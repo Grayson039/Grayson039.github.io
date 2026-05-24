@@ -931,18 +931,89 @@
       <span class="cs-tag">UX Design</span><span class="cs-tag">React Native</span><span class="cs-tag">react-native-skia</span><span class="cs-tag">Freemium</span>
     </div>
     <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">Scrapbookers don't have a home. GoodNotes has a 3-file free limit. Canva is a marketing tool with broken layers. Unfold locks sharing to Instagram only, a 100-page family scrapbook can't be sent to grandma. Pic Collage forces watermarks and holds a 3.9★ rating from frustrated users. Every competitor optimizes for the wrong output.</p>
+    <p class="cs-body">Scrapbookers don't have a home. GoodNotes hits a 3-file wall immediately. Canva is a marketing tool — its layers are broken and its best templates are paywalled. Unfold exports to Instagram only, meaning a 100-page family scrapbook literally cannot be sent to grandma. Pic Collage forces watermarks on finished work and sits at a 3.9★ rating from a frustrated user base. Every competitor optimizes for the wrong output.</p>
     <div class="cs-divider"></div>
-    <div class="cs-section-head">The Insight</div>
-    <p class="cs-body">People aren't making scrapbooks to post on Instagram. They're making them to keep, share with family, and print. The gap is a purpose-built scrapbooking app that is free, offline, layered, and lets you share finished books wherever you want, not just to social media.</p>
-    <div class="cs-section-head">Key Differentiators</div>
-    <p class="cs-body">Unlimited free scrapbooks with no watermarks ever. Full offline functionality. Share anywhere, email, iMessage, print, anywhere, not locked to a single platform. Premium tier at ~$3.99/mo targeting a 5-8% conversion rate. Targeting women 25-45 making scrapbooks for life events: weddings, milestones, travel, holidays.</p>
-    <div class="cs-grid-2">
-      <div class="cs-stat-box"><div class="cs-stat-num">4.5★</div><div class="cs-stat-label">Day-One Rating Target</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">5-8%</div><div class="cs-stat-label">Premium Conversion Target</div></div>
+    <div class="cs-section-head">The Core Insight</div>
+    <p class="cs-body">People aren't making scrapbooks to post on Instagram. They're making them to keep, share with family, and print. That realization — that every competitor is solving for social media virality instead of personal memory — is the product foundation everything else is built on.</p>
+
+    <div class="cs-section-head">Who It's Built For</div>
+    <p class="cs-body">Two personas drive every design decision. The Memory Keeper: women 25–45 making scrapbooks for weddings, milestones, travel, and holidays — currently duct-taping together GoodNotes and Canva and physical craft supplies, none of it feeling right. The Gift Maker: people building scrapbooks as gifts, who care deeply about the finished output looking polished and need to actually send it to someone.</p>
+
+    <div class="cs-section-head">Wireframe → Prototype Evolution</div>
+    <p class="cs-body">The design went through three distinct stages before the current prototype. The first pass focused purely on the canvas layer model — getting the stacking order right before any visual polish. The second pass established the emotional tone: warm craft textures, Playfair Display typography, the "paper feel" that separates Scrap'd from every generic grid editor. The third pass locked the onboarding flow — the decision to get users into creation in under 60 seconds, skippable everywhere, no account required.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;">
+      <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 01 · Wireframe</div>
+        <div style="background:rgba(255,230,225,0.06);border-radius:8px;padding:12px;margin-bottom:10px;min-height:80px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;">
+            <div style="height:28px;background:rgba(255,230,225,0.12);border-radius:3px;"></div>
+            <div style="height:28px;background:rgba(255,230,225,0.12);border-radius:3px;"></div>
+            <div style="height:28px;background:rgba(255,230,225,0.12);border-radius:3px;"></div>
+            <div style="height:28px;background:rgba(255,230,225,0.12);border-radius:3px;"></div>
+          </div>
+          <div style="height:8px;background:rgba(255,230,225,0.08);border-radius:3px;width:60%;"></div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Layer model + canvas architecture. No visual polish — just proving the stacking system works.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 02 · Visual Identity</div>
+        <div style="background:linear-gradient(135deg,#2D7A6A,#519E8A);border-radius:8px;padding:12px;margin-bottom:10px;min-height:80px;display:flex;flex-direction:column;justify-content:center;gap:6px;">
+          <div style="font-family:Georgia,serif;font-size:18px;font-weight:900;color:white;letter-spacing:-0.5px;">Scrap<span style="color:#F5C842;">'</span>d</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.6);font-style:italic;">Snap it. Scrap it. Share it.</div>
+          <div style="display:flex;gap:4px;">
+            <div style="height:6px;width:20px;background:rgba(255,255,255,0.3);border-radius:2px;"></div>
+            <div style="height:6px;width:14px;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Craft textures, Playfair Display, warm palette. Establishing the emotional tone.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 03 · Prototype</div>
+        <div style="background:linear-gradient(135deg,#1F6B5A,#519E8A);border-radius:8px;padding:10px;margin-bottom:10px;min-height:80px;">
+          <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">My Scrapbooks</div>
+          <div style="background:rgba(255,255,255,0.15);border-radius:6px;padding:6px 8px;margin-bottom:4px;">
+            <div style="font-size:9px;color:white;font-weight:600;">Paris 2024 ✈</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+            <div style="height:18px;background:rgba(255,113,103,0.5);border-radius:3px;"></div>
+            <div style="height:18px;background:rgba(81,158,138,0.5);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Full login + onboarding flow. Get to first creation in under 60 seconds.</div>
+      </div>
     </div>
+
+    <div class="cs-section-head">What Makes It Different</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;">
+      <div style="background:rgba(255,230,225,0.06);border-left:2px solid #FF5B04;padding:12px 14px;border-radius:0 8px 8px 0;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">Unlimited free books</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">GoodNotes' #1 complaint. Becomes the headline of every ad.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.06);border-left:2px solid #FED16A;padding:12px 14px;border-radius:0 8px 8px 0;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">Share anywhere</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">Unfold users literally can't send books to their families. We fix that.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.06);border-left:2px solid #FF5B04;padding:12px 14px;border-radius:0 8px 8px 0;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">Proper layer model</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">GoodNotes forces delete-and-redo to reorder. We built drag-to-reorder from day one.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.06);border-left:2px solid #FED16A;padding:12px 14px;border-radius:0 8px 8px 0;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">No watermarks. Ever.</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">Pic Collage is losing users over this. It's a core promise, not a paid perk.</div>
+      </div>
+    </div>
+
+    <div class="cs-section-head">The Canvas Architecture</div>
+    <p class="cs-body">Every page is a 6-layer GPU-rendered canvas via react-native-skia. Layer 1: background paper. Layer 2: photos. Layer 3: stickers and washi tape. Layer 4: typed text and journaling. Layer 5: Apple Pencil or finger drawing with pressure sensitivity. Layer 6 (Tier 2): video and GIF. Nothing is destructive. Unlimited undo. 60fps target on iPhone 12 or newer — non-negotiable.</p>
+
+    <div class="cs-grid-2">
+      <div class="cs-stat-box"><div class="cs-stat-num">4.5★</div><div class="cs-stat-label">Day-One App Store Target</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">$250</div><div class="cs-stat-label">Total Day-1 Asset Budget</div></div>
+    </div>
+
     <div class="cs-section-head">Where It Stands</div>
-    <p class="cs-body">Full PRD written covering home screen, editor, template system, sharing architecture, and monetization. Prototype built with login and onboarding flows. Design system established. Tech stack confirmed as React Native with react-native-skia for the canvas layer.</p>
+    <p class="cs-body">Full PRD complete across all 12 feature specs: library, canvas, photo import, stickers, washi tape, background papers, text, drawing, templates, sharing, onboarding, and offline architecture. Login and onboarding prototypes built. Design system established. Tech stack confirmed. Asset licensing strategy defined. Next phase: resolve 10 open questions in the PRD, then developer handoff spec.</p>
     <a href="https://grayson039.github.io/scrapd/" target="_blank" class="cs-link">View Prototype →</a>
   </div>
 </div>

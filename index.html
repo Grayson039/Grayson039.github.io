@@ -1029,19 +1029,89 @@
     <div class="cs-tags">
       <span class="cs-tag">UX Design</span><span class="cs-tag">React Native</span><span class="cs-tag">Expo</span><span class="cs-tag">AI Vision</span><span class="cs-tag">Dark Mode First</span>
     </div>
-    <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">You see a recipe on TikTok. You screenshot it. It disappears into your camera roll forever. Meanwhile your fridge is full of ingredients you forget you have, and deciding what to cook becomes a daily frustration.</p>
+    <div class="cs-section-head">The Origin</div>
+    <p class="cs-body">My wife had her gallbladder removed. Overnight our cooking had to change — certain fats, certain ingredients, certain meal structures were suddenly off the table. Every recipe app we tried was built for a single person with no restrictions and unlimited pantry access. None of them understood that real households are complicated: multiple people, medical needs, dietary preferences, and a fridge full of stuff you bought three days ago and forgot about. So I started building the app I actually needed.</p>
     <div class="cs-divider"></div>
-    <div class="cs-section-head">The Solution</div>
-    <p class="cs-body">OurTable lets you save recipes directly from screenshots and social media, scan your fridge with your camera to catalog what you have, and get AI-powered meal suggestions based on your actual ingredients. The UX challenge: turning messy, unstructured social content into clean, actionable cooking experiences.</p>
-    <div class="cs-section-head">AI-Native Features</div>
-    <p class="cs-body">Fridge scanner uses Expo Camera to photograph ingredients and catalog them automatically. AI recipe suggestions are generated based on what's actually in your fridge, not generic recommendations. Recipe saving from screenshots uses image processing to extract ingredients and steps from social media content.</p>
-    <div class="cs-grid-2">
-      <div class="cs-stat-box"><div class="cs-stat-num">4</div><div class="cs-stat-label">Core AI Features</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">Dark</div><div class="cs-stat-label">Design-First Approach</div></div>
+
+    <div class="cs-section-head">The Problem Chain</div>
+    <p class="cs-body">The app solves five connected problems that every other recipe app treats as separate. You see a recipe on TikTok — it disappears into your camera roll. Your fridge has salmon that expires tomorrow — you don't know what to make with it. You plan a meal — you forget someone in the house can't eat dairy. You go grocery shopping — you buy things you already have. You cook something great — you have no way to remember what you changed. OurTable is one system that solves all five.</p>
+
+    <div class="cs-section-head">The Design Evolution</div>
+    <p class="cs-body">The app went through three distinct visual phases before landing on the current direction. The first build ran on-device — dark mode, placeholder images, but real navigation and real data flowing through every screen. The second phase explored light vs. dark mode in a formal mockup system, where the warm cream/linen direction beat the all-dark approach because the app needed to feel like a kitchen, not a command center. The third phase — the current build — added real food photography, a refined terracotta and cream palette, full cooking mode, and the household architecture.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;">
+      <div style="background:rgba(255,230,225,0.06);border:1px solid rgba(255,230,225,0.12);border-radius:12px;padding:14px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.4);margin-bottom:8px;">V1 · On Device</div>
+        <div style="background:#1C1410;border-radius:8px;padding:10px;margin-bottom:8px;">
+          <div style="font-size:11px;color:#C4614A;font-weight:700;margin-bottom:4px;">What's for dinner? 👋</div>
+          <div style="height:6px;background:rgba(196,97,74,0.3);border-radius:2px;margin-bottom:3px;width:80%;"></div>
+          <div style="height:6px;background:rgba(196,97,74,0.2);border-radius:2px;width:60%;"></div>
+        </div>
+        <div style="font-size:10px;color:rgba(255,230,225,0.4);line-height:1.5;">Dark mode. Real navigation. Proof the system works.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.06);border:1px solid rgba(255,230,225,0.12);border-radius:12px;padding:14px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.4);margin-bottom:8px;">V2 · Mode Exploration</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;">
+          <div style="background:#F5EEE6;border-radius:6px;padding:6px;text-align:center;">
+            <div style="font-size:8px;color:#C4614A;font-weight:700;">Light</div>
+            <div style="height:4px;background:#C4614A;border-radius:1px;margin-top:3px;opacity:0.5;"></div>
+          </div>
+          <div style="background:#1C1410;border-radius:6px;padding:6px;text-align:center;">
+            <div style="font-size:8px;color:#C4614A;font-weight:700;">Dark</div>
+            <div style="height:4px;background:#C4614A;border-radius:1px;margin-top:3px;opacity:0.5;"></div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:rgba(255,230,225,0.4);line-height:1.5;">Formal design system. Light mode won — feels like a kitchen.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.06);border:1px solid rgba(255,230,225,0.12);border-radius:12px;padding:14px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.4);margin-bottom:8px;">V3 · Current</div>
+        <div style="background:#F5EEE6;border-radius:8px;padding:8px;margin-bottom:8px;">
+          <div style="font-size:10px;color:#C4614A;font-weight:800;font-family:Georgia,serif;">Our Table</div>
+          <div style="font-size:8px;color:#8B6E52;margin-top:2px;">Good evening, Will 👋</div>
+          <div style="height:20px;background:linear-gradient(135deg,#8B9E7A,#5B7A5F);border-radius:4px;margin-top:4px;"></div>
+        </div>
+        <div style="font-size:10px;color:rgba(255,230,225,0.4);line-height:1.5;">Real photos. Full cooking mode. Household system.</div>
+      </div>
     </div>
+
+    <div class="cs-section-head">The Household Intelligence Layer</div>
+    <p class="cs-body">The feature that makes OurTable different from every recipe app isn't the fridge scanner — it's "Who's at your table?" During onboarding, you add household members and set dietary preferences per person: Dairy-Free, Gluten-Free, Vegetarian, Halal, and more. When a saved recipe conflicts with a household member's restriction, the app flags it and suggests AI-generated alternatives. My wife's gallbladder recovery isn't an edge case — it's the product thesis.</p>
+
+    <div class="cs-section-head">The Fridge Intelligence Layer</div>
+    <p class="cs-body">Snap your fridge — the AI detects and catalogs ingredients automatically across Fridge, Pantry, and Freezer. "What Can I Make?" surfaces recipes ranked by match percentage: 95% match means all ingredients on hand, 85% means you need one item. Expiring items get prioritized first. Food Waste Mode shows you exactly how much money you've saved by cooking what you have — $24.60 saved this month across 8 meals is a number people feel.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;">
+      <div style="background:rgba(255,230,225,0.05);border-left:2px solid #FF5B04;padding:12px 14px;border-radius:0 8px 8px 0;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">Cost per meal</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">$4.60/serving on Creamy Tuscan Salmon. Nobody else shows this.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.05);border-left:2px solid #FED16A;padding:12px 14px;border-radius:0 8px 8px 0;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">Food waste saved</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">$24.60 this month. A number people feel, not just a feature.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.05);border-left:2px solid #FF5B04;padding:12px 14px;border-radius:0 8px 8px 0;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">Match scoring</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">95% = cook now. 85% = add 1 item. The gap drives action.</div>
+      </div>
+      <div style="background:rgba(255,230,225,0.05);border-left:2px solid #FED16A;padding:12px 14px;border-radius:0 8px 8px 0;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">"That's a wrap!"</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">Post-cook screen: rate, photo, notes. Closes the learning loop.</div>
+      </div>
+    </div>
+
+    <div class="cs-section-head">The Platform Vision</div>
+    <p class="cs-body">OurTable is being designed as a platform, not just an app. The next layer: a weekly and monthly meal planning calendar powered by your own saved recipe database. The more recipes you add, the smarter your suggestions become — a personal data flywheel that makes the app more valuable the longer you use it. Household members share access under one plan, turning a personal utility into a family platform. A senior developer reviewed the concept and joined as a collaborator — the architecture is built to scale there.</p>
+
+    <div class="cs-grid-2">
+      <div class="cs-stat-box"><div class="cs-stat-num">3</div><div class="cs-stat-label">Design Versions Shipped</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">17+</div><div class="cs-stat-label">Screens Built & Working</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">1</div><div class="cs-stat-label">Real Household Problem</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">∞</div><div class="cs-stat-label">Flywheel Potential</div></div>
+    </div>
+
     <div class="cs-section-head">Tech Stack</div>
-    <p class="cs-body">Expo (React Native) with React Navigation v6. Expo Camera and Image Picker for the fridge scanner and recipe screenshot capture. Dark mode first design with a Terracotta (#C4614A), Cream, and Olive palette. Built to run on both iOS and Android from day one.</p>
+    <p class="cs-body">Expo (React Native) with React Navigation v6. Expo Camera and Image Picker for fridge scanning and recipe screenshot capture. Warm cream/linen palette with Terracotta (#C4614A) and Olive accents. Full light mode design system with dark mode support. iOS and Android from day one.</p>
+    <a href="https://grayson039.github.io/ourtable/" target="_blank" class="cs-link">View Prototype →</a>
   </div>
 </div>
 

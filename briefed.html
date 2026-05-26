@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briefed — 15 Words or Less</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0e0e10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+    color: #fff;
+  }
+
+  .phone-shell {
+    width: 100%;
+    max-width: 390px;
+    background: #141416;
+    border-radius: 40px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+    overflow: hidden;
+    min-height: 780px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .status-bar {
+    padding: 14px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .nav-bar {
+    padding: 12px 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #222;
+  }
+
+  .nav-left { display: flex; align-items: center; gap: 10px; }
+
+  .logo-mark {
+    width: 34px; height: 34px;
+    background: #e8ff47;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .nav-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: #fff; }
+  .nav-sub { font-size: 10px; color: #555; margin-top: 1px; letter-spacing: 1px; text-transform: uppercase; }
+
+  .word-counter {
+    background: #1e1e20;
+    border: 1px solid #333;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #e8ff47;
+  }
+
+  .content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  textarea {
+    width: 100%;
+    background: #1a1a1c;
+    border: 1.5px solid #2a2a2c;
+    border-radius: 14px;
+    padding: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e0e0e0;
+    resize: none;
+    outline: none;
+    min-height: 140px;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus { border-color: #e8ff47; }
+  textarea::placeholder { color: #444; }
+
+  .category-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .chip {
+    background: #1e1e20;
+    border: 1.5px solid #2a2a2c;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .chip.active {
+    background: rgba(232,255,71,0.1);
+    border-color: #e8ff47;
+    color: #e8ff47;
+  }
+
+  .go-btn {
+    width: 100%;
+    background: #e8ff47;
+    color: #000;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+
+  .go-btn:active { transform: scale(0.98); }
+  .go-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .example-btn {
+    background: none;
+    border: 1.5px dashed #2a2a2c;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #555;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .example-btn:hover { border-color: #e8ff47; color: #e8ff47; }
+
+  /* RESULT */
+  .result-container {
+    background: #1a1a1c;
+    border: 1px solid #2a2a2c;
+    border-radius: 18px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .result-container.visible { display: block; }
+
+  .result-header {
+    padding: 14px 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .category-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #e8ff47;
+    background: rgba(232,255,71,0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .word-count-badge {
+    font-size: 11px;
+    color: #555;
+    font-weight: 500;
+  }
+
+  .brief-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.4;
+    padding: 16px 16px 12px;
+  }
+
+  .result-footer {
+    border-top: 1px solid #222;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .why-label { font-size: 11px; color: #444; }
+
+  .copy-btn {
+    background: #e8ff47;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .copy-btn:hover { opacity: 0.85; }
+
+  /* VARIANTS */
+  .variants-section { display: none; flex-direction: column; gap: 8px; }
+  .variants-section.visible { display: flex; }
+
+  .variant-card {
+    background: #1a1a1c;
+    border: 1px solid #2a2a2c;
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .variant-card:hover { border-color: #444; }
+  .variant-card.selected { border-color: #e8ff47; background: rgba(232,255,71,0.04); }
+
+  .variant-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .variant-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #e0e0e0;
+    line-height: 1.4;
+  }
+
+  .variant-wc {
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 10px;
+    color: #555;
+  }
+
+  /* THINKING */
+  .thinking-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 24px;
+  }
+
+  .thinking-bar {
+    width: 100%;
+    height: 3px;
+    background: #222;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .thinking-fill {
+    height: 100%;
+    background: #e8ff47;
+    border-radius: 2px;
+    animation: sweep 1.5s ease-in-out infinite;
+  }
+
+  @keyframes sweep {
+    0% { width: 0%; margin-left: 0; }
+    50% { width: 60%; margin-left: 20%; }
+    100% { width: 0%; margin-left: 100%; }
+  }
+
+  .thinking-label { font-size: 12px; color: #444; }
+
+  .empty-state {
+    text-align: center;
+    padding: 20px 0;
+    color: #333;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .empty-icon { font-size: 28px; margin-bottom: 8px; filter: grayscale(1) opacity(0.4); }
+
+  .error-box {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    color: #ef4444;
+    display: none;
+  }
+
+  .divider { height: 1px; background: #1e1e20; }
+
+  .prompt-iteration {
+    background: #1a1a1c;
+    border: 1px solid #2a2a2c;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 11px;
+    color: #444;
+    line-height: 1.7;
+    display: none;
+  }
+
+  .prompt-iteration.visible { display: block; }
+  .prompt-iteration strong { color: #666; }
+  .prompt-toggle { font-size: 11px; color: #555; cursor: pointer; text-align: center; }
+  .prompt-toggle:hover { color: #e8ff47; }
+</style>
+</head>
+<body>
+
+<div class="phone-shell">
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>●●●</span>
+  </div>
+
+  <div class="nav-bar">
+    <div class="nav-left">
+      <div class="logo-mark">📰</div>
+      <div>
+        <div class="nav-title">Briefed</div>
+        <div class="nav-sub">15 words or less</div>
+      </div>
+    </div>
+    <div class="word-counter" id="liveCount">0 words</div>
+  </div>
+
+  <div class="content">
+
+    <div>
+      <div class="section-label">Paste any article, headline, or update</div>
+      <textarea id="inputText" placeholder="Paste a news article, long update, email, or any block of text here. Briefed will distill it down to the essential truth in 15 words or less." oninput="onInput()"></textarea>
+      <button class="example-btn" style="margin-top:8px" onclick="loadExample()">📋 Load an example article snippet</button>
+    </div>
+
+    <div>
+      <div class="section-label">Category</div>
+      <div class="category-chips">
+        <div class="chip active" onclick="selectChip(this)" data-val="news">📰 News</div>
+        <div class="chip" onclick="selectChip(this)" data-val="tech">💻 Tech</div>
+        <div class="chip" onclick="selectChip(this)" data-val="business">📈 Business</div>
+        <div class="chip" onclick="selectChip(this)" data-val="sports">🏆 Sports</div>
+        <div class="chip" onclick="selectChip(this)" data-val="personal update">📬 Personal</div>
+      </div>
+    </div>
+
+    <button class="go-btn" id="briefBtn" onclick="brief()" disabled>⚡ Distill It</button>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="thinking-state" id="thinkingState">
+      <div class="thinking-bar"><div class="thinking-fill"></div></div>
+      <div class="thinking-label">Cutting through the noise...</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MAIN RESULT -->
+    <div class="result-container" id="resultContainer">
+      <div class="result-header">
+        <span class="category-tag" id="resultCat">News</span>
+        <span class="word-count-badge" id="resultWC">— words</span>
+      </div>
+      <div class="brief-text" id="resultText">—</div>
+      <div class="result-footer">
+        <span class="why-label" id="whyLabel">—</span>
+        <button class="copy-btn" onclick="copyResult()">Copy</button>
+      </div>
+    </div>
+
+    <!-- VARIANTS -->
+    <div id="variantsWrap" style="display:none">
+      <div class="section-label" style="margin-bottom:8px">3 versions — pick your flavor</div>
+      <div class="variants-section" id="variantsSection"></div>
+    </div>
+
+    <!-- PROMPT WINDOW (portfolio piece) -->
+    <div id="promptToggleWrap" style="display:none">
+      <div class="prompt-toggle" onclick="togglePrompt()">🔬 See how the prompt works</div>
+      <div class="prompt-iteration" id="promptBox"></div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📰</div>
+      Paste any article or long update above. You'll get 3 versions — all under 15 words — plus the reasoning behind each cut.
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let selectedCat = 'news';
+  let lastResult = null;
+
+  function selectChip(el) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    selectedCat = el.dataset.val;
+  }
+
+  function onInput() {
+    const val = document.getElementById('inputText').value.trim();
+    const wc = val ? val.split(/\s+/).length : 0;
+    document.getElementById('liveCount').textContent = `${wc} words`;
+    document.getElementById('briefBtn').disabled = wc < 10;
+  }
+
+  function loadExample() {
+    const examples = [
+      `The Federal Reserve announced Wednesday it would hold interest rates steady for the third consecutive meeting, citing ongoing concerns about inflation that remains above its 2% target despite signs of cooling in the labor market. Fed Chair Jerome Powell noted the committee remains data-dependent and would not rule out further hikes if inflation data warrants action.`,
+      `Apple has officially unveiled its new M4-powered MacBook Pro lineup, featuring up to 24-core CPU configurations and a redesigned cooling system. The machines promise up to 40% faster performance over the previous generation while maintaining the same battery life. Pre-orders begin this Friday with availability in two weeks.`,
+      `Scientists announced a breakthrough in fusion energy research, achieving a net energy gain for the second consecutive time at the National Ignition Facility. Researchers say this marks a pivotal step toward commercially viable fusion power, though experts caution that widespread energy production is still likely decades away.`,
+      `A new study published in the Journal of Sleep Research found that adults who consistently sleep fewer than 6 hours per night show a 30% higher likelihood of developing type 2 diabetes over a 10-year period, even after controlling for diet and exercise habits. Researchers are urging clinicians to treat sleep as a primary health metric.`
+    ];
+    const pick = examples[Math.floor(Math.random() * examples.length)];
+    document.getElementById('inputText').value = pick;
+    onInput();
+  }
+
+  async function brief() {
+    const input = document.getElementById('inputText').value.trim();
+    if (!input) return;
+
+    const btn = document.getElementById('briefBtn');
+    const thinking = document.getElementById('thinkingState');
+    const errorBox = document.getElementById('errorBox');
+
+    btn.disabled = true;
+    thinking.style.display = 'flex';
+    errorBox.style.display = 'none';
+    document.getElementById('resultContainer').classList.remove('visible');
+    document.getElementById('variantsSection').classList.remove('visible');
+    document.getElementById('variantsWrap').style.display = 'none';
+    document.getElementById('promptToggleWrap').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('variantsSection').innerHTML = '';
+
+    const prompt = `You are a master editor. Your only job is to distill text into its single most essential truth — in 15 words or less. The output must sound completely human, punchy, and natural. No jargon. No passive voice. No filler words.
+
+Category: ${selectedCat}
+
+Text to distill:
+"${input}"
+
+Rules:
+- Hard limit: 15 words maximum per version
+- Sound like a sharp human wrote it, not an AI
+- Capture the most newsworthy or important fact
+- No starting with "The" if avoidable
+- No ending with ellipsis
+- Do NOT summarize, DISTILL — capture the essence
+
+Return ONLY valid JSON, nothing else:
+{
+  "v1": "...",
+  "v1_wc": 0,
+  "v2": "...",
+  "v2_wc": 0,
+  "v3": "...",
+  "v3_wc": 0,
+  "why": "One sentence: what was the most important fact you preserved?"
+}`;
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+
+      const data = await response.json();
+      const raw = data.content[0].text.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(raw);
+
+      lastResult = parsed;
+      thinking.style.display = 'none';
+
+      // Show best result (v1) as main
+      document.getElementById('resultCat').textContent = selectedCat.toUpperCase();
+      document.getElementById('resultText').textContent = parsed.v1;
+      document.getElementById('resultWC').textContent = `${parsed.v1_wc} words`;
+      document.getElementById('whyLabel').textContent = parsed.why;
+      document.getElementById('resultContainer').classList.add('visible');
+
+      // Show variants
+      document.getElementById('variantsWrap').style.display = 'block';
+      const vs = document.getElementById('variantsSection');
+      vs.classList.add('visible');
+
+      const variants = [
+        { key: 'v1', wc: parsed.v1_wc, text: parsed.v1, label: 'Most punchy' },
+        { key: 'v2', wc: parsed.v2_wc, text: parsed.v2, label: 'Most neutral' },
+        { key: 'v3', wc: parsed.v3_wc, text: parsed.v3, label: 'Most context' }
+      ];
+
+      variants.forEach((v, i) => {
+        const card = document.createElement('div');
+        card.className = `variant-card${i === 0 ? ' selected' : ''}`;
+        card.innerHTML = `
+          <div class="variant-num">${v.label}</div>
+          <div class="variant-text">${v.text}</div>
+          <div class="variant-wc">${v.wc}w</div>
+        `;
+        card.onclick = () => {
+          document.querySelectorAll('.variant-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          document.getElementById('resultText').textContent = v.text;
+          document.getElementById('resultWC').textContent = `${v.wc} words`;
+        };
+        vs.appendChild(card);
+      });
+
+      // Show prompt toggle (portfolio piece)
+      document.getElementById('promptToggleWrap').style.display = 'block';
+      document.getElementById('promptBox').textContent = `Prompt strategy: The model is instructed to DISTILL not summarize — a key distinction. Word count is enforced in the prompt rules, not post-processed. Three variants force the model to explore different angles of the same story. The "why" field makes the model explain its editorial decision, which catches hallucinations early. This is v1 of the prompt — a real portfolio shows iteration.`;
+
+      btn.disabled = false;
+
+    } catch (err) {
+      thinking.style.display = 'none';
+      errorBox.style.display = 'block';
+      errorBox.textContent = 'Something went wrong. Try again.';
+      btn.disabled = false;
+      document.getElementById('emptyState').style.display = 'block';
+    }
+  }
+
+  function copyResult() {
+    const text = document.getElementById('resultText').textContent;
+    navigator.clipboard.writeText(text).catch(() => {});
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  }
+
+  function togglePrompt() {
+    const box = document.getElementById('promptBox');
+    box.classList.toggle('visible');
+  }
+</script>
+</body>
+</html>

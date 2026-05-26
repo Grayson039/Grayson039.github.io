@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReplyRight — Text Rewriter</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f7f7f8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+  }
+
+  .phone-shell {
+    width: 100%;
+    max-width: 390px;
+    background: #fff;
+    border-radius: 40px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+    overflow: hidden;
+    min-height: 780px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .status-bar {
+    background: #fff;
+    padding: 14px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+  }
+
+  .nav-bar {
+    padding: 12px 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .nav-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .nav-subtitle {
+    font-size: 11px;
+    color: #888;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+
+  .app-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+
+  .message-bubble-wrap {
+    background: #f7f7f8;
+    border-radius: 16px;
+    padding: 4px;
+  }
+
+  .message-bubble {
+    background: #e5e5ea;
+    border-radius: 18px 18px 18px 4px;
+    padding: 12px 14px;
+    font-size: 15px;
+    line-height: 1.45;
+    color: #000;
+    margin: 8px 8px 8px 8px;
+    max-width: 85%;
+  }
+
+  .incoming-label {
+    font-size: 11px;
+    color: #888;
+    padding: 4px 8px 0;
+  }
+
+  textarea {
+    width: 100%;
+    border: 1.5px solid #e5e5ea;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    color: #000;
+    background: #fff;
+    transition: border-color 0.2s;
+    min-height: 100px;
+  }
+
+  textarea:focus { border-color: #6366f1; }
+  textarea::placeholder { color: #bbb; }
+
+  .context-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    background: #f0f0f5;
+    border: 1.5px solid transparent;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .chip.active {
+    background: #ede9fe;
+    border-color: #6366f1;
+    color: #6366f1;
+  }
+
+  .rewrite-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .rewrite-btn:active { transform: scale(0.98); }
+  .rewrite-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .results-section { display: flex; flex-direction: column; gap: 12px; }
+
+  .result-card {
+    background: #fff;
+    border: 1.5px solid #f0f0f0;
+    border-radius: 16px;
+    padding: 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-card:hover { border-color: #6366f1; box-shadow: 0 4px 16px rgba(99,102,241,0.1); }
+  .result-card.copied { border-color: #22c55e; }
+
+  .result-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  }
+
+  .result-card.tone-calm::before { background: #3b82f6; }
+  .result-card.tone-warm::before { background: #f59e0b; }
+  .result-card.tone-assertive::before { background: #ef4444; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .tone-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tone-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tone-calm .tone-dot { background: #3b82f6; }
+  .tone-calm .tone-label { color: #3b82f6; }
+  .tone-warm .tone-dot { background: #f59e0b; }
+  .tone-warm .tone-label { color: #f59e0b; }
+  .tone-assertive .tone-dot { background: #ef4444; }
+  .tone-assertive .tone-label { color: #ef4444; }
+
+  .copy-hint {
+    font-size: 11px;
+    color: #bbb;
+    transition: color 0.2s;
+  }
+  .result-card.copied .copy-hint { color: #22c55e; }
+
+  .result-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #1a1a1a;
+  }
+
+  .tone-desc {
+    font-size: 11px;
+    color: #999;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .thinking-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px;
+    display: none;
+  }
+
+  .thinking-dots {
+    display: flex; gap: 6px;
+  }
+
+  .dot {
+    width: 8px; height: 8px;
+    background: #6366f1;
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-8px); opacity: 1; }
+  }
+
+  .thinking-label { font-size: 13px; color: #888; }
+
+  .empty-state {
+    text-align: center;
+    padding: 24px 16px;
+    color: #bbb;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .empty-icon { font-size: 32px; margin-bottom: 8px; }
+
+  .tone-detected {
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #666;
+    display: none;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tone-detected.visible { display: flex; }
+  .tone-detected strong { color: #000; }
+
+  .example-btn {
+    background: none;
+    border: 1.5px dashed #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #888;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .example-btn:hover { border-color: #6366f1; color: #6366f1; background: #fafaff; }
+
+  .divider { height: 1px; background: #f0f0f0; margin: 4px 0; }
+
+  .error-box {
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    color: #dc2626;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-shell">
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>●●●</span>
+  </div>
+
+  <div class="nav-bar">
+    <div>
+      <div class="nav-title">ReplyRight</div>
+      <div class="nav-subtitle">Say it better, every time</div>
+    </div>
+    <div class="app-icon">💬</div>
+  </div>
+
+  <div class="content">
+
+    <!-- INCOMING MESSAGE -->
+    <div>
+      <div class="section-label">Their Message</div>
+      <div class="message-bubble-wrap">
+        <div class="incoming-label">Received</div>
+        <div class="message-bubble" id="previewBubble">Paste a message below to see it here...</div>
+      </div>
+    </div>
+
+    <!-- PASTE AREA -->
+    <div>
+      <div class="section-label">Paste the conversation or message</div>
+      <textarea id="inputText" placeholder="e.g. 'I can't believe you forgot again. This always happens and I'm done dealing with it.'" rows="4" oninput="onInput()"></textarea>
+      <button class="example-btn" style="margin-top:8px" onclick="loadExample()">💡 Load an example tense message</button>
+    </div>
+
+    <!-- CONTEXT -->
+    <div>
+      <div class="section-label">Who is this?</div>
+      <div class="context-chips">
+        <div class="chip active" onclick="selectChip(this)" data-val="someone close to me">Partner / Family</div>
+        <div class="chip" onclick="selectChip(this)" data-val="a friend">Friend</div>
+        <div class="chip" onclick="selectChip(this)" data-val="a coworker">Coworker</div>
+        <div class="chip" onclick="selectChip(this)" data-val="my boss">Boss</div>
+        <div class="chip" onclick="selectChip(this)" data-val="a client">Client</div>
+      </div>
+    </div>
+
+    <!-- TONE DETECTED -->
+    <div class="tone-detected" id="toneDetected">
+      <span>🔍</span>
+      <span>Tone detected: <strong id="toneLabel">—</strong></span>
+    </div>
+
+    <!-- ERROR -->
+    <div class="error-box" id="errorBox"></div>
+
+    <!-- BUTTON -->
+    <button class="rewrite-btn" id="rewriteBtn" onclick="rewrite()" disabled>
+      <span>✨</span> Rewrite My Reply
+    </button>
+
+    <div class="divider"></div>
+
+    <!-- THINKING -->
+    <div class="thinking-state" id="thinkingState">
+      <div class="thinking-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div class="thinking-label">Reading the room...</div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-section" id="resultsSection">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">💭</div>
+        Paste a tense or tricky message above and tap Rewrite. You'll get 3 versions — calm, warm, and assertive — so you can pick the one that fits.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let selectedChip = 'someone close to me';
+
+  function selectChip(el) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    selectedChip = el.dataset.val;
+  }
+
+  function onInput() {
+    const val = document.getElementById('inputText').value.trim();
+    document.getElementById('rewriteBtn').disabled = val.length < 5;
+    document.getElementById('previewBubble').textContent = val || 'Paste a message below to see it here...';
+    document.getElementById('toneDetected').classList.remove('visible');
+  }
+
+  function loadExample() {
+    const examples = [
+      "I can't believe you forgot again. This always happens and honestly I'm starting to wonder if you even care anymore.",
+      "You said you'd have this done by Friday. It's Monday. This is unacceptable and it's affecting the whole team.",
+      "I don't understand why you keep doing this. I've told you how it makes me feel and nothing changes.",
+      "We need to talk. I've been feeling really ignored lately and it's starting to affect us.",
+      "I need a response on this NOW. This has been sitting for 3 days and I don't know what's going on your end."
+    ];
+    const pick = examples[Math.floor(Math.random() * examples.length)];
+    document.getElementById('inputText').value = pick;
+    document.getElementById('previewBubble').textContent = pick;
+    document.getElementById('rewriteBtn').disabled = false;
+    document.getElementById('toneDetected').classList.remove('visible');
+  }
+
+  async function rewrite() {
+    const input = document.getElementById('inputText').value.trim();
+    if (!input) return;
+
+    const btn = document.getElementById('rewriteBtn');
+    const thinking = document.getElementById('thinkingState');
+    const results = document.getElementById('resultsSection');
+    const errorBox = document.getElementById('errorBox');
+
+    btn.disabled = true;
+    thinking.style.display = 'flex';
+    errorBox.style.display = 'none';
+    results.innerHTML = '';
+
+    const prompt = `You are a communication coach helping someone reply to a difficult message from ${selectedChip}.
+
+The message they received is:
+"${input}"
+
+Your job:
+1. First, detect the emotional tone of the incoming message in 3 words or less (e.g. "frustrated and accusatory").
+2. Then write 3 different reply options for the user to send back:
+   - CALM: De-escalating, measured, non-reactive
+   - WARM: Empathetic, caring, emotionally open
+   - ASSERTIVE: Direct, boundaried, firm but respectful
+
+Rules:
+- Each reply should feel HUMAN and natural, not robotic or therapy-speak
+- Keep each reply under 3 sentences
+- Do NOT start any reply with "I understand" or "I hear you"
+- Replies should acknowledge the message without being defensive
+
+Return ONLY valid JSON in this exact format, nothing else:
+{
+  "detected_tone": "...",
+  "calm": "...",
+  "warm": "...",
+  "assertive": "..."
+}`;
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+
+      const data = await response.json();
+      const raw = data.content[0].text.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(raw);
+
+      // Show tone
+      document.getElementById('toneLabel').textContent = parsed.detected_tone;
+      document.getElementById('toneDetected').classList.add('visible');
+
+      thinking.style.display = 'none';
+
+      const tones = [
+        { key: 'calm', label: 'Calm', cls: 'tone-calm', emoji: '🌊', desc: 'De-escalates the tension without dismissing their feelings' },
+        { key: 'warm', label: 'Warm', cls: 'tone-warm', emoji: '☀️', desc: 'Opens emotional dialogue and shows you care' },
+        { key: 'assertive', label: 'Assertive', cls: 'tone-assertive', emoji: '🎯', desc: 'Sets a clear boundary while staying respectful' }
+      ];
+
+      tones.forEach(t => {
+        const card = document.createElement('div');
+        card.className = `result-card ${t.cls}`;
+        card.innerHTML = `
+          <div class="result-header">
+            <div class="tone-badge">
+              <div class="tone-dot"></div>
+              <span class="tone-label">${t.emoji} ${t.label}</span>
+            </div>
+            <span class="copy-hint" id="hint-${t.key}">Tap to copy</span>
+          </div>
+          <div class="result-text">${parsed[t.key]}</div>
+          <div class="tone-desc">${t.desc}</div>
+        `;
+        card.onclick = () => {
+          navigator.clipboard.writeText(parsed[t.key]).catch(() => {});
+          card.classList.add('copied');
+          document.getElementById(`hint-${t.key}`).textContent = '✓ Copied!';
+          setTimeout(() => {
+            card.classList.remove('copied');
+            document.getElementById(`hint-${t.key}`).textContent = 'Tap to copy';
+          }, 2000);
+        };
+        results.appendChild(card);
+      });
+
+      btn.disabled = false;
+
+    } catch (err) {
+      thinking.style.display = 'none';
+      errorBox.style.display = 'block';
+      errorBox.textContent = 'Something went wrong. Check your connection and try again.';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Little Caesars App Redesign — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --lc-orange: #F47321;
+      --lc-orange-dark: #D85F0A;
+      --lc-orange-light: #FFF3EB;
+      --lc-green: #16A34A;
+    }
+    body { font-family: 'Inter', sans-serif; background: #0d0d0d; color: white; min-height: 100vh; }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero { padding: 72px 60px 60px; border-bottom: 1px solid #1a1a1a; position: relative; overflow: hidden; }
+    .hero::before {
+      content: '';
+      position: absolute; top: -80px; right: -80px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(244,115,33,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow { font-size: 11px; font-weight: 700; color: var(--lc-orange); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: white; line-height: 0.95; letter-spacing: 1px; }
+    .hero-title span { color: var(--lc-orange); }
+    .hero-sub { font-size: 16px; color: #555; margin-top: 16px; max-width: 580px; line-height: 1.7; }
+    .hero-meta { display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
+    .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-meta-label { font-size: 10px; font-weight: 700; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+    .hero-meta-value { font-size: 13px; font-weight: 700; color: #888; }
+    .hero-actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--lc-orange); color: white; font-size: 13px; font-weight: 800; padding: 12px 22px; border-radius: 12px; text-decoration: none; transition: opacity 0.15s; letter-spacing: 0.2px; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: #1a1a1a; color: #888; font-size: 13px; font-weight: 700; padding: 12px 22px; border-radius: 12px; text-decoration: none; border: 1px solid #2a2a2a; transition: all 0.15s; }
+    .btn-secondary:hover { background: #222; color: white; border-color: #333; }
+
+    /* ── PROBLEM STRIP ────────────────────────────────── */
+    .problem-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 1px solid #1a1a1a; }
+    .problem-item { padding: 28px 32px; border-right: 1px solid #1a1a1a; }
+    .problem-item:last-child { border-right: none; }
+    .problem-num { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: #1e1e1e; line-height: 1; }
+    .problem-label { font-size: 13px; font-weight: 800; color: white; margin-top: 4px; }
+    .problem-desc { font-size: 11px; color: #444; line-height: 1.6; margin-top: 6px; }
+
+    /* ── SECTION HEADER ───────────────────────────────── */
+    .section-header { padding: 48px 60px 32px; }
+    .section-eyebrow { font-size: 11px; font-weight: 700; color: var(--lc-orange); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: white; line-height: 1; }
+
+    /* ── SCREEN GRID ──────────────────────────────────── */
+    .screen-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 0 60px 60px; }
+    .screen-card { background: #111; border: 1px solid #1e1e1e; border-radius: 16px; overflow: hidden; text-decoration: none; color: inherit; transition: all 0.2s; display: flex; flex-direction: column; }
+    .screen-card:hover { border-color: #2a2a2a; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+    .screen-card.active:hover { border-color: rgba(244,115,33,0.4); }
+    .screen-thumb { height: 180px; background: #161616; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .screen-thumb-gradient { position: absolute; inset: 0; }
+    .screen-thumb-icon { font-size: 40px; color: #222; z-index: 1; }
+    .screen-thumb img { width: 90px; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-radius: 12px 12px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.6); z-index: 1; }
+    .screen-card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .screen-num { font-size: 10px; font-weight: 700; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+    .screen-name { font-size: 14px; font-weight: 800; color: white; }
+    .screen-desc { font-size: 11px; color: #444; line-height: 1.55; margin-top: 4px; flex: 1; }
+    .screen-card-footer { padding: 12px 16px; border-top: 1px solid #1a1a1a; display: flex; align-items: center; justify-content: space-between; }
+    .screen-status { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .status-done { background: rgba(22,163,74,0.15); color: var(--lc-green); }
+    .status-wip { background: rgba(244,115,33,0.12); color: var(--lc-orange); }
+    .status-soon { background: #1a1a1a; color: #444; }
+    .screen-arrow { font-size: 14px; color: #2a2a2a; transition: color 0.15s; }
+    .screen-card:hover .screen-arrow { color: #555; }
+    .screen-card.active .screen-arrow { color: var(--lc-orange); }
+
+    /* ── THUMB PHONE MOCKUPS (mini LC-orange header) ──── */
+    .mini-phone { width: 76px; height: 156px; background: #f8f8f8; border-radius: 14px; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); overflow: hidden; box-shadow: 0 -4px 20px rgba(0,0,0,0.6); z-index: 1; }
+    .mini-header { height: 28px; background: var(--lc-orange); }
+    .mini-content { padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+    .mini-bar { height: 7px; border-radius: 3px; background: #e8e8e8; }
+    .mini-bar.orange { background: rgba(244,115,33,0.25); }
+    .mini-bar.short { width: 60%; }
+    .mini-card { height: 28px; border-radius: 5px; background: white; border: 1px solid #efefef; }
+    .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .mini-grid-cell { height: 22px; border-radius: 4px; background: white; border: 1px solid #efefef; }
+    .mini-green-card { height: 22px; border-radius: 5px; background: rgba(22,163,74,0.15); }
+
+    /* ── PROCESS SECTION ──────────────────────────────── */
+    .process-section { padding: 0 60px 60px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; border-top: 1px solid #1a1a1a; padding-top: 48px; }
+    .process-card { background: #111; border: 1px solid #1e1e1e; border-radius: 16px; padding: 24px; }
+    .process-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: #1a1a1a; line-height: 1; margin-bottom: 8px; }
+    .process-title { font-size: 15px; font-weight: 800; color: white; margin-bottom: 8px; }
+    .process-body { font-size: 12px; color: #444; line-height: 1.7; }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    .footer { padding: 32px 60px; border-top: 1px solid #1a1a1a; display: flex; align-items: center; justify-content: space-between; }
+    .footer-name { font-size: 13px; font-weight: 700; color: #333; }
+    .footer-note { font-size: 11px; color: #2a2a2a; }
+    .portfolio-back { display: flex; align-items: center; gap: 8px; padding: 14px 60px; border-bottom: 1px solid #1a1a1a; font-size: 11px; font-weight: 700; color: #444; text-decoration: none; letter-spacing: 0.3px; transition: color 0.15s; }
+    .portfolio-back:hover { color: var(--lc-orange); }
+  </style>
+</head>
+<body>
+
+  <a class="portfolio-back" href="../index.html"><i class="ti ti-arrow-left" style="font-size:12px;"></i> Will Grayson &mdash; Portfolio</a>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">UX/UI Redesign Case Study &middot; 2026</div>
+    <div class="hero-title">Little <span>Caesars</span><br>App Redesign</div>
+    <div class="hero-sub">A ground-up rethink of the Little Caesars mobile ordering experience — replacing promotional dead ends with real utility, surfacing Hot-N-Ready status, and collapsing a 4-screen order gate into a single tap.</div>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Role</span>
+        <span class="hero-meta-value">UX Strategy &middot; UI Design &middot; Prototyping</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Platform</span>
+        <span class="hero-meta-value">iOS Mobile</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Screens</span>
+        <span class="hero-meta-value">8 Case Studies</span>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a class="btn-primary" href="01-home-screen.html?mode=prototype">
+        <i class="ti ti-player-play"></i> Launch Interactive Prototype
+      </a>
+      <a class="btn-secondary" href="01-home-screen.html">
+        <i class="ti ti-layout-2"></i> View Case Study
+      </a>
+    </div>
+  </div>
+
+  <!-- PROBLEM STRIP -->
+  <div class="problem-strip">
+    <div class="problem-item">
+      <div class="problem-num">01</div>
+      <div class="problem-label">Full-screen ad, zero utility</div>
+      <div class="problem-desc">Home screen is 100% promotional real estate. Users can't see the menu, status, or any reason to stay.</div>
+    </div>
+    <div class="problem-item">
+      <div class="problem-num">04</div>
+      <div class="problem-label">Screens to reach the menu</div>
+      <div class="problem-desc">Home &rarr; Pick-Up/Delivery &rarr; Location &rarr; Start Pickup &rarr; Menu. Four gates before users see a single food item.</div>
+    </div>
+    <div class="problem-item">
+      <div class="problem-num">02</div>
+      <div class="problem-label">Navigation systems, one job</div>
+      <div class="problem-desc">Hamburger drawer plus bottom tab bar running in parallel. Confusion on every single open.</div>
+    </div>
+  </div>
+
+  <!-- CASE STUDIES -->
+  <div class="section-header">
+    <div class="section-eyebrow">Case Studies</div>
+    <div class="section-title">08 Screens Redesigned</div>
+  </div>
+
+  <div class="screen-grid">
+
+    <!-- 01 Home Screen — DONE -->
+    <a class="screen-card active" href="01-home-screen.html">
+      <div class="screen-thumb">
+        <div class="mini-phone">
+          <div class="mini-header"></div>
+          <div class="mini-content">
+            <div class="mini-green-card"></div>
+            <div class="mini-grid">
+              <div class="mini-grid-cell"></div><div class="mini-grid-cell"></div>
+              <div class="mini-grid-cell"></div><div class="mini-grid-cell"></div>
+            </div>
+            <div class="mini-bar short orange"></div>
+            <div class="mini-card"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-card-body">
+        <div class="screen-num">Screen 01</div>
+        <div class="screen-name">Home Screen</div>
+        <div class="screen-desc">Replacing a full-screen ad with Hot-N-Ready status, category grid, and reorder shortcuts.</div>
+      </div>
+      <div class="screen-card-footer">
+        <span class="screen-status status-done">Complete</span>
+        <i class="ti ti-arrow-right screen-arrow"></i>
+      </div>
+    </a>
+
+    <!-- 02 Menu Browse — DONE -->
+    <a class="screen-card active" href="02-menu-browse.html">
+      <div class="screen-thumb">
+        <div class="mini-phone">
+          <div class="mini-header"></div>
+          <div class="mini-content">
+            <div class="mini-bar"></div>
+            <div class="mini-bar short orange"></div>
+            <div class="mini-card"></div>
+            <div class="mini-card"></div>
+            <div class="mini-card"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-card-body">
+        <div class="screen-num">Screen 02</div>
+        <div class="screen-name">Menu Browse</div>
+        <div class="screen-desc">Search, category filter chips, and real menu items with prices — before starting a formal order.</div>
+      </div>
+      <div class="screen-card-footer">
+        <span class="screen-status status-done">Case Study</span>
+        <i class="ti ti-arrow-right screen-arrow"></i>
+      </div>
+    </a>
+
+    <!-- 03 Item Detail — WIP -->
+    <a class="screen-card active" href="01-home-screen.html?mode=prototype">
+      <div class="screen-thumb">
+        <div class="mini-phone">
+          <div class="mini-header" style="height:56px; background:#e8e8e8;"></div>
+          <div class="mini-content">
+            <div class="mini-bar short"></div>
+            <div class="mini-bar" style="width:40%; height:5px; background:rgba(244,115,33,0.4);"></div>
+            <div style="display:flex;gap:3px;margin-top:2px;">
+              <div style="flex:1;height:24px;border-radius:4px;background:rgba(244,115,33,0.15);border:1px solid rgba(244,115,33,0.3);"></div>
+              <div style="flex:1;height:24px;border-radius:4px;background:white;border:1px solid #efefef;"></div>
+              <div style="flex:1;height:24px;border-radius:4px;background:white;border:1px solid #efefef;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-card-body">
+        <div class="screen-num">Screen 03</div>
+        <div class="screen-name">Item Detail</div>
+        <div class="screen-desc">Crust style, flavor, and quantity customization in a sheet that slides up from the menu.</div>
+      </div>
+      <div class="screen-card-footer">
+        <span class="screen-status status-wip">In Prototype</span>
+        <i class="ti ti-arrow-right screen-arrow"></i>
+      </div>
+    </a>
+
+    <!-- 04 Order / Cart — WIP -->
+    <a class="screen-card active" href="01-home-screen.html?mode=prototype">
+      <div class="screen-thumb">
+        <div class="mini-phone">
+          <div class="mini-header"></div>
+          <div class="mini-content">
+            <div class="mini-card"></div>
+            <div class="mini-bar short orange"></div>
+            <div class="mini-card"></div>
+            <div class="mini-card"></div>
+            <div style="height:18px;border-radius:4px;background:rgba(244,115,33,0.8);margin-top:2px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-card-body">
+        <div class="screen-num">Screen 04</div>
+        <div class="screen-name">Cart &amp; Checkout</div>
+        <div class="screen-desc">Store pickup context always visible. Quantity controls, order totals, and a single-tap checkout.</div>
+      </div>
+      <div class="screen-card-footer">
+        <span class="screen-status status-wip">In Prototype</span>
+        <i class="ti ti-arrow-right screen-arrow"></i>
+      </div>
+    </a>
+
+    <!-- 05 Order Tracking — WIP -->
+    <a class="screen-card active" href="01-home-screen.html?mode=prototype">
+      <div class="screen-thumb">
+        <div class="mini-phone">
+          <div class="mini-header" style="height:52px; background:linear-gradient(135deg,#15803d,#16a34a);"></div>
+          <div class="mini-content">
+            <div style="display:flex;gap:6px;align-items:flex-start;margin-bottom:3px;">
+              <div style="width:14px;height:14px;border-radius:50%;background:var(--lc-green);flex-shrink:0;margin-top:1px;"></div>
+              <div style="flex:1;"><div class="mini-bar" style="height:5px;background:#e8e8e8;margin-bottom:3px;"></div><div class="mini-bar short" style="height:4px;"></div></div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-start;margin-bottom:3px;">
+              <div style="width:14px;height:14px;border-radius:50%;background:rgba(244,115,33,0.8);flex-shrink:0;margin-top:1px;"></div>
+              <div style="flex:1;"><div class="mini-bar" style="height:5px;background:#e8e8e8;margin-bottom:3px;"></div><div class="mini-bar short" style="height:4px;"></div></div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-start;">
+              <div style="width:14px;height:14px;border-radius:50%;background:#e8e8e8;flex-shrink:0;margin-top:1px;"></div>
+              <div style="flex:1;"><div class="mini-bar short" style="height:5px;background:#e8e8e8;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-card-body">
+        <div class="screen-num">Screen 05</div>
+        <div class="screen-name">Order Tracking</div>
+        <div class="screen-desc">Live status stepper — Order Received, Preparing, Ready for Pickup — with store info and quick actions.</div>
+      </div>
+      <div class="screen-card-footer">
+        <span class="screen-status status-wip">In Prototype</span>
+        <i class="ti ti-arrow-right screen-arrow"></i>
+      </div>
+    </a>
+
+    <!-- 06 Deals — Case Study -->
+    <a class="screen-card active" href="06-deals.html">
+      <div class="screen-thumb">
+        <div class="mini-phone">
+          <div class="mini-header"></div>
+          <div class="mini-content">
+            <div style="height:44px;border-radius:5px;background:rgba(244,115,33,0.2);border:1px solid rgba(244,115,33,0.2);margin-bottom:4px;"></div>
+            <div style="height:44px;border-radius:5px;background:#1a1a1a;border:1px solid #2a2a2a;margin-bottom:4px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-card-body">
+        <div class="screen-num">Screen 06</div>
+        <div class="screen-name">Deals &amp; Rewards</div>
+        <div class="screen-desc">Real deal data from the app — Free Crazy Bread, $3 Off — plus Caesar Crown points integration.</div>
+      </div>
+      <div class="screen-card-footer">
+        <span class="screen-status status-done">Case Study</span>
+        <i class="ti ti-arrow-right screen-arrow"></i>
+      </div>
+    </a>
+
+    <!-- 07 Account — Case Study -->
+    <a class="screen-card active" href="07-account.html">
+      <div class="screen-thumb">
+        <div class="mini-phone">
+          <div class="mini-header"></div>
+          <div class="mini-content">
+            <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;">
+              <div style="width:20px;height:20px;border-radius:50%;background:rgba(244,115,33,0.3);"></div>
+              <div style="flex:1;"><div class="mini-bar" style="height:5px;margin-bottom:3px;"></div><div class="mini-bar short" style="height:4px;"></div></div>
+            </div>
+            <div class="mini-card" style="height:14px;margin-bottom:2px;"></div>
+            <div class="mini-card" style="height:14px;margin-bottom:2px;"></div>
+            <div class="mini-card" style="height:14px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-card-body">
+        <div class="screen-num">Screen 07</div>
+        <div class="screen-name">Account</div>
+        <div class="screen-desc">Profile, Caesar Crown points, order history, payment methods, and preferences — all in one place.</div>
+      </div>
+      <div class="screen-card-footer">
+        <span class="screen-status status-done">Case Study</span>
+        <i class="ti ti-arrow-right screen-arrow"></i>
+      </div>
+    </a>
+
+    <!-- 08 Placeholder — Coming Soon -->
+    <div class="screen-card">
+      <div class="screen-thumb">
+        <i class="ti ti-dots screen-thumb-icon"></i>
+      </div>
+      <div class="screen-card-body">
+        <div class="screen-num">Screen 08</div>
+        <div class="screen-name">Search &amp; Discovery</div>
+        <div class="screen-desc">Contextual search with recent items, trending picks, and dietary filter tags.</div>
+      </div>
+      <div class="screen-card-footer">
+        <span class="screen-status status-soon">Coming Soon</span>
+        <i class="ti ti-arrow-right screen-arrow"></i>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PROCESS -->
+  <div class="section-header" style="border-top: 1px solid #1a1a1a;">
+    <div class="section-eyebrow">Design Process</div>
+    <div class="section-title">How We Got Here</div>
+  </div>
+
+  <div class="process-section">
+    <div class="process-card">
+      <div class="process-num">01</div>
+      <div class="process-title">Audit the Real App</div>
+      <div class="process-body">Started with 9 actual iOS screenshots of the live Little Caesars app. Documented every friction point, dead-end, and missed opportunity before touching any design tool.</div>
+    </div>
+    <div class="process-card">
+      <div class="process-num">02</div>
+      <div class="process-title">Identify the Core Failures</div>
+      <div class="process-body">The home screen is 100% promotional. The menu is 4 taps away. There are two competing nav systems. Hot-N-Ready — their biggest brand differentiator — is invisible on launch.</div>
+    </div>
+    <div class="process-card">
+      <div class="process-num">03</div>
+      <div class="process-title">Redesign for Utility First</div>
+      <div class="process-body">Every decision starts with: what does the user actually need right now? Status, menu access, and reorders above the fold. Promotions right-sized to one card — not a full-screen takeover.</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-name">Wilbert Gaffney &mdash; UX/Product Design &middot; 2026</div>
+    <div class="footer-note">Portfolio piece &middot; Not affiliated with Little Caesars Enterprises, Inc.</div>
+  </div>
+
+</body>
+</html>

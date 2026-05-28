@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Little Caesars â€” Deals &amp; Rewards Redesign</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --lc-orange: #F47321; --lc-orange-dark: #D85F0A; --lc-orange-light: #FFF3EB;
+      --lc-green: #16A34A; --lc-green-light: #DCFCE7;
+      --lc-black: #0F0F0F; --lc-gray-50: #F8F8F8; --lc-gray-100: #EFEFEF; --lc-gray-500: #888;
+    }
+    body { font-family: 'Inter', sans-serif; background: #111; color: white; min-height: 100vh; }
+
+    /* â”€â”€ CASE STUDY HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .cs-header { padding: 48px 60px 40px; border-bottom: 1px solid #1e1e1e; }
+    .cs-breadcrumb { font-size: 11px; color: #333; margin-bottom: 12px; }
+    .cs-breadcrumb a { color: #444; text-decoration: none; }
+    .cs-breadcrumb a:hover { color: var(--lc-orange); }
+    .cs-eyebrow { font-size: 11px; font-weight: 700; color: var(--lc-orange); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .cs-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: white; line-height: 1; }
+    .cs-subtitle { font-size: 15px; color: #666; margin-top: 10px; max-width: 640px; line-height: 1.65; }
+    .cs-tags { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .cs-tag { background: #1e1e1e; color: #666; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; border: 1px solid #2a2a2a; }
+    .proto-launch { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; background: var(--lc-orange); color: white; font-size: 11px; font-weight: 700; padding: 7px 14px; border-radius: 20px; text-decoration: none; transition: opacity 0.15s; letter-spacing: 0.3px; }
+    .proto-launch:hover { opacity: 0.88; }
+
+    /* â”€â”€ PAGE LAYOUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .comparison-layout { display: flex; align-items: flex-start; padding: 60px; }
+    .annotation-panel { width: 230px; flex-shrink: 0; padding-top: 72px; }
+    .annotation-panel.left { padding-right: 32px; }
+    .annotation-panel.right { padding-left: 32px; }
+    .annotation-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #2a2a2a; }
+    .annotation-label.red { color: #F87171; }
+    .annotation-label.green { color: #4ADE80; }
+    .annotation-item { margin-bottom: 16px; padding-left: 14px; border-left: 2px solid #2a2a2a; }
+    .annotation-item.red { border-left-color: rgba(248,113,113,0.5); }
+    .annotation-item.green { border-left-color: rgba(74,222,128,0.5); }
+    .annotation-item-title { font-size: 12px; font-weight: 700; color: white; margin-bottom: 3px; }
+    .annotation-item-desc { font-size: 11px; color: #555; line-height: 1.55; }
+
+    /* â”€â”€ PHONE FRAMES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .phones-container { flex: 1; display: flex; justify-content: center; gap: 40px; align-items: flex-start; }
+    .phone-wrapper { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .phone-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
+    .phone-label.red { color: #F87171; }
+    .phone-label.green { color: #4ADE80; }
+    .phone-frame { width: 300px; background: #1e1e1e; border-radius: 44px; padding: 10px; box-shadow: 0 0 0 1px #2a2a2a, 0 0 0 3px #1a1a1a, 0 30px 80px rgba(0,0,0,0.8); flex-shrink: 0; }
+    .phone-screen { border-radius: 36px; overflow: hidden; background: var(--lc-gray-50); height: 650px; position: relative; }
+
+    /* â”€â”€ AFTER PHONE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    #after-phone { display: flex; flex-direction: column; height: 100%; }
+    .after-header { background: var(--lc-orange); padding: 13px 14px 0; flex-shrink: 0; }
+    .after-status { display: flex; justify-content: space-between; margin-bottom: 10px; }
+    .stext { font-size: 11px; font-weight: 700; color: white; }
+    .sicons { font-size: 10px; color: rgba(255,255,255,0.7); }
+    .after-loc-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .lc-mark { width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
+    .lc-mark-text { font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: white; letter-spacing: 1px; line-height: 1; }
+    .location-pill { flex: 1; background: rgba(0,0,0,0.15); border-radius: 9px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; }
+    .lp-text { flex: 1; }
+    .lp-label { font-size: 9px; color: rgba(255,255,255,0.7); font-weight: 600; display: block; }
+    .lp-name { font-size: 11px; color: white; font-weight: 700; display: block; }
+    .notif-btn { width: 32px; height: 32px; border-radius: 10px; background: rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; color: white; font-size: 15px; flex-shrink: 0; }
+    .screen-body { flex: 1; overflow-y: auto; background: var(--lc-gray-50); padding: 12px 12px 8px; }
+    .screen-body::-webkit-scrollbar { display: none; }
+
+    /* â”€â”€ DEALS SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .deals-header { font-size: 13px; font-weight: 800; color: var(--lc-black); margin-bottom: 10px; }
+    .deal-card { background: white; border-radius: 13px; overflow: hidden; border: 1px solid var(--lc-gray-100); margin-bottom: 10px; }
+    .deal-banner { background: var(--lc-orange); padding: 20px 16px; text-align: center; }
+    .deal-free-text { font-size: 18px; font-style: italic; font-weight: 900; color: white; line-height: 1; }
+    .deal-name-text { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: white; line-height: 1; letter-spacing: 1px; }
+    .deal-sub-text { font-size: 10px; color: rgba(255,255,255,0.85); margin-top: 3px; }
+    .deal-amount-text { font-family: 'Bebas Neue', sans-serif; font-size: 44px; color: white; line-height: 1; }
+    .deal-card-body { padding: 12px; }
+    .deal-card-title { font-size: 13px; font-weight: 800; color: var(--lc-black); }
+    .deal-card-desc { font-size: 10px; color: var(--lc-gray-500); margin-top: 4px; line-height: 1.55; }
+    .deal-card-valid { font-size: 10px; color: var(--lc-gray-500); margin-top: 5px; }
+    .deal-apply-btn { background: var(--lc-orange); color: white; font-size: 11px; font-weight: 800; padding: 10px; border-radius: 9px; text-align: center; margin-top: 10px; letter-spacing: 0.3px; }
+    .crown-card { background: linear-gradient(135deg, var(--lc-orange) 0%, #c45a10 100%); border-radius: 13px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .crown-icon { font-size: 28px; color: white; flex-shrink: 0; }
+    .crown-body { flex: 1; }
+    .crown-title { font-size: 13px; font-weight: 800; color: white; }
+    .crown-sub { font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 2px; }
+    .crown-pts { font-size: 22px; font-weight: 900; color: white; flex-shrink: 0; }
+
+    /* â”€â”€ BOTTOM NAV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .after-bottom-nav { background: white; border-top: 1px solid var(--lc-gray-100); display: flex; padding: 7px 0 5px; flex-shrink: 0; }
+    .after-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .after-nav-item.active .ani { color: var(--lc-orange); }
+    .after-nav-item.active .anl { color: var(--lc-orange); }
+    .ani { font-size: 17px; color: #ccc; }
+    .anl { font-size: 8px; font-weight: 600; color: #ccc; text-transform: uppercase; }
+    .after-nav-order { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: -16px; }
+    .order-circle { width: 44px; height: 44px; background: var(--lc-orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--lc-gray-50); }
+    .order-circle i { font-size: 18px; color: white; }
+    .order-label { font-size: 8px; font-weight: 700; color: var(--lc-orange); text-transform: uppercase; }
+
+    /* â”€â”€ DESIGN NOTES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .design-notes { padding: 40px 60px 60px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; border-top: 1px solid #1e1e1e; }
+    .note-card { background: #161616; border: 1px solid #222; border-radius: 14px; padding: 20px; }
+    .note-label { font-size: 10px; font-weight: 700; color: var(--lc-orange); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .note-title { font-size: 14px; font-weight: 800; color: white; margin-bottom: 7px; }
+    .note-body { font-size: 12px; color: #555; line-height: 1.65; }
+
+    /* â”€â”€ NAV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .cs-nav { display: flex; align-items: center; justify-content: space-between; padding: 24px 60px; border-top: 1px solid #1e1e1e; }
+    .cs-nav-link { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #444; text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1px solid #222; transition: all 0.15s; }
+    .cs-nav-link:hover { color: white; border-color: #333; background: #1a1a1a; }
+    .cs-nav-dots { display: flex; gap: 6px; align-items: center; }
+    .cs-nav-dot { width: 6px; height: 6px; border-radius: 50%; background: #2a2a2a; }
+    .cs-nav-dot.active { background: var(--lc-orange); width: 18px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <div class="cs-header">
+    <div class="cs-breadcrumb"><a href="index.html">â† All Screens</a> &nbsp;/&nbsp; Screen 06 of 08</div>
+    <div class="cs-eyebrow">UI/UX Redesign Case Study &middot; Screen 06 of 08</div>
+    <div class="cs-title">Little Caesars App &mdash; Deals &amp; Rewards</div>
+    <div class="cs-subtitle">Deals are buried under Challenges â†’ Rewards â€” two taps from anywhere, with no path from the home screen. We surfaced them in the main nav and gave each deal the visual weight it deserves.</div>
+    <div class="cs-tags">
+      <span class="cs-tag">Loyalty & Rewards</span>
+      <span class="cs-tag">Navigation</span>
+      <span class="cs-tag">Visual Hierarchy</span>
+      <span class="cs-tag">Conversion</span>
+    </div>
+    <a class="proto-launch" href="01-home-screen.html?mode=prototype"><i class="ti ti-player-play" style="font-size:12px;"></i> Launch Full Interactive Prototype</a>
+  </div>
+
+  <div class="comparison-layout">
+
+    <div class="annotation-panel left">
+      <div class="annotation-label red">&#x274C; Current Problems</div>
+      <div class="annotation-item red">
+        <div class="annotation-item-title">Buried under Challenges</div>
+        <div class="annotation-item-desc">Deals live at Challenges &rarr; Rewards â€” a sub-tab inside a section most users ignore. Not discoverable.</div>
+      </div>
+      <div class="annotation-item red">
+        <div class="annotation-item-title">No main nav entry point</div>
+        <div class="annotation-item-desc">The bottom nav has no Deals tab. There's no direct path from the home screen to your available offers.</div>
+      </div>
+      <div class="annotation-item red">
+        <div class="annotation-item-title">Flat visual hierarchy</div>
+        <div class="annotation-item-desc">Free Crazy Bread and $3 Off look identical. No visual weight to communicate which is more valuable.</div>
+      </div>
+      <div class="annotation-item red">
+        <div class="annotation-item-title">"Apply Code &amp; Order" confusion</div>
+        <div class="annotation-item-desc">Implies you need a promo code. It's actually just a redemption flow â€” the copy creates unnecessary hesitation.</div>
+      </div>
+      <div class="annotation-item red">
+        <div class="annotation-item-title">Caesar Crown isolated</div>
+        <div class="annotation-item-desc">Points balance only visible on the Profile sub-tab. No connection between your points and the deals you could redeem.</div>
+      </div>
+    </div>
+
+    <div class="phones-container">
+
+      <div class="phone-wrapper">
+        <div class="phone-label red">Before â€” Actual App</div>
+        <div class="phone-frame">
+          <div class="phone-screen" style="overflow:hidden;">
+            <img src="original/20260527_145833000_iOS.png" alt="Little Caesars Rewards screen" style="width:100%; height:100%; object-fit:cover; object-position:top center; display:block;">
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrapper">
+        <div class="phone-label green">After &mdash; Redesigned</div>
+        <div class="phone-frame">
+          <div class="phone-screen" id="after-phone">
+
+            <div class="after-header">
+              <div class="after-status">
+                <span class="stext">9:41</span>
+                <span class="sicons">&#9679;&#9679;&#9679; WiFi &#x1F50B;</span>
+              </div>
+              <div class="after-loc-row">
+                <div class="lc-mark"><span class="lc-mark-text">LC</span></div>
+                <div class="location-pill">
+                  <i class="ti ti-map-pin" style="font-size:13px; color:rgba(255,255,255,0.8);"></i>
+                  <div class="lp-text">
+                    <span class="lp-label">Pickup from</span>
+                    <span class="lp-name">Fallbrook, Canoga Park</span>
+                  </div>
+                  <i class="ti ti-chevron-down" style="font-size:11px; color:rgba(255,255,255,0.7);"></i>
+                </div>
+                <div class="notif-btn"><i class="ti ti-bell" style="font-size:15px;"></i></div>
+              </div>
+            </div>
+
+            <div class="screen-body">
+
+              <div class="deals-header">Your Rewards</div>
+
+              <!-- Caesar Crown card at top -->
+              <div class="crown-card">
+                <i class="ti ti-crown crown-icon"></i>
+                <div class="crown-body">
+                  <div class="crown-title">Caesar Crown</div>
+                  <div class="crown-sub">Earn 1 pt per $1 &middot; Wilbert Gaffney</div>
+                </div>
+                <div class="crown-pts">0 pts</div>
+              </div>
+
+              <!-- Free Crazy Bread -->
+              <div class="deal-card">
+                <div class="deal-banner">
+                  <div class="deal-free-text">Free</div>
+                  <div class="deal-name-text">Crazy Bread&reg;</div>
+                  <div class="deal-sub-text">8-piece order</div>
+                </div>
+                <div class="deal-card-body">
+                  <div class="deal-card-title">Free Crazy Bread&reg;</div>
+                  <div class="deal-card-desc">App only. Excl. taxes &amp; fees. One-time use only.</div>
+                  <div class="deal-card-valid">Valid through: 06-19-2026 11:59pm local time</div>
+                  <div class="deal-apply-btn">APPLY &amp; ORDER</div>
+                </div>
+              </div>
+
+              <!-- $3 Off -->
+              <div class="deal-card">
+                <div class="deal-banner" style="background:#1a1a1a;">
+                  <div class="deal-amount-text">$3 <span style="font-size:20px; font-weight:700; font-family:'Inter',sans-serif; font-style:italic;">off</span></div>
+                  <div class="deal-name-text" style="font-size:16px; letter-spacing:2px;">A FUTURE APP ORDER</div>
+                </div>
+                <div class="deal-card-body">
+                  <div class="deal-card-title">$3 Off App Order</div>
+                  <div class="deal-card-desc">App only. Excl. taxes &amp; fees. One-time use only.</div>
+                  <div class="deal-apply-btn">APPLY &amp; ORDER</div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="after-bottom-nav">
+              <div class="after-nav-item"><i class="ti ti-home ani"></i><span class="anl">Home</span></div>
+              <div class="after-nav-item"><i class="ti ti-menu-2 ani"></i><span class="anl">Menu</span></div>
+              <div class="after-nav-order">
+                <div class="order-circle"><i class="ti ti-shopping-cart"></i></div>
+                <span class="order-label">Order</span>
+              </div>
+              <div class="after-nav-item active"><i class="ti ti-tag ani"></i><span class="anl">Deals</span></div>
+              <div class="after-nav-item"><i class="ti ti-user ani"></i><span class="anl">Account</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="annotation-panel right">
+      <div class="annotation-label green">&#x2705; Redesign Fixes</div>
+      <div class="annotation-item green">
+        <div class="annotation-item-title">Deals in the main nav</div>
+        <div class="annotation-item-desc">A dedicated Deals tab in the bottom nav. One tap from anywhere â€” home screen, menu, cart, everywhere.</div>
+      </div>
+      <div class="annotation-item green">
+        <div class="annotation-item-title">Caesar Crown at the top</div>
+        <div class="annotation-item-desc">Points balance shown above deals so users understand the full rewards picture at a glance.</div>
+      </div>
+      <div class="annotation-item green">
+        <div class="annotation-item-title">Visual deal hierarchy</div>
+        <div class="annotation-item-desc">Bold banners (FREE in orange, $3 OFF on dark) communicate deal value instantly â€” no reading required.</div>
+      </div>
+      <div class="annotation-item green">
+        <div class="annotation-item-title">Expiry dates surfaced</div>
+        <div class="annotation-item-desc">Valid through date shown clearly on each card. Creates urgency without hiding it in fine print.</div>
+      </div>
+      <div class="annotation-item green">
+        <div class="annotation-item-title">"Apply &amp; Order" â€” clear CTA</div>
+        <div class="annotation-item-desc">Simplified from "Apply Code &amp; Order." No code confusion. The action is obvious.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="design-notes">
+    <div class="note-card">
+      <div class="note-label">Design Decision</div>
+      <div class="note-title">Rewards earn orders</div>
+      <div class="note-body">A deal that's hard to find doesn't drive behavior. Moving deals to the main nav turns them from a buried feature into an active conversion lever. Users who know about their free Crazy Bread will place an order to redeem it.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-label">Real Data</div>
+      <div class="note-title">These are actual deals</div>
+      <div class="note-body">The Free Crazy Bread and $3 Off offers shown here are Wilbert's actual rewards from the live app â€” expiry date and all. This case study uses real data, not placeholders. The redesign preserves the exact content, just with better presentation.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-label">Up Next</div>
+      <div class="note-title">Screen 07 &mdash; Account</div>
+      <div class="note-body">The current account screen is a bare list with no personality. We're adding a profile card, Crown points integration, and a hierarchy that puts Order History and Favorites front and center â€” not Change Password.</div>
+    </div>
+  </div>
+
+  <div class="cs-nav">
+    <a class="cs-nav-link" href="02-menu-browse.html"><i class="ti ti-arrow-left" style="font-size:12px;"></i> 02 Menu Browse</a>
+    <div class="cs-nav-dots">
+      <div class="cs-nav-dot"></div><div class="cs-nav-dot"></div><div class="cs-nav-dot"></div>
+      <div class="cs-nav-dot"></div><div class="cs-nav-dot"></div>
+      <div class="cs-nav-dot active"></div><div class="cs-nav-dot"></div><div class="cs-nav-dot"></div>
+    </div>
+    <a class="cs-nav-link" href="07-account.html">07 Account <i class="ti ti-arrow-right" style="font-size:12px;"></i></a>
+  </div>
+
+</body>
+</html>
+

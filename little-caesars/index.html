@@ -166,14 +166,20 @@
       <div class="screen-thumb">
         <div class="mini-phone">
           <div class="mini-header"></div>
-          <div class="mini-content">
-            <div class="mini-green-card"></div>
-            <div class="mini-grid">
-              <div class="mini-grid-cell"></div><div class="mini-grid-cell"></div>
-              <div class="mini-grid-cell"></div><div class="mini-grid-cell"></div>
+          <div class="mini-content" style="gap:3px;">
+            <div style="height:20px;border-radius:4px;background:#16A34A;padding:3px 4px;display:flex;align-items:center;gap:3px;">
+              <div style="width:8px;height:8px;border-radius:2px;background:rgba(255,255,255,0.3);flex-shrink:0;"></div>
+              <div style="flex:1;"><div style="height:2px;background:rgba(255,255,255,0.8);border-radius:1px;margin-bottom:2px;width:55%;"></div><div style="height:2px;background:rgba(255,255,255,0.4);border-radius:1px;width:35%;"></div></div>
+              <div style="font-size:5px;font-weight:900;color:white;">$5</div>
             </div>
-            <div class="mini-bar short orange"></div>
-            <div class="mini-card"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+              <div style="height:18px;border-radius:3px;background:white;border:1px solid #efefef;"></div>
+              <div style="height:18px;border-radius:3px;background:white;border:1px solid #efefef;"></div>
+              <div style="height:18px;border-radius:3px;background:white;border:1px solid #efefef;"></div>
+              <div style="height:18px;border-radius:3px;background:white;border:1px solid #efefef;"></div>
+            </div>
+            <div style="height:7px;border-radius:3px;background:rgba(244,115,33,0.22);"></div>
+            <div style="height:14px;border-radius:4px;background:white;border:1px solid #efefef;"></div>
           </div>
         </div>
       </div>
@@ -193,12 +199,29 @@
       <div class="screen-thumb">
         <div class="mini-phone">
           <div class="mini-header"></div>
-          <div class="mini-content">
-            <div class="mini-bar"></div>
-            <div class="mini-bar short orange"></div>
-            <div class="mini-card"></div>
-            <div class="mini-card"></div>
-            <div class="mini-card"></div>
+          <div class="mini-content" style="gap:3px;">
+            <div style="height:11px;border-radius:5px;background:#efefef;border:1px solid #e0e0e0;"></div>
+            <div style="display:flex;gap:2px;">
+              <div style="height:7px;border-radius:4px;background:#F47321;width:12px;flex-shrink:0;"></div>
+              <div style="height:7px;border-radius:4px;background:#efefef;border:1px solid #e0e0e0;flex:1;"></div>
+              <div style="height:7px;border-radius:4px;background:#efefef;border:1px solid #e0e0e0;flex:1;"></div>
+              <div style="height:7px;border-radius:4px;background:#efefef;border:1px solid #e0e0e0;flex:1;"></div>
+            </div>
+            <div style="height:16px;border-radius:4px;background:white;border:1px solid #efefef;display:flex;align-items:center;padding:0 4px;gap:3px;">
+              <div style="width:10px;height:10px;background:rgba(244,115,33,0.15);border-radius:2px;flex-shrink:0;"></div>
+              <div style="flex:1;height:3px;background:#e0e0e0;border-radius:1px;"></div>
+              <div style="height:5px;width:7px;border-radius:1px;background:rgba(244,115,33,0.55);flex-shrink:0;"></div>
+            </div>
+            <div style="height:16px;border-radius:4px;background:white;border:1px solid #efefef;display:flex;align-items:center;padding:0 4px;gap:3px;">
+              <div style="width:10px;height:10px;background:rgba(244,115,33,0.15);border-radius:2px;flex-shrink:0;"></div>
+              <div style="flex:1;height:3px;background:#e0e0e0;border-radius:1px;"></div>
+              <div style="height:5px;width:7px;border-radius:1px;background:rgba(244,115,33,0.55);flex-shrink:0;"></div>
+            </div>
+            <div style="height:16px;border-radius:4px;background:white;border:1px solid #efefef;display:flex;align-items:center;padding:0 4px;gap:3px;">
+              <div style="width:10px;height:10px;background:rgba(244,115,33,0.15);border-radius:2px;flex-shrink:0;"></div>
+              <div style="flex:1;height:3px;background:#e0e0e0;border-radius:1px;"></div>
+              <div style="height:5px;width:7px;border-radius:1px;background:rgba(244,115,33,0.55);flex-shrink:0;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -216,15 +239,24 @@
     <!-- 03 Item Detail — WIP -->
     <a class="screen-card active" href="01-home-screen.html?mode=prototype">
       <div class="screen-thumb">
-        <div class="mini-phone">
-          <div class="mini-header" style="height:56px; background:#e8e8e8;"></div>
-          <div class="mini-content">
-            <div class="mini-bar short"></div>
-            <div class="mini-bar" style="width:40%; height:5px; background:rgba(244,115,33,0.4);"></div>
-            <div style="display:flex;gap:3px;margin-top:2px;">
-              <div style="flex:1;height:24px;border-radius:4px;background:rgba(244,115,33,0.15);border:1px solid rgba(244,115,33,0.3);"></div>
-              <div style="flex:1;height:24px;border-radius:4px;background:white;border:1px solid #efefef;"></div>
-              <div style="flex:1;height:24px;border-radius:4px;background:white;border:1px solid #efefef;"></div>
+        <div class="mini-phone" style="display:flex;flex-direction:column;">
+          <div class="mini-header"></div>
+          <!-- Dimmed menu content behind the sheet -->
+          <div style="flex:1;background:#c4c4c4;position:relative;padding:5px 5px 0;">
+            <div style="height:7px;border-radius:3px;background:#b4b4b4;margin-bottom:3px;"></div>
+            <div style="height:7px;border-radius:3px;background:#b4b4b4;width:65%;margin-bottom:3px;"></div>
+            <div style="height:7px;border-radius:3px;background:#b4b4b4;width:80%;"></div>
+            <!-- White bottom sheet rising from bottom -->
+            <div style="position:absolute;bottom:0;left:0;right:0;background:white;border-radius:7px 7px 0 0;padding:4px 5px;">
+              <div style="width:14px;height:2px;border-radius:1px;background:#ddd;margin:0 auto 4px;"></div>
+              <div style="height:4px;background:#1a1a1a;border-radius:2px;width:72%;margin-bottom:2px;"></div>
+              <div style="height:3px;background:#e0e0e0;border-radius:2px;width:48%;margin-bottom:5px;"></div>
+              <div style="display:flex;gap:2px;margin-bottom:4px;">
+                <div style="flex:1;height:13px;border-radius:4px;background:#F47321;"></div>
+                <div style="flex:1;height:13px;border-radius:4px;background:white;border:1px solid #ddd;"></div>
+                <div style="flex:1;height:13px;border-radius:4px;background:white;border:1px solid #ddd;"></div>
+              </div>
+              <div style="height:13px;border-radius:4px;background:#F47321;"></div>
             </div>
           </div>
         </div>
@@ -245,12 +277,28 @@
       <div class="screen-thumb">
         <div class="mini-phone">
           <div class="mini-header"></div>
-          <div class="mini-content">
-            <div class="mini-card"></div>
-            <div class="mini-bar short orange"></div>
-            <div class="mini-card"></div>
-            <div class="mini-card"></div>
-            <div style="height:18px;border-radius:4px;background:rgba(244,115,33,0.8);margin-top:2px;"></div>
+          <div class="mini-content" style="gap:3px;">
+            <!-- Pickup context bar -->
+            <div style="height:8px;border-radius:3px;background:rgba(244,115,33,0.12);border:1px solid rgba(244,115,33,0.22);"></div>
+            <!-- Item row 1 -->
+            <div style="height:16px;border-radius:4px;background:white;border:1px solid #efefef;display:flex;align-items:center;padding:0 3px;gap:3px;">
+              <div style="width:10px;height:10px;background:rgba(244,115,33,0.2);border-radius:2px;flex-shrink:0;"></div>
+              <div style="flex:1;height:3px;background:#e0e0e0;border-radius:1px;"></div>
+              <div style="height:4px;width:9px;background:rgba(244,115,33,0.65);border-radius:1px;flex-shrink:0;"></div>
+            </div>
+            <!-- Item row 2 -->
+            <div style="height:16px;border-radius:4px;background:white;border:1px solid #efefef;display:flex;align-items:center;padding:0 3px;gap:3px;">
+              <div style="width:10px;height:10px;background:rgba(244,115,33,0.2);border-radius:2px;flex-shrink:0;"></div>
+              <div style="flex:1;height:3px;background:#e0e0e0;border-radius:1px;"></div>
+              <div style="height:4px;width:9px;background:rgba(244,115,33,0.65);border-radius:1px;flex-shrink:0;"></div>
+            </div>
+            <!-- Subtotal row -->
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:1px 2px;">
+              <div style="height:3px;width:22px;background:#d0d0d0;border-radius:1px;"></div>
+              <div style="height:4px;width:14px;background:#555;border-radius:1px;"></div>
+            </div>
+            <!-- Place Order CTA -->
+            <div style="height:15px;border-radius:4px;background:#F47321;margin-top:1px;"></div>
           </div>
         </div>
       </div>
@@ -302,9 +350,31 @@
       <div class="screen-thumb">
         <div class="mini-phone">
           <div class="mini-header"></div>
-          <div class="mini-content">
-            <div style="height:44px;border-radius:5px;background:rgba(244,115,33,0.2);border:1px solid rgba(244,115,33,0.2);margin-bottom:4px;"></div>
-            <div style="height:44px;border-radius:5px;background:#1a1a1a;border:1px solid #2a2a2a;margin-bottom:4px;"></div>
+          <div class="mini-content" style="gap:3px;">
+            <!-- Crown rewards card - orange gradient -->
+            <div style="height:18px;border-radius:4px;background:linear-gradient(135deg,#F47321,#D85F0A);display:flex;align-items:center;padding:0 4px;gap:3px;">
+              <div style="width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="height:2px;background:rgba(255,255,255,0.85);border-radius:1px;width:58%;margin-bottom:2px;"></div>
+                <div style="height:2px;background:rgba(255,255,255,0.4);border-radius:1px;width:38%;"></div>
+              </div>
+            </div>
+            <!-- Deal card 1 - Free Crazy Bread (orange top banner) -->
+            <div style="border-radius:4px;overflow:hidden;border:1px solid #e8e8e8;">
+              <div style="height:12px;background:#F47321;"></div>
+              <div style="background:white;padding:3px 4px;">
+                <div style="height:3px;background:#ddd;border-radius:1px;width:78%;margin-bottom:3px;"></div>
+                <div style="height:8px;border-radius:3px;background:#F47321;width:48%;"></div>
+              </div>
+            </div>
+            <!-- Deal card 2 - $3 Off (dark top banner) -->
+            <div style="border-radius:4px;overflow:hidden;border:1px solid #e8e8e8;">
+              <div style="height:12px;background:#1a1a2e;"></div>
+              <div style="background:white;padding:3px 4px;">
+                <div style="height:3px;background:#ddd;border-radius:1px;width:78%;margin-bottom:3px;"></div>
+                <div style="height:8px;border-radius:3px;background:#F47321;width:48%;"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -324,14 +394,39 @@
       <div class="screen-thumb">
         <div class="mini-phone">
           <div class="mini-header"></div>
-          <div class="mini-content">
-            <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;">
-              <div style="width:20px;height:20px;border-radius:50%;background:rgba(244,115,33,0.3);"></div>
-              <div style="flex:1;"><div class="mini-bar" style="height:5px;margin-bottom:3px;"></div><div class="mini-bar short" style="height:4px;"></div></div>
+          <div class="mini-content" style="gap:3px;">
+            <!-- Profile card -->
+            <div style="background:white;border-radius:5px;border:1px solid #efefef;padding:4px;">
+              <div style="display:flex;align-items:center;gap:3px;margin-bottom:3px;">
+                <div style="width:16px;height:16px;border-radius:50%;background:#F47321;flex-shrink:0;"></div>
+                <div style="flex:1;">
+                  <div style="height:3px;background:#1a1a1a;border-radius:1px;width:68%;margin-bottom:2px;"></div>
+                  <div style="height:2px;background:#ddd;border-radius:1px;width:52%;"></div>
+                </div>
+              </div>
+              <!-- Crown points badge row -->
+              <div style="height:7px;border-radius:3px;background:rgba(244,115,33,0.15);border:1px solid rgba(244,115,33,0.2);"></div>
             </div>
-            <div class="mini-card" style="height:14px;margin-bottom:2px;"></div>
-            <div class="mini-card" style="height:14px;margin-bottom:2px;"></div>
-            <div class="mini-card" style="height:14px;"></div>
+            <!-- Menu rows card -->
+            <div style="background:white;border-radius:5px;border:1px solid #efefef;padding:3px 4px;display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;align-items:center;gap:3px;">
+                <div style="width:8px;height:8px;border-radius:2px;background:rgba(244,115,33,0.2);flex-shrink:0;"></div>
+                <div style="flex:1;height:3px;background:#e0e0e0;border-radius:1px;"></div>
+                <div style="width:3px;height:3px;border-right:1.5px solid #ccc;border-top:1.5px solid #ccc;transform:rotate(45deg);flex-shrink:0;margin-right:1px;"></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:3px;">
+                <div style="width:8px;height:8px;border-radius:2px;background:rgba(244,115,33,0.2);flex-shrink:0;"></div>
+                <div style="flex:1;height:3px;background:#e0e0e0;border-radius:1px;"></div>
+                <div style="width:3px;height:3px;border-right:1.5px solid #ccc;border-top:1.5px solid #ccc;transform:rotate(45deg);flex-shrink:0;margin-right:1px;"></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:3px;">
+                <div style="width:8px;height:8px;border-radius:2px;background:rgba(244,115,33,0.2);flex-shrink:0;"></div>
+                <div style="flex:1;height:3px;background:#e0e0e0;border-radius:1px;"></div>
+                <div style="width:3px;height:3px;border-right:1.5px solid #ccc;border-top:1.5px solid #ccc;transform:rotate(45deg);flex-shrink:0;margin-right:1px;"></div>
+              </div>
+            </div>
+            <!-- De-escalated log out strip -->
+            <div style="height:9px;border-radius:3px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.18);"></div>
           </div>
         </div>
       </div>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TriageAI Demo v4 — 23 Scenarios</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f0f2f5;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+.bar{background:#1e1e2e;padding:9px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);flex-shrink:0;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.url-bar{flex:1;background:#2d2d3f;border-radius:6px;padding:5px 14px;color:#aaa;font-size:13px;display:flex;align-items:center;gap:8px;}
+.tab-bar{background:#0a2222;display:flex;border-bottom:1px solid #0D4F4F;flex-shrink:0;}
+.tab{padding:9px 20px;font-size:13px;color:#9FE1CB;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;}
+.tab:hover{background:rgba(255,255,255,0.05);}
+.tab.active{color:#fff;border-bottom:2px solid #2E9C9C;background:rgba(46,156,156,0.1);}
+.view{flex:1;overflow:hidden;position:relative;display:none;}
+.view.active{display:flex;flex-direction:column;}
+.page-nav{background:#0D4F4F;padding:12px 28px;display:flex;align-items:center;gap:24px;flex-shrink:0;}
+.page-nav-logo{font-size:17px;font-weight:700;color:#fff;letter-spacing:2px;}
+.page-nav-links{display:flex;gap:18px;}
+.page-nav-links a{color:#9FE1CB;font-size:12px;text-decoration:none;}
+.page-hero{background:linear-gradient(135deg,#0a2e2e 0%,#0D4F4F 60%,#1A7070 100%);padding:28px 52px;color:white;flex-shrink:0;}
+.page-hero h1{font-size:22px;font-weight:700;margin-bottom:6px;}
+.page-hero p{font-size:13px;color:#9FE1CB;max-width:500px;line-height:1.5;}
+.page-body{padding:20px 52px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;flex-shrink:0;}
+.page-card{background:#f8fafa;border:1px solid #e0eaea;border-radius:10px;padding:16px;}
+.page-card h3{font-size:13px;color:#0D4F4F;margin-bottom:6px;font-weight:600;}
+.page-card p{font-size:12px;color:#666;line-height:1.5;}
+.page-footer{background:#f0f4f4;border-top:1px solid #e0eaea;padding:8px 28px;font-size:11px;color:#999;display:flex;justify-content:space-between;flex-shrink:0;}
+/* Dashboard */
+.dash-view{flex:1;overflow-y:auto;background:#f0f2f5;padding:24px 40px;}
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.dash-header h2{font-size:20px;font-weight:700;color:#0a2e2e;}
+.dash-badge{background:#0D4F4F;color:#9FE1CB;font-size:12px;padding:4px 12px;border-radius:20px;}
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:white;border-radius:10px;padding:14px 16px;border:1px solid #e0eaea;}
+.stat-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
+.stat-val{font-size:24px;font-weight:700;color:#0D4F4F;}
+.stat-sub{font-size:11px;color:#aaa;margin-top:2px;}
+.dash-section-title{font-size:12px;font-weight:600;color:#444;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;}
+.ticket-table{background:white;border-radius:12px;border:1px solid #e0eaea;overflow:hidden;margin-bottom:22px;}
+.ticket-row{display:grid;grid-template-columns:88px 1fr 110px 100px 88px 98px;align-items:center;padding:11px 16px;border-bottom:1px solid #f0f4f4;font-size:12px;gap:10px;}
+.ticket-row:last-child{border-bottom:none;}
+.ticket-row.head{background:#f8fafa;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;padding:8px 16px;}
+.ticket-id{font-weight:700;color:#0D4F4F;}
+.ticket-title{color:#222;}
+.ticket-title small{display:block;color:#999;font-size:11px;margin-top:1px;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge.open{background:#FFF3CD;color:#856404;}
+.badge.in-progress{background:#D1ECF1;color:#0C5460;}
+.badge.resolved{background:#D4EDDA;color:#155724;}
+.prio.high{color:#C0392B;font-weight:600;}
+.prio.medium{color:#E67E22;font-weight:600;}
+.prio.low{color:#27AE60;font-weight:600;}
+.dash-charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+.chart-card{background:white;border-radius:12px;border:1px solid #e0eaea;padding:16px;}
+.chart-card h4{font-size:12px;font-weight:600;color:#444;margin-bottom:12px;}
+.bar-chart-item{margin-bottom:8px;}
+.bar-chart-label{font-size:11px;color:#555;margin-bottom:3px;display:flex;justify-content:space-between;}
+.bar-track{height:6px;background:#f0f4f4;border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;background:#2E9C9C;border-radius:3px;}
+.bar-fill.amber{background:#EF9F27;}
+.bar-fill.red{background:#E24B4A;}
+.pie-legend{display:flex;flex-direction:column;gap:7px;}
+.pie-item{display:flex;align-items:center;gap:8px;font-size:12px;}
+.pie-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+/* Chat */
+#chat-bubble{position:absolute;bottom:44px;right:22px;width:54px;height:54px;border-radius:50%;background:#0D4F4F;box-shadow:0 4px 16px rgba(13,79,79,0.45);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;transition:transform 0.2s;}
+#chat-bubble:hover{transform:scale(1.08);}
+#chat-bubble svg{width:26px;height:26px;}
+@keyframes pulse-ring{0%{box-shadow:0 4px 16px rgba(13,79,79,0.45),0 0 0 0 rgba(46,156,156,0.6);}60%{box-shadow:0 4px 16px rgba(13,79,79,0.45),0 0 0 14px rgba(46,156,156,0);}100%{box-shadow:0 4px 16px rgba(13,79,79,0.45);}}
+.bubble-badge{position:absolute;top:-2px;right:-2px;width:17px;height:17px;border-radius:50%;background:#E24B4A;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid white;}
+#chat-window{position:absolute;bottom:110px;right:22px;width:360px;background:white;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.18);display:flex;flex-direction:column;overflow:hidden;z-index:200;transform-origin:bottom right;transform:scale(0);opacity:0;transition:transform 0.28s cubic-bezier(0.34,1.56,0.64,1),opacity 0.2s;max-height:540px;}
+#chat-window.open{transform:scale(1);opacity:1;}
+.chat-header{background:#0D4F4F;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.chat-avatar{width:32px;height:32px;border-radius:50%;background:#2E9C9C;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:white;flex-shrink:0;}
+.chat-hinfo{flex:1;}
+.chat-hname{font-size:14px;font-weight:600;color:white;}
+.chat-hstatus{font-size:11px;color:#9FE1CB;display:flex;align-items:center;gap:4px;}
+.odot{width:6px;height:6px;border-radius:50%;background:#2E9C9C;}
+.chat-x{color:#9FE1CB;background:none;border:none;cursor:pointer;font-size:19px;line-height:1;}
+.chat-msgs{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:9px;overflow-y:auto;max-height:350px;}
+.mrow{display:flex;gap:7px;align-items:flex-end;}
+.mrow.user{flex-direction:row-reverse;}
+.mavatar{width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;}
+.mavatar.ai{background:#0D4F4F;color:#9FE1CB;}
+.mavatar.user{background:#e8f0f0;color:#0D4F4F;border:1px solid #c8dcdc;}
+.mbubble{max-width:83%;padding:8px 11px;font-size:13px;line-height:1.5;border-radius:14px;}
+.mbubble.ai{background:#f0f4f4;color:#1a1a1a;border-radius:14px 14px 14px 3px;}
+.mbubble.user{background:#0D4F4F;color:white;border-radius:14px 14px 3px 14px;}
+.ticket-box{margin-top:7px;background:#E1F5EE;border:1px solid #5DCAA5;border-radius:8px;padding:7px 9px;}
+.ticket-box .tid{font-size:11px;font-weight:700;color:#085041;}
+.ticket-box .tdet{font-size:11px;color:#0F6E56;margin-top:2px;}
+.escalate-box{margin-top:7px;background:#FAEEDA;border:1px solid #EF9F27;border-radius:8px;padding:7px 9px;}
+.escalate-box .eid{font-size:11px;font-weight:700;color:#633806;}
+.escalate-box .edet{font-size:11px;color:#854F0B;margin-top:2px;}
+.typing-bub{background:#f0f4f4;border-radius:14px 14px 14px 3px;padding:9px 13px;display:flex;gap:4px;align-items:center;}
+.typing-bub span{width:6px;height:6px;border-radius:50%;background:#2E9C9C;animation:td 1.2s infinite;}
+.typing-bub span:nth-child(2){animation-delay:0.2s;}
+.typing-bub span:nth-child(3){animation-delay:0.4s;}
+@keyframes td{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-5px);}}
+.qr-area{padding:0 10px 7px;display:flex;flex-wrap:wrap;gap:4px;flex-shrink:0;}
+.qr-btn{font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid #2E9C9C;color:#0D4F4F;background:white;cursor:pointer;transition:all 0.15s;}
+.qr-btn:hover{background:#0D4F4F;color:white;}
+.os-row{padding:0 10px 7px;display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.os-label{font-size:11px;color:#888;margin-right:3px;}
+.os-btn{font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid #dde8e8;background:#f8fafa;color:#555;cursor:pointer;transition:all 0.15s;}
+.os-btn.sel{background:#0D4F4F;color:white;border-color:#0D4F4F;}
+.input-bar{border-top:1px solid #e8efef;padding:9px 10px;display:flex;gap:7px;align-items:center;flex-shrink:0;}
+.cinput{flex:1;border:1px solid #dde8e8;border-radius:20px;padding:7px 13px;font-size:13px;font-family:inherit;outline:none;background:#f8fafa;color:#1a1a1a;}
+.cinput:focus{border-color:#2E9C9C;}
+.sbtn{width:30px;height:30px;border-radius:50%;background:#0D4F4F;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sbtn svg{width:13px;height:13px;}
+/* Demo Panel */
+.demo-panel{position:absolute;top:8px;left:12px;background:rgba(8,40,40,0.95);border-radius:10px;padding:10px 13px;color:white;font-size:11px;z-index:300;width:186px;max-height:calc(100vh - 120px);overflow-y:auto;}
+.demo-panel h4{font-size:10px;color:#9FE1CB;margin-bottom:5px;letter-spacing:0.05em;text-transform:uppercase;}
+.dbtn{display:block;width:100%;margin-bottom:3px;padding:5px 9px;border-radius:5px;border:none;background:#1A7070;color:white;font-size:11px;cursor:pointer;text-align:left;transition:background 0.15s;}
+.dbtn:hover{background:#2E9C9C;}
+.slabel{font-size:9px;color:#5DCAA5;margin-top:7px;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.05em;border-top:1px solid rgba(255,255,255,0.08);padding-top:5px;}
+.dhint{font-size:10px;color:#6B8A8A;margin-top:6px;line-height:1.4;}
+/* KB badge */
+.kb-badge{display:inline-block;background:#0D4F4F;color:#9FE1CB;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:8px;vertical-align:middle;}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+  <div class="url-bar"><span style="color:#5DCAA5">&#128274;</span> graysonresourcesolutions.com/client-portal <span class="kb-badge">KB v4 &bull; 23 scenarios</span></div>
+</div>
+<div class="tab-bar">
+  <div class="tab active" id="tab-portal" onclick="switchTab('portal')">Client Portal</div>
+  <div class="tab" id="tab-admin" onclick="switchTab('admin')">Admin Dashboard</div>
+</div>
+
+<!-- CLIENT PORTAL -->
+<div class="view active" id="view-portal">
+  <div class="page-nav">
+    <div class="page-nav-logo">GRAYSON</div>
+    <div class="page-nav-links"><a href="#">Dashboard</a><a href="#">Tickets</a><a href="#">Team</a><a href="#">Reports</a></div>
+  </div>
+  <div class="page-hero">
+    <h1>Welcome back, Riverside Logistics</h1>
+    <p>Your IT support portal is active. TriageAI v4 running — 23-scenario knowledge base powered by CompTIA A+ methodology.</p>
+  </div>
+  <div class="page-body">
+    <div class="page-card"><h3>Open Tickets</h3><p>2 tickets open &mdash; 0 critical. Last resolved 1 hour ago.</p></div>
+    <div class="page-card"><h3>Knowledge Base</h3><p><strong>23 scenarios</strong> active &mdash; CompTIA A+ sourced. Windows + Mac coverage. Auto-escalation enabled.</p></div>
+    <div class="page-card"><h3>AI Resolution Rate</h3><p>TriageAI resolved <strong>83%</strong> of tickets automatically this month. 23 scenarios, 6 categories.</p></div>
+  </div>
+  <div class="page-footer">
+    <span>Grayson Resource Solutions &mdash; Client Portal v4.0</span>
+    <span>TriageAI Active &bull; 23 scenarios &bull; CompTIA A+ sourced</span>
+  </div>
+
+  <!-- Demo Panel -->
+  <div class="demo-panel">
+    <h4>&#9654; Auto-Play Demo</h4>
+    <div class="slabel">Access</div>
+    <button class="dbtn" onclick="autoPlay('account')">Account Lockout</button>
+    <button class="dbtn" onclick="autoPlay('mfa')">MFA Not Working</button>
+    <div class="slabel">Network</div>
+    <button class="dbtn" onclick="autoPlay('internet')">Internet Down</button>
+    <button class="dbtn" onclick="autoPlay('networkdrive')">Network Drive</button>
+    <button class="dbtn" onclick="autoPlay('vpn')">VPN Not Connecting</button>
+    <div class="slabel">Hardware</div>
+    <button class="dbtn" onclick="autoPlay('nopower')">Computer Won't Start</button>
+    <button class="dbtn" onclick="autoPlay('printer')">Printer Connection</button>
+    <button class="dbtn" onclick="autoPlay('flicker')">Screen Flickering</button>
+    <button class="dbtn" onclick="autoPlay('monitor2')">2nd Monitor Missing</button>
+    <button class="dbtn" onclick="autoPlay('audio')">Audio Not Working</button>
+    <button class="dbtn" onclick="autoPlay('usb')">USB Not Recognized</button>
+    <button class="dbtn" onclick="autoPlay('keyboard')">Keyboard / Mouse</button>
+    <button class="dbtn" onclick="autoPlay('webcam')">Webcam Not Working</button>
+    <button class="dbtn" onclick="autoPlay('bluetooth')">Bluetooth Pairing</button>
+    <button class="dbtn" onclick="autoPlay('overheat')">Overheating / Fan</button>
+    <div class="slabel">Software</div>
+    <button class="dbtn" onclick="autoPlay('email')">Email Not Syncing</button>
+    <button class="dbtn" onclick="autoPlay('crash')">App Crashing</button>
+    <button class="dbtn" onclick="autoPlay('browser')">Browser Issues</button>
+    <button class="dbtn" onclick="autoPlay('bsod')">Blue Screen (BSOD)</button>
+    <button class="dbtn" onclick="autoPlay('onedrive')">Cloud Sync Issues</button>
+    <div class="slabel">Data / Performance</div>
+    <button class="dbtn" onclick="autoPlay('deletedfile')">Deleted File Recovery</button>
+    <button class="dbtn" onclick="autoPlay('slow')">Slow Computer</button>
+    <button class="dbtn" onclick="autoPlay('newdevice')">New Device Setup</button>
+    <button class="dbtn" style="background:#3a1a1a;margin-top:6px;" onclick="resetAll()">&#8635; Reset</button>
+    <p class="dhint">Or click the teal bubble to try manually.</p>
+  </div>
+
+  <!-- Chat Bubble -->
+  <div id="chat-bubble" onclick="toggleChat()">
+    <div class="bubble-badge" id="badge">1</div>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 3C6.477 3 2 6.925 2 11.75c0 2.162.87 4.14 2.316 5.67L3 21l3.896-1.04A10.7 10.7 0 0012 20.5c5.523 0 10-3.925 10-8.75S17.523 3 12 3z" fill="#2E9C9C"/><circle cx="8.5" cy="11.5" r="1.2" fill="white"/><circle cx="12" cy="11.5" r="1.2" fill="white"/><circle cx="15.5" cy="11.5" r="1.2" fill="white"/></svg>
+  </div>
+
+  <!-- Chat Window -->
+  <div id="chat-window">
+    <div class="chat-header">
+      <div class="chat-avatar">T</div>
+      <div class="chat-hinfo">
+        <div class="chat-hname">TriageAI Support</div>
+        <div class="chat-hstatus"><div class="odot"></div> Online &mdash; 23 scenarios ready</div>
+      </div>
+      <button class="chat-x" onclick="toggleChat()">&#x2715;</button>
+    </div>
+    <div class="chat-msgs" id="msgs"></div>
+    <div class="os-row" id="os-row" style="display:none;">
+      <span class="os-label">OS:</span>
+      <button class="os-btn sel" id="os-win" onclick="setOS('windows')">Windows</button>
+      <button class="os-btn" id="os-mac" onclick="setOS('mac')">Mac</button>
+    </div>
+    <div class="qr-area" id="qra"></div>
+    <div class="input-bar">
+      <input class="cinput" id="inp" placeholder="Describe your IT issue..." onkeydown="if(event.key==='Enter')send()"/>
+      <button class="sbtn" onclick="send()"><svg viewBox="0 0 24 24" fill="white"><path d="M2 12L22 2 12 22 10 13 2 12z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div class="view" id="view-admin">
+  <div class="dash-view">
+    <div class="dash-header"><h2>IT Support Dashboard</h2><span class="dash-badge">Riverside Logistics &bull; May 2026 &bull; KB v4</span></div>
+    <div class="dash-stats">
+      <div class="stat-card"><div class="stat-label">Tickets This Month</div><div class="stat-val">54</div><div class="stat-sub">+15% vs last month</div></div>
+      <div class="stat-card"><div class="stat-label">AI Resolved</div><div class="stat-val" style="color:#1D9E75;">45</div><div class="stat-sub">83% resolution rate</div></div>
+      <div class="stat-card"><div class="stat-label">Escalated</div><div class="stat-val" style="color:#E24B4A;" id="esc-count">9</div><div class="stat-sub">17% escalation rate</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Resolution</div><div class="stat-val">4m</div><div class="stat-sub">Down from 2.3 hrs</div></div>
+    </div>
+    <div class="dash-charts">
+      <div class="chart-card">
+        <h4>Issue Breakdown — 23 Scenario Categories</h4>
+        <div class="bar-chart-item"><div class="bar-chart-label"><span>Account / MFA</span><span>16</span></div><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div></div>
+        <div class="bar-chart-item"><div class="bar-chart-label"><span>Internet / Network / VPN</span><span>12</span></div><div class="bar-track"><div class="bar-fill" style="width:56%"></div></div></div>
+        <div class="bar-chart-item"><div class="bar-chart-label"><span>Printer / Display / Peripherals</span><span>10</span></div><div class="bar-track"><div class="bar-fill amber" style="width:47%"></div></div></div>
+        <div class="bar-chart-item"><div class="bar-chart-label"><span>Email / M365 / Cloud</span><span>8</span></div><div class="bar-track"><div class="bar-fill" style="width:37%"></div></div></div>
+        <div class="bar-chart-item"><div class="bar-chart-label"><span>Performance / BSOD / Power</span><span>5</span></div><div class="bar-track"><div class="bar-fill amber" style="width:24%"></div></div></div>
+        <div class="bar-chart-item"><div class="bar-chart-label"><span>Software / Browser</span><span>3</span></div><div class="bar-track"><div class="bar-fill red" style="width:14%"></div></div></div>
+      </div>
+      <div class="chart-card">
+        <h4>Resolution Outcome</h4>
+        <div class="pie-legend" style="margin-top:6px;">
+          <div class="pie-item"><div class="pie-dot" style="background:#2E9C9C;"></div><span style="flex:1;">Resolved by AI (Tier 1)</span><strong>45</strong></div>
+          <div class="pie-item"><div class="pie-dot" style="background:#EF9F27;"></div><span style="flex:1;">Escalated to IT Admin</span><strong>7</strong></div>
+          <div class="pie-item"><div class="pie-dot" style="background:#E24B4A;"></div><span style="flex:1;">Escalated — Hardware/Security</span><strong>2</strong></div>
+          <div class="pie-item" style="margin-top:12px;padding-top:10px;border-top:1px solid #f0f4f4;">
+            <div class="pie-dot" style="background:#1D9E75;"></div><span style="flex:1;font-weight:600;">Est. Hours Saved</span><strong style="color:#1D9E75;">~105 hrs</strong>
+          </div>
+          <div class="pie-item">
+            <div class="pie-dot" style="background:#0D4F4F;"></div><span style="flex:1;font-weight:600;">Est. Cost vs. Break-Fix</span><strong style="color:#0D4F4F;">~$7,900</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-section-title">Escalated Tickets</div>
+    <div class="ticket-table" id="esc-table">
+      <div class="ticket-row head"><div>Ticket #</div><div>Issue</div><div>Category</div><div>OS</div><div>Priority</div><div>Status</div></div>
+      <div class="ticket-row"><div class="ticket-id">TRG-1071</div><div class="ticket-title">BSOD repeating after Windows update rollback<small>T. Martinez &bull; 1h ago</small></div><div>System / OS</div><div>Windows 11</div><div class="prio high">High</div><div><span class="badge open">Open</span></div></div>
+      <div class="ticket-row"><div class="ticket-id">TRG-1068</div><div class="ticket-title">Overheating laptop — fan grinding noise<small>P. Lee &bull; 3h ago</small></div><div>Hardware</div><div>Windows 10</div><div class="prio high">High</div><div><span class="badge in-progress">In Progress</span></div></div>
+      <div class="ticket-row"><div class="ticket-id">TRG-1064</div><div class="ticket-title">MFA locked out — lost phone<small>J. Garcia &bull; 5h ago</small></div><div>Access / Security</div><div>Multiple</div><div class="prio high">High</div><div><span class="badge in-progress">In Progress</span></div></div>
+      <div class="ticket-row"><div class="ticket-id">TRG-1058</div><div class="ticket-title">Printer not detected after office move<small>J. Torres &bull; 2d ago</small></div><div>Printer</div><div>Windows 11</div><div class="prio medium">Medium</div><div><span class="badge resolved">Resolved</span></div></div>
+      <div class="ticket-row"><div class="ticket-id">TRG-1047</div><div class="ticket-title">Whole-office internet outage<small>A. Patel &bull; 5d ago</small></div><div>Network</div><div>Multiple</div><div class="prio high">High</div><div><span class="badge resolved">Resolved</span></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var chatOpen=false,chatStarted=false,state='idle',uName='',userOS='windows',autoTimer=null;
+
+function switchTab(t){document.querySelectorAll('.tab').forEach(function(e){e.classList.remove('active');});document.querySelectorAll('.view').forEach(function(e){e.classList.remove('active');});document.getElementById('tab-'+t).classList.add('active');document.getElementById('view-'+t).classList.add('active');}
+function setOS(os){userOS=os;document.getElementById('os-win').classList.toggle('sel',os==='windows');document.getElementById('os-mac').classList.toggle('sel',os==='mac');}
+function toggleChat(){chatOpen=!chatOpen;document.getElementById('chat-window').classList.toggle('open',chatOpen);if(chatOpen){document.getElementById('badge').style.display='none';if(!chatStarted){chatStarted=true;setTimeout(function(){aiMsg("Hi! I'm TriageAI — your IT support assistant. What can I help you with today?");showOS();qr(["Locked out of account","MFA not working","Internet is down","Printer won't connect","VPN not connecting","Email not syncing","Blue screen (BSOD)","Computer won't turn on","Webcam not working","Bluetooth not pairing","OneDrive not syncing","Deleted a file","Overheating / loud fan","Keyboard or mouse issue","Second monitor missing","Screen flickering","Audio not working","USB not recognized","Browser issues","App crashing","Slow computer","New device setup"]);},400);}}}
+function showOS(){document.getElementById('os-row').style.display='flex';}
+function aiMsg(text,opts){
+  var m=document.getElementById('msgs'),r=document.createElement('div');r.className='mrow ai';
+  var c=text.replace(/\n/g,'<br>');
+  if(opts&&opts.ticket){var tn='TRG-'+(1070+Math.floor(Math.random()*30));c+='<div class="ticket-box"><div class="tid">Ticket '+tn+' resolved</div><div class="tdet">Logged &bull; Steps documented &bull; System verified</div></div>';}
+  if(opts&&opts.escalate){var en='TRG-'+(1070+Math.floor(Math.random()*30));c+='<div class="escalate-box"><div class="eid">Escalated &bull; Ticket '+en+'</div><div class="edet">'+(opts.summary||'Full summary sent to your IT administrator.')+'</div></div>';addEscRow(en,opts.title||'Issue',opts.cat||'General',opts.os||userOS);}
+  r.innerHTML='<div class="mavatar ai">T</div><div class="mbubble ai">'+c+'</div>';
+  document.getElementById('msgs').appendChild(r);document.getElementById('msgs').scrollTop=9999;
+}
+function usrMsg(t){var m=document.getElementById('msgs'),r=document.createElement('div');r.className='mrow user';var i=uName?uName[0].toUpperCase():'U';r.innerHTML='<div class="mavatar user">'+i+'</div><div class="mbubble user">'+t+'</div>';m.appendChild(r);m.scrollTop=9999;}
+function typing(){var m=document.getElementById('msgs'),r=document.createElement('div');r.className='mrow ai';r.id='trow';r.innerHTML='<div class="mavatar ai">T</div><div class="typing-bub"><span></span><span></span><span></span></div>';m.appendChild(r);m.scrollTop=9999;}
+function rmTyping(){var e=document.getElementById('trow');if(e)e.remove();}
+function qr(arr){var a=document.getElementById('qra');a.innerHTML='';arr.forEach(function(t){var b=document.createElement('button');b.className='qr-btn';b.textContent=t;b.onclick=function(){a.innerHTML='';usrMsg(t);process(t);};a.appendChild(b);});}
+function send(){var i=document.getElementById('inp'),t=i.value.trim();if(!t)return;i.value='';document.getElementById('qra').innerHTML='';usrMsg(t);process(t);}
+function process(t){typing();setTimeout(function(){rmTyping();respond(t.toLowerCase(),t);},850+Math.floor(Math.random()*400));}
+function addEscRow(id,title,cat,os){var tbl=document.getElementById('esc-table');if(!tbl)return;var row=document.createElement('div');row.className='ticket-row';row.style.background='#FFFDE7';row.innerHTML='<div class="ticket-id">'+id+'</div><div class="ticket-title">'+title+'<small>Live &bull; Just now</small></div><div>'+cat+'</div><div>'+(os==='mac'?'macOS':'Windows')+'</div><div class="prio high">High</div><div><span class="badge open">Open</span></div>';tbl.insertBefore(row,tbl.children[1]);var ev=document.getElementById('esc-count');if(ev)ev.textContent=parseInt(ev.textContent)+1;}
+
+// ═══════════════════ ROUTER ═══════════════════
+function respond(lo,raw){
+  if(state==='idle'){
+    if(lo.match(/locked|password|log.?in|account|sign.?in/)){state='pw_name';aiMsg("Got it — account lockouts are very common. I can help right away.\n\nWhat's your name?");}
+    else if(lo.match(/mfa|two.?factor|2fa|authenticator|verification.?code|code.?not.?work|auth.?app/)){state='mfa_name';aiMsg("MFA issues can be stressful — let's work through it. What's your name?");}
+    else if(lo.match(/internet|wifi|wi-fi|no.?connect|ethernet|online/)){state='internet_name';aiMsg("Let's get you back online. What's your name?");}
+    else if(lo.match(/drive|mapped|network.?drive|shared.?folder/)){state='drive_name';aiMsg("I can help with that. What's your name?");}
+    else if(lo.match(/vpn|anyconnect|globalprotect|tunnel/)){state='vpn_name';aiMsg("VPN issues — let's fix it. What's your name?");}
+    else if(lo.match(/email|outlook|not.?sync|m365|office.?365|inbox/)){state='email_name';aiMsg("Email issues are fixable. What's your name?");}
+    else if(lo.match(/blue.?screen|bsod|stop.?error|crash.*windows|0x[0-9a-f]/i)){state='bsod_name';aiMsg("Blue screen errors can be scary but are often fixable. What's your name?");}
+    else if(lo.match(/won.?t.?turn.?on|no.?power|dead|not.?start|black.?screen|computer.?dead|won.?t.?boot|nothing.?happen/)){state='power_name';aiMsg("Let's figure out why it won't start. What's your name?");}
+    else if(lo.match(/webcam|camera|video.?call|zoom.?camera|teams.?camera|can.?t.?see.?me|no.?camera/)){state='webcam_name';aiMsg("Camera issues are usually a quick fix. What's your name?");}
+    else if(lo.match(/bluetooth|bt\b|not.?pair|won.?t.?pair|wireless.?headset|wireless.?keyboard|wireless.?mouse/)){state='bt_name';aiMsg("Let's get that Bluetooth device connected. What's your name?");}
+    else if(lo.match(/onedrive|cloud.?sync|not.?syncing|dropbox|google.?drive|sync.?error|sync.?stuck|files.?not.?upload/)){state='sync_name';aiMsg("Sync issues are usually a quick fix. What's your name?");}
+    else if(lo.match(/deleted|missing.?file|lost.?file|can.?t.?find.?file|recover.?file|file.?gone|accidental.?delete/)){state='file_name';aiMsg("Let's find that file — it's often still recoverable. What's your name?");}
+    else if(lo.match(/overheat|hot|fan.?loud|loud.?fan|fan.?noise|burning.?smell|running.?hot|throttl/)){state='heat_name';aiMsg("Overheating needs attention. What's your name?");}
+    else if(lo.match(/keyboard|mouse|keys.?not|cursor.?won.?t|can.?t.?type|wireless.?keyboard|wireless.?mouse/)){state='kb_name';aiMsg("Let's get your input device working. What's your name?");}
+    else if(lo.match(/second.?monitor|external.?monitor|dual.?monitor|display.?not.?detect|monitor.?not.?show|extend.?display|no.?signal/)){state='mon2_name';aiMsg("Let's get your second display detected. What's your name?");}
+    else if(lo.match(/flicker|screen.*flicker|monitor.*flicker|display.*flicker|blink/)){state='flicker_name';aiMsg("I can help troubleshoot that display issue. What's your name?");}
+    else if(lo.match(/sound|audio|speaker|headset|microphone|no.?sound|volume/)){state='audio_name';aiMsg("Audio issues are usually a quick fix. What's your name?");}
+    else if(lo.match(/usb|flash.?drive|external.?drive|not.?recognized/)){state='usb_name';aiMsg("Let's get that device recognized. What's your name?");}
+    else if(lo.match(/browser|chrome|edge|firefox/)){state='browser_name';aiMsg("I can help with browser issues. What's your name?");}
+    else if(lo.match(/crash|won.?t.?open|not.?open|keeps.?closing|application.?error|not.?respond/)){state='crash_name';aiMsg("Let's get that app working. What's your name?");}
+    else if(lo.match(/slow|sluggish|freezing|lagging|performance/)){state='slow_name';aiMsg("A slow computer is frustrating — let's fix it. What's your name?");}
+    else if(lo.match(/new.?device|new.?computer|set.?up|onboard|install.?office/)){state='newdevice_name';aiMsg("Happy to help with setup. What's your name?");}
+    else if(lo.match(/printer|print/)){state='printer_name';aiMsg("I can help with that. What's your name?");}
+    else{aiMsg("I'm here to help. What kind of issue are you having?");qr(["Locked out of account","Internet is down","Printer won't connect","Computer won't turn on","Blue screen (BSOD)","Email not syncing","Webcam not working","Slow computer","Something else"]);}
+    return;
+  }
+
+  // SHARED NAME HANDLER
+  var ns=['pw_name','mfa_name','internet_name','drive_name','vpn_name','email_name','bsod_name','power_name','webcam_name','bt_name','sync_name','file_name','heat_name','kb_name','mon2_name','flicker_name','audio_name','usb_name','browser_name','crash_name','slow_name','newdevice_name','printer_name'];
+  if(ns.indexOf(state)>=0){uName=raw.trim().split(' ')[0];var nxt=state.replace('_name','_os');state=nxt;showOS();aiMsg("Thanks "+uName+"! Are you on Windows or Mac?");qr(["Windows","Mac"]);return;}
+
+  // SHARED OS HANDLER → branches into flow
+  var os2=['pw_os','mfa_os','internet_os','drive_os','vpn_os','email_os','bsod_os','power_os','webcam_os','bt_os','sync_os','file_os','heat_os','kb_os','mon2_os','flicker_os','audio_os','usb_os','browser_os','crash_os','slow_os','newdevice_os','printer_os'];
+  if(os2.indexOf(state)>=0){
+    if(lo.indexOf('mac')>=0)setOS('mac');else setOS('windows');
+    var fl=state.replace('_os','');
+    if(fl==='pw'){state='pw_location';aiMsg("In the office or working from home?");qr(["In the office","Working from home"]);}
+    else if(fl==='mfa'){state='mfa_time';aiMsg("First — is your authenticator app generating codes normally (they should change every 30 seconds)?");qr(["Yes, codes are cycling","Codes aren't working / app won't load","I'm not getting SMS codes"]);}
+    else if(fl==='internet'){state='internet_scope';aiMsg("Is this just your device, or is the whole office down?");qr(["Just my device","The whole office is down"]);}
+    else if(fl==='drive'){state='drive_vpn';aiMsg("Are you in the office or working from home?");qr(["In the office","Working from home"]);}
+    else if(fl==='vpn'){state='vpn_internet';aiMsg("Can you load google.com in a browser? Is your internet working?");qr(["Yes, internet works","No, internet is also down"]);}
+    else if(fl==='email'){state='email_offline';aiMsg("In Outlook, click the Send/Receive tab — do you see 'Work Offline' highlighted?");qr(["Yes, it's highlighted","No, it's not highlighted"]);}
+    else if(fl==='bsod'){state='bsod_rebooted';aiMsg("Did the computer restart on its own, or is it still showing the blue screen?");qr(["It restarted and seems OK now","Still stuck on blue screen / keeps crashing"]);}
+    else if(fl==='power'){state='power_strip';aiMsg("Is this a desktop or a laptop?");qr(["Desktop","Laptop"]);}
+    else if(fl==='webcam'){state='webcam_perm';aiMsg("Let's check OS permissions first.\n\n"+(userOS==='mac'?"Mac: System Settings > Privacy & Security > Camera — is your video app (Teams/Zoom) allowed?":"Windows: Settings > Privacy & Security > Camera — is 'Camera access' ON and your app (Teams/Zoom) toggled on?")+"\n\nIs the app allowed?");qr(["Yes, permission is allowed","No — permission was blocked, I fixed it","Not sure"]);}
+    else if(fl==='bt'){state='bt_mode';aiMsg("Is the Bluetooth device in pairing mode? (Usually holding the pairing button until the LED flashes rapidly.)");qr(["Yes, it's in pairing mode","Not sure how to do that","Yes, but it still won't connect"]);}
+    else if(fl==='sync'){state='sync_icon';aiMsg("Click the OneDrive icon in your taskbar (bottom right Windows, top right Mac menu bar). Is it showing a Paused icon, an error, or does it look normal?");qr(["It says Paused","There's an error message","Looks normal but files still aren't syncing"]);}
+    else if(fl==='file'){state='file_trash';aiMsg("Let's start with the most common hiding spot.\n\n"+(userOS==='mac'?"Mac: Click the Trash icon in your Dock. Is the file there?":"Windows: Double-click the Recycle Bin on your desktop. Is the file there?")+"\n\nDo you see it?");qr(["Yes! Found it","Not in Trash — not there"]);}
+    else if(fl==='heat'){state='heat_smell';aiMsg("IMPORTANT FIRST: Is there a burning smell or any smoke coming from the computer?");qr(["No burning smell","Yes, there's a burning smell — shutting down now"]);}
+    else if(fl==='kb'){state='kb_type';aiMsg("Is this a USB keyboard/mouse or a wireless (Bluetooth/dongle) device?");qr(["USB cable","Wireless with a USB dongle","Bluetooth"]);}
+    else if(fl==='mon2'){state='mon2_cable';aiMsg("Let's start with the cable — the most common cause.\n\nFirmly re-seat the HDMI or DisplayPort cable at both ends. Then press the Input/Source button on your monitor and cycle through inputs to match where your cable is plugged in.\n\nDid the second screen appear?");qr(["Yes! It appeared","Still black / no signal"]);}
+    else if(fl==='flicker'){state='flicker_scope';aiMsg("Is this an external monitor or your laptop's built-in screen?");qr(["External monitor","Built-in laptop screen"]);}
+    else if(fl==='audio'){state='audio_device';aiMsg("Let's check the output device — wrong device selected is the #1 cause.\n\n"+(userOS==='mac'?"Mac: Apple Menu > System Settings > Sound > Output. Is the correct device selected?":"Windows: Right-click the speaker icon > Open Sound settings. Is the correct device selected under Output?")+"\n\nIs the right speaker/headset selected?");qr(["Yes, correct device","Wrong device — I just switched it","Not sure"]);}
+    else if(fl==='usb'){state='usb_port';aiMsg("Try a different USB port — unplug, wait 10 seconds, plug into a different port on the computer (not a hub). Did the device appear?");qr(["Yes, it's recognized!","Still not showing up"]);}
+    else if(fl==='browser'){state='browser_restart';aiMsg("Let's start by fully closing and reopening the browser. Did that fix the issue?");qr(["Yes, working now!","Still having issues"]);}
+    else if(fl==='crash'){state='crash_force';aiMsg("Let's force close first. Press "+(userOS==='mac'?"Cmd+Option+Esc > Force Quit":"Ctrl+Shift+Esc > End Task")+". Wait 10 seconds and relaunch. Did it open?");qr(["Yes, it works now!","Still crashing"]);}
+    else if(fl==='slow'){state='slow_restart';aiMsg("Has your computer been restarted recently — in the last day or two?");qr(["No, it's been on for days","Yes, still slow after restarting"]);}
+    else if(fl==='newdevice'){state='newdevice_wifi';aiMsg("Are you connected to the office WiFi?");qr(["Yes, connected","Not yet"]);}
+    else if(fl==='printer'){state='printer_type';aiMsg("Is your printer connected by USB cable or is it wireless/network?");qr(["USB cable","Wireless / Wi-Fi","Not sure"]);}
+    return;
+  }
+
+  // ═══ ACCOUNT LOCKOUT ═══
+  if(state==='pw_location'){if(lo.indexOf('home')>=0){state='pw_internet';aiMsg("Can you load google.com? Is your internet working?");qr(["Yes, loads fine","No, internet is down too"]);}else{state='pw_unlock';aiMsg("Your account was locked after failed login attempts. I've unlocked it — try signing in.");qr(["It worked!","Still getting an error"]);}return;}
+  if(state==='pw_internet'){if(lo.match(/yes|loads|fine/)){state='pw_unlock';aiMsg("Good — internet is working. Account unlocked — try signing in.");qr(["It worked!","Still getting an error"]);}else{state='pw_reconnect';aiMsg("Sounds like internet is also down. Try toggling WiFi off/on. Once back online, try signing in.");qr(["Back online — still locked out","Back online and I'm in!"]);}return;}
+  if(state==='pw_reconnect'){if(lo.match(/still|locked/)){state='pw_unlock';aiMsg("Account still showing locked — I've cleared it. Try again.");qr(["It worked!","Still not working"]);}else{state='done';aiMsg("Glad you're back in! Reset your password if it's been a while.",{ticket:true,title:"Account lockout resolved",cat:"Account",os:userOS});return;}return;}
+  if(state==='pw_unlock'){if(lo.match(/worked|yes|in/)){state='pw_reset';aiMsg("Now reset your password — at least 12 characters, upper+lowercase+number+symbol. Let me know when done.");qr(["Done, all set!","Need help resetting it"]);}else{state='done';aiMsg("Escalating to your IT administrator.",{escalate:true,title:"Account lockout — persistent",cat:"Account",os:userOS,summary:"Account unlocked twice, still failing."});return;}return;}
+  if(state==='pw_reset'){state='done';aiMsg("You're all set"+(uName?", "+uName:"")+"!",{ticket:true,title:"Account lockout",cat:"Account",os:userOS});return;}
+
+  // ═══ MFA ═══
+  if(state==='mfa_time'){
+    if(lo.match(/cycle|work|yes/)){state='mfa_backup';aiMsg("The codes are cycling normally — the issue may be with the app selection in your sign-in screen.\n\nAt the login prompt, try clicking 'Use a different verification option' or 'I can't use my authenticator app'. This lets you use SMS or email backup. Did that get you in?");qr(["Yes, I'm in now!","No backup option is available"]);}
+    else if(lo.match(/sms|text/)){state='mfa_sms';aiMsg("Check that your SMS code is going to the right phone number. Also check the spam/junk folder in your texts if you have a message filter.\n\nDid the code arrive?");qr(["Yes, got it and I'm in!","Still not receiving it"]);}
+    else{state='mfa_time_fix';aiMsg("The most common cause of auth app failures is the phone clock being out of sync.\n\n"+(userOS==='mac'?"iPhone: Settings > General > Date & Time > turn on 'Set Automatically'.":"Android: Settings > System > Date & Time > enable 'Set Automatically'.")+"\n\nAfter fixing the time, try the authenticator code again. Did it work?");qr(["Yes, it worked!","Still failing"]);}
+    return;
+  }
+  if(state==='mfa_time_fix'){if(lo.match(/yes|work/)){state='done';aiMsg("Time sync was off — fixed!",{ticket:true,title:"MFA — phone time sync",cat:"Access / Security",os:userOS});}else{state='done';aiMsg("This will need your IT administrator to reset your MFA enrollment.",{escalate:true,title:"MFA not working — reset needed",cat:"Access / Security",os:userOS,summary:"Auth codes failing after time sync fix. MFA account reset required."});}return;}
+  if(state==='mfa_backup'){if(lo.match(/yes|in/)){state='mfa_readd';aiMsg("Good — you're in! Now let's re-add your authenticator.\n\nGo to mysignins.microsoft.com > Security info > remove the old authenticator entry > click Add method > Authenticator app > scan the QR code.\n\nDone?");qr(["Yes, authenticator set up!","Need help with that"]);}else{state='done';aiMsg("If there's no backup method available, your IT administrator needs to reset your MFA.",{escalate:true,title:"MFA locked out — no backup method",cat:"Access / Security",os:userOS,summary:"No backup MFA method available. Admin reset required."});return;}return;}
+  if(state==='mfa_readd'){state='done';aiMsg("MFA is back up and working"+(uName?", "+uName:"")+"!",{ticket:true,title:"MFA issue resolved",cat:"Access / Security",os:userOS});return;}
+  if(state==='mfa_sms'){if(lo.match(/yes|got|in/)){state='done';aiMsg("SMS backup worked — you're in!",{ticket:true,title:"MFA — used SMS backup",cat:"Access / Security",os:userOS});}else{state='done';aiMsg("Escalating to your IT administrator to verify your phone number and reset MFA.",{escalate:true,title:"MFA SMS not delivering",cat:"Access / Security",os:userOS,summary:"SMS codes not delivering. Phone number may need verification."});}return;}
+
+  // ═══ INTERNET ═══
+  if(state==='internet_scope'){if(lo.match(/whole|office|everyone/)){state='done';aiMsg("Whole-office outage is a router/ISP issue. Escalating to your IT administrator.",{escalate:true,title:"Whole-office internet outage",cat:"Internet / Network",os:userOS,summary:"Office-wide outage reported."});}else{state='internet_test';aiMsg("Are you on WiFi or ethernet?");qr(["WiFi","Ethernet"]);}return;}
+  if(state==='internet_test'){if(lo.match(/wifi/)){state='internet_wifi';aiMsg("Toggle WiFi off, wait 10 seconds, back on. Make sure you're on the right network. Back online?");qr(["Yes!","Still no connection"]);}else{state='internet_eth';aiMsg("Unplug the ethernet cable, wait 10 sec, plug it back in firmly. Try a different port if available. Back online?");qr(["Yes!","Still no connection"]);}return;}
+  if(state==='internet_wifi'){if(lo.match(/yes/)){state='done';aiMsg("Back online"+(uName?", "+uName:"")+"!",{ticket:true,title:"WiFi dropped",cat:"Internet",os:userOS});}else{state='internet_forget';aiMsg("Let's forget and rejoin the network.\n\n"+(userOS==='mac'?"Mac: System Settings > Wi-Fi > info icon next to network > Forget > reconnect.":"Windows: Settings > Network & Internet > WiFi > Manage known networks > Forget > reconnect.")+"\n\nBack online?");qr(["Yes!","Still not connecting"]);}return;}
+  if(state==='internet_eth'){if(lo.match(/yes/)){state='done';aiMsg("Loose cable was it — all fixed.",{ticket:true,title:"Ethernet issue",cat:"Internet",os:userOS});}else{state='internet_forget';aiMsg("Let's restart the network adapter.\n\n"+(userOS==='mac'?"Mac: System Settings > Network > Ethernet > turn off, wait 5 sec, turn on.":"Windows: Device Manager > Network Adapters > right-click > Disable > wait 5 sec > Enable.")+"\n\nBack online?");qr(["Yes!","Still not connecting"]);}return;}
+  if(state==='internet_forget'){if(lo.match(/yes/)){state='done';aiMsg("Connected"+(uName?", "+uName:"")+"!",{ticket:true,title:"Internet issue",cat:"Internet",os:userOS});}else{state='done';aiMsg("Escalating — may be a network adapter or infrastructure issue.",{escalate:true,title:"Internet — single device persistent",cat:"Internet",os:userOS,summary:"WiFi toggle, forget/rejoin, adapter restart all tried."});}return;}
+
+  // ═══ NETWORK DRIVE ═══
+  if(state==='drive_vpn'){if(lo.indexOf('home')>=0){state='drive_vpn_check';aiMsg("Working remotely requires VPN first. Is your VPN connected?");qr(["Yes, VPN is on","No / not sure"]);}else{state='drive_restart';aiMsg("Try a quick restart first — this fixes most network drive issues. Did the drive reappear?");qr(["Yes!","Still missing"]);}return;}
+  if(state==='drive_vpn_check'){if(lo.match(/yes|on/)){state='drive_restart';aiMsg("Good. Restart with VPN connected and check if drive reappears.");qr(["Yes!","Still missing"]);}else{state='drive_vpn_fix';aiMsg("Connect VPN first (lock/shield icon in taskbar). Once connected, check for the drive. Did it come back?");qr(["Yes!","VPN on but drive still missing"]);}return;}
+  if(state==='drive_vpn_fix'){if(lo.match(/yes/)){state='done';aiMsg("VPN was the missing piece!",{ticket:true,title:"Network drive — VPN issue",cat:"Network Drive",os:userOS});}else{state='drive_restart';aiMsg("Restart with VPN on and check again.");qr(["Yes!","Still missing"]);}return;}
+  if(state==='drive_restart'){if(lo.match(/yes/)){state='done';aiMsg("Restart fixed it!",{ticket:true,title:"Network drive — restart resolved",cat:"Network Drive",os:userOS});}else{state='drive_discovery';if(userOS==='mac'){aiMsg("Mac: Finder > Go > Connect to Server > enter the server address your IT team provided (smb://servername). Did it connect?");}else{aiMsg("Windows: File Explorer > Network > right-click > Properties > Change advanced sharing settings > Turn on network discovery. Did the drive appear?");}qr(["Yes!","Still can't see it"]);return;}return;}
+  if(state==='drive_discovery'){if(lo.match(/yes/)){state='done';aiMsg("Drive is back!",{ticket:true,title:"Network drive missing",cat:"Network Drive",os:userOS});}else{state='done';aiMsg("Escalating — likely a credential or server-side issue.",{escalate:true,title:"Network drive not reconnecting",cat:"Network Drive",os:userOS,summary:"VPN confirmed, restart tried, discovery checked. Admin needed."});}return;}
+
+  // ═══ VPN ═══
+  if(state==='vpn_internet'){if(lo.match(/yes|works/)){state='vpn_restart';aiMsg("Good. Let's restart the VPN app.\n\nRight-click the VPN icon in your taskbar > Quit. Wait 10 seconds, relaunch, try connecting. Did it connect?");qr(["Yes!","Still failing"]);}else{state='done';aiMsg("Internet must be working for VPN to connect. Let's fix internet first.");qr(["WiFi not working","Ethernet not working"]);}return;}
+  if(state==='vpn_restart'){if(lo.match(/yes/)){state='done';aiMsg("App restart fixed it!",{ticket:true,title:"VPN — app restart",cat:"VPN / Network",os:userOS});}else{state='done';aiMsg("Escalating — may be a config or certificate issue.",{escalate:true,title:"VPN not connecting",cat:"VPN / Network",os:userOS,summary:"Internet confirmed, app restart tried. Config/cert issue suspected."});}return;}
+
+  // ═══ EMAIL ═══
+  if(state==='email_offline'){if(lo.match(/yes|highlight/)){state='email_fixol';aiMsg("Click 'Work Offline' to turn it off, then 'Send/Receive All Folders'. Did emails come in?");qr(["Yes!","Still not syncing"]);}else{state='email_sync';aiMsg("Let's force a sync. Press "+(userOS==='mac'?"Cmd+Shift+K":"F9")+" or click Send/Receive > Send/Receive All Folders. Did that pull in new emails?");qr(["Yes!","Still not syncing"]);}return;}
+  if(state==='email_fixol'||state==='email_sync'){if(lo.match(/yes/)){state='done';aiMsg("Fixed!",{ticket:true,title:"Email not syncing — offline/sync",cat:"Email / M365",os:userOS});}else{state='email_repair';aiMsg("Let's repair the account.\n\n"+(userOS==='mac'?"Mac: Outlook > Tools > Accounts > your account > Advanced > Reset Account.":"Windows: File > Account Settings > select account > Repair > follow prompts.")+"\n\nRestart Outlook after. Is it syncing?");qr(["Yes!","Still not working"]);}return;}
+  if(state==='email_repair'){if(lo.match(/yes/)){state='done';aiMsg("Account repair fixed it!",{ticket:true,title:"Email — account repair",cat:"Email / M365",os:userOS});}else{state='done';aiMsg("Escalating — may be a corrupted profile or M365 license issue.",{escalate:true,title:"Email not syncing — escalated",cat:"Email / M365",os:userOS,summary:"Offline mode checked, sync forced, account repair tried. Profile/license issue likely."});}return;}
+
+  // ═══ BSOD ═══
+  if(state==='bsod_rebooted'){
+    if(lo.match(/restart|ok now|seem/)){state='bsod_recent';aiMsg("Good — it rebooted. Did this happen right after a Windows Update or installing new software/drivers?");qr(["Yes, after a Windows Update","Yes, after installing something","No, it just happened randomly"]);}
+    else{state='done';aiMsg("If the computer is stuck on the blue screen, please do a hard restart (hold the power button 10 seconds). If it keeps looping back to a blue screen, escalating to your IT administrator.",{escalate:true,title:"BSOD — persistent crash loop",cat:"System / OS",os:userOS,summary:"Computer stuck in BSOD crash loop. Cannot boot normally."});}
+    return;
+  }
+  if(state==='bsod_recent'){
+    if(lo.match(/update|install/)){state='bsod_rollback';aiMsg("Let's roll back the recent change.\n\nFor a Windows Update: Settings > Windows Update > Update history > Uninstall updates > remove the most recent one.\n\nFor a driver: Device Manager > right-click the device > Properties > Driver tab > Roll Back Driver.\n\nDid rolling back fix it?");qr(["Yes, no more BSOD","Still crashing"]);}
+    else{state='bsod_memory';aiMsg("Let's run a memory check.\n\nStart > search 'Windows Memory Diagnostic' > Restart now and check for problems. This takes about 10 minutes. Did it come back clean?");qr(["Yes, no errors found","Found memory errors"]);}
+    return;
+  }
+  if(state==='bsod_rollback'){if(lo.match(/yes|no more|fix/)){state='done';aiMsg("Rollback fixed it!",{ticket:true,title:"BSOD — update rollback resolved",cat:"System / OS",os:userOS});}else{state='done';aiMsg("Escalating — this may need a deeper diagnostic or repair install.",{escalate:true,title:"BSOD — persistent after rollback",cat:"System / OS",os:userOS,summary:"Rollback attempted. BSOD persists. Possible RAM, HDD, or OS corruption."});}return;}
+  if(state==='bsod_memory'){if(lo.match(/clean|no error|pass/)){state='done';aiMsg("Memory is fine — this may have been a one-time driver glitch. Monitor for recurrence.",{ticket:true,title:"BSOD — one-time occurrence",cat:"System / OS",os:userOS});}else{state='done';aiMsg("Memory errors found — this is a hardware issue that needs your IT administrator.",{escalate:true,title:"BSOD — memory errors detected",cat:"System / OS",os:userOS,summary:"Windows Memory Diagnostic found errors. RAM replacement likely needed."});}return;}
+
+  // ═══ NO POWER ═══
+  if(state==='power_strip'){
+    if(lo.match(/desktop/)){state='power_desktop';aiMsg("Check these in order:\n1. Is the power strip or surge protector switched on?\n2. Try plugging a lamp or phone charger into the same outlet — does it work?\n3. Check the power cable is firmly plugged into both the computer and the wall\n4. For desktops, check the small power switch on the back of the PC — it should be at '|' (on), not 'O' (off)\n\nAnything change?");qr(["Yes, it's starting up now!","Still nothing"]);}
+    else{state='power_laptop';aiMsg("For a laptop:\n1. Is the charging cable firmly plugged into the laptop and the wall?\n2. Try a different wall outlet\n3. If the battery was fully dead, plug it in and wait 5 minutes before trying to power on\n\nDoes anything change?");qr(["Yes, it started!","Still nothing — even when charging"]);}
+    return;
+  }
+  if(state==='power_desktop'){if(lo.match(/yes|start|on|boot/)){state='done';aiMsg("Power issue resolved!",{ticket:true,title:"Computer won't start — power source",cat:"Hardware / Power",os:userOS});}else{state='done';aiMsg("Escalating to your IT administrator — this may be a PSU failure.",{escalate:true,title:"Desktop no power — PSU suspected",cat:"Hardware / Power",os:userOS,summary:"Power strip, outlets, and cables all checked. No response. PSU failure possible."});}return;}
+  if(state==='power_laptop'){if(lo.match(/yes|start/)){state='done';aiMsg("Laptop is back up!",{ticket:true,title:"Laptop won't start — power issue",cat:"Hardware / Power",os:userOS});}else{state='done';aiMsg("Escalating — this may be a failed battery or motherboard issue.",{escalate:true,title:"Laptop no power — hardware suspected",cat:"Hardware / Power",os:userOS,summary:"Charging confirmed but laptop won't respond. Battery or motherboard issue likely."});}return;}
+
+  // ═══ WEBCAM ═══
+  if(state==='webcam_perm'){
+    if(lo.match(/block|was.?block|no.*allow|fix/)){state='done';aiMsg("Permission was blocked — that's the most common camera issue. It should work now!",{ticket:true,title:"Webcam — OS permission blocked",cat:"Hardware / Peripherals",os:userOS});}
+    else{state='webcam_app';aiMsg("Good — permission is on. Let's check if another app is using the camera.\n\nClose all other video apps (Zoom if you're in Teams, OBS, Skype). In your video app settings, go to Video/Camera and reselect the camera from the dropdown.\n\nIs the camera showing now?");qr(["Yes, camera is working!","Still not showing"]);}
+    return;
+  }
+  if(state==='webcam_app'){if(lo.match(/yes|work/)){state='done';aiMsg("Another app was holding the camera — all fixed!",{ticket:true,title:"Webcam — competing app",cat:"Hardware / Peripherals",os:userOS});}else{state='webcam_driver';aiMsg("Let's update the camera driver.\n\n"+(userOS==='mac'?"Mac: Apple Menu > System Settings > Software Update — install any updates.":"Windows: Device Manager > Imaging Devices > right-click your camera > Update driver. Also try unplugging and replugging if it's a USB webcam.")+"\n\nIs the camera detected now?");qr(["Yes!","Still not working"]);}return;}
+  if(state==='webcam_driver'){if(lo.match(/yes/)){state='done';aiMsg("Driver update fixed it!",{ticket:true,title:"Webcam — driver update",cat:"Hardware / Peripherals",os:userOS});}else{state='done';aiMsg("Escalating — camera may not be appearing in Device Manager at all, suggesting a hardware issue.",{escalate:true,title:"Webcam not detected",cat:"Hardware / Peripherals",os:userOS,summary:"Privacy permission checked, competing apps closed, driver updated. Camera still not detected."});}return;}
+
+  // ═══ BLUETOOTH ═══
+  if(state==='bt_mode'){
+    if(lo.match(/yes|pair|mode/)){state='bt_remove';aiMsg("Let's remove the old pairing and start fresh.\n\n"+(userOS==='mac'?"Mac: System Settings > Bluetooth > right-click device > Remove > re-pair.":"Windows: Settings > Bluetooth & Devices > click the three dots next to the device > Remove > re-pair.")+"\n\nPut the device back in pairing mode and try again. Did it connect?");qr(["Yes!","Still won't pair"]);}
+    else{state='bt_guide';aiMsg("Most Bluetooth devices enter pairing mode by holding the Bluetooth/power button for 3–5 seconds until the LED flashes rapidly. Check the device manual for the exact method.\n\nTry putting it in pairing mode now, then check Settings > Bluetooth for it to appear. Did it show up?");qr(["Yes!","Still not showing up"]);}
+    return;
+  }
+  if(state==='bt_guide'||state==='bt_remove'){if(lo.match(/yes/)){state='done';aiMsg("Bluetooth device connected!",{ticket:true,title:"Bluetooth pairing resolved",cat:"Hardware / Wireless",os:userOS});}else{state='done';aiMsg("Escalating — may be a driver or hardware issue with the Bluetooth adapter.",{escalate:true,title:"Bluetooth not pairing",cat:"Hardware / Wireless",os:userOS,summary:"Device in pairing mode, re-pair attempted. Still not connecting."});}return;}
+
+  // ═══ ONEDRIVE SYNC ═══
+  if(state==='sync_icon'){
+    if(lo.match(/pause/)){state='sync_resume';aiMsg("Click 'Resume Syncing' in the OneDrive menu. Wait a minute and check if files start uploading. Did syncing resume?");qr(["Yes, syncing now!","Still paused / not syncing"]);}
+    else if(lo.match(/error/)){state='sync_restart';aiMsg("Let's restart OneDrive.\n\n"+(userOS==='mac'?"Mac: Right-click OneDrive in menu bar > Quit. Reopen from Applications.":"Windows: Click OneDrive icon > Help & Settings > Quit OneDrive. Relaunch from Start menu.")+"\n\nDid restarting fix it?");qr(["Yes, syncing now!","Still showing an error"]);}
+    else{state='sync_filename';aiMsg("Even though it looks normal, syncing may be blocked by a file with a special character in its name (? * : / \\ < > | or a name too long).\n\nCheck your OneDrive folder for any files with unusual names or very long paths and rename them. Did that fix the sync?");qr(["Yes, found a bad filename — it's syncing now!","Still not syncing"]);}
+    return;
+  }
+  if(state==='sync_resume'||state==='sync_restart'||state==='sync_filename'){if(lo.match(/yes/)){state='done';aiMsg("Syncing restored!",{ticket:true,title:"OneDrive sync issue resolved",cat:"Software / Cloud",os:userOS});}else{state='done';aiMsg("Escalating — this may be a storage quota or account issue.",{escalate:true,title:"OneDrive sync — persistent",cat:"Software / Cloud",os:userOS,summary:"Paused/restart/filename checks all done. Possible storage quota or account issue."});}return;}
+
+  // ═══ DELETED FILE ═══
+  if(state==='file_trash'){
+    if(lo.match(/yes|found/)){state='file_restore';aiMsg("Right-click the file > "+(userOS==='mac'?"Put Back":"Restore")+". It will go back to its original location. Did it restore?");qr(["Yes!","Can't restore it"]);}
+    else{state='file_search';aiMsg("Let's search for it.\n\nPress "+(userOS==='mac'?"Cmd+Space (Spotlight)":"Win+S")+' and type the filename (or part of it). Also check your cloud trash: for OneDrive go to onedrive.com > Recycle Bin in the left sidebar.\n\nDid you find it?');qr(["Yes, found it!","Not finding it anywhere"]);}
+    return;
+  }
+  if(state==='file_restore'){state='done';aiMsg("File restored!",{ticket:true,title:"File recovered from Trash",cat:"Data / Files",os:userOS});return;}
+  if(state==='file_search'){
+    if(lo.match(/yes|found/)){state='done';aiMsg("File found!",{ticket:true,title:"File located via search/cloud trash",cat:"Data / Files",os:userOS});}
+    else{state='file_history';aiMsg("Let's try File History / Time Machine.\n\n"+(userOS==='mac'?"Mac: Open Time Machine from the menu bar > browse to the folder where the file was > navigate to a date before deletion > click Restore.":"Windows: Right-click the folder where the file was > 'Restore previous versions' > pick a date before deletion > Restore.")+"\n\nDid you find it?");qr(["Yes, restored!","Not there either"]);}
+    return;
+  }
+  if(state==='file_history'){if(lo.match(/yes/)){state='done';aiMsg("File recovered!",{ticket:true,title:"File recovered via File History",cat:"Data / Files",os:userOS});}else{state='done';aiMsg("If it's not in any local or cloud recycle bin or version history, we'll need IT to check server-level backups.",{escalate:true,title:"Deleted file — backup restore needed",cat:"Data / Files",os:userOS,summary:"Recycle bin, cloud trash, File History, and Time Machine all checked. Server backup restore needed."});}return;}
+
+  // ═══ OVERHEATING ═══
+  if(state==='heat_smell'){
+    if(lo.match(/yes|burn|smell|smoke/)){state='done';aiMsg("STOP — shut down the computer immediately if you haven't already. Do not restart it. I'm escalating to your IT administrator right now.",{escalate:true,title:"URGENT: Burning smell / possible hardware failure",cat:"Hardware / Power",os:userOS,summary:"USER REPORTED BURNING SMELL. Computer needs immediate physical inspection. Do not power on."});}
+    else{state='heat_airflow';aiMsg("Good — no burning smell. Let's check airflow.\n\nFor laptops: is it on a hard, flat surface? Vents on the bottom and sides must be clear — not on a pillow, bed, or carpet.\n\nFor desktops: are there 2–3 inches of clearance around all sides?\n\nAlso: is the fan running faster than usual but the computer still running slowly? Open Task Manager and check if an app is using very high CPU.\n\nDid fixing the airflow help?");qr(["Yes, it's cooler now","Still running hot or loud"]);}
+    return;
+  }
+  if(state==='heat_airflow'){if(lo.match(/yes|cool|better/)){state='done';aiMsg("Airflow was restricted — all clear now. Keeping it on a hard surface will prevent this.",{ticket:true,title:"Overheating — airflow blocked",cat:"Hardware / Performance",os:userOS});}else{state='done';aiMsg("Persistent overheating after clearing airflow may mean the internal fan or thermal paste needs attention. Escalating to your IT administrator.",{escalate:true,title:"Overheating — persistent after airflow check",cat:"Hardware / Performance",os:userOS,summary:"Airflow checked and cleared. Overheating persists. Internal fan or thermal paste issue likely."});}return;}
+
+  // ═══ KEYBOARD / MOUSE ═══
+  if(state==='kb_type'){
+    if(lo.match(/usb|cable/)){state='kb_usb';aiMsg("Unplug the cable from the current USB port. Plug it directly into a different port on the computer (skip any USB hub). Is it working now?");qr(["Yes!","Still not working"]);}
+    else if(lo.match(/dongle|wireless/)){state='kb_dongle';aiMsg("Try these:\n1. Move the USB dongle from a hub directly into the computer\n2. Replace the batteries in the keyboard/mouse\n3. Toggle the power switch on the bottom of the device off, wait 5 seconds, then back on\n\nIs it working?");qr(["Yes!","Still not working"]);}
+    else{state='bt_mode';aiMsg("For Bluetooth devices, see Bluetooth troubleshooting.\n\nIs the device in pairing mode?");qr(["Yes","Not sure how"]);}
+    return;
+  }
+  if(state==='kb_usb'||state==='kb_dongle'){if(lo.match(/yes/)){state='done';aiMsg("Fixed — port or power issue!",{ticket:true,title:"Keyboard/mouse — port or power issue",cat:"Hardware / Peripherals",os:userOS});}else{state='done';aiMsg("Let's try a full restart — Windows sometimes re-initializes USB devices on reboot. If it still doesn't work, try on a different computer to confirm the device itself is okay. If it fails there too, it may need replacing.",{escalate:true,title:"Keyboard/mouse — not working",cat:"Hardware / Peripherals",os:userOS,summary:"Port change and power cycle tried. Device still unresponsive."});}return;}
+
+  // ═══ SECOND MONITOR ═══
+  if(state==='mon2_cable'){
+    if(lo.match(/yes/)){state='done';aiMsg("Cable seating and input source fixed it!",{ticket:true,title:"Second monitor — cable/input fix",cat:"Display",os:userOS});}
+    else{state='mon2_detect';aiMsg("Let's force Windows/Mac to detect the display.\n\n"+(userOS==='mac'?"Mac: System Settings > Displays > hold Option key > a 'Detect Displays' button appears > click it.":"Windows: Right-click desktop > Display settings > scroll down to 'Multiple displays' > click Detect. Also press Win+P and choose Extend.")+"\n\nDid the second screen appear?");qr(["Yes!","Still not detected"]);}
+    return;
+  }
+  if(state==='mon2_detect'){if(lo.match(/yes/)){state='done';aiMsg("Display detected!",{ticket:true,title:"Second monitor — detect fixed",cat:"Display",os:userOS});}else{state='done';aiMsg("Escalating — may be a display driver or docking station issue.",{escalate:true,title:"Second monitor not detected",cat:"Display",os:userOS,summary:"Cable reseated, Detect run, Win+P tried. Monitor still not appearing."});}return;}
+
+  // ═══ SCREEN FLICKER ═══
+  if(state==='flicker_scope'){state='flicker_cable';if(lo.match(/external|monitor/)){aiMsg("Let's reseat the cable — unplug the HDMI/DisplayPort cable both ends, plug back in firmly. Did flickering stop?");}else{aiMsg("For built-in screens, restart first — a driver hiccup often causes this. Did the restart fix it?");}qr(["Yes!","Still flickering"]);return;}
+  if(state==='flicker_cable'){if(lo.match(/yes/)){state='done';aiMsg("Cable fix worked!",{ticket:true,title:"Screen flickering — cable",cat:"Display",os:userOS});}else{state='done';if(userOS==='mac'){aiMsg("Mac: System Settings > Displays > set refresh rate to 60Hz, uncheck True Tone. Also check for macOS updates. Did that help?",);}else{aiMsg("Windows: Press Win+Ctrl+Shift+B to reset graphics driver. Also check Display settings > Advanced display > refresh rate (set to 60Hz or monitor spec). Did that help?");}state='flicker_driver';}qr(["Yes!","Still flickering"]);return;}
+  if(state==='flicker_driver'){if(lo.match(/yes/)){state='done';aiMsg("Display settings fixed it!",{ticket:true,title:"Screen flickering — refresh rate",cat:"Display",os:userOS});}else{state='done';aiMsg("Escalating — persistent flickering after cable and driver checks suggests hardware.",{escalate:true,title:"Screen flickering — hardware suspected",cat:"Display",os:userOS,summary:"Cable, refresh rate, driver reset all tried."});}return;}
+
+  // ═══ AUDIO ═══
+  if(state==='audio_device'){if(lo.match(/wrong|switch|fix/)){state='audio_done';aiMsg("Good — wrong output device is #1 audio cause! Check volume isn't at zero either. Is audio working?");qr(["Yes!","Still no sound"]);}else{state='audio_volume';aiMsg("Double-check volume slider isn't at zero and mute isn't on (physical mute button on headset too). Is audio working now?");qr(["Yes!","Still no sound"]);}return;}
+  if(state==='audio_done'||state==='audio_volume'){if(lo.match(/yes/)){state='done';aiMsg("Audio working!",{ticket:true,title:"Audio — output device/volume",cat:"Audio",os:userOS});}else{state='done';aiMsg("Let's check app-level audio (Teams/Zoom settings). If that doesn't work, a driver update is next. Escalating to IT if still failing.",{escalate:true,title:"Audio issue — persistent",cat:"Audio",os:userOS,summary:"Output device and volume checked. App settings and driver update needed."});}return;}
+
+  // ═══ USB ═══
+  if(state==='usb_port'){if(lo.match(/yes/)){state='done';aiMsg("Different port fixed it!",{ticket:true,title:"USB device — port issue",cat:"Hardware",os:userOS});}else{state='done';aiMsg("Try on a colleague's computer to confirm if the device works. If it doesn't work there either, the device may need replacing. Escalating.",{escalate:true,title:"USB device not recognized",cat:"Hardware",os:userOS,summary:"Multiple ports tried. Device may be faulty."});}return;}
+
+  // ═══ BROWSER ═══
+  if(state==='browser_restart'){if(lo.match(/yes/)){state='done';aiMsg("Restart fixed it!",{ticket:true,title:"Browser — restart resolved",cat:"Software",os:userOS});}else{state='browser_cache';aiMsg("Clear cache and cookies: press "+(userOS==='mac'?"Cmd+Shift+Delete":"Ctrl+Shift+Delete")+", set All time, check Cached images + Cookies, Clear data. Restart browser. Fixed?");qr(["Yes!","Still having issues"]);}return;}
+  if(state==='browser_cache'){if(lo.match(/yes/)){state='done';aiMsg("Cache clear fixed it!",{ticket:true,title:"Browser — cache cleared",cat:"Software",os:userOS});}else{state='done';aiMsg("Escalating — may be an extension conflict or malware.",{escalate:true,title:"Browser issues — possible malware",cat:"Software",os:userOS,summary:"Restart and cache clear tried. Possible extension conflict or malware."});}return;}
+
+  // ═══ APP CRASH ═══
+  if(state==='crash_force'){if(lo.match(/yes/)){state='done';aiMsg("Force close fixed it!",{ticket:true,title:"App crash — force close resolved",cat:"Software",os:userOS});}else{state='crash_update';aiMsg("Check for app updates — Help > Check for Updates or check the app store. After updating, try again.");qr(["Yes, works now!","Still crashing"]);}return;}
+  if(state==='crash_update'){if(lo.match(/yes/)){state='done';aiMsg("Update fixed it!",{ticket:true,title:"App crash — update resolved",cat:"Software",os:userOS});}else{state='done';aiMsg("Escalating — may need a full reinstall or OS compatibility check.",{escalate:true,title:"App crashing — escalated",cat:"Software",os:userOS,summary:"Force close and update tried. Reinstall or compatibility check needed."});}return;}
+
+  // ═══ SLOW ═══
+  if(state==='slow_restart'){if(lo.match(/no|days/)){state='slow_after';aiMsg("Please do a full restart now. Let me know if it's faster after.");qr(["Much faster!","A bit better but still slow","Still slow"]);}else{respondSlow();}return;}
+  if(state==='slow_after'){if(lo.match(/much|faster|fixed/)){state='done';aiMsg("Restart was all it needed! Restart once a week for best performance.",{ticket:true,title:"Slow computer — restart resolved",cat:"Performance",os:userOS});}else{respondSlow();}return;}
+  function respondSlow(){state='slow_task';if(userOS==='mac'){aiMsg("Open Activity Monitor (Cmd+Space > type Activity Monitor). Click CPU. Is any app using over 50%?");}else{aiMsg("Open Task Manager (Ctrl+Shift+Esc) > Processes. Sort by CPU. Is anything over 50%, or is Disk at 100%?");}qr(["One app is using a lot","Disk is at 100%","Everything looks normal"]);}
+  if(state==='slow_task'){
+    if(lo.match(/app|program/)){state='done';aiMsg("Force quit that app. If it's needed, close and reopen it. Performance back to normal?",);qr(["Yes, much faster!","Still slow"]);state='slow_app';return;}
+    else if(lo.match(/disk|100/)){state='done';if(userOS==='mac'){aiMsg("Mac: Apple Menu > About This Mac > Storage > Manage. Delete large unneeded files. Empty Trash.",);}else{aiMsg("Windows: Start > Disk Cleanup > run it. Also Settings > System > Storage > Temporary files > delete.");}qr(["Yes, faster now!","Still slow"]);state='slow_disk';return;}
+    else{state='done';if(userOS==='mac'){aiMsg("Mac: System Settings > General > Login Items — remove unneeded apps.");}else{aiMsg("Windows: Task Manager > Startup Apps — disable non-essential. Restart and check.");}qr(["Yes, faster!","Still slow"]);state='slow_startup';return;}
+  }
+  if(state==='slow_app'||state==='slow_disk'||state==='slow_startup'){if(lo.match(/yes|fast/)){state='done';aiMsg("Performance restored!",{ticket:true,title:"Slow computer resolved",cat:"Performance",os:userOS});}else{state='done';aiMsg("Escalating — persistent slowness may indicate hardware.",{escalate:true,title:"Slow computer — hardware suspected",cat:"Performance",os:userOS,summary:"Restart, resource check, disk cleanup done. HDD or RAM issue possible."});}return;}
+
+  // ═══ NEW DEVICE ═══
+  if(state==='newdevice_wifi'){if(lo.match(/yes/)){state='newdevice_m365';aiMsg("Connected! Go to office.com and sign in with your work email. Do you see your Microsoft 365 apps?");qr(["Yes!","Sign-in failed / no apps"]);}else{state='done';aiMsg("Connect to WiFi first: "+(userOS==='mac'?"Mac: Click WiFi icon top right > select network > enter password.":"Windows: Click WiFi icon taskbar > select network > enter password.")+"\n\nIf credentials needed, check with your manager. Connected?");qr(["Yes, connected!","Still can't connect"]);state='newdevice_wifi2';return;}return;}
+  if(state==='newdevice_wifi2'){if(lo.match(/yes/)){state='newdevice_m365';aiMsg("Connected! Now go to office.com and sign in with your work email. Do you see your apps?");qr(["Yes!","Sign-in issue"]);}else{state='done';aiMsg("WiFi connection needs attention. Escalating.",{escalate:true,title:"New device — WiFi issue",cat:"Onboarding",os:userOS,summary:"New device cannot connect to office WiFi."});}return;}
+  if(state==='newdevice_m365'){if(lo.match(/yes/)){state='done';aiMsg("You're set up! Click Install Office to download your apps. Open Outlook — it should auto-configure with your email.",{ticket:true,title:"New device setup complete",cat:"Onboarding",os:userOS});}else{state='done';aiMsg("Sign-in issue may mean the M365 license isn't assigned yet. Escalating to IT.",{escalate:true,title:"New device — M365 sign-in failed",cat:"Onboarding",os:userOS,summary:"Cannot sign into office.com. License or provisioning issue."});}return;}
+
+  // ═══ PRINTER ═══
+  if(state==='printer_type'){state='printer_power';aiMsg("Let's power cycle — turn printer off, unplug 30 sec, plug back in, power on. Showing as ready?");qr(["Yes!","Still offline"]);return;}
+  if(state==='printer_power'){if(lo.match(/yes/)){state='done';aiMsg("Power cycle did it!",);qr(["Let me test print first"]);state='printer_queue';aiMsg("Clear the print queue too: "+(userOS==='mac'?"System Settings > Printers & Scanners > Open Print Queue > delete stuck jobs.":"Settings > Printers & Scanners > printer > Open print queue > delete.")+"\n\nTest print — did it work?");qr(["Yes!","Still not printing"]);}else{state='done';aiMsg("Escalating — cable, driver, or hardware issue.",{escalate:true,title:"Printer not connecting",cat:"Printer",os:userOS,summary:"Power cycle tried. Still offline."});return;}return;}
+  if(state==='printer_queue'){if(lo.match(/yes/)){state='done';aiMsg("Queue clear fixed it!",{ticket:true,title:"Printer — queue cleared",cat:"Printer",os:userOS});}else{state='done';aiMsg("Escalating — driver or hardware issue.",{escalate:true,title:"Printer not working — escalated",cat:"Printer",os:userOS,summary:"Power cycle and queue clear tried."});}return;}
+
+  // ═══ DONE / FOLLOWUP ═══
+  if(state==='done'){state='followup';aiMsg("Is there anything else I can help with?");qr(["No, all set — thanks!","Yes, another issue"]);return;}
+  if(state==='followup'){if(lo.match(/another|yes|more/)){state='idle';uName='';aiMsg("Of course — what's the next issue?");showOS();qr(["Locked out of account","Internet down","Printer issue","Computer won't start","Blue screen","Email not syncing","Webcam not working","Slow computer","Something else"]);}else{state='closed';aiMsg("Glad I could help"+(uName?", "+uName:"")+"! Have a great day.");}return;}
+  aiMsg("Can you tell me a bit more about what's happening?");
+}
+
+// ═══════════ AUTO-PLAY SCRIPTS ═══════════
+var scripts={
+  account:[{w:'user',t:"I'm locked out of my account.",d:0},{w:'ai',t:"What's your name?",d:1200},{w:'user',t:"Sarah",d:2400},{w:'ai',t:"Thanks Sarah! In the office or working from home?",d:3800},{w:'user',t:"Working from home.",d:5200},{w:'ai',t:"Can you load google.com — does it work?",d:6600},{w:'user',t:"Yes, works fine.",d:8000},{w:'ai',t:"Good — your account was locked after failed attempts. I've unlocked it. Try signing in.",d:9400},{w:'user',t:"It worked!",d:12200},{w:'ai',t:"Now reset your password — 12 chars, upper+lowercase+number+symbol. Done?",d:13600},{w:'user',t:"Done, all set!",d:16400},{w:'ai',t:"You're all set, Sarah!",d:17800,ticket:true,cat:"Account"}],
+  mfa:[{w:'user',t:"My authenticator codes aren't working. I can't log in.",d:0},{w:'ai',t:"MFA issues can be stressful — let's work through it. What's your name?",d:1400},{w:'user',t:"Ray",d:2800},{w:'ai',t:"Thanks Ray! Are the codes cycling normally (changing every 30 seconds)?",d:4200},{w:'user',t:"They're cycling but get rejected.",d:5800},{w:'ai',t:"Classic sign of a phone clock out of sync. Go to Settings > System > Date & Time > enable 'Set Automatically'. Then try the authenticator code again. Did it work?",d:7200},{w:'user',t:"Yes! It accepted the code!",d:11200},{w:'ai',t:"Phone time sync was off — that's a very common MFA issue. All fixed, Ray!",d:12600,ticket:true,cat:"Access / Security"}],
+  nopower:[{w:'user',t:"My desktop computer won't turn on at all.",d:0},{w:'ai',t:"Let's figure out why. What's your name?",d:1400},{w:'user',t:"Sandra",d:2600},{w:'ai',t:"Thanks Sandra! Check the power strip it's plugged into — is it switched on? Also try plugging a lamp into the same outlet.",d:4000},{w:'user',t:"Oh! The power strip was switched off.",d:6200},{w:'ai',t:"That's it! Switch it on and try the power button. Did it start?",d:7600},{w:'user',t:"Yes! It's booting.",d:9800},{w:'ai',t:"Power strip was off — simple fix, Sandra!",d:11200,ticket:true,cat:"Hardware / Power"}],
+  bsod:[{w:'user',t:"I got a blue screen and my computer crashed.",d:0},{w:'ai',t:"Blue screen errors are often fixable. What's your name?",d:1400},{w:'user',t:"Kevin",d:2600},{w:'ai',t:"Thanks Kevin! Did the computer restart, or is it still on the blue screen?",d:4000},{w:'user',t:"It restarted and seems OK now.",d:5600},{w:'ai',t:"Good. Did this happen right after a Windows Update?",d:7000},{w:'user',t:"Yes, there was a driver update yesterday.",d:8400},{w:'ai',t:"Let's roll it back. Device Manager > right-click the updated device > Properties > Driver > Roll Back Driver. Done?",d:9800},{w:'user',t:"Done — rolled it back.",d:13800},{w:'ai',t:"BSOD should stop now. Monitor it today.",d:15200,ticket:true,cat:"System / OS"}],
+  webcam:[{w:'user',t:"My webcam isn't working in Teams.",d:0},{w:'ai',t:"Camera issues are usually a quick fix. What's your name?",d:1400},{w:'user',t:"Monica",d:2600},{w:'ai',t:"Thanks Monica! Let's check Windows Privacy settings.\n\nSettings > Privacy & Security > Camera — is Teams allowed?",d:4000},{w:'user',t:"It was turned off! I toggled it on.",d:6600},{w:'ai',t:"That's the most common cause — OS privacy was blocking it. Try Teams now. Is the camera working?",d:8000},{w:'user',t:"Yes! I can see myself.",d:10800},{w:'ai',t:"Privacy permission was blocked — all fixed, Monica!",d:12200,ticket:true,cat:"Hardware / Peripherals"}],
+  bluetooth:[{w:'user',t:"My Bluetooth headset won't connect to my computer.",d:0},{w:'ai',t:"Let's get that connected. What's your name?",d:1400},{w:'user',t:"Chris",d:2600},{w:'ai',t:"Thanks Chris! Is the headset in pairing mode — LED flashing rapidly?",d:4000},{w:'user',t:"I think so.",d:5400},{w:'ai',t:"Let's remove the old pairing and start fresh.\n\nSettings > Bluetooth & Devices > find the headset > three dots > Remove device. Put headset back in pairing mode. Did it connect?",d:6800},{w:'user',t:"Yes! It connected.",d:11000},{w:'ai',t:"Re-pairing fixed it, Chris!",d:12400,ticket:true,cat:"Hardware / Wireless"}],
+  onedrive:[{w:'user',t:"My OneDrive isn't syncing. Files are just sitting there.",d:0},{w:'ai',t:"Sync issues are usually a quick fix. What's your name?",d:1400},{w:'user',t:"Ella",d:2800},{w:'ai',t:"Thanks Ella! Click the OneDrive icon in your taskbar. Is it showing 'Paused'?",d:4200},{w:'user',t:"Yes — it says Paused!",d:5800},{w:'ai',t:"Click 'Resume Syncing'. Wait a minute and check if files start uploading. Syncing now?",d:7200},{w:'user',t:"Yes! Files are uploading.",d:9800},{w:'ai',t:"OneDrive was paused — all syncing now, Ella!",d:11200,ticket:true,cat:"Software / Cloud"}],
+  deletedfile:[{w:'user',t:"I accidentally deleted an important file.",d:0},{w:'ai',t:"Let's find it — it's often still recoverable. What's your name?",d:1400},{w:'user',t:"Paul",d:2600},{w:'ai',t:"Thanks Paul! Let's check the Recycle Bin first. Double-click it on your desktop — is the file there?",d:4000},{w:'user',t:"Yes! Found it in the Recycle Bin.",d:6400},{w:'ai',t:"Right-click it > Restore — it'll go back to its original location. Restored?",d:7800},{w:'user',t:"Yes, got it back!",d:9600},{w:'ai',t:"File recovered, Paul! Always check the Recycle Bin first — files stay there until emptied.",d:11000,ticket:true,cat:"Data / Files"}],
+  overheat:[{w:'user',t:"My laptop is really hot and the fan is running super loud.",d:0},{w:'ai',t:"Overheating needs attention. What's your name?",d:1400},{w:'user',t:"Jenny",d:2600},{w:'ai',t:"Thanks Jenny! First — do you smell anything burning?",d:4000},{w:'user',t:"No, no burning smell.",d:5400},{w:'ai',t:"Good. Where is your laptop sitting right now? Is it on a soft surface like a bed or pillow?",d:6800},{w:'user',t:"It's on my lap on the couch.",d:8400},{w:'ai',t:"That's the issue — soft surfaces block the vents on the bottom of the laptop. Move it to a desk or hard flat surface right now. Did the fan slow down?",d:9800},{w:'user',t:"Yes! It's much quieter already.",d:13200},{w:'ai',t:"Blocked vents were causing the overheating. Always use your laptop on a hard surface, Jenny!",d:14600,ticket:true,cat:"Hardware / Performance"}],
+  monitor2:[{w:'user',t:"My second monitor isn't showing up.",d:0},{w:'ai',t:"Let's get it detected. What's your name?",d:1400},{w:'user',t:"Alex",d:2600},{w:'ai',t:"Thanks Alex! Let's start with the cable — firmly re-seat the HDMI cable at both ends. Then press the Input/Source button on the monitor and cycle to HDMI. Did it appear?",d:4000},{w:'user',t:"Still not showing.",d:7400},{w:'ai',t:"Let's force detection. Right-click desktop > Display settings > scroll to 'Multiple displays' > click Detect. Also try Win+P > Extend. Did it show up?",d:8800},{w:'user',t:"Yes! It's showing now after pressing Win+P.",d:12400},{w:'ai',t:"Display mode wasn't set to Extend — all working now, Alex!",d:13800,ticket:true,cat:"Display"}],
+  keyboard:[{w:'user',t:"My wireless keyboard stopped working.",d:0},{w:'ai',t:"Let's get it working. What's your name?",d:1400},{w:'user',t:"Ben",d:2600},{w:'ai',t:"Thanks Ben! First — replace the batteries in the keyboard. Then toggle the power switch on the bottom off, wait 5 seconds, back on. Is it working?",d:4000},{w:'user',t:"Yes! Dead batteries were the issue.",d:7400},{w:'ai',t:"Battery replacement fixed it, Ben!",d:8800,ticket:true,cat:"Hardware / Peripherals"}],
+  printer:[{w:'user',t:"My printer shows as offline.",d:0},{w:'ai',t:"I can help. What's your name?",d:1400},{w:'user',t:"James",d:2600},{w:'ai',t:"Thanks James! Let's power cycle: unplug the printer for 30 seconds, plug back in, power on. Showing as ready?",d:4000},{w:'user',t:"Still offline.",d:7000},{w:'ai',t:"Let's check the print queue — a stuck job blocks everything.\n\nSettings > Printers & Scanners > click your printer > Open print queue. Delete any stuck jobs. Try a test print.",d:8400},{w:'user',t:"There was a stuck job! Deleted it and it printed.",d:12000},{w:'ai',t:"Stuck job was the issue — all fixed, James!",d:13400,ticket:true,cat:"Printer"}],
+  internet:[{w:'user',t:"My internet isn't working.",d:0},{w:'ai',t:"Let's get you back online. What's your name?",d:1400},{w:'user',t:"Marcus",d:2600},{w:'ai',t:"Just your device or the whole office?",d:4000},{w:'user',t:"Just mine.",d:5400},{w:'ai',t:"WiFi or ethernet?",d:6800},{w:'user',t:"WiFi.",d:8000},{w:'ai',t:"Toggle WiFi off, wait 10 sec, back on. Back online?",d:9400},{w:'user',t:"Still not connecting.",d:12400},{w:'ai',t:"Let's forget and rejoin the network: Settings > WiFi > Manage known networks > Forget > reconnect. Did that work?",d:13800},{w:'user',t:"Yes! Connected.",d:17200},{w:'ai',t:"Back online, Marcus!",d:18600,ticket:true,cat:"Internet"}],
+  networkdrive:[{w:'user',t:"My network drive isn't showing up.",d:0},{w:'ai',t:"I can help. What's your name?",d:1400},{w:'user',t:"Priya",d:2600},{w:'ai',t:"In the office or at home?",d:4000},{w:'user',t:"Working from home.",d:5400},{w:'ai',t:"Network drives need VPN first when remote. Is your VPN on?",d:6800},{w:'user',t:"No! I forgot.",d:8200},{w:'ai',t:"Connect VPN first — lock icon in taskbar — then check the drive. Back?",d:9600},{w:'user',t:"Yes, it's showing!",d:12600},{w:'ai',t:"VPN was the missing piece, Priya!",d:14000,ticket:true,cat:"Network Drive"}],
+  vpn:[{w:'user',t:"My VPN won't connect.",d:0},{w:'ai',t:"Let's fix it. What's your name?",d:1400},{w:'user',t:"Carlos",d:2600},{w:'ai',t:"Can you load google.com? Internet working?",d:4000},{w:'user',t:"Yes.",d:5400},{w:'ai',t:"Fully quit the VPN app (right-click > Quit), wait 10 sec, relaunch and connect. Did it work?",d:6800},{w:'user',t:"Yes! Connected.",d:9600},{w:'ai',t:"App restart fixed it, Carlos!",d:11000,ticket:true,cat:"VPN / Network"}],
+  email:[{w:'user',t:"Outlook stopped receiving emails.",d:0},{w:'ai',t:"Let's fix it. What's your name?",d:1400},{w:'user',t:"Diane",d:2600},{w:'ai',t:"In Outlook, click Send/Receive tab — is 'Work Offline' highlighted?",d:4000},{w:'user',t:"Yes, it's highlighted!",d:5600},{w:'ai',t:"Click 'Work Offline' to turn it off, then 'Send/Receive All Folders'. Emails coming in?",d:7000},{w:'user',t:"Yes! A bunch just came through.",d:10200},{w:'ai',t:"Outlook was in offline mode — fixed, Diane!",d:11600,ticket:true,cat:"Email / M365"}],
+  flicker:[{w:'user',t:"My external monitor is flickering.",d:0},{w:'ai',t:"I can help. What's your name?",d:1400},{w:'user',t:"Derek",d:2600},{w:'ai',t:"Reseat the HDMI cable at both ends. Flickering stop?",d:4000},{w:'user',t:"Still flickering.",d:7000},{w:'ai',t:"Press Windows+Ctrl+Shift+B to reset the graphics driver. Also check Display settings > refresh rate — set to 60Hz. Did that stop it?",d:8400},{w:'user',t:"Yes! Changing to 60Hz fixed it.",d:12200},{w:'ai',t:"Mismatched refresh rate was the cause — fixed, Derek!",d:13600,ticket:true,cat:"Display"}],
+  audio:[{w:'user',t:"I have no sound.",d:0},{w:'ai',t:"Audio issues are usually quick. What's your name?",d:1400},{w:'user',t:"Lisa",d:2600},{w:'ai',t:"Right-click the speaker icon in taskbar > Sound settings. Is the correct output device selected?",d:4000},{w:'user',t:"It was set to my monitor, not my speakers!",d:6000},{w:'ai',t:"Switch to your speakers and check volume. Is audio working?",d:7400},{w:'user',t:"Yes!",d:9800},{w:'ai',t:"Wrong output device — fixed, Lisa!",d:11200,ticket:true,cat:"Audio"}],
+  usb:[{w:'user',t:"My USB flash drive isn't recognized.",d:0},{w:'ai',t:"Let's get it recognized. What's your name?",d:1400},{w:'user',t:"Ben",d:2600},{w:'ai',t:"Try a different USB port directly on the computer (skip any hub). Did it show up?",d:4000},{w:'user',t:"Yes! Works in the other port.",d:7000},{w:'ai',t:"Port issue — original port may be faulty. All good now, Ben!",d:8400,ticket:true,cat:"Hardware"}],
+  browser:[{w:'user',t:"My browser is really slow.",d:0},{w:'ai',t:"I can help. What's your name?",d:1400},{w:'user',t:"Amy",d:2600},{w:'ai',t:"Fully close and relaunch the browser. Did that help?",d:4000},{w:'user',t:"Still slow.",d:6800},{w:'ai',t:"Clear cache: Ctrl+Shift+Delete > All time > Cached images + Cookies > Clear. Restart browser. Faster?",d:8200},{w:'user',t:"Yes! Much faster.",d:12000},{w:'ai',t:"Cache was the issue — fixed, Amy!",d:13400,ticket:true,cat:"Software"}],
+  crash:[{w:'user',t:"My app keeps crashing.",d:0},{w:'ai',t:"Let's get it working. What's your name?",d:1400},{w:'user',t:"Tom",d:2600},{w:'ai',t:"Force close: Ctrl+Shift+Esc > End Task. Wait 10 sec and relaunch. Did it open?",d:4000},{w:'user',t:"Still crashing.",d:7200},{w:'ai',t:"Check for app updates — Help > Check for Updates. After updating, try again.",d:8600},{w:'user',t:"There was an update — it works now!",d:12200},{w:'ai',t:"Update fixed it, Tom!",d:13600,ticket:true,cat:"Software"}],
+  slow:[{w:'user',t:"My computer is really slow today.",d:0},{w:'ai',t:"Let's fix it. What's your name?",d:1400},{w:'user',t:"Linda",d:2600},{w:'ai',t:"Has it been restarted recently?",d:4000},{w:'user',t:"No, on for a week.",d:5400},{w:'ai',t:"Please do a full restart now. Let me know if it's faster after.",d:6800},{w:'user',t:"Much faster!",d:10800},{w:'ai',t:"Restart was all it needed, Linda! Restart weekly for best performance.",d:12200,ticket:true,cat:"Performance"}],
+  newdevice:[{w:'user',t:"I got a new laptop and need help setting it up.",d:0},{w:'ai',t:"Happy to help. What's your name?",d:1400},{w:'user',t:"Kevin",d:2600},{w:'ai',t:"Are you connected to the office WiFi?",d:4000},{w:'user',t:"Yes.",d:5400},{w:'ai',t:"Go to office.com and sign in with your work email. Do you see your Microsoft 365 apps?",d:6800},{w:'user',t:"Yes!",d:8600},{w:'ai',t:"You're set up! Click Install Office to download your apps.",d:10000,ticket:true,cat:"Onboarding"}]
+};
+
+function autoPlay(s){resetAll();setTimeout(function(){if(!chatOpen)toggleChat();var sc=scripts[s];if(!sc)return;runScript(sc,0);},700);}
+function runScript(sc,i){if(i>=sc.length)return;var s=sc[i],delay=i===0?800:(s.d-sc[i-1].d);autoTimer=setTimeout(function(){document.getElementById('qra').innerHTML='';if(s.w==='user'){usrMsg(s.t);if(i===2&&s.t.split(' ').length<=2)uName=s.t.trim().split(' ')[0];runScript(sc,i+1);}else{typing();setTimeout(function(){rmTyping();var o={};if(s.ticket)o={ticket:true,title:s.t.substring(0,50),cat:s.cat||'General',os:'windows'};if(s.escalate)o={escalate:true,title:s.t.substring(0,50),cat:s.cat||'General',os:'windows',summary:'Escalated via demo.'};aiMsg(s.t,Object.keys(o).length?o:null);runScript(sc,i+1);},1000);}},delay);}
+function resetAll(){clearTimeout(autoTimer);chatOpen=false;chatStarted=false;state='idle';uName='';userOS='windows';document.getElementById('chat-window').classList.remove('open');document.getElementById('msgs').innerHTML='';document.getElementById('qra').innerHTML='';document.getElementById('badge').style.display='flex';document.getElementById('inp').value='';document.getElementById('os-row').style.display='none';document.getElementById('os-win').classList.add('sel');document.getElementById('os-mac').classList.remove('sel');}
+setTimeout(function(){document.getElementById('chat-bubble').style.animation='pulse-ring 2.5s ease-out 0s 3';},600);
+</script>
+</body>
+</html>

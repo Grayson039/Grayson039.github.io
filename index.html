@@ -1040,27 +1040,37 @@
 
 <!-- CASE STUDY OVERLAYS -->
 <div class="case-overlay" id="case-aftershow">
-  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">&#x2715; &nbsp;Close</button>
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 01 / 09</div>
     <div class="cs-title">Aftershow</div>
-    <div class="cs-subtitle">Letterboxd for Concerts · UI Design in Progress</div>
+    <div class="cs-subtitle">Letterboxd for Concerts &middot; Mobile App &middot; Phase 3 of 5</div>
     <div class="cs-tags">
-      <span class="cs-tag">UX Design</span><span class="cs-tag">Social App</span><span class="cs-tag">React Native</span><span class="cs-tag">Setlist.fm API</span><span class="cs-tag">AI-Assisted Logging</span>
+      <span class="cs-tag">UX Design</span><span class="cs-tag">Social App</span><span class="cs-tag">React Native</span><span class="cs-tag">Setlist.fm API</span><span class="cs-tag">AI-Assisted</span>
     </div>
     <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">Die-hard live music fans have no real home. Concert Archives has the data but zero soul. Bandsintown focuses on upcoming shows. Nobody owns the lifetime diary use case, the ability to log every show you've ever attended, from memory, no ticket required.</p>
+    <p class="cs-body">Die-hard live music fans have no real home. Concert Archives has the data but zero soul. Bandsintown leads with upcoming shows and buries your history. Nobody owns the lifetime diary use case &mdash; the ability to log every show you&rsquo;ve ever attended, from memory, no ticket required. So thousands of shows go undocumented because the right tool doesn&rsquo;t exist.</p>
     <div class="cs-divider"></div>
     <div class="cs-section-head">The Insight</div>
-    <p class="cs-body">The archive IS the product. Every competitor buries your history and leads with upcoming events. Aftershow flips it: My Shows is Tab 1. Your concert history is your identity. The feed is the reward for building it. This single architectural decision separates Aftershow from every competitor.</p>
-    <div class="cs-section-head">Key Design Decisions</div>
-    <p class="cs-body">Conceived at a Black Queen show at Thalia Hall. The "from memory" log was the first principle established, no gatekeeping, no proof required, just trust. Onboarding entry point was deliberately set to building concert history first, not upcoming shows. Social unlocks after the first show is logged so the feed has value before it's surfaced.</p>
+    <p class="cs-body">The archive IS the product. Every competitor treats history as a side feature and leads with upcoming events. Aftershow flips the architecture entirely: My Shows is Tab 1. Your concert history is your identity. The social feed is the reward for building it &mdash; not the entry point. This single decision separates Aftershow from every competitor.</p>
+    <p class="cs-body" style="margin-top:10px">The &ldquo;from memory&rdquo; log was the first principle locked in. No ticket verification, no location check, no gatekeeping. Just trust. The target user has 200+ shows in their head and nowhere to put them.</p>
     <div class="cs-grid-2">
+      <div class="cs-stat-box"><div class="cs-stat-num">10</div><div class="cs-stat-label">UI Screens Built</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">14</div><div class="cs-stat-label">MVP Screens Designed</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">5</div><div class="cs-stat-label">Tab Architecture</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">3</div><div class="cs-stat-label">Real Test Users Identified</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">2</div><div class="cs-stat-label">Full Theme Systems (Dark + Light)</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">2</div><div class="cs-stat-label">Full Theme Systems</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">5</div><div class="cs-stat-label">Phase Roadmap</div></div>
     </div>
+    <div class="cs-section-head">Key Design Decisions</div>
+    <p class="cs-body"><strong>Tab 1 is My Shows, not a feed.</strong> Onboarding funnels directly into logging your first show. Social features unlock after that &mdash; so the feed has value before it&rsquo;s surfaced. Most social apps get this backwards.</p>
+    <p class="cs-body" style="margin-top:10px"><strong>Two equal color systems.</strong> Dark Vintage (#0C0C0C base, Marshall tolex texture) and Vintage Bold (#EDE6D3 warm cream). Both modes are full citizens. Gold (#D4A853) is the shared accent across both &mdash; the connective thread that makes them feel like one product.</p>
+    <p class="cs-body" style="margin-top:10px"><strong>Type does the heavy lifting.</strong> Playfair Display Italic for artist names and show titles. Crimson Pro for setlist text. DM Mono for all metadata and labels. Syne 800 for usernames. Four fonts, each with a specific job &mdash; nothing decorative.</p>
+    <p class="cs-body" style="margin-top:10px"><strong>AI as a feature, not a gimmick.</strong> Phase 2 includes Claude API-powered fuzzy logging assist &mdash; type a vague memory, get a Setlist.fm-matched result. ~200 tokens per call. Roughly free at scale.</p>
+    <div class="cs-section-head">Phase Roadmap</div>
+    <p class="cs-body"><strong style="color:var(--gold)">Phase 1 &mdash; Complete:</strong> Competitive analysis, user personas, user journeys, information architecture.<br><br><strong style="color:var(--gold)">Phase 2 &mdash; Complete:</strong> UX architecture, feature prioritization (P0/P1/P2), data model, tech stack decisions.<br><br><strong style="color:var(--gold)">Phase 3 &mdash; In Progress:</strong> UI design &amp; asset creation. 10 of 14 MVP screens built.<br><br><strong style="color:var(--gold)">Phase 4 &mdash; Locked:</strong> React Native prototype, Setlist.fm API integration, GitHub repo.<br><br><strong style="color:var(--gold)">Phase 5 &mdash; Locked:</strong> Case study compilation, portfolio readiness.</p>
+    <div class="cs-divider"></div>
+    <a href="https://grayson039.github.io/aftershow/" target="_blank" class="cs-link">Browse All 10 Screens &#x2192;</a>
+  </div>
+</div>
     <div class="cs-section-head">Design System</div>
     <p class="cs-body">Two full color palettes designed simultaneously, Dark Vintage (#0C0C0C base with Marshall amp tolex texture) and Vintage Bold (#EDE6D3 warm cream with Orange baffle board crosshatch). A shared type system using Playfair Display, Crimson Pro, DM Mono, and Syne. Both modes are equal citizens, not an afterthought.</p>
     <div class="cs-section-head">Where It Stands</div>

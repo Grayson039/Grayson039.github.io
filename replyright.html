@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -539,7 +539,7 @@ Return ONLY valid JSON in this exact format, nothing else:
     } catch (err) {
       thinking.style.display = 'none';
       errorBox.style.display = 'block';
-      errorBox.textContent = 'Something went wrong. Check your connection and try again.';
+      errorBox.textContent = 'Error: ' + (err.message || 'Something went wrong. Try again.');
       btn.disabled = false;
     }
   }

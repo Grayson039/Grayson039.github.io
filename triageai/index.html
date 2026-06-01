@@ -122,6 +122,40 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f0f2f5;
 .dhint{font-size:10px;color:#6B8A8A;margin-top:6px;line-height:1.4;}
 /* KB badge */
 .kb-badge{display:inline-block;background:#0D4F4F;color:#9FE1CB;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:8px;vertical-align:middle;}
+
+  .back-nav {
+    position: fixed;
+    top: 20px;
+    left: 24px;
+    z-index: 999;
+  }
+  .back-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(5, 54, 56, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 138, 61, 0.25);
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 100px;
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .back-nav a:hover {
+    background: rgba(5, 54, 56, 0.98);
+    border-color: rgba(255, 138, 61, 0.6);
+  }
+  .back-nav a svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>

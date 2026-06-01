@@ -821,7 +821,7 @@
   <div class="section-label">Selected Work</div>
   <div class="work-grid reveal">
 
-    <div class="project-card stagger-child" onclick="openCase('lc')" style="cursor:pointer;">
+    <div class="project-card stagger-child" onclick="window.location='little-caesars/'" style="cursor:pointer;">
       <div class="p-num">01 / 09</div>
       <div class="p-screenshot"><img src="little-caesars/lc-thumbnail.png" alt="Little Caesars Redesign" /></div>
       <div class="p-name">Little Caesars</div>
@@ -834,7 +834,7 @@
           <span class="p-tag">Speculative</span>
         </div>
         <div class="p-actions">
-          <a href="#" class="p-case-link" onclick="openCase('lc');return false;">Case Study →</a>
+          <a href="#" class="p-case-link" href="little-caesars/">Case Study →</a>
         </div>
       </div>
     </div>
@@ -1411,46 +1411,7 @@
   </div>
 </div>
 
-<div class="case-overlay" id="case-lc">
-  <button class="case-close" onclick="closeCase()">&#x2715; &nbsp;Close</button>
-  <div class="case-inner">
-    <div class="cs-eyebrow">Case Study, 01 / 09 &middot; Speculative</div>
-    <div class="cs-title">Little Caesars</div>
-    <div class="cs-subtitle">Mobile App Redesign &middot; 7 Screens &middot; Interactive Prototype</div>
-    <div class="cs-tags">
-      <span class="cs-tag">UX Design</span><span class="cs-tag">Mobile App</span><span class="cs-tag">Before &amp; After</span><span class="cs-tag">Interactive Prototype</span><span class="cs-tag">Speculative</span>
-    </div>
-    <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">The Little Caesars app has a conversion problem hiding in plain sight. Before a user can see a single menu item, they&rsquo;re forced through four sequential commitment screens: choose Pick-Up or Delivery, select a location, set a pickup time &mdash; and only then does the menu appear.</p>
-    <p class="cs-body" style="margin-top:10px">There&rsquo;s no browse mode. No way to check prices or decide what you want before committing to a location and order type. Users who just want to look around have nowhere to go. So they leave.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Four gate screens before a menu isn&rsquo;t a UX quirk &mdash; it&rsquo;s abandoned carts.</strong></p>
-    <div class="cs-divider"></div>
-    <div class="cs-section-head">The Approach</div>
-    <p class="cs-body">Rather than a full rebrand, this redesign targets the specific friction points. Seven screens redesigned with side-by-side documentation &mdash; every before screen is a real screenshot from a live account, paired with the redesigned version and annotated callouts explaining exactly what changed and why.</p>
-    <p class="cs-body" style="margin-top:10px">The interactive prototype covers the complete order flow in a single HTML file: browse, customize, cart, checkout, and order tracking. No Figma handoff theater &mdash; a fully clickable product.</p>
-    <div class="cs-section-head">Key Design Decisions</div>
-    <p class="cs-body"><strong>Menu access with zero commitment.</strong> One tap from the home screen gets you to the full menu &mdash; no location, no order type, no schedule required. Browse first, commit when you&rsquo;re ready. Removes the single biggest drop-off point in the flow.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Context-aware item detail sheet.</strong> A single adaptive component handles pizza, wings, sides, drinks, and combos &mdash; instead of separate templates per category that drift out of sync and create inconsistent experiences.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Caesar Crown loyalty surfaced, not buried.</strong> Points balance visible on the account screen. Active deals promoted to the main nav. Previously hidden under a sub-tab most users never found &mdash; a loyalty program that&rsquo;s invisible isn&rsquo;t a retention tool.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Real data throughout.</strong> Every screen uses actual rewards, actual store data, and actual order history &mdash; not lorem ipsum. The redesign had to work with the real product, not around it.</p>
-    <div class="cs-grid-2">
-      <div class="cs-stat-box"><div class="cs-stat-num">4</div><div class="cs-stat-label">Gate Screens Removed</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">7</div><div class="cs-stat-label">Screens Redesigned</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">1</div><div class="cs-stat-label">Tap to Browse (was 4)</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">100%</div><div class="cs-stat-label">Real Data, No Lorem Ipsum</div></div>
-    </div>
-    <div class="cs-section-head">The Tradeoffs</div>
-    <p class="cs-body"><strong>Browse-first vs. location-first:</strong> The obvious counter-argument is that Little Caesars needs your location to show accurate pricing and availability. We considered keeping location as step one. The tradeoff: a small percentage of menu items vary by location, but 100% of users hit the gate. The decision was to let people browse the full menu freely and only ask for location at the point of ordering &mdash; when they&rsquo;ve already decided they want something. Commitment after intent, not before it.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Single component vs. category templates:</strong> Building one adaptive item detail sheet instead of separate templates per category means slightly more complex logic for edge cases like combos. The tradeoff was worth it &mdash; separate templates drift out of sync over time and create inconsistent experiences. One source of truth, maintained in one place, is the right long-term call even if it&rsquo;s harder to build initially.</p>
-    <div class="cs-section-head">The Result</div>
-    <p class="cs-body">A redesigned flow that gets users to the menu in a single tap, eliminates the pre-commitment friction that drives abandonment, and makes the Caesar Crown loyalty program visible enough to actually influence behavior. The before/after documentation shows not just what changed but why &mdash; each decision traced back to a specific user friction point.</p>
-    <p class="cs-body" style="margin-top:10px">This is speculative work built with the LC design team in mind. The goal wasn&rsquo;t to reimagine the brand &mdash; it was to demonstrate exactly what I&rsquo;d fix and why, backed by working prototypes and documented rationale. This is what day one looks like.</p>
-    <p class="cs-body" style="margin-top:10px; color: var(--gold); font-style: italic;">If you&rsquo;re on the LC team and reading this: hi.</p>
-    <div class="cs-divider"></div>
-    <a href="little-caesars/" target="_blank" class="cs-link" style="margin-right:24px">View Full Case Study &#x2192;</a>
-    <a href="little-caesars/" target="_blank" class="cs-link">Explore Interactive Screens &#x2192;</a>
-  </div>
-</div>
+
 
 <div class="case-overlay" id="case-replyright">
   <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>

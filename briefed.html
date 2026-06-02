@@ -637,7 +637,7 @@ Return ONLY valid JSON, nothing else:
 }`;
 
     try {
-      const response = await fetch("/.netlify/functions/claude-proxy", {
+      const response = await fetch("https://claude-proxy.willgrayson039.workers.dev", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

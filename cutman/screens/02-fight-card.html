@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cutman — Fight Card Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family:'Inter',sans-serif;background:#111;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px; }
+  .phone-outer { position:relative;filter:drop-shadow(0 32px 64px rgba(0,0,0,0.6)); }
+  .side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
+  .side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
+  .phone-body { width:370px;height:760px;background:#0D0D0D;border-radius:54px;padding:12px;border:1px solid #2A2A2A;box-shadow:inset 0 1px 1px rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.5); }
+  #phone-screen { width:100%;height:100%;border-radius:44px;overflow:hidden;position:relative; }
+  .controls { text-align:center;margin-top:24px; }
+  #screen-label { font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px; }
+  .hint { font-size:11px;color:#444;margin-bottom:14px; }
+  #screen-dots { display:flex;gap:7px;align-items:center;justify-content:center;margin-bottom:14px; }
+  #screen-dots .dot { width:7px;height:7px;border-radius:50%;background:#333;transition:all 0.2s; }
+  #screen-dots .dot.on { width:22px;border-radius:4px;background:#E8272A; }
+  .theme-btn { background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);color:#888;font-size:12px;font-weight:600;padding:8px 20px;border-radius:100px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px; }
+</style>
+</head>
+<body>
+
+<div class="phone-outer">
+  <div class="side-l"></div>
+  <div class="side-r"></div>
+  <div class="phone-body">
+    <div id="phone-screen"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div id="screen-label">Fight Card</div>
+  <div class="hint">Tap fighters to see profiles · Toggle prelims</div>
+  <div id="screen-dots"></div>
+  <button class="theme-btn" id="theme-btn" onclick="cmToggleTheme()">☀ Light</button>
+</div>
+
+<script src="../cutman-design-system.js"></script>
+<script>
+(function () {
+  var T = CM.T, S = CM.S, R = CM.R, c = CM.c, HEX = CM.HEX;
+
+  /* ── DATA ─────────────────────────────────────────────── */
+  var EVENT = {
+    promo: 'UFC', name: 'UFC 315',
+    date: 'Saturday, May 31, 2026', time: 'Main Card 10pm ET · Prelims 8pm ET',
+    venue: 'Madison Square Garden', city: 'New York, NY',
+    network: 'ESPN+', ppvPrice: '$79.99'
+  };
+
+  var MAIN_CARD = [
+    { a: 'Jon Jones',        aRank: 'Champion',  aGym: 'Jackson-Wink MMA',   aOdds: -350, b: 'Stipe Miocic',       bRank: '#1 Contender', bGym: 'Strong Style MMA',     bOdds: +280, weightClass: 'Heavyweight',        rounds: 5, title: true, main: true },
+    { a: 'Leon Edwards',     aRank: 'Champion',  aGym: 'BCSA',               aOdds: -280, b: 'Shavkat Rakhimov',   bRank: '#3 Contender', bGym: 'Tiger Muay Thai',      bOdds: +225, weightClass: 'Welterweight',        rounds: 5, title: true },
+    { a: 'Alex Pereira',     aRank: '#1',        aGym: 'Glory MMA',          aOdds: -400, b: 'Khalil Rountree Jr.',bRank: '#4',           bGym: 'Xtreme Couture',       bOdds: +310, weightClass: 'Light Heavyweight',   rounds: 3 },
+    { a: 'Sean Strickland',  aRank: '#2',        aGym: 'Xtreme Couture',     aOdds: -150, b: 'Paulo Costa',        bRank: '#5',           bGym: 'Team Luta Livre',      bOdds: +125, weightClass: 'Middleweight',        rounds: 3 },
+    { a: 'Val. Shevchenko',  aRank: '#1',        aGym: 'Tiger Muay Thai',    aOdds: +150, b: 'Alexa Grasso',       bRank: 'Champion',     bGym: 'Science of Fighting',  bOdds: -180, weightClass: "Women's Flyweight",   rounds: 3 }
+  ];
+
+  var PRELIMS = [
+    { a: 'Merab Dvalishvili',  aRank: 'Champion',   aGym: 'Tiger Muay Thai',    aOdds: -220, b: 'Henry Cejudo',        bRank: 'Former Champ', bGym: 'GAMMA',              bOdds: +180, weightClass: 'Bantamweight',        rounds: 5, title: true },
+    { a: 'Brian Ortega',       aRank: '#3',          aGym: 'Gracie Hermosa',     aOdds: +135, b: 'Yair Rodriguez',      bRank: '#2',           bGym: 'Entram Gym',         bOdds: -165, weightClass: 'Featherweight',       rounds: 3 },
+    { a: 'Mateusz Gamrot',     aRank: '#6',          aGym: 'AKA Thailand',       aOdds: +165, b: 'Arman Tsarukyan',     bRank: '#4',           bGym: 'AKA Thailand',       bOdds: -200, weightClass: 'Lightweight',         rounds: 3 },
+    { a: 'Cody Garbrandt',     aRank: 'NR',          aGym: 'Team Alpha Male',    aOdds: +200, b: 'Deiveson Figueiredo', bRank: 'Former Champ', bGym: 'Fight Ready',        bOdds: -250, weightClass: 'Flyweight',           rounds: 3 }
+  ];
+
+  /* ── SCREENS ──────────────────────────────────────────── */
+
+  function sFightCard(th) {
+    var showPrelims = cmState.showPrelims !== false;
+
+    return '<div style="height:100%;display:flex;flex-direction:column;position:relative;font-family:' + T.sans + '">' +
+      c.notch() + c.statusBar(th) +
+
+      /* Header bar */
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px ' + S.xl + ' 8px;flex-shrink:0">' +
+        c.backBtn(th, '', 'cmGo(\'home\')') +
+        '<div style="font-size:13px;font-weight:700;color:' + th.text + '">' + EVENT.name + '</div>' +
+        c.promoBadge(EVENT.promo) +
+      '</div>' +
+
+      /* Scrollable body */
+      '<div style="flex:1;overflow-y:auto;padding-bottom:80px;scrollbar-width:none">' +
+
+        /* Event hero */
+        '<div style="margin:0 ' + S.xl + ' 14px;border-radius:' + R.xl + ';overflow:hidden;' +
+          'background-color:#1A0000;' +
+          'background-image:linear-gradient(145deg,rgba(40,0,0,0.78) 0%,rgba(10,0,0,0.62) 45%,rgba(0,0,0,0.92) 100%),url(../stipe%20jones.webp);' +
+          'background-size:100% 100%,cover;background-position:center,center top;' +
+          'border:1px solid rgba(232,39,42,0.25);padding:16px">' +
+
+          '<div style="font-size:24px;font-weight:900;color:#FFF;letter-spacing:-0.02em;margin-bottom:4px">' + EVENT.name + '</div>' +
+          '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:12px">' + EVENT.date + '</div>' +
+
+          '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+            '<span style="font-size:11px;color:rgba(255,255,255,0.4)">' + EVENT.venue + ' · ' + EVENT.city + '</span>' +
+          '</div>' +
+
+          '<div style="font-size:10px;color:rgba(255,255,255,0.35)">' + EVENT.time + '</div>' +
+        '</div>' +
+
+        /* Where to Watch — flat list row */
+        '<div style="padding:10px ' + S.xl + ';margin-bottom:4px;' +
+          'display:flex;align-items:center;justify-content:space-between;' +
+          'border-bottom:1px solid ' + th.border + '">' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<span style="font-size:9px;font-weight:700;color:' + th.muted + ';letter-spacing:0.1em;text-transform:uppercase">WATCH</span>' +
+            '<span style="font-size:13px;font-weight:800;color:' + th.text + '">' + EVENT.network + '</span>' +
+          '</div>' +
+          '<span style="font-size:12px;font-weight:600;color:' + th.sub + '">' + EVENT.ppvPrice + '</span>' +
+        '</div>' +
+
+        /* Main Card header */
+        '<div style="display:flex;align-items:center;gap:10px;padding:0 ' + S.xl + ';margin-bottom:4px">' +
+          '<div style="flex:1;height:1px;background:' + th.border + '"></div>' +
+          '<span style="font-size:10px;font-weight:800;color:' + th.muted + ';letter-spacing:0.14em">MAIN CARD</span>' +
+          '<div style="flex:1;height:1px;background:' + th.border + '"></div>' +
+        '</div>' +
+
+        MAIN_CARD.map(function (f) { return c.fightRow(th, f); }).join('') +
+
+        /* Prelims toggle header */
+        '<div onclick="cmToggleState(\'showPrelims\')" style="display:flex;align-items:center;gap:10px;padding:14px ' + S.xl + ';cursor:pointer">' +
+          '<div style="flex:1;height:1px;background:' + th.border + '"></div>' +
+          '<span style="font-size:10px;font-weight:800;color:' + th.muted + ';letter-spacing:0.14em">PRELIMS</span>' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="' + th.muted + '" stroke-width="2.5" stroke-linecap="round">' +
+            '<path d="' + (showPrelims ? 'M18 15l-6-6-6 6' : 'M6 9l6 6 6-6') + '"/>' +
+          '</svg>' +
+          '<div style="flex:1;height:1px;background:' + th.border + '"></div>' +
+        '</div>' +
+
+        (showPrelims ? PRELIMS.map(function (f) { return c.fightRow(th, f); }).join('') : '') +
+
+        '<div style="height:10px"></div>' +
+
+      '</div>' +
+      c.navBar(th, 1) +
+    '</div>';
+  }
+
+  function sFighter(th) {
+    return '<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:' + T.sans + '">' +
+      c.notch() +
+      '<div style="font-size:48px;margin-bottom:14px">🥋</div>' +
+      '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Fighter Profile</div>' +
+      '<div style="font-size:12px;color:' + th.muted + ';text-align:center;padding:0 32px;margin-bottom:24px">Full detail in 03-fighter-profile.html</div>' +
+      '<div onclick="cmBack()" style="padding:10px 24px;border-radius:' + R.pill + ';background:' + th.primary + ';color:white;font-size:13px;font-weight:600;cursor:pointer">← Back</div>' +
+    '</div>';
+  }
+
+  function sHome(th) {
+    return '<div style="height:100%;display:flex;flex-direction:column;position:relative;font-family:' + T.sans + '">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column">' +
+        '<div style="font-size:48px;margin-bottom:14px">🏠</div>' +
+        '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Home</div>' +
+        '<div style="font-size:12px;color:' + th.muted + ';margin-bottom:24px">See 01-home.html</div>' +
+        '<div onclick="cmGo(\'fightCard\')" style="padding:10px 24px;border-radius:' + R.pill + ';background:' + th.primary + ';color:white;font-size:13px;font-weight:600;cursor:pointer">→ Fight Card</div>' +
+      '</div>' +
+      c.navBar(th, 0) +
+    '</div>';
+  }
+
+  /* ── WIRE UP ───────────────────────────────────────────── */
+  CM.nav(
+    { fightCard: sFightCard, fighter: sFighter, home: sHome },
+    'fightCard',
+    'phone-screen',
+    {
+      state: { showPrelims: true },
+      onRender: function (state, theme) {
+        var names = { fightCard: 'Fight Card', fighter: 'Fighter Profile', home: 'Home' };
+        var lbl = document.getElementById('screen-label');
+        if (lbl) lbl.textContent = names[state.cur] || state.cur;
+        var dots = document.getElementById('screen-dots');
+        if (dots) {
+          var list = ['fightCard', 'fighter'];
+          dots.innerHTML = list.map(function (s) { return '<div class="dot' + (s === state.cur ? ' on' : '') + '"></div>'; }).join('');
+        }
+        var btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = state.dark ? '☀ Light' : '☾ Dark';
+      }
+    }
+  );
+})();
+</script>
+</body>
+</html>

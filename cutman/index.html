@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cutman — Combat Sports Dashboard · Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #E8272A;
+  --gold: #D4A853;
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --border: #222;
+  --text: #F2F2F2;
+  --muted: #888;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── BACK NAV ── */
+.back-nav {
+  position: fixed; top: 20px; left: 24px; z-index: 999;
+}
+.back-nav a {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(5,54,56,0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,138,61,0.25);
+  color: #fff; text-decoration: none;
+  padding: 10px 16px; border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+.back-nav a:hover { background: rgba(5,54,56,0.98); border-color: rgba(255,138,61,0.6); }
+.back-nav a svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 80px 40px 48px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, #0f0000 0%, var(--bg) 100%);
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 8vw, 96px);
+  letter-spacing: 2px; line-height: 1;
+  color: #fff; margin-bottom: 16px;
+}
+.hero h1 span { color: var(--red); }
+.hero-sub {
+  color: var(--muted); font-size: 16px; line-height: 1.6;
+  max-width: 560px; margin: 0 auto 32px;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 32px;
+}
+.hero-meta-item .label {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+}
+.hero-meta-item .value { font-size: 14px; font-weight: 600; color: #ccc; }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 40px;
+  align-items: start;
+}
+
+/* ── STICKY PHONE COLUMN ── */
+.phone-col {
+  position: sticky;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Screen tabs */
+.screen-tabs {
+  display: flex; gap: 6px;
+}
+.screen-tab {
+  font-size: 11px; font-weight: 600; padding: 6px 14px;
+  border-radius: 100px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--muted);
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.screen-tab.active {
+  background: var(--red); border-color: var(--red); color: #fff;
+}
+
+/* Phone shell */
+.phone-outer {
+  position: relative;
+  filter: drop-shadow(0 32px 64px rgba(232,39,42,0.2));
+}
+.side-l {
+  position: absolute; left: -4px; top: 108px;
+  width: 4px; height: 32px; background: #1A1A1A;
+  border-radius: 4px 0 0 4px; box-shadow: 0 46px 0 #1A1A1A;
+}
+.side-r {
+  position: absolute; right: -4px; top: 130px;
+  width: 4px; height: 64px; background: #1A1A1A;
+  border-radius: 0 4px 4px 0;
+}
+.phone-body {
+  width: 300px; height: 620px;
+  background: #0D0D0D; border-radius: 54px; padding: 10px;
+  border: 1px solid #2A2A2A;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.5);
+}
+.phone-screen-wrap {
+  width: 100%; height: 100%;
+  border-radius: 44px; overflow: hidden; position: relative;
+}
+.phone-frame {
+  width: 100%; height: 100%;
+  border: none; border-radius: 44px;
+  display: block;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); font-size: 12px; font-weight: 600;
+  padding: 7px 18px; border-radius: 100px; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+}
+.theme-toggle:hover { border-color: #444; color: #ccc; }
+
+/* ── CASE STUDY COLUMN ── */
+.cs-col {
+  padding-left: 56px;
+  border-left: 1px solid var(--border);
+}
+
+.cs-section {
+  margin-bottom: 56px;
+}
+.cs-section:last-child { margin-bottom: 0; }
+
+.cs-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--red); margin-bottom: 12px;
+}
+.cs-section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px; letter-spacing: 1px;
+  color: #fff; margin-bottom: 12px; line-height: 1.1;
+}
+.cs-body {
+  font-size: 14px; line-height: 1.75; color: #bbb; margin-bottom: 16px;
+}
+.cs-body:last-child { margin-bottom: 0; }
+
+.cs-divider {
+  height: 1px; background: var(--border); margin: 32px 0;
+}
+
+/* Insight cards */
+.cs-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;
+}
+.cs-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px;
+}
+.cs-card-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--red);
+  background: rgba(232,39,42,0.1); border-radius: 4px;
+  padding: 2px 8px; display: inline-block; margin-bottom: 10px;
+}
+.cs-card-tag.gold { color: var(--gold); background: rgba(212,168,83,0.1); }
+.cs-card h4 { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.cs-card p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* Decision list */
+.cs-decisions {
+  display: flex; flex-direction: column; gap: 14px; margin-top: 20px;
+}
+.cs-decision {
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.cs-decision-arrow {
+  color: var(--red); font-size: 16px; flex-shrink: 0; margin-top: 1px;
+}
+.cs-decision-body h5 {
+  font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px;
+}
+.cs-decision-body p {
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+}
+
+/* Stats row */
+.cs-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px;
+}
+.cs-stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; text-align: center;
+}
+.cs-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px; color: var(--red); line-height: 1; margin-bottom: 4px;
+}
+.cs-stat-label { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* Status badge */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(212,168,83,0.08); border: 1px solid rgba(212,168,83,0.25);
+  border-radius: 100px; padding: 8px 16px; margin-top: 16px;
+}
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0;
+}
+.status-text { font-size: 12px; font-weight: 600; color: var(--gold); }
+
+/* Proof screenshot */
+.proof-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; margin-top: 20px;
+  display: flex; gap: 14px; align-items: center;
+}
+.proof-icon { font-size: 28px; flex-shrink: 0; }
+.proof-text h5 { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.proof-text p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .main {
+    grid-template-columns: 1fr;
+    padding: 32px 20px;
+  }
+  .phone-col { position: static; margin-bottom: 48px; }
+  .cs-col { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 40px; }
+  .hero { padding: 80px 20px 40px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="back-nav">
+  <a href="../">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Case Study, 09 / 09 · Personal Project</div>
+  <h1>Cut<span>man</span></h1>
+  <p class="hero-sub">One app. Every promotion. All the fights. A combat sports dashboard that replaces five fragmented sources with one fan-first interface.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="label">Role</div><div class="value">UX Design · Product</div></div>
+    <div class="hero-meta-item"><div class="label">Platform</div><div class="value">iOS · Android</div></div>
+    <div class="hero-meta-item"><div class="label">Stack</div><div class="value">React Native · FastAPI</div></div>
+    <div class="hero-meta-item"><div class="label">Status</div><div class="value">Design Complete · Build Phase</div></div>
+  </div>
+</div>
+
+<!-- MAIN TWO-COLUMN -->
+<div class="main">
+
+  <!-- STICKY PHONE -->
+  <div class="phone-col">
+    <div class="screen-tabs">
+      <button class="screen-tab active" onclick="switchScreen('home', this)">Home</button>
+      <button class="screen-tab" onclick="switchScreen('card', this)">Fight Card</button>
+      <button class="screen-tab" onclick="switchScreen('fighter', this)">Fighter</button>
+    </div>
+
+    <div class="phone-outer">
+      <div class="side-l"></div>
+      <div class="side-r"></div>
+      <div class="phone-body">
+        <div class="phone-screen-wrap">
+          <iframe id="phone-frame" class="phone-frame" src="screens/01-home.html" scrolling="no"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">☾ Toggle Theme</button>
+  </div>
+
+  <!-- CASE STUDY -->
+  <div class="cs-col">
+
+    <!-- THE PROBLEM -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">The Problem</div>
+      <h2>Five Apps to Follow One Sport</h2>
+      <p class="cs-body">I'm a combat sports fan. UFC events, boxing cards, PFL, ONE Championship — I follow all of it. And every single time I want to know when the next fight is, where to watch it, who's on the card, what the odds are, and what's been happening in the news — I'm bouncing between UFC.com, ESPN, Google, Reddit, and Tapology.</p>
+      <p class="cs-body">That's five different contexts, five different UX patterns, five logins. None of them talk to each other. None of them cover all the promotions. There is no hub for combat sports fans — and there should be.</p>
+
+      <div class="cs-cards">
+        <div class="cs-card">
+          <div class="cs-card-tag">Pain Point</div>
+          <h4>No single source of truth</h4>
+          <p>UFC.com only covers UFC. ESPN buries fight cards behind general sports. Tapology has the data but the UX is built for superfans only.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag">Pain Point</div>
+          <h4>Casual fans are lost</h4>
+          <p>A die-hard knows where to look. A casual fan who wants to get into the sport has no entry point. There's no app that meets them where they are.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- THE INSIGHT -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">The Insight</div>
+      <h2>Fans Don't Need More Sources</h2>
+      <p class="cs-body">The insight that drove every design decision: fans don't need another source. They need one source that thinks like a fan. That means cross-promotion aggregation, surfacing what matters most (next event, who's fighting, where to watch, how much it costs), and letting depth live a tap away — not buried in a scroll.</p>
+      <p class="cs-body">The design challenge isn't the information — it's the hierarchy. Combat sports fans want everything, but density is the enemy of usefulness. Every screen had to earn its information.</p>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- HOME SCREEN -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Screen 01 · Home</div>
+      <h2>The Next Fight, Above the Fold</h2>
+      <p class="cs-body">The home screen has one job: tell you what's coming up and what you need to know before you go deeper. The hero card always shows the next major event — promotion, fighters, date, venue, network, and PPV cost in one glance. No tapping around to find out if you need to pay.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Hero card takes 40% of the screen</h5>
+            <p>The next event is the most time-sensitive piece of information. It gets the most real estate. Everything else lives below it.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Promotion filter chips, not a dropdown</h5>
+            <p>Boxing fans shouldn't have to scroll through UFC cards. Filter chips let you narrow by promotion in one tap and stay narrow until you want to broaden.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Color-coded promo badges</h5>
+            <p>UFC in red, Boxing in purple, PFL in green, ONE in gold. A fan scanning a list of events can identify their promotion instantly without reading the label.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Removed the hexagon texture</h5>
+            <p>Early versions had a subtle red hexagon pattern on the screen background. Design review feedback was that it cluttered the home screen. Cut it. The fighter profile hero still uses it implicitly through the photo treatment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- FIGHT CARD SCREEN -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Screen 02 · Fight Card</div>
+      <h2>Every Fight, Ranked by Importance</h2>
+      <p class="cs-body">The fight card screen surfaces the full event card in a scannable list. Main card at top, prelims collapsible below. Each fight row shows fighters, rankings, and live betting odds inline — because fans check odds constantly and burying them would make this no better than UFC.com.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Odds inline in the fight row</h5>
+            <p>Odds aren't supplementary — they're primary for fight fans. They sit in the VS column between fighters, not behind a tap.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Title fights get gold treatment</h5>
+            <p>Championship bouts get a gold background tint and the 🏆 weight class label. Glanceable hierarchy — you know what's important without reading everything.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Prelims are collapsible</h5>
+            <p>Casual fans care about the main card. Die-hards care about everything. Prelims collapse by default — one tap to open. Nobody gets what they don't want.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- FIGHTER PROFILE -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Screen 03 · Fighter Profile</div>
+      <h2>Record, Corner, Bio — In That Order</h2>
+      <p class="cs-body">Fighter profiles are tabbed: Record, Corner, Bio. The tab order is intentional. Fans want the record first. The Corner tab is Cutman's most unique feature — it shows who else trains at the same gym, surfacing the gym-fighter connection graph that hardcore fans know and casual fans have never seen presented this way.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Corner tab: the differentiator</h5>
+            <p>No other combat sports app surfaces the training camp connection. Knowing Jon Jones and Max Holloway both come from Jackson-Wink is fight-fan context that makes you sound like an expert. That's the casual-to-expert bridge.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Physical stats in one bar</h5>
+            <p>Age, height, weight, reach — four numbers that matter before every fight. They live in a single row inside the hero card, not buried in the Bio tab.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Win method breakdown on the hero</h5>
+            <p>KO/TKO, SUB, DEC — color coded in red, gold, green. A fighter's style lives in those three numbers. They're on the hero card, not in a stats tab.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- WHERE IT STANDS -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Build Status</div>
+      <h2>The Pipeline Works. The App Is Next.</h2>
+      <p class="cs-body">This isn't just a design exercise. The data layer has been proven — a Python/BeautifulSoup scraper was built, connected to live sources, and real UFC events and news headlines pulled directly to an iPhone via Expo Go. The infrastructure runs at $0/month.</p>
+
+      <div class="proof-block">
+        <div class="proof-icon">📱</div>
+        <div class="proof-text">
+          <h5>Proof of concept: live on device</h5>
+          <p>Real UFC fight cards and news headlines scraped and displayed on iPhone. Multi-promotion support confirmed (UFC, Boxing, Combate).</p>
+        </div>
+      </div>
+
+      <div class="cs-stats">
+        <div class="cs-stat">
+          <div class="cs-stat-num">5+</div>
+          <div class="cs-stat-label">Apps Replaced by One</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-num">3</div>
+          <div class="cs-stat-label">Screens Designed</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-num">$0</div>
+          <div class="cs-stat-label">Monthly Infrastructure</div>
+        </div>
+      </div>
+
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <div class="status-text">Data pipeline proven · React Native build is next</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var screens = {
+  home:    'screens/01-home.html',
+  card:    'screens/02-fight-card.html',
+  fighter: 'screens/03-fighter-profile.html'
+};
+var isDark = true;
+
+function switchScreen(key, btn) {
+  document.getElementById('phone-frame').src = screens[key];
+  document.querySelectorAll('.screen-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function toggleTheme() {
+  var frame = document.getElementById('phone-frame');
+  try {
+    if (frame.contentWindow && frame.contentWindow.cmToggleTheme) {
+      frame.contentWindow.cmToggleTheme();
+    }
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

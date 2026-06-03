@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cutman — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #111111;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 20px;
+  }
+  .phone-outer { position: relative; filter: drop-shadow(0 32px 64px rgba(0,0,0,0.6)); }
+  .side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
+  .side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
+  .phone-body { width:370px;height:760px;background:#0D0D0D;border-radius:54px;padding:12px;border:1px solid #2A2A2A;box-shadow:inset 0 1px 1px rgba(255,255,255,0.06),inset 0 -1px 0 rgba(0,0,0,0.5); }
+  #phone-screen { width:100%;height:100%;border-radius:44px;overflow:hidden;position:relative; }
+  .controls { text-align:center;margin-top:24px; }
+  #screen-label { font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px; }
+  .hint { font-size:11px;color:#444;margin-bottom:14px; }
+  #screen-dots { display:flex;gap:7px;align-items:center;justify-content:center;margin-bottom:14px; }
+  #screen-dots .dot { width:7px;height:7px;border-radius:50%;background:#333;transition:all 0.2s; }
+  #screen-dots .dot.on { width:22px;border-radius:4px;background:#E8272A; }
+  .theme-btn { background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);color:#888;font-size:12px;font-weight:600;padding:8px 20px;border-radius:100px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px; }
+</style>
+</head>
+<body>
+
+<div class="phone-outer">
+  <div class="side-l"></div>
+  <div class="side-r"></div>
+  <div class="phone-body">
+    <div id="phone-screen"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div id="screen-label">Home</div>
+  <div class="hint">Tap the hero card or week cards to navigate</div>
+  <div id="screen-dots"></div>
+  <button class="theme-btn" id="theme-btn" onclick="cmToggleTheme()">☀ Light</button>
+</div>
+
+<script src="../cutman-design-system.js"></script>
+<script>
+(function () {
+  var T = CM.T, S = CM.S, R = CM.R, c = CM.c, HEX = CM.HEX;
+
+  /* ── DATA ─────────────────────────────────────────────── */
+  var NEXT_EVENT = {
+    promo: 'UFC', name: 'UFC 315',
+    mainEvent: 'Jones vs. Miocic',
+    subtitle: 'Heavyweight Championship · 5 Rounds',
+    date: 'Sat · May 31, 2026', venue: 'Madison Square Garden',
+    network: 'ESPN+', ppvPrice: '$79.99', daysAway: 10
+  };
+
+  var THIS_WEEK = [
+    { promo: 'UFC',     name: 'UFC 315',            sub: 'Jones vs. Miocic',        date: 'May 31', net: 'ESPN+ PPV',  color: '#2A0000', img: '../ufc%20315.jpg' },
+    { promo: 'BOXING',  name: 'Canelo vs. Crawford', sub: 'Super Middleweight Title', date: 'Jun 1',  net: 'DAZN PPV',   color: '#06061E' },
+    { promo: 'PFL',     name: 'PFL Playoffs 1',      sub: 'LW & Featherweight',       date: 'Jun 3',  net: 'ESPN2',      color: '#001A08' },
+    { promo: 'ONE',     name: 'ONE Fight Night 28',  sub: 'Superlek vs. Nguyen',      date: 'Jun 7',  net: 'Prime Video',color: '#1A1400' }
+  ];
+
+  var NEWS = [
+    { source: 'ESPN MMA',    time: '2h',  headline: 'Jon Jones posts MSG training footage — "I\'ve never been more ready for anything in my life"', hot: true  },
+    { source: 'MMA Fighting',time: '4h',  headline: 'Canelo vs. Crawford undercard announced — four world title fights added to June 1 card' },
+    { source: 'MMA Junkie',  time: '6h',  headline: 'UFC releases updated P4P rankings ahead of UFC 315 — Ilia Topuria climbs to No. 1' },
+    { source: 'The Athletic',time: '9h',  headline: 'Exclusive: UFC in advanced talks with Ryan Garcia for MMA debut, Q4 2026 target date' },
+    { source: 'Tapology',    time: '11h', headline: 'PFL Playoffs bracket finalized — Olivier Aubin-Mercier earns top seed in lightweight' }
+  ];
+
+  /* ── SCREENS ──────────────────────────────────────────── */
+
+  function sHome(th) {
+    var filter = cmState.homeFilter || 'All';
+    var chips   = ['All', 'UFC', 'Boxing', 'PFL', 'ONE', 'Bellator'];
+
+    return '<div style="height:100%;display:flex;flex-direction:column;position:relative;font-family:' + T.sans + '">' +
+      c.notch() + c.statusBar(th) +
+
+      /* Header */
+      '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px ' + S.xl + ' 10px;flex-shrink:0">' +
+        '<div>' +
+          '<div style="font-size:18px;font-weight:800;color:' + th.text + ';letter-spacing:-0.02em;line-height:1">CUTMAN <span style="color:' + th.primary + '">🥊</span></div>' +
+          '<div style="font-size:9px;font-weight:600;color:' + th.muted + ';letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">All Combat Sports</div>' +
+        '</div>' +
+        '<div onclick="void(0)" style="position:relative;cursor:pointer;padding:4px">' +
+          '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + th.muted + '" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>' +
+          '<div style="position:absolute;top:3px;right:3px;width:7px;height:7px;background:' + th.primary + ';border-radius:50%;border:1.5px solid ' + th.bg + '"></div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Scroll body */
+      '<div style="flex:1;overflow-y:auto;padding-bottom:80px;scrollbar-width:none">' +
+
+        /* NEXT EVENT HERO */
+        '<div onclick="cmGo(\'fightCard\')" style="margin:4px ' + S.xl + ' ' + S.section + ';border-radius:' + R.xl + ';overflow:hidden;cursor:pointer;' +
+          'background-color:#1A0000;' +
+          'background-image:linear-gradient(145deg,rgba(40,0,0,0.8) 0%,rgba(10,0,0,0.65) 40%,rgba(0,0,0,0.88) 100%),url(../stipe%20jones.webp);' +
+          'background-size:100% 100%,cover;background-position:center,center top;' +
+          'position:relative;height:196px;' +
+          'border:1px solid rgba(232,39,42,0.22);box-shadow:0 8px 32px rgba(232,39,42,0.15)">' +
+
+          '<div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(232,39,42,0.15);filter:blur(40px);pointer-events:none"></div>' +
+
+          '<div style="position:absolute;inset:0;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between">' +
+
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+              '<div style="display:flex;align-items:center;gap:8px">' +
+                c.promoBadge(NEXT_EVENT.promo) +
+                '<span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.5)">' + NEXT_EVENT.date + '</span>' +
+              '</div>' +
+              '<div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.12);border-radius:' + R.pill + ';padding:3px 10px;font-size:10px;color:rgba(255,255,255,0.65);font-weight:600">' + NEXT_EVENT.daysAway + 'd away</div>' +
+            '</div>' +
+
+            '<div>' +
+              '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:4px">' + NEXT_EVENT.name + '</div>' +
+              '<div style="font-size:26px;font-weight:900;color:#FFFFFF;line-height:1.05;letter-spacing:-0.02em;margin-bottom:3px">' + NEXT_EVENT.mainEvent + '</div>' +
+              '<div style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px">' + NEXT_EVENT.subtitle + '</div>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between">' +
+                '<div style="display:flex;align-items:center;gap:5px">' +
+                  '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+                  '<span style="font-size:10px;color:rgba(255,255,255,0.5)">' + NEXT_EVENT.venue + '</span>' +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:5px">' +
+                  '<span style="font-size:11px;color:rgba(255,255,255,0.9);font-weight:700">' + NEXT_EVENT.network + '</span>' +
+                  '<span style="font-size:10px;color:rgba(255,255,255,0.3);font-weight:500">· PPV ' + NEXT_EVENT.ppvPrice + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+
+          '</div>' +
+        '</div>' +
+
+        /* Filter chips */
+        '<div style="display:flex;gap:6px;overflow-x:auto;padding:0 ' + S.xl + ';margin-bottom:20px;scrollbar-width:none">' +
+          chips.map(function (ch) { return c.chip(th, ch, ch === filter, 'cmSetState(\'homeFilter\',\'' + ch + '\')'); }).join('') +
+        '</div>' +
+
+        /* This Week */
+        c.sectionHeader(th, 'This Week', 'See all', 'cmGo(\'cards\')') +
+        '<div style="display:flex;gap:10px;overflow-x:auto;padding:0 ' + S.xl + ';margin-bottom:' + S.section + ';scrollbar-width:none">' +
+          THIS_WEEK.map(function (ev) {
+            return '<div onclick="cmGo(\'fightCard\')" style="flex-shrink:0;width:148px;cursor:pointer">' +
+              '<div style="height:110px;border-radius:' + R.lg + ';' +
+                (ev.img
+                  ? 'background-color:#000;background-image:linear-gradient(to bottom,rgba(0,0,0,0.45) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.85) 100%),url(' + ev.img + ');background-size:100% 100%,cover;background-position:center,center;'
+                  : 'background:' + ev.color + ';') +
+                'border:1px solid ' + th.border + ';margin-bottom:7px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.35)">' +
+                '<div style="position:absolute;top:8px;left:8px">' + c.promoBadge(ev.promo) + '</div>' +
+                '<div style="position:absolute;top:8px;right:8px;font-size:9px;color:rgba(255,255,255,0.5);font-weight:600">' + ev.date + '</div>' +
+                '<div style="position:absolute;bottom:8px;left:8px;right:8px">' +
+                  '<div style="font-size:11px;font-weight:800;color:#FFF;line-height:1.2">' + ev.name + '</div>' +
+                  '<div style="font-size:9px;color:rgba(255,255,255,0.45);margin-top:2px">' + ev.net + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div style="font-size:11px;font-weight:500;color:' + th.sub + ';line-height:1.35">' + ev.sub + '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Latest News */
+        c.sectionHeader(th, 'Latest News', 'See all', 'cmGo(\'news\')') +
+        '<div style="padding:0 ' + S.xl + '">' +
+          NEWS.slice(0, 4).map(function (item, i) {
+            return '<div onclick="void(0)" style="display:flex;gap:12px;padding:11px 0;border-bottom:1px solid ' + th.border + ';cursor:pointer;align-items:flex-start">' +
+              '<div style="flex-shrink:0;padding-top:1px">' +
+                '<div style="display:flex;align-items:center;gap:5px;margin-bottom:2px">' +
+                  (item.hot ? '<span style="font-size:8px;color:' + th.primary + '">🔥</span>' : '') +
+                  '<span style="font-size:9px;font-weight:700;color:' + th.muted + '">' + item.source + '</span>' +
+                '</div>' +
+                '<span style="font-size:9px;color:' + th.muted + ';opacity:0.7">' + item.time + ' ago</span>' +
+              '</div>' +
+              '<div style="flex:1;font-size:12px;font-weight:' + (i < 2 ? '600' : '500') + ';color:' + (i < 2 ? th.text : th.sub) + ';line-height:1.45">' + item.headline + '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+      '</div>' +
+      c.navBar(th, 0) +
+    '</div>';
+  }
+
+  function sFightCard(th) {
+    return '<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:' + T.sans + '">' +
+      c.notch() +
+      '<div style="font-size:48px;margin-bottom:14px">🥊</div>' +
+      '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">UFC 315 Fight Card</div>' +
+      '<div style="font-size:12px;color:' + th.muted + ';text-align:center;padding:0 32px;margin-bottom:24px">Full detail in 02-fight-card.html</div>' +
+      '<div onclick="cmBack()" style="padding:10px 24px;border-radius:' + R.pill + ';background:' + th.primary + ';color:white;font-size:13px;font-weight:600;cursor:pointer">← Back</div>' +
+    '</div>';
+  }
+
+  function sCards(th) {
+    return '<div style="height:100%;display:flex;flex-direction:column;position:relative;font-family:' + T.sans + '">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column">' +
+        '<div style="font-size:48px;margin-bottom:14px">📅</div>' +
+        '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Fight Cards</div>' +
+        '<div style="font-size:12px;color:' + th.muted + ';text-align:center;padding:0 32px">Coming soon</div>' +
+      '</div>' +
+      c.navBar(th, 1) +
+    '</div>';
+  }
+
+  function sNews(th) {
+    return '<div style="height:100%;display:flex;flex-direction:column;position:relative;font-family:' + T.sans + '">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column">' +
+        '<div style="font-size:48px;margin-bottom:14px">📰</div>' +
+        '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">News Feed</div>' +
+        '<div style="font-size:12px;color:' + th.muted + ';text-align:center;padding:0 32px">Coming soon</div>' +
+      '</div>' +
+      c.navBar(th, 3) +
+    '</div>';
+  }
+
+  /* ── WIRE UP ───────────────────────────────────────────── */
+  CM.nav(
+    { home: sHome, fightCard: sFightCard, cards: sCards, news: sNews },
+    'home',
+    'phone-screen',
+    {
+      state: { homeFilter: 'All' },
+      onRender: function (state, theme) {
+        var names = { home: 'Home', fightCard: 'Fight Card', cards: 'Cards', news: 'News' };
+        var lbl = document.getElementById('screen-label');
+        if (lbl) lbl.textContent = names[state.cur] || state.cur;
+        var dots = document.getElementById('screen-dots');
+        if (dots) {
+          var list = ['home', 'fightCard', 'cards', 'news'];
+          dots.innerHTML = list.map(function (s) { return '<div class="dot' + (s === state.cur ? ' on' : '') + '"></div>'; }).join('');
+        }
+        var btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = state.dark ? '☀ Light' : '☾ Dark';
+      }
+    }
+  );
+})();
+</script>
+</body>
+</html>

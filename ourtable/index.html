@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OurTable — Family Kitchen Platform · Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0E0C0A;
+  --card:     #1A1714;
+  --border:   #2A2520;
+  --text:     #F5F0E8;
+  --sub:      #A09080;
+  --primary:  #C4614A;
+  --sage:     #7A8C52;
+  --cream:    #FAF7F0;
+  --gold:     #C4A96A;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* BACK NAV */
+.back-nav { position: fixed; top: 20px; left: 24px; z-index: 999; }
+.back-nav a {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(10,8,6,0.88); backdrop-filter: blur(10px);
+  border: 1px solid rgba(196,97,74,0.3);
+  color: var(--cream); text-decoration: none;
+  padding: 10px 16px; border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+.back-nav a:hover { background: rgba(10,8,6,0.98); border-color: rgba(196,97,74,0.7); }
+.back-nav a svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* HERO */
+.hero {
+  padding: 100px 40px 64px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,97,74,0.18) 0%, transparent 70%), var(--bg);
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--primary); margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 9vw, 110px);
+  letter-spacing: 2px; line-height: 0.95; color: var(--cream);
+  margin-bottom: 16px;
+}
+.hero h1 span { color: var(--primary); }
+.hero-sub { font-size: 16px; color: var(--sub); max-width: 540px; margin: 0 auto 40px; line-height: 1.6; }
+.hero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; }
+.hero-meta-item .label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--sub); margin-bottom: 4px;
+}
+.hero-meta-item .value { font-size: 14px; font-weight: 600; color: #ccc; }
+
+/* MAIN LAYOUT */
+.main {
+  display: grid; grid-template-columns: 340px 1fr;
+  max-width: 1200px; margin: 0 auto;
+  padding: 56px 40px; gap: 0; align-items: start;
+}
+
+/* PHONE COL */
+.phone-col {
+  position: sticky; top: 40px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+.phone-outer {
+  position: relative;
+  filter: drop-shadow(0 32px 64px rgba(196,97,74,0.15));
+}
+.side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
+.side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
+.phone-body {
+  width: 300px; height: 620px;
+  background: #0D0D0D; border-radius: 54px; padding: 10px;
+  border: 1px solid #2A2A2A;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.06);
+}
+.phone-frame {
+  width: 100%; height: 100%;
+  border: none; border-radius: 44px; display: block;
+}
+
+/* CASE STUDY COL */
+.cs-col {
+  padding-left: 56px;
+  border-left: 1px solid var(--border);
+}
+.cs-section { margin-bottom: 56px; }
+.cs-section:last-child { margin-bottom: 0; }
+.cs-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--primary); margin-bottom: 12px;
+}
+.cs-section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(28px, 3.5vw, 48px);
+  letter-spacing: 1px; color: var(--cream);
+  margin-bottom: 14px; line-height: 1.05;
+}
+.cs-body { font-size: 14px; line-height: 1.75; color: #aaa; margin-bottom: 14px; }
+.cs-body:last-child { margin-bottom: 0; }
+.cs-divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+/* FEATURE GRID */
+.feature-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;
+}
+.feature-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+}
+.feature-card-icon { font-size: 24px; margin-bottom: 10px; }
+.feature-card h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.feature-card p { font-size: 12px; color: var(--sub); line-height: 1.6; }
+
+/* DECISION LIST */
+.decisions { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
+.decision { display: flex; gap: 14px; align-items: flex-start; }
+.decision-arrow { color: var(--primary); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.decision-body h5 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.decision-body p { font-size: 12px; color: var(--sub); line-height: 1.6; }
+
+/* PALETTE */
+.palette { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.swatch { flex: 1; min-width: 100px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+.swatch-color { height: 64px; }
+.swatch-info { padding: 10px; background: var(--card); }
+.swatch-hex { font-size: 11px; font-weight: 700; color: var(--text); font-family: monospace; }
+.swatch-name { font-size: 10px; color: var(--sub); margin-top: 2px; }
+
+/* SCREENS GRID */
+.screens-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px;
+}
+.screen-chip {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+  font-size: 12px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.screen-chip span { font-size: 16px; }
+
+/* BUILD STATUS */
+.status-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px;
+}
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-align: center; }
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 44px;
+  color: var(--primary); line-height: 1; margin-bottom: 4px;
+}
+.stat-label { font-size: 11px; color: var(--sub); line-height: 1.4; }
+
+.status-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(122,140,82,0.1); border: 1px solid rgba(122,140,82,0.3);
+  border-radius: 100px; padding: 8px 18px; margin-top: 16px;
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); flex-shrink: 0; }
+.status-text { font-size: 12px; font-weight: 600; color: var(--sage); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; padding: 32px 20px; }
+  .phone-col { position: static; margin-bottom: 48px; }
+  .cs-col { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 40px; }
+  .hero { padding: 80px 20px 48px; }
+  .feature-grid, .status-grid { grid-template-columns: 1fr; }
+  .screens-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="back-nav">
+  <a href="../">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Case Study, 02 / 09 · Personal Project</div>
+  <h1>Our<span>Table</span></h1>
+  <p class="hero-sub">A family kitchen platform built in React Native. Shared recipe books, AI-powered fridge scanning, smart grocery lists, and meal planning built around how households actually cook.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="label">Role</div><div class="value">UX Design · Product · Build</div></div>
+    <div class="hero-meta-item"><div class="label">Platform</div><div class="value">iOS · Android (React Native)</div></div>
+    <div class="hero-meta-item"><div class="label">Version</div><div class="value">v2.1.0</div></div>
+    <div class="hero-meta-item"><div class="label">Status</div><div class="value">Active Build</div></div>
+  </div>
+</div>
+
+<!-- MAIN TWO-COLUMN -->
+<div class="main">
+
+  <!-- PHONE PROTOTYPE -->
+  <div class="phone-col">
+    <div class="phone-outer">
+      <div class="side-l"></div>
+      <div class="side-r"></div>
+      <div class="phone-body">
+        <iframe class="phone-frame" src="prototype.html" scrolling="no" title="OurTable Prototype"></iframe>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--sub);text-align:center;max-width:260px;line-height:1.5">
+      Interactive prototype · 8 screens · Light &amp; dark mode
+    </div>
+  </div>
+
+  <!-- CASE STUDY -->
+  <div class="cs-col">
+
+    <!-- PROBLEM -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">The Problem</div>
+      <h2>Cooking for a household is a coordination problem</h2>
+      <p class="cs-body">This app started because of my wife. She's a passionate home cook who saves recipes from TikTok and Instagram — and then can't find them when she needs them. Screenshots buried in camera roll, links in DMs that disappear, recipes saved to five different apps with no connection between them.</p>
+      <p class="cs-body">But the bigger problem isn't recipe management — it's that cooking for a household involves multiple people with different dietary needs, different schedules, and a shared fridge nobody has a full picture of. No app solves this as a household coordination problem. They all solve it as an individual food tracker.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-icon">🤌</div>
+          <h4>Recipes live everywhere</h4>
+          <p>TikTok, Instagram, screenshots, links in messages — no unified home for saved recipes that actually stays organized.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🧑‍🍳</div>
+          <h4>Cooking for more than one person</h4>
+          <p>No app thinks about the household as the unit. Who's eating tonight? What does the fridge actually have? What can we make?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- FEATURES -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Core Features</div>
+      <h2>Five screens that solve five real problems</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-icon">📸</div>
+          <h4>Save from Screenshot</h4>
+          <p>Photograph a TikTok recipe, Instagram post, or any screen. OurTable parses the image and saves a clean, structured recipe automatically.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🧊</div>
+          <h4>AI Fridge Scanner</h4>
+          <p>Open the camera, point at your fridge. The AI catalogues what's there. Tap "What can we make?" and it surfaces recipes matching your inventory.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🛒</div>
+          <h4>Smart Grocery List</h4>
+          <p>Add items manually or pull ingredients directly from a recipe. Items auto-categorize by section (produce, dairy, pantry). Check off as you shop.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">📖</div>
+          <h4>Shared Recipe Book</h4>
+          <p>A household-shared library. Both partners see the same saved recipes. No more "what did you save that pasta one?" — it's in the book.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🌙</div>
+          <h4>Light & Dark Mode</h4>
+          <p>Both modes designed from day one. Dark for late-night cooking in a dim kitchen. Light for daytime browsing.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">⚠️</div>
+          <h4>Dietary Conflict Warnings</h4>
+          <p>Set preferences per household member. If a recipe contains an ingredient that conflicts with someone's diet, OurTable flags it and suggests a swap.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- DESIGN DECISIONS -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Design Decisions</div>
+      <h2>Why it looks and works the way it does</h2>
+
+      <div class="decisions">
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Terracotta + Cream — not the usual food app green</h5>
+            <p>Most recipe apps reach for fresh green. OurTable uses terracotta (#C4614A) and warm cream (#FAF7F0) because they feel like a kitchen — warm, lived-in, the colors of cast iron and wooden cutting boards. The palette is deliberate positioning away from "health app" and toward "home cooking."</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Playfair Display for recipe titles, Inter for UI</h5>
+            <p>Recipe names and dish titles use Playfair Display — an editorial serif that makes a recipe feel special, not like a database entry. All navigation and UI labels stay in Inter. Two fonts, clear hierarchy, no confusion about what's content and what's chrome.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Household as the primary unit, not the individual</h5>
+            <p>Every design decision flows from this. The recipe book is shared. The grocery list is shared. The fridge scanner feeds the whole household's context. Individual profiles exist but they're inside a household — not the other way around.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Fridge scanner → recipe suggestions is the killer feature</h5>
+            <p>This is what nobody else has. "What can I make with what I have?" is the most common question before cooking. Pointing a camera at a fridge and getting a real answer closes a loop that every other app leaves open. It's the reason the fridge tab gets its own bottom nav slot.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Grocery list check-off uses sage green, not the primary color</h5>
+            <p>Checked items turn sage green (#7A8C52) and get a line-through. The terracotta primary stays reserved for CTAs and active states. Sage green carries a "done, healthy, complete" semantic that terracotta doesn't — and it matches the food context without looking like a warning.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- DESIGN SYSTEM -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Design System</div>
+      <h2>Color palette</h2>
+
+      <div class="palette">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#FAF7F0"></div>
+          <div class="swatch-info"><div class="swatch-hex">#FAF7F0</div><div class="swatch-name">Cream · Background</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#C4614A"></div>
+          <div class="swatch-info"><div class="swatch-hex">#C4614A</div><div class="swatch-name">Terracotta · Primary</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#7A8C52"></div>
+          <div class="swatch-info"><div class="swatch-hex">#7A8C52</div><div class="swatch-name">Sage · Success</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#2C2416"></div>
+          <div class="swatch-info"><div class="swatch-hex">#2C2416</div><div class="swatch-name">Dark Brown · Text</div></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#1C1917"></div>
+          <div class="swatch-info"><div class="swatch-hex">#1C1917</div><div class="swatch-name">Near Black · Dark bg</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">8 Designed Screens</div>
+        <div class="screens-grid">
+          <div class="screen-chip"><span>🔐</span> Auth / Onboarding</div>
+          <div class="screen-chip"><span>🏠</span> Home + Search</div>
+          <div class="screen-chip"><span>📖</span> Recipe Detail</div>
+          <div class="screen-chip"><span>➕</span> Add Recipe</div>
+          <div class="screen-chip"><span>🧊</span> Fridge + Pantry</div>
+          <div class="screen-chip"><span>🛒</span> Grocery List</div>
+          <div class="screen-chip"><span>📚</span> Recipe Book</div>
+          <div class="screen-chip"><span>👤</span> Profile + Settings</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- BUILD STATUS -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Build Status</div>
+      <h2>Active build · Version 2.1.0</h2>
+      <p class="cs-body">OurTable is in active development in React Native with Expo. The design system is fully built and documented. All 8 screens are designed and prototyped. Camera integration for the fridge scanner and recipe screenshot parsing are the current focus.</p>
+
+      <div class="status-grid">
+        <div class="stat">
+          <div class="stat-num">8</div>
+          <div class="stat-label">Screens Designed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">v2</div>
+          <div class="stat-label">Design Iteration</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Color Modes</div>
+        </div>
+      </div>
+
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <div class="status-text">Active Build · React Native + Expo</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

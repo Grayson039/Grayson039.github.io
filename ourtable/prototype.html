@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Table — Interactive Prototype</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #EDE9E2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  width: 100%;
+  background: #1C1A16;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.page-brand { font-size: 18px; font-weight: 800; color: #C4614A; font-family: 'Playfair Display', serif; }
+.page-subtitle { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 2px; }
+.theme-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.75);
+  font-size: 12px; font-weight: 600;
+  padding: 7px 16px; border-radius: 100px; cursor: pointer;
+  font-family: 'Inter', sans-serif; transition: all 0.15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.theme-btn:hover { background: rgba(255,255,255,0.14); }
+
+/* ── MAIN LAYOUT ── */
+.page-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 20px 40px;
+  gap: 20px;
+}
+
+/* ── PHONE FRAME ── */
+.phone-wrap {
+  position: relative;
+  filter: drop-shadow(0 32px 64px rgba(0,0,0,0.28));
+}
+.phone-frame {
+  width: 370px;
+  height: 760px;
+  background: #0D0D0D;
+  border-radius: 54px;
+  padding: 12px;
+  position: relative;
+  border: 1px solid #1A1A1A;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.07), inset 0 -1px 0 rgba(0,0,0,0.5);
+}
+/* Volume buttons */
+.phone-frame::before {
+  content: '';
+  position: absolute;
+  left: -4px; top: 108px;
+  width: 4px; height: 32px;
+  background: #1A1A1A; border-radius: 4px 0 0 4px;
+  box-shadow: 0 46px 0 #1A1A1A;
+}
+/* Power button */
+.phone-frame::after {
+  content: '';
+  position: absolute;
+  right: -4px; top: 130px;
+  width: 4px; height: 64px;
+  background: #1A1A1A; border-radius: 0 4px 4px 0;
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  background: #FAF7F0;
+  transition: background 0.3s ease;
+}
+
+/* ── SCREEN TRANSITIONS ── */
+@keyframes slideFromRight {
+  from { transform: translateX(100%); opacity: 0.6; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes slideFromLeft {
+  from { transform: translateX(-100%); opacity: 0.6; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+@keyframes fadeScaleUp {
+  from { opacity: 0; transform: scale(0.97) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.anim-forward { animation: slideFromRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.anim-back    { animation: slideFromLeft  0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.anim-up      { animation: fadeScaleUp   0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* ── SCAN LINE ── */
+@keyframes scanLine {
+  0%   { top: 0; }
+  100% { top: calc(100% - 3px); }
+}
+
+/* ── TOAST ── */
+@keyframes toastAnim {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  78%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-5px); }
+}
+
+/* ── BELOW PHONE ── */
+.phone-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.screen-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8A7060;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.nav-hint {
+  font-size: 11px;
+  color: #B0A090;
+}
+.screen-dots {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  margin-top: 4px;
+}
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #D4C4B8;
+  transition: all 0.25s ease;
+}
+.dot.active {
+  width: 22px;
+  border-radius: 4px;
+  background: #C4614A;
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div>
+    <div class="page-brand">Our Table</div>
+    <div class="page-subtitle">Interactive Prototype</div>
+  </div>
+  <button class="theme-btn" id="theme-btn" onclick="window.otToggleTheme()">
+    <span id="theme-icon">☾</span> Dark Mode
+  </button>
+</div>
+
+<!-- MAIN -->
+<div class="page-main">
+  <div class="phone-wrap">
+    <div class="phone-frame">
+      <div class="phone-screen" id="phone-screen"></div>
+    </div>
+  </div>
+  <div class="phone-meta">
+    <div class="screen-label" id="screen-label">Welcome</div>
+    <div class="nav-hint">Tap elements inside the phone to navigate</div>
+    <div class="screen-dots" id="screen-dots"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+/* ═══════════════════════════════════════════════════
+   THEMES
+═══════════════════════════════════════════════════ */
+var L = {
+  bg:'#FAF7F0', card:'#FFFFFF', primary:'#C4614A',
+  secondary:'#7A8C52', text:'#2C2416', muted:'#8A7060',
+  border:'#E8DDD5', chip:'#F0EBE6', chipTx:'#8A7060',
+  h1:'#D4A090', h2:'#B8CFA0', h3:'#E8D4A8',
+  navBg:'#FAF7F0', inputBg:'#FFFFFF', dark:false
+};
+var D = {
+  bg:'#1A1A2E', card:'#2D2D4A', primary:'#E8692A',
+  secondary:'#A8C476', text:'#FEFAF6', muted:'#9B8EA5',
+  border:'rgba(255,255,255,0.11)', chip:'#3A3A5C', chipTx:'#C8BAD8',
+  h1:'#3D2A22', h2:'#2A3820', h3:'#3D3020',
+  navBg:'#1A1A2E', inputBg:'#252542', dark:true
+};
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+var state = {
+  cur: 0,
+  hist: [],
+  dark: false,
+  signUpName: 'Will',
+  dietary: [],
+  homeFilter: 'All',
+  grocery: { spaghetti:false, pancetta:false, parmesan:false, eggs:true, cream:true, pepper:false },
+  scanning: false,
+  scanned: false,
+  cookStep: 0,
+  toast: null,
+  toastTimer: null
+};
+
+var NAMES = ['Welcome','Sign In','Create Account','Your Household','Home','Recipe Detail','Grocery List','Fridge Scanner','Cooking Mode'];
+var DIET_OPTS = ['None','Vegetarian','Vegan','Gluten-Free','Dairy-Free','Nut-Free','Halal','Kosher'];
+var STEPS = [
+  { n:'01', title:'Boil the water',       body:'Bring a large pot of generously salted water to a rolling boil over high heat.',                                                                          time:'10 min', icon:'💧' },
+  { n:'02', title:'Crisp the pancetta',   body:'Sauté diced pancetta in a dry skillet over medium heat until golden and crispy, about 4–5 minutes. Keep the rendered fat in the pan.',                    time:'5 min',  icon:'🥓' },
+  { n:'03', title:'Whisk the egg mix',    body:'In a bowl, whisk together 3 eggs, 50g grated parmesan, and a generous amount of freshly cracked black pepper until smooth.',                              time:'2 min',  icon:'🥚' },
+  { n:'04', title:'Cook pasta al dente',  body:'Add spaghetti to the boiling water. Cook 1 minute less than package directions. Before draining, reserve 1 full cup of starchy pasta water.',             time:'8 min',  icon:'🍝' },
+  { n:'05', title:'Toss & plate',         body:'Off heat, transfer hot pasta to the pancetta pan. Pour egg mixture over top and toss vigorously — adding pasta water a splash at a time — until silky.', time:'3 min',  icon:'✨' }
+];
+
+function th() { return state.dark ? D : L; }
+
+/* ═══════════════════════════════════════════════════
+   SHARED UI HELPERS
+═══════════════════════════════════════════════════ */
+function notch() {
+  return '<div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:100px;height:30px;background:#0D0D0D;border-radius:0 0 20px 20px;z-index:30"></div>';
+}
+
+function sb() {
+  var c = th();
+  // 4-bar cellular signal (ascending, bottom-aligned) + battery icon
+  var sig = '<svg width="17" height="12" viewBox="0 0 17 12" style="flex-shrink:0;display:block">'
+    +'<rect x="0" y="9" width="3" height="3" rx=".5" fill="'+c.text+'"/>'
+    +'<rect x="4.5" y="6" width="3" height="6" rx=".5" fill="'+c.text+'"/>'
+    +'<rect x="9" y="3" width="3" height="9" rx=".5" fill="'+c.text+'"/>'
+    +'<rect x="13.5" y="0" width="3" height="12" rx=".5" fill="'+c.text+'"/>'
+    +'</svg>';
+  var bat = '<svg width="24" height="12" viewBox="0 0 24 12" style="flex-shrink:0;display:block">'
+    +'<rect x="0.6" y="1" width="19.8" height="10" rx="2.5" stroke="'+c.text+'" stroke-width="1.2" fill="none"/>'
+    +'<rect x="20.6" y="3.8" width="2.8" height="4.4" rx="1.2" fill="'+c.text+'" opacity=".5"/>'
+    +'<rect x="2.2" y="2.6" width="16.6" height="6.8" rx="1.5" fill="'+c.text+'"/>'
+    +'</svg>';
+  return '<div style="display:flex;justify-content:space-between;align-items:center;padding:38px 22px 4px;font-size:12px;font-weight:600;font-family:Inter,sans-serif;color:'+c.text+';position:relative;z-index:5">'
+    +'<span>9:41</span>'
+    +'<div style="display:flex;align-items:center;gap:6px">'+sig+bat+'</div>'
+    +'</div>';
+}
+
+function navBar(active) {
+  var c = th();
+  var items = [
+    { lbl:'Home',   scr:4,  d:'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z' },
+    { lbl:'Search', scr:-1, d:'M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z' },
+    { lbl:'Fridge', scr:7,  d:'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm0 7h14' },
+    { lbl:'List',   scr:6,  d:'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4' },
+    { lbl:'Me',     scr:-1, d:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' }
+  ];
+  var html = '<div style="position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;padding:10px 0 22px;border-top:0.5px solid '+c.border+';background:'+c.navBg+';z-index:10">';
+  for(var i=0;i<items.length;i++){
+    var isAct = i===active, col = isAct?c.primary:c.muted;
+    var click = items[i].scr>=0 ? 'onclick="window.otGo('+items[i].scr+')" style="cursor:pointer"' : '';
+    html += '<div '+click+' style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;font-family:Inter,sans-serif;color:'+col+(items[i].scr>=0?';cursor:pointer':'')+';">';
+    html += '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="'+col+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+items[i].d+'"/></svg>';
+    html += '<span>'+items[i].lbl+'</span></div>';
+  }
+  return html+'</div>';
+}
+
+function toastEl() {
+  if(!state.toast) return '';
+  var c = th();
+  return '<div style="position:absolute;bottom:88px;left:50%;transform:translateX(-50%);white-space:nowrap;background:'+c.primary+';color:white;font-size:12px;font-weight:700;padding:8px 18px;border-radius:100px;animation:toastAnim 2s ease forwards;z-index:50;pointer-events:none;font-family:Inter,sans-serif">'+state.toast+'</div>';
+}
+
+function showToast(msg) {
+  if(state.toastTimer) clearTimeout(state.toastTimer);
+  state.toast = msg;
+  render();
+  state.toastTimer = setTimeout(function(){ state.toast=null; render(); }, 2200);
+}
+
+function btn(label, click, style) {
+  var c = th();
+  if(style==='primary')   return '<button onclick="'+click+'" style="width:100%;padding:14px;border-radius:14px;border:none;background:'+c.primary+';color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 8px 20px '+c.primary+'33">'+label+'</button>';
+  if(style==='secondary') return '<button onclick="'+click+'" style="width:100%;padding:14px;border-radius:14px;border:1.5px solid '+c.border+';background:transparent;color:'+c.text+';font-size:15px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">'+label+'</button>';
+  if(style==='ghost')     return '<button onclick="'+click+'" style="width:100%;padding:11px;border-radius:12px;border:1.5px solid '+c.secondary+';background:transparent;color:'+c.secondary+';font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">'+label+'</button>';
+  return '<button onclick="'+click+'" style="'+style+'">'+label+'</button>';
+}
+
+function input(id, type, placeholder, value) {
+  var c = th();
+  var base = 'width:100%;padding:13px 16px;border-radius:13px;border:1.5px solid '+c.border+';background:'+c.inputBg+';font-size:14px;font-family:Inter,sans-serif;color:'+c.text+';outline:none;display:block;';
+  return '<input type="'+type+'" id="'+id+'" placeholder="'+placeholder+'" value="'+(value||'')+'" style="'+base+'">';
+}
+
+function backBtn(label) {
+  var c = th();
+  label = label || '';
+  return '<div onclick="window.otBack()" style="cursor:pointer;padding:4px;display:inline-flex;align-items:center;gap:4px">'
+    +'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="'+c.muted+'" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>'
+    +(label?'<span style="font-size:13px;color:'+c.muted+';font-family:Inter,sans-serif">'+label+'</span>':'')
+    +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 0 — WELCOME
+═══════════════════════════════════════════════════ */
+function sWelcome() {
+  var c = th();
+  return '<div style="height:100%;background:'+c.bg+';display:flex;flex-direction:column;position:relative;overflow:hidden;font-family:Inter,sans-serif">'
+    +notch()+sb()
+    // Decorative blobs
+    +'<div style="position:absolute;top:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:'+c.primary+';opacity:0.1;pointer-events:none"></div>'
+    +'<div style="position:absolute;top:80px;right:-30px;width:140px;height:140px;border-radius:50%;background:'+c.secondary+';opacity:0.12;pointer-events:none"></div>'
+    +'<div style="position:absolute;bottom:100px;left:-60px;width:180px;height:180px;border-radius:50%;background:'+c.h3+';opacity:0.3;pointer-events:none"></div>'
+    // Content
+    +'<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 32px 10px">'
+      // Logo
+      +'<div style="width:82px;height:82px;background:'+c.primary+';border-radius:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 16px 36px '+c.primary+'44">'
+        +'<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>'
+      +'</div>'
+      +'<div style="font-size:36px;font-weight:800;color:'+c.primary+';font-family:Playfair Display,Georgia,serif;line-height:1;margin-bottom:8px">Our Table</div>'
+      +'<div style="font-size:14px;color:'+c.muted+';text-align:center;line-height:1.6;max-width:220px">Save recipes. Know your fridge.<br>Cook for everyone.</div>'
+      // Food icons
+      +'<div style="display:flex;gap:12px;margin:28px 0">'
+        +'<div style="width:52px;height:52px;border-radius:16px;background:'+c.chip+';display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid '+c.border+'">🥗</div>'
+        +'<div style="width:52px;height:52px;border-radius:16px;background:'+c.chip+';display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid '+c.border+'">🍝</div>'
+        +'<div style="width:52px;height:52px;border-radius:16px;background:'+c.chip+';display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid '+c.border+'">🥘</div>'
+        +'<div style="width:52px;height:52px;border-radius:16px;background:'+c.chip+';display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid '+c.border+'">🍜</div>'
+      +'</div>'
+    +'</div>'
+    // CTAs
+    +'<div style="padding:0 28px 42px;display:flex;flex-direction:column;gap:12px">'
+      +btn('Get Started','window.otGo(2)','primary')
+      +btn('Sign In','window.otGo(1)','secondary')
+      +'<div style="text-align:center;font-size:11px;color:'+c.muted+'">By continuing you agree to our Terms of Service</div>'
+    +'</div>'
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 1 — SIGN IN
+═══════════════════════════════════════════════════ */
+function sSignIn() {
+  var c = th();
+  return '<div style="height:100%;background:'+c.bg+';display:flex;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif">'
+    +notch()+sb()
+    +'<div style="padding:10px 24px 0">'+backBtn()+'</div>'
+    +'<div style="flex:1;padding:12px 28px 28px;overflow-y:auto;display:flex;flex-direction:column">'
+      +'<div style="font-size:28px;font-weight:800;color:'+c.text+';font-family:Playfair Display,Georgia,serif;margin-bottom:6px;line-height:1.15">Welcome<br>back 👋</div>'
+      +'<div style="font-size:13px;color:'+c.muted+';margin-bottom:28px">Sign in to your Our Table account</div>'
+      +'<div style="font-size:12px;font-weight:600;color:'+c.text+';margin-bottom:6px">Email</div>'
+      +input('si-email','email','your@email.com','will@ourtable.app')
+      +'<div style="height:12px"></div>'
+      +'<div style="font-size:12px;font-weight:600;color:'+c.text+';margin-bottom:6px">Password</div>'
+      +input('si-pass','password','Password','')
+      +'<div style="text-align:right;margin:10px 0 20px"><span style="font-size:12px;color:'+c.primary+';font-weight:600;cursor:pointer">Forgot password?</span></div>'
+      +btn('Sign In','window.otGo(4)','primary')
+      +'<div style="display:flex;align-items:center;gap:10px;margin:18px 0">'
+        +'<div style="flex:1;height:1px;background:'+c.border+'"></div>'
+        +'<span style="font-size:11px;color:'+c.muted+'">or</span>'
+        +'<div style="flex:1;height:1px;background:'+c.border+'"></div>'
+      +'</div>'
+      +'<button style="width:100%;padding:12px;border-radius:13px;border:1.5px solid '+c.border+';background:transparent;color:'+c.text+';font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px">'
+        +'<span style="font-size:16px"></span> Continue with Apple'
+      +'</button>'
+      +'<div style="text-align:center;font-size:13px;color:'+c.muted+'">No account? <span onclick="window.otGo(2)" style="color:'+c.primary+';font-weight:600;cursor:pointer">Sign up</span></div>'
+    +'</div>'
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 2 — CREATE ACCOUNT
+═══════════════════════════════════════════════════ */
+function sCreateAccount() {
+  var c = th();
+  function dot(active) { return '<div style="width:'+(active?'20px':'7px')+';height:7px;border-radius:100px;background:'+(active?c.primary:c.chip)+'"></div>'; }
+  return '<div style="height:100%;background:'+c.bg+';display:flex;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif">'
+    +notch()+sb()
+    +'<div style="padding:10px 24px 0;display:flex;justify-content:space-between;align-items:center">'
+      +backBtn()
+      +'<div style="display:flex;gap:6px;align-items:center">'+dot(true)+dot(false)+'</div>'
+    +'</div>'
+    +'<div style="flex:1;padding:12px 28px 28px;overflow-y:auto;display:flex;flex-direction:column">'
+      +'<div style="font-size:26px;font-weight:800;color:'+c.text+';font-family:Playfair Display,Georgia,serif;line-height:1.2;margin-bottom:6px">Create your<br>account</div>'
+      +'<div style="font-size:13px;color:'+c.muted+';margin-bottom:24px">Join thousands of households cooking better</div>'
+      // Name row
+      +'<div style="display:flex;gap:10px;margin-bottom:12px">'
+        +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:'+c.text+';margin-bottom:6px">First name</div>'+input('ca-fname','text','Will','')+'</div>'
+        +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:'+c.text+';margin-bottom:6px">Last name</div>'+input('ca-lname','text','Grayson','')+'</div>'
+      +'</div>'
+      +'<div style="font-size:12px;font-weight:600;color:'+c.text+';margin-bottom:6px">Email</div>'
+      +input('ca-email','email','your@email.com','')
+      +'<div style="height:12px"></div>'
+      +'<div style="font-size:12px;font-weight:600;color:'+c.text+';margin-bottom:6px">Password</div>'
+      +input('ca-pass','password','Create a password','')
+      +'<div style="height:18px"></div>'
+      +btn('Continue →','window.otContinueSignUp()','primary')
+      +'<div style="height:16px"></div>'
+      +'<div style="text-align:center;font-size:13px;color:'+c.muted+'">Already have an account? <span onclick="window.otGo(1)" style="color:'+c.primary+';font-weight:600;cursor:pointer">Sign in</span></div>'
+    +'</div>'
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 3 — HOUSEHOLD SETUP
+═══════════════════════════════════════════════════ */
+function sHousehold() {
+  var c = th();
+  function dot(active) { return '<div style="width:'+(active?'20px':'7px')+';height:7px;border-radius:100px;background:'+(active?c.primary:c.secondary)+'"></div>'; }
+  var dietHtml = DIET_OPTS.map(function(opt){
+    var sel = state.dietary.indexOf(opt)>=0;
+    return '<span onclick="window.otToggleDietary(\''+opt+'\')" style="font-size:11px;padding:7px 14px;border-radius:100px;cursor:pointer;border:1.5px solid '+(sel?c.primary:c.border)+';background:'+(sel?c.primary:c.chip)+';color:'+(sel?'white':c.chipTx)+'">'+(sel?'✓ ':'')+opt+'</span>';
+  }).join('');
+  var displayName = state.signUpName || 'You';
+  return '<div style="height:100%;background:'+c.bg+';display:flex;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif">'
+    +notch()+sb()
+    +'<div style="padding:10px 24px 0;display:flex;justify-content:space-between;align-items:center">'
+      +backBtn()
+      +'<div style="display:flex;gap:6px;align-items:center">'+dot(false)+dot(true)+'</div>'
+    +'</div>'
+    +'<div style="flex:1;padding:12px 28px 28px;overflow-y:auto;display:flex;flex-direction:column">'
+      +'<div style="font-size:26px;font-weight:800;color:'+c.text+';font-family:Playfair Display,Georgia,serif;line-height:1.2;margin-bottom:6px">Who\'s at your<br>table? 👨‍👩‍👧</div>'
+      +'<div style="font-size:13px;color:'+c.muted+';margin-bottom:22px">We\'ll tailor every recipe to your household\'s needs</div>'
+      // Members
+      +'<div style="font-size:13px;font-weight:700;color:'+c.text+';margin-bottom:10px">Household members</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px">'
+        +'<div style="display:flex;align-items:center;gap:7px;background:'+c.primary+';border-radius:100px;padding:7px 14px">'
+          +'<div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:white">'+displayName[0].toUpperCase()+'</div>'
+          +'<span style="font-size:12px;font-weight:600;color:white">'+displayName+'</span>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:6px;background:transparent;border-radius:100px;padding:7px 14px;border:1.5px dashed '+c.border+';cursor:pointer">'
+          +'<span style="font-size:18px;line-height:1;color:'+c.muted+'">+</span>'
+          +'<span style="font-size:12px;color:'+c.muted+'">Add member</span>'
+        +'</div>'
+      +'</div>'
+      // Dietary
+      +'<div style="font-size:13px;font-weight:700;color:'+c.text+';margin-bottom:4px">Dietary preferences</div>'
+      +'<div style="font-size:12px;color:'+c.muted+';margin-bottom:12px">Select all that apply</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px">'+dietHtml+'</div>'
+      +btn('Get Cooking 🍳','window.otGo(4)','primary')
+    +'</div>'
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 4 — HOME
+═══════════════════════════════════════════════════ */
+function sHome() {
+  var c = th();
+  var filters = ['All','Quick','Italian','Asian','Veggie','Vegan'];
+  var chips = filters.map(function(f){
+    var a = state.homeFilter===f;
+    return '<span onclick="window.otFilter(\''+f+'\')" style="font-size:11px;padding:6px 14px;border-radius:100px;background:'+(a?c.primary:c.chip)+';color:'+(a?'white':c.chipTx)+';cursor:pointer;white-space:nowrap;flex-shrink:0">'+f+'</span>';
+  }).join('');
+  return '<div style="height:100%;background:'+c.bg+';position:relative;overflow:hidden;font-family:Inter,sans-serif">'
+    +notch()+sb()
+    // Header
+    +'<div style="padding:8px 22px 6px;display:flex;justify-content:space-between;align-items:center">'
+      +'<div style="font-size:26px;font-weight:800;color:'+c.primary+';font-family:Playfair Display,Georgia,serif;letter-spacing:-0.5px">Our Table</div>'
+      +'<img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" style="width:38px;height:38px;border-radius:50%;object-fit:cover;cursor:pointer;border:2.5px solid '+c.primary+';flex-shrink:0">'
+    +'</div>'
+    +'<div style="padding:2px 22px 12px">'
+      +'<div style="font-size:15px;font-weight:600;color:'+c.text+'">Good evening, '+state.signUpName+' 👋</div>'
+      +'<div style="font-size:12px;color:'+c.muted+'">What are you cooking tonight?</div>'
+    +'</div>'
+    // Featured card — tappable
+    +'<div onclick="window.otGo(5)" style="margin:0 18px 14px;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.1);border:0.5px solid '+c.border+'">'
+      +'<div style="height:122px;background:url(\'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=500&h=260&fit=crop&q=80\') center/cover no-repeat;position:relative">'
+        +'<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.42) 0%,transparent 55%)"></div>'
+        +'<div style="position:absolute;bottom:10px;left:12px"><span style="background:rgba(0,0,0,0.5);border-radius:7px;padding:3px 9px;font-size:10px;color:white;font-weight:700;letter-spacing:0.06em">FEATURED</span></div>'
+        +'<div style="position:absolute;bottom:10px;right:12px"><span style="background:rgba(0,0,0,0.45);border-radius:7px;padding:3px 9px;font-size:10px;color:white;font-weight:600">from TikTok</span></div>'
+      +'</div>'
+      +'<div style="padding:11px 14px;background:'+c.card+'">'
+        +'<div style="font-size:15px;font-weight:700;color:'+c.text+'">Spaghetti Carbonara</div>'
+        +'<div style="display:flex;gap:8px;margin-top:5px;align-items:center">'
+          +'<span style="font-size:11px;color:'+c.muted+'">⏱ 25 min</span>'
+          +'<span style="font-size:11px;color:'+c.muted+'">·</span>'
+          +'<span style="font-size:11px;color:'+c.primary+';font-weight:700">★ 4.8</span>'
+          +'<span style="font-size:10px;color:'+c.muted+'">·</span>'
+          +'<span style="font-size:11px;color:'+c.secondary+';font-weight:600">Medium</span>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+    // Filters
+    +'<div style="padding:0 18px 10px">'
+      +'<div style="font-size:12px;font-weight:700;color:'+c.text+';margin-bottom:8px">Browse by</div>'
+      +'<div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">'+chips+'</div>'
+    +'</div>'
+    // Mini cards
+    +'<div style="padding:0 18px">'
+      +'<div style="font-size:12px;font-weight:700;color:'+c.text+';margin-bottom:9px">Saved from Social</div>'
+      +'<div style="display:flex;gap:10px">'
+        +'<div onclick="window.otGo(5)" style="flex:1;border-radius:14px;overflow:hidden;border:0.5px solid '+c.border+';cursor:pointer">'
+          +'<div style="height:68px;background:url(\'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=300&h=140&fit=crop&q=80\') center/cover no-repeat"></div>'
+          +'<div style="padding:7px 11px;background:'+c.card+'"><div style="font-size:11px;font-weight:700;color:'+c.text+'">Thai Green Curry</div><div style="font-size:10px;color:'+c.muted+'">32 min</div></div>'
+        +'</div>'
+        +'<div onclick="window.otGo(5)" style="flex:1;border-radius:14px;overflow:hidden;border:0.5px solid '+c.border+';cursor:pointer">'
+          +'<div style="height:68px;background:url(\'https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=300&h=140&fit=crop&q=80\') center/cover no-repeat"></div>'
+          +'<div style="padding:7px 11px;background:'+c.card+'"><div style="font-size:11px;font-weight:700;color:'+c.text+'">Avocado Toast</div><div style="font-size:10px;color:'+c.muted+'">12 min</div></div>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+    +navBar(0)+toastEl()
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 5 — RECIPE DETAIL
+═══════════════════════════════════════════════════ */
+function sRecipe() {
+  var c = th();
+  var ingredients = [
+    ['Spaghetti','200g'],['Pancetta','100g'],['Eggs','3 large'],
+    ['Parmesan','50g'],['Black pepper','to taste'],['Olive oil','1 tbsp']
+  ];
+  var ingredientRows = ingredients.map(function(r){
+    return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid '+c.border+'">'
+      +'<span style="font-size:13px;color:'+c.text+'">'+r[0]+'</span>'
+      +'<span style="font-size:12px;color:'+c.muted+'">'+r[1]+'</span>'
+    +'</div>';
+  }).join('');
+  return '<div style="height:100%;background:'+c.bg+';position:relative;overflow:hidden;font-family:Inter,sans-serif;display:flex;flex-direction:column">'
+    // Hero
+    +'<div style="height:185px;background:url(\'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=500&h=380&fit=crop&q=80\') center/cover no-repeat;position:relative;flex-shrink:0">'
+      +notch()
+      +'<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.08) 45%,transparent 70%)"></div>'
+      +'<div onclick="window.otBack()" style="position:absolute;top:38px;left:16px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;cursor:pointer">'
+        +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>'
+      +'</div>'
+      +'<div style="position:absolute;top:38px;right:16px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;cursor:pointer">'
+        +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
+      +'</div>'
+    +'</div>'
+    // Scrollable content
+    +'<div style="flex:1;overflow-y:auto;padding:16px 22px 100px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+        +'<div style="font-size:22px;font-weight:800;color:'+c.text+';font-family:Playfair Display,Georgia,serif;line-height:1.2;max-width:220px">Spaghetti Carbonara</div>'
+        +'<span style="font-size:14px;color:'+c.primary+';font-weight:700;white-space:nowrap">★ 4.8</span>'
+      +'</div>'
+      +'<div style="display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap">'
+        +'<span style="font-size:11px;padding:5px 11px;border-radius:100px;background:'+c.chip+';color:'+c.chipTx+'">⏱ 25 min</span>'
+        +'<span style="font-size:11px;padding:5px 11px;border-radius:100px;background:'+c.chip+';color:'+c.chipTx+'">👥 2 servings</span>'
+        +'<span style="font-size:11px;padding:5px 11px;border-radius:100px;background:'+c.chip+';color:'+c.chipTx+'">Medium</span>'
+      +'</div>'
+      +btn('+ Add to Grocery List','window.otAddToList()','ghost')
+      +'<div style="height:16px"></div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+c.text+';margin-bottom:8px">Ingredients</div>'
+      +ingredientRows
+    +'</div>'
+    // Sticky start button
+    +'<div style="position:absolute;bottom:0;left:0;right:0;padding:12px 22px 28px;background:'+c.bg+';border-top:0.5px solid '+c.border+'">'
+      +btn('▶  Start Cooking','window.otGo(8)','primary')
+    +'</div>'
+    +toastEl()
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 6 — GROCERY LIST
+═══════════════════════════════════════════════════ */
+function sGrocery() {
+  var c = th();
+  var items = [
+    {id:'spaghetti',lbl:'Spaghetti',qty:'200g'},
+    {id:'pancetta',lbl:'Pancetta',qty:'100g'},
+    {id:'parmesan',lbl:'Parmesan',qty:'50g'},
+    {id:'pepper',lbl:'Black pepper',qty:'as needed'},
+    {id:'eggs',lbl:'Eggs',qty:'3 large'},
+    {id:'cream',lbl:'Heavy cream',qty:'100ml'}
+  ];
+  var unchecked='', checked='', cnt=0;
+  items.forEach(function(it){
+    if(state.grocery[it.id]){
+      cnt++;
+      checked += '<div onclick="window.otToggleGrocery(\''+it.id+'\')" style="display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:6px;border-radius:13px;background:'+c.chip+';cursor:pointer">'
+        +'<div style="width:22px;height:22px;border-radius:50%;background:'+c.secondary+';flex-shrink:0;display:flex;align-items:center;justify-content:center">'
+          +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg>'
+        +'</div>'
+        +'<span style="font-size:14px;color:'+c.muted+';flex:1;text-decoration:line-through">'+it.lbl+'</span>'
+        +'<span style="font-size:12px;color:'+c.muted+';text-decoration:line-through">'+it.qty+'</span>'
+      +'</div>';
+    } else {
+      unchecked += '<div onclick="window.otToggleGrocery(\''+it.id+'\')" style="display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:6px;border-radius:13px;background:'+c.card+';border:0.5px solid '+c.border+';cursor:pointer">'
+        +'<div style="width:22px;height:22px;border-radius:50%;border:2px solid '+c.border+';flex-shrink:0"></div>'
+        +'<span style="font-size:14px;color:'+c.text+';flex:1">'+it.lbl+'</span>'
+        +'<span style="font-size:12px;color:'+c.muted+'">'+it.qty+'</span>'
+      +'</div>';
+    }
+  });
+  var pct = Math.round(cnt/items.length*100);
+  return '<div style="height:100%;background:'+c.bg+';position:relative;overflow:hidden;font-family:Inter,sans-serif">'
+    +notch()+sb()
+    +'<div style="padding:10px 22px 12px;display:flex;justify-content:space-between;align-items:center">'
+      +'<div style="font-size:22px;font-weight:800;color:'+c.text+'">Grocery List</div>'
+      +'<span style="font-size:12px;color:'+c.muted+'">'+cnt+' / '+items.length+' items</span>'
+    +'</div>'
+    +'<div style="margin:0 22px 14px;height:6px;border-radius:100px;background:'+c.chip+'">'
+      +'<div style="height:100%;border-radius:100px;background:'+c.secondary+';width:'+pct+'%"></div>'
+    +'</div>'
+    +'<div style="padding:0 18px;overflow-y:auto;max-height:460px;padding-bottom:12px">'
+      +'<div style="font-size:11px;font-weight:700;color:'+c.primary+';text-transform:uppercase;letter-spacing:0.1em;margin-bottom:9px">Spaghetti Carbonara</div>'
+      +unchecked
+      +(checked ? '<div style="font-size:11px;font-weight:700;color:'+c.muted+';text-transform:uppercase;letter-spacing:0.1em;margin:14px 0 9px">In Cart ✓</div>'+checked : '')
+    +'</div>'
+    +navBar(3)+toastEl()
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 7 — FRIDGE SCANNER
+═══════════════════════════════════════════════════ */
+function sFridge() {
+  var c = th();
+  var vfBg = state.dark ? '#0B0B1C' : '#BFBAB0';
+  var cornerColor = state.scanned ? c.secondary : c.primary;
+
+  var corners = ['top:10px;left:10px;border-top:3px solid;border-left:3px solid','top:10px;right:10px;border-top:3px solid;border-right:3px solid','bottom:10px;left:10px;border-bottom:3px solid;border-left:3px solid','bottom:10px;right:10px;border-bottom:3px solid;border-right:3px solid'].map(function(s){
+    return '<div style="position:absolute;'+s+' border-color:'+cornerColor+';width:24px;height:24px"></div>';
+  }).join('');
+
+  var viewContent;
+  if(state.scanning){
+    viewContent = corners
+      +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+c.primary+';border-radius:2px;box-shadow:0 0 12px '+c.primary+'88;animation:scanLine 1.8s linear forwards"></div>'
+      +'<div style="text-align:center">'
+        +'<div style="font-size:12px;color:'+c.primary+';font-weight:700;letter-spacing:0.08em">ANALYZING...</div>'
+        +'<div style="font-size:10px;color:'+c.muted+';margin-top:3px">Identifying ingredients</div>'
+      +'</div>';
+  } else if(state.scanned){
+    viewContent = corners
+      +'<div style="text-align:center">'
+        +'<div style="font-size:28px;margin-bottom:5px">✅</div>'
+        +'<div style="font-size:12px;color:'+c.secondary+';font-weight:700">Scan complete!</div>'
+        +'<div onclick="window.otScan()" style="font-size:10px;color:'+c.muted+';margin-top:3px;cursor:pointer;text-decoration:underline">Scan again</div>'
+      +'</div>';
+  } else {
+    viewContent = corners
+      +'<div onclick="window.otScan()" style="text-align:center;cursor:pointer">'
+        +'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="'+c.primary+'" stroke-width="1.5" style="display:block;margin:0 auto 7px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>'
+        +'<div style="font-size:12px;color:'+(state.dark?'rgba(255,255,255,0.45)':'rgba(0,0,0,0.4)')+'">Tap to scan fridge</div>'
+      +'</div>';
+  }
+
+  var detected = state.scanned
+    ? ['🥚 Eggs','🧈 Butter','🥛 Milk','🧀 Cheddar','🥬 Spinach','🍗 Chicken'].map(function(i){ return '<span style="font-size:11px;padding:5px 12px;border-radius:100px;background:'+c.chip+';color:'+c.chipTx+';border:0.5px solid '+c.border+'">'+i+'</span>'; }).join('')
+    : '<span style="font-size:12px;color:'+c.muted+'">Scan to detect ingredients</span>';
+
+  var suggestions = state.scanned
+    ? [['🥚','Spinach & Cheddar Omelette','8 min'],['🍗','Butter Chicken Rice Bowl','25 min'],['🍞','Scrambled Egg Toast','6 min']].map(function(r){
+        return '<div onclick="window.otGo(5)" style="display:flex;align-items:center;gap:11px;padding:10px 13px;margin-bottom:7px;border-radius:13px;background:'+c.card+';border:0.5px solid '+c.border+';cursor:pointer">'
+          +'<div style="width:36px;height:36px;border-radius:11px;background:'+c.chip+';display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">'+r[0]+'</div>'
+          +'<div style="flex:1"><div style="font-size:12px;font-weight:700;color:'+c.text+'">'+r[1]+'</div><div style="font-size:11px;color:'+c.muted+'">'+r[2]+'</div></div>'
+          +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+c.muted+'" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>'
+        +'</div>';
+      }).join('')
+    : '';
+
+  return '<div style="height:100%;background:'+c.bg+';position:relative;overflow:hidden;font-family:Inter,sans-serif">'
+    +notch()+sb()
+    +'<div style="padding:10px 22px 10px">'
+      +'<div style="font-size:22px;font-weight:800;color:'+c.text+'">Fridge Scanner</div>'
+      +'<div style="font-size:12px;color:'+c.muted+'">Snap your fridge — we\'ll find recipes</div>'
+    +'</div>'
+    +'<div style="margin:0 18px 14px;border-radius:16px;height:158px;background:'+vfBg+';position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden">'
+      +viewContent
+    +'</div>'
+    +'<div style="padding:0 18px;overflow-y:auto;max-height:320px">'
+      +'<div style="font-size:13px;font-weight:700;color:'+c.text+';margin-bottom:9px">Detected ingredients</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px">'+detected+'</div>'
+      +(state.scanned ? '<div style="font-size:13px;font-weight:700;color:'+c.text+';margin-bottom:9px">You can make these 🍳</div>'+suggestions : '')
+    +'</div>'
+    +navBar(2)+toastEl()
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN 8 — COOKING MODE
+═══════════════════════════════════════════════════ */
+function sCooking() {
+  var c = th();
+  var step = STEPS[state.cookStep];
+  var isLast = state.cookStep === STEPS.length-1;
+  var isFirst = state.cookStep === 0;
+
+  var dots = STEPS.map(function(s,i){
+    var done = i < state.cookStep, act = i === state.cookStep;
+    var bg = done ? c.secondary : (act ? 'white' : 'rgba(255,255,255,0.25)');
+    var w = act ? '22px' : '7px';
+    return '<div style="width:'+w+';height:7px;border-radius:100px;background:'+bg+'"></div>';
+  }).join('');
+
+  return '<div style="height:100%;background:'+c.bg+';position:relative;overflow:hidden;font-family:Inter,sans-serif;display:flex;flex-direction:column">'
+    // Colored header
+    +'<div style="background:'+c.primary+';padding:0 22px 16px;flex-shrink:0">'
+      +notch()
+      +'<div style="padding-top:36px;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
+        +'<div onclick="window.otBack()" style="display:flex;align-items:center;gap:5px;cursor:pointer">'
+          +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>'
+          +'<span style="font-size:12px;color:rgba(255,255,255,0.8)">Recipe</span>'
+        +'</div>'
+        +'<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.07em">COOKING MODE</div>'
+        +'<div style="font-size:12px;color:rgba(255,255,255,0.7)">'+(state.cookStep+1)+' / '+STEPS.length+'</div>'
+      +'</div>'
+      +'<div style="font-size:15px;font-weight:700;color:white;font-family:Playfair Display,Georgia,serif">Spaghetti Carbonara</div>'
+      +'<div style="display:flex;gap:6px;align-items:center;margin-top:10px">'+dots+'</div>'
+    +'</div>'
+    // Step card
+    +'<div style="flex:1;padding:20px 22px;display:flex;flex-direction:column;justify-content:center">'
+      +'<div style="border-radius:20px;background:'+c.card+';border:0.5px solid '+c.border+';padding:24px;box-shadow:0 6px 24px rgba(0,0,0,0.07)">'
+        +'<div style="font-size:42px;text-align:center;margin-bottom:14px">'+step.icon+'</div>'
+        +'<div style="text-align:center;margin-bottom:8px">'
+          +'<div style="display:inline-block;background:'+c.primary+';color:white;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:800;letter-spacing:0.05em">STEP '+step.n+'</div>'
+        +'</div>'
+        +'<div style="font-size:18px;font-weight:800;color:'+c.text+';text-align:center;margin-bottom:12px;font-family:Playfair Display,Georgia,serif;line-height:1.2">'+step.title+'</div>'
+        +'<div style="font-size:13px;color:'+c.muted+';line-height:1.7;text-align:center;margin-bottom:16px">'+step.body+'</div>'
+        +'<div style="display:flex;justify-content:center">'
+          +'<div style="display:inline-flex;align-items:center;gap:6px;background:'+c.chip+';border-radius:100px;padding:6px 16px">'
+            +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+c.primary+'" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'
+            +'<span style="font-size:12px;font-weight:600;color:'+c.primary+'">'+step.time+'</span>'
+          +'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+    // Nav buttons
+    +'<div style="padding:0 22px 32px;display:flex;gap:10px;flex-shrink:0">'
+      +(!isFirst
+        ? '<button onclick="window.otPrevStep()" style="flex:1;padding:13px;border-radius:13px;border:1.5px solid '+c.border+';background:transparent;color:'+c.text+';font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">← Prev</button>'
+        : '<div style="flex:1"></div>')
+      +'<button onclick="window.otNextStep()" style="flex:2;padding:13px;border-radius:13px;border:none;background:'+c.primary+';color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">'+(isLast?'🎉 Done!':'Next Step →')+'</button>'
+    +'</div>'
+  +'</div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREEN REGISTRY
+═══════════════════════════════════════════════════ */
+var SCREENS = [sWelcome, sSignIn, sCreateAccount, sHousehold, sHome, sRecipe, sGrocery, sFridge, sCooking];
+var APP_SCREENS = [4,5,6,7,8]; // screens shown with dot nav
+
+/* ═══════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════ */
+function render(anim) {
+  var el = document.getElementById('phone-screen');
+  if(!el) return;
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
+  if(anim) wrap.className = anim;
+  wrap.innerHTML = SCREENS[state.cur](th());
+  el.innerHTML = '';
+  el.appendChild(wrap);
+  el.style.background = th().bg;
+
+  // Sync labels
+  var lbl = document.getElementById('screen-label');
+  if(lbl) lbl.textContent = NAMES[state.cur];
+
+  // Dots
+  var dotEl = document.getElementById('screen-dots');
+  if(dotEl){
+    var inApp = APP_SCREENS.indexOf(state.cur) >= 0;
+    if(!inApp){ dotEl.innerHTML = ''; }
+    else {
+      dotEl.innerHTML = APP_SCREENS.map(function(s){
+        return '<div class="dot'+(s===state.cur?' active':'')+'"></div>';
+      }).join('');
+    }
+  }
+
+  // Theme button
+  var tbtn = document.getElementById('theme-btn');
+  if(tbtn) tbtn.innerHTML = '<span id="theme-icon">'+(state.dark?'☀':'☾')+'</span> '+(state.dark?'Light':'Dark')+' Mode';
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════ */
+window.otGo = function(i, back) {
+  if(i === state.cur) return;
+  if(!back) state.hist.push(state.cur);
+  state.cur = i;
+  var anim;
+  if(back) anim = 'anim-back';
+  else if(i === 4) anim = 'anim-up';   // entering home
+  else anim = 'anim-forward';
+  render(anim);
+};
+
+window.otBack = function() {
+  if(!state.hist.length) return;
+  var prev = state.hist.pop();
+  state.cur = prev;
+  render('anim-back');
+};
+
+window.otToggleTheme = function() {
+  state.dark = !state.dark;
+  render();
+};
+
+/* ── GROCERY ── */
+window.otToggleGrocery = function(id) {
+  state.grocery[id] = !state.grocery[id];
+  render();
+};
+
+window.otAddToList = function() {
+  showToast('Added to grocery list ✓');
+};
+
+/* ── FRIDGE ── */
+window.otScan = function() {
+  state.scanning = true;
+  state.scanned = false;
+  render();
+  setTimeout(function(){
+    state.scanning = false;
+    state.scanned = true;
+    render();
+  }, 2200);
+};
+
+/* ── COOKING ── */
+window.otNextStep = function() {
+  if(state.cookStep < STEPS.length-1){
+    state.cookStep++;
+    render('anim-forward');
+  } else {
+    showToast('Enjoy your meal! 🍽️');
+    setTimeout(function(){ state.cookStep=0; window.otGo(4); }, 2300);
+  }
+};
+
+window.otPrevStep = function() {
+  if(state.cookStep > 0){ state.cookStep--; render('anim-back'); }
+};
+
+/* ── FILTER ── */
+window.otFilter = function(f) {
+  state.homeFilter = f;
+  render();
+};
+
+/* ── SIGN UP ── */
+window.otContinueSignUp = function() {
+  var fn = document.getElementById('ca-fname');
+  var ln = document.getElementById('ca-lname');
+  if(fn && fn.value.trim()) state.signUpName = fn.value.trim() + (ln && ln.value.trim() ? '' : '');
+  window.otGo(3);
+};
+
+window.otToggleDietary = function(opt) {
+  var idx = state.dietary.indexOf(opt);
+  if(idx>=0) state.dietary.splice(idx,1);
+  else state.dietary.push(opt);
+  render();
+};
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+render('anim-up');
+
+})();
+</script>
+</body>
+</html>

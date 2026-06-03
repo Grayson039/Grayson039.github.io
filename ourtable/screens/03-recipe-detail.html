@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Table — Recipe Detail & Cooking Mode</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #EDE8E2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .phone-outer {
+    position: relative;
+    filter: drop-shadow(0 28px 56px rgba(0,0,0,0.26));
+  }
+  .side-l {
+    position: absolute; left: -4px; top: 108px;
+    width: 4px; height: 32px;
+    background: #1A1A1A; border-radius: 4px 0 0 4px;
+    box-shadow: 0 46px 0 #1A1A1A;
+  }
+  .side-r {
+    position: absolute; right: -4px; top: 130px;
+    width: 4px; height: 64px;
+    background: #1A1A1A; border-radius: 0 4px 4px 0;
+  }
+  .phone-body {
+    width: 370px; height: 760px;
+    background: #0D0D0D; border-radius: 54px; padding: 12px;
+    border: 1px solid #1A1A1A;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.07), inset 0 -1px 0 rgba(0,0,0,0.5);
+  }
+  #phone-screen {
+    width: 100%; height: 100%;
+    border-radius: 44px; overflow: hidden;
+    position: relative;
+    transition: background 0.3s ease;
+  }
+  .controls { text-align: center; margin-top: 24px; }
+  #screen-label {
+    font-size: 11px; font-weight: 700; color: #8A7060;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;
+  }
+  .hint { font-size: 11px; color: #B0A090; margin-bottom: 14px; }
+  #screen-dots {
+    display: flex; gap: 7px; align-items: center;
+    justify-content: center; margin-bottom: 14px;
+  }
+  #screen-dots .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #C8B8A8; transition: all 0.2s;
+  }
+  #screen-dots .dot.on {
+    width: 22px; border-radius: 4px; background: #1B3A5C;
+  }
+  .theme-btn {
+    background: rgba(0,0,0,0.07); border: 1.5px solid rgba(0,0,0,0.14);
+    color: #2C2416; font-size: 12px; font-weight: 600;
+    padding: 8px 20px; border-radius: 100px;
+    cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-outer">
+  <div class="side-l"></div>
+  <div class="side-r"></div>
+  <div class="phone-body">
+    <div id="phone-screen"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div id="screen-label">Recipe Detail</div>
+  <div class="hint">Tap tabs, ingredients &amp; Start Cooking to explore</div>
+  <div id="screen-dots"></div>
+  <button class="theme-btn" id="theme-btn" onclick="otToggleTheme()">☾ Dark Mode</button>
+</div>
+
+<script src="./our-table-design-system.js"></script>
+<script>
+(function () {
+  var T = OT.T, S = OT.S, R = OT.R, c = OT.c;
+
+  /* ══════════════════════════════════════════════════════════
+     RECIPE DATA
+  ══════════════════════════════════════════════════════════ */
+  var RECIPE = {
+    title:       'Creamy Tuscan Salmon',
+    heroColor:   null,  // gradient
+    rating:      4.9,
+    ratingCount: 2847,
+    time:        '28 min',
+    prep:        '8 min',
+    cook:        '20 min',
+    servings:    4,
+    difficulty:  'Medium',
+    cost:        '$18.40',
+    costPer:     '$4.60/serving',
+    source:      'Web',
+    sourceUrl:   'bonappetit.com',
+    description: 'Pan-seared salmon fillets in a luscious sun-dried tomato cream sauce with wilted spinach and fresh basil. Restaurant quality in under 30 minutes.',
+    tags:        ['High Protein', 'Dairy', 'Gluten-Free', 'Pescatarian'],
+    author:      'Bon Appétit',
+    savedBy:     '14.2K',
+    conflicts: [
+      { member: 'Emma', ingredient: 'Heavy cream', need: 'Dairy-Free', swap: 'Full-fat coconut cream' }
+    ]
+  };
+
+  var INGREDIENTS = [
+    { section: 'Salmon', items: [
+      { label: 'Salmon fillets, skin-on',     qty: '4 × 6 oz' },
+      { label: 'Olive oil',                   qty: '2 tbsp' },
+      { label: 'Salt & black pepper',         qty: 'to taste' }
+    ]},
+    { section: 'Cream Sauce', items: [
+      { label: 'Butter, unsalted',            qty: '2 tbsp' },
+      { label: 'Garlic cloves, minced',       qty: '4' },
+      { label: 'Sun-dried tomatoes in oil',   qty: '⅓ cup, drained' },
+      { label: 'Cherry tomatoes',             qty: '1 cup, halved' },
+      { label: 'Heavy cream',                 qty: '1 cup' },
+      { label: 'Chicken or fish stock',       qty: '½ cup' },
+      { label: 'Parmesan, freshly grated',    qty: '½ cup' }
+    ]},
+    { section: 'Greens & Finish', items: [
+      { label: 'Baby spinach',                qty: '3 cups' },
+      { label: 'Fresh basil leaves',          qty: '¼ cup, torn' },
+      { label: 'Lemon, zested & juiced',      qty: '1' },
+      { label: 'Red pepper flakes',           qty: 'pinch' }
+    ]}
+  ];
+
+  var INSTRUCTIONS = [
+    { number: 1, icon: '🧂', title: 'Season the salmon',
+      body: 'Pat salmon fillets completely dry with paper towels. Season generously with salt and cracked black pepper on both sides. Let rest at room temperature for 5 minutes.',
+      time: null },
+    { number: 2, icon: '🔥', title: 'Sear skin-side down',
+      body: 'Heat olive oil in a large oven-safe skillet over medium-high heat until shimmering. Add salmon skin-side down. Press gently with a spatula for the first 30 seconds. Cook undisturbed for 4–5 minutes until the skin is crispy and golden.',
+      time: '5 min' },
+    { number: 3, icon: '🐟', title: 'Flip & finish salmon',
+      body: 'Flip salmon and cook for another 2–3 minutes until the flesh is just cooked through. Transfer to a plate and tent loosely with foil. Do not discard the pan drippings.',
+      time: '3 min' },
+    { number: 4, icon: '🧄', title: 'Build the sauce base',
+      body: 'Reduce heat to medium. Melt butter in the same pan. Add minced garlic and sun-dried tomatoes; sauté for 1 minute until fragrant. Add cherry tomatoes and cook until they begin to blister, about 2 minutes.',
+      time: '3 min' },
+    { number: 5, icon: '🥛', title: 'Make it creamy',
+      body: 'Pour in heavy cream and stock. Stir in parmesan, scraping up any browned bits from the pan. Simmer on medium-low for 3–4 minutes, stirring often, until the sauce thickens enough to coat a spoon.',
+      time: '4 min' },
+    { number: 6, icon: '🌿', title: 'Add greens & return salmon',
+      body: 'Stir in spinach and let it wilt for 1 minute. Nestle the salmon back into the sauce. Squeeze over lemon juice, add zest, scatter basil leaves, and finish with a pinch of red pepper flakes.',
+      time: '2 min' },
+    { number: 7, icon: '🍽️', title: 'Serve immediately',
+      body: 'Spoon sauce generously over each fillet. Serve with crusty bread, pasta, or steamed rice to soak up every last drop of that sauce. Enjoy!',
+      time: null }
+  ];
+
+  var RELATED = [
+    { title: 'Lemon Herb Salmon',   heroColor: '#3A6898', time: '22 min' },
+    { title: 'Creamy Pasta Bake',   heroColor: '#D4A848', time: '35 min' },
+    { title: 'Garlic Butter Shrimp',heroColor: '#C89040', time: '15 min' }
+  ];
+
+  var SCREEN_NAMES = {
+    recipeDetail:    'Recipe Detail',
+    conflictDetail:  'Dietary Conflict',
+    cookingMode:     'Cooking Mode'
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════════ */
+
+  function iconSvg(path, size, color, sw) {
+    return '<svg width="' + (size||20) + '" height="' + (size||20) + '" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="' + (color||'currentColor') + '" stroke-width="' + (sw||'1.8') + '" ' +
+      'stroke-linecap="round" stroke-linejoin="round"><path d="' + path + '"/></svg>';
+  }
+
+  /* Tab bar for recipe detail */
+  function tabBar(th, active) {
+    var tabs = [
+      { id: 'overview',     label: 'Overview' },
+      { id: 'ingredients',  label: 'Ingredients' },
+      { id: 'instructions', label: 'Instructions' }
+    ];
+    var html = '<div style="display:flex;border-bottom:1.5px solid ' + th.border + ';' +
+      'background:' + th.bg + ';position:sticky;top:0;z-index:5">';
+    tabs.forEach(function (t) {
+      var on = t.id === active;
+      html += '<div onclick="otSetTab(\'' + t.id + '\')" style="flex:1;text-align:center;' +
+        'padding:12px 0 10px;font-size:12px;font-weight:' + (on ? T.wt.bold : T.wt.med) + ';' +
+        'color:' + (on ? th.primary : th.muted) + ';cursor:pointer;position:relative">' +
+        t.label +
+        (on ? '<div style="position:absolute;bottom:-1px;left:20%;right:20%;height:2px;' +
+          'background:' + th.primary + ';border-radius:2px"></div>' : '') +
+      '</div>';
+    });
+    return html + '</div>';
+  }
+
+  /* Star rating display */
+  function stars(rating, th) {
+    var full  = Math.floor(rating);
+    var frac  = rating - full;
+    var html  = '<div style="display:flex;align-items:center;gap:2px">';
+    for (var i = 0; i < 5; i++) {
+      var fill = i < full ? '#FFD060' : (i === full && frac >= 0.5 ? '#FFD060' : th.border);
+      html += '<svg width="12" height="12" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="' + fill + '" stroke="' + fill + '" stroke-width="1"/></svg>';
+    }
+    return html + '</div>';
+  }
+
+  /* Ingredient row with tap-to-check */
+  function ingredientRow(th, item, idx, checked) {
+    var isChecked = checked.indexOf(idx) >= 0;
+    return '<div onclick="otCheckIngredient(' + idx + ')" style="display:flex;align-items:center;' +
+      'gap:12px;padding:10px 0;border-bottom:0.5px solid ' + th.border + ';cursor:pointer">' +
+      /* Checkbox */
+      '<div style="width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;' +
+        'align-items:center;justify-content:center;' +
+        (isChecked
+          ? 'background:' + th.secondary + ';'
+          : 'border:1.5px solid ' + th.border + ';') + '">' +
+        (isChecked ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : '') +
+      '</div>' +
+      /* Text */
+      '<div style="flex:1">' +
+        '<span style="font-size:13px;color:' + (isChecked ? th.muted : th.text) + ';' +
+          (isChecked ? 'text-decoration:line-through;' : '') + '">' + item.label + '</span>' +
+      '</div>' +
+      /* Qty */
+      '<span style="font-size:12px;color:' + th.muted + ';font-weight:' + T.wt.semi + ';' +
+        (isChecked ? 'text-decoration:line-through;' : '') + '">' + item.qty + '</span>' +
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SCREENS
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── 1. RECIPE DETAIL ───────────────────────────────────── */
+  function sRecipeDetail(th) {
+    var tab      = otState.recipeTab || 'overview';
+    var servings = otState.servings || RECIPE.servings;
+    var checked  = otState.checkedIngredients || [];
+    var saved    = otState.recipeSaved;
+    var swapAccepted = otState.swapAccepted;
+
+    /* ── OVERVIEW TAB ─────────────────────────────────── */
+    var overviewContent =
+      /* Description */
+      '<p style="font-size:13px;color:' + th.muted + ';line-height:1.75;margin-bottom:18px">' +
+        RECIPE.description + '</p>' +
+
+      /* Conflict warning */
+      (!swapAccepted ? c.conflictWarning(
+        th,
+        RECIPE.conflicts[0].member,
+        RECIPE.conflicts[0].ingredient,
+        RECIPE.conflicts[0].swap,
+        'otAcceptSwap()'
+      ) : '<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;' +
+        'background:' + (th._name === 'dark' ? '#1A2E1A' : '#F0FDF4') + ';' +
+        'border:1px solid ' + (th._name === 'dark' ? '#2A5A2A' : '#BBF7D0') + ';' +
+        'border-radius:' + R.md + ';margin-bottom:10px">' +
+        '<span style="font-size:16px">✅</span>' +
+        '<span style="font-size:12px;color:' + th.secondary + ';font-weight:' + T.wt.semi + '">' +
+          'Swap accepted — using coconut cream for Emma' +
+        '</span></div>') +
+
+      /* Dietary tags */
+      '<div style="margin-bottom:18px">' +
+        '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+          'letter-spacing:0.06em;margin-bottom:8px">DIETARY INFO</div>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+          RECIPE.tags.map(function (tag) {
+            return '<span style="padding:4px 12px;border-radius:' + R.pill + ';font-size:11px;' +
+              'background:' + th.chip + ';color:' + th.chipTx + ';border:1px solid ' + th.border + '">' + tag + '</span>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+
+      /* Nutrition quick stats */
+      '<div style="margin-bottom:18px">' +
+        '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+          'letter-spacing:0.06em;margin-bottom:8px">NUTRITION (PER SERVING)</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">' +
+          [['420','kcal'],['38g','protein'],['12g','carbs'],['26g','fat']].map(function (n) {
+            return '<div style="background:' + th.card + ';border:0.5px solid ' + th.border + ';' +
+              'border-radius:' + R.md + ';padding:10px 6px;text-align:center">' +
+              '<div style="font-size:16px;font-weight:' + T.wt.heavy + ';color:' + th.text + '">' + n[0] + '</div>' +
+              '<div style="font-size:11px;color:' + th.muted + ';margin-top:2px">' + n[1] + '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+
+      /* Cost info */
+      '<div style="background:' + th.card + ';border:0.5px solid ' + th.border + ';' +
+        'border-radius:' + R.md + ';padding:14px;margin-bottom:18px;' +
+        'display:flex;align-items:center;justify-content:space-between">' +
+        '<div>' +
+          '<div style="font-size:11px;color:' + th.muted + ';margin-bottom:3px">Cost per meal</div>' +
+          '<div style="font-size:20px;font-weight:' + T.wt.heavy + ';color:' + th.secondary + '">' + RECIPE.costPer + '</div>' +
+        '</div>' +
+        '<div style="text-align:right">' +
+          '<div style="font-size:11px;color:' + th.muted + ';margin-bottom:3px">Total (' + servings + ' servings)</div>' +
+          '<div style="font-size:16px;font-weight:' + T.wt.bold + ';color:' + th.text + '">' + RECIPE.cost + '</div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Related recipes */
+      '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+        'letter-spacing:0.06em;margin-bottom:10px">YOU MIGHT ALSO LIKE</div>' +
+      '<div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px">' +
+        RELATED.map(function (r) {
+          return '<div onclick="otRender()" style="flex-shrink:0;width:110px;cursor:pointer">' +
+            '<div style="height:80px;border-radius:' + R.md + ';background:' + r.heroColor + ';' +
+              'margin-bottom:6px;position:relative;overflow:hidden">' +
+              '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.3),transparent 60%)"></div>' +
+              '<div style="position:absolute;bottom:5px;left:7px;font-size:9px;color:white">' + r.time + '</div>' +
+            '</div>' +
+            '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.text + ';line-height:1.3">' + r.title + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+
+    /* ── INGREDIENTS TAB ──────────────────────────────── */
+    var totalItems = INGREDIENTS.reduce(function (acc, s) { return acc + s.items.length; }, 0);
+    var checkedCount = checked.length;
+
+    var ingredientsContent =
+      /* Servings adjuster + add to list button */
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">' +
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<span style="font-size:12px;color:' + th.muted + '">Servings</span>' +
+          '<div style="display:flex;align-items:center;gap:0;border:1.5px solid ' + th.border + ';' +
+            'border-radius:' + R.sm + ';overflow:hidden">' +
+            '<button onclick="otAdjustServings(-1)" style="width:44px;height:44px;border:none;' +
+              'background:' + th.chip + ';color:' + th.text + ';font-size:20px;cursor:pointer;' +
+              'font-family:' + T.sans + ';line-height:1;display:flex;align-items:center;justify-content:center">−</button>' +
+            '<div style="min-width:32px;height:44px;display:flex;align-items:center;justify-content:center;' +
+              'font-size:14px;font-weight:' + T.wt.bold + ';color:' + th.text + '">' + servings + '</div>' +
+            '<button onclick="otAdjustServings(1)" style="width:44px;height:44px;border:none;' +
+              'background:' + th.chip + ';color:' + th.text + ';font-size:20px;cursor:pointer;' +
+              'font-family:' + T.sans + ';line-height:1;display:flex;align-items:center;justify-content:center">+</button>' +
+          '</div>' +
+        '</div>' +
+        '<button onclick="otAddToGroceryList()" style="padding:7px 14px;border-radius:' + R.pill + ';' +
+          'border:none;background:' + th.secondary + ';color:white;font-size:11px;' +
+          'font-weight:' + T.wt.bold + ';cursor:pointer;font-family:' + T.sans + ';' +
+          'display:flex;align-items:center;gap:5px">' +
+          iconSvg('M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4', 13, 'white') +
+          'Add to List' +
+        '</button>' +
+      '</div>' +
+
+      /* Progress bar */
+      (checkedCount > 0 ? '<div style="margin-bottom:14px">' +
+        c.progressBar(th, checkedCount, totalItems, th.secondary) +
+        '<div style="font-size:10px;color:' + th.muted + ';margin-top:4px;text-align:right">' +
+          checkedCount + ' of ' + totalItems + ' gathered' +
+        '</div>' +
+      '</div>' : '') +
+
+      /* Ingredient sections */
+      (function () {
+        var html = '';
+        var globalIdx = 0;
+        INGREDIENTS.forEach(function (section) {
+          html += '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+            'letter-spacing:0.06em;padding:10px 0 4px;text-transform:uppercase">' + section.section + '</div>';
+          section.items.forEach(function (item) {
+            html += ingredientRow(th, item, globalIdx, checked);
+            globalIdx++;
+          });
+        });
+        return html;
+      })();
+
+    /* ── INSTRUCTIONS TAB ─────────────────────────────── */
+    var instructionsContent =
+      /* Time summary */
+      '<div style="display:flex;gap:8px;margin-bottom:16px">' +
+        [['Prep', RECIPE.prep], ['Cook', RECIPE.cook], ['Total', RECIPE.time]].map(function (t) {
+          return '<div style="flex:1;background:' + th.card + ';border:0.5px solid ' + th.border + ';' +
+            'border-radius:' + R.md + ';padding:10px;text-align:center">' +
+            '<div style="font-size:15px;font-weight:' + T.wt.heavy + ';color:' + th.text + '">' + t[1] + '</div>' +
+            '<div style="font-size:11px;color:' + th.muted + ';margin-top:2px">' + t[0] + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+
+      /* Steps list */
+      INSTRUCTIONS.map(function (step) {
+        return '<div style="display:flex;gap:12px;margin-bottom:18px">' +
+          /* Step number bubble */
+          '<div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:' + th.primary + ';' +
+            'display:flex;align-items:center;justify-content:center;margin-top:2px">' +
+            '<span style="font-size:11px;font-weight:' + T.wt.heavy + ';color:white">' + step.number + '</span>' +
+          '</div>' +
+          /* Content */
+          '<div style="flex:1">' +
+            '<div style="font-size:14px;font-weight:' + T.wt.bold + ';color:' + th.text + ';margin-bottom:5px">' +
+              step.icon + ' ' + step.title +
+            '</div>' +
+            '<div style="font-size:12px;color:' + th.muted + ';line-height:1.7;margin-bottom:' +
+              (step.time ? '8' : '0') + 'px">' + step.body + '</div>' +
+            (step.time ? '<div style="display:inline-flex;align-items:center;gap:5px;' +
+              'background:' + th.chip + ';border-radius:' + R.pill + ';padding:4px 12px">' +
+              iconSvg('M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 5v5l3 3', 12, th.primary) +
+              '<span style="font-size:11px;color:' + th.primary + ';font-weight:' + T.wt.semi + '">' + step.time + '</span>' +
+            '</div>' : '') +
+          '</div>' +
+        '</div>';
+      }).join('') +
+
+      /* Start cooking CTA */
+      '<div style="margin-top:8px">' +
+        c.btn(th, '👨‍🍳  Start Cooking Mode', "otGo('cookingMode')", 'primary') +
+      '</div>';
+
+    var tabContent = tab === 'overview'     ? overviewContent
+                   : tab === 'ingredients'  ? ingredientsContent
+                   : instructionsContent;
+
+    /* ── ASSEMBLE ─────────────────────────────────────── */
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+
+      /* Hero image area */
+      '<div style="flex-shrink:0;height:220px;position:relative;overflow:hidden;' +
+        'background:' + (th._name === 'dark'
+          ? 'linear-gradient(150deg,#1A2A40 0%,#0F1A28 100%)'
+          : 'linear-gradient(150deg,#1B3A5C 0%,#0F2A48 60%,#0A1E38 100%)') + '">' +
+
+        /* Decorative circles */
+        '<div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;' +
+          'border-radius:50%;background:rgba(255,255,255,0.06)"></div>' +
+        '<div style="position:absolute;bottom:-60px;left:-30px;width:160px;height:160px;' +
+          'border-radius:50%;background:rgba(255,255,255,0.04)"></div>' +
+
+        /* Large emoji / food icon */
+        '<div style="position:absolute;right:22px;top:50%;transform:translateY(-50%);' +
+          'font-size:88px;opacity:0.6;line-height:1">🐟</div>' +
+
+        /* Gradient overlay (bottom fade) */
+        '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 55%)"></div>' +
+
+        /* Status bar (overlay style) */
+        c.notch() +
+        '<div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;' +
+          'align-items:center;padding:38px 20px 0;font-size:12px;font-weight:600;color:white;z-index:20">' +
+          '<span>9:41</span>' +
+          '<div style="display:flex;gap:5px;font-size:11px;letter-spacing:1px;opacity:0.85">●●●</div>' +
+        '</div>' +
+
+        /* Top controls */
+        '<div style="position:absolute;top:52px;left:0;right:0;' +
+          'display:flex;justify-content:space-between;align-items:center;padding:0 18px;z-index:20">' +
+          /* Back */
+          '<div onclick="otBack()" style="width:34px;height:34px;border-radius:50%;' +
+            'background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+            iconSvg('M15 18l-6-6 6-6', 18, 'white', '2') +
+          '</div>' +
+          /* Right icons */
+          '<div style="display:flex;gap:8px">' +
+            /* Share */
+            '<div onclick="return false" style="width:34px;height:34px;border-radius:50%;' +
+              'background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+              iconSvg('M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13', 17, 'white', '2') +
+            '</div>' +
+            /* Bookmark */
+            '<div onclick="otToggleSave()" style="width:34px;height:34px;border-radius:50%;' +
+              'background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+              '<svg width="17" height="17" viewBox="0 0 24 24" fill="' + (saved ? 'white' : 'none') + '" ' +
+                'stroke="white" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Recipe title + meta on hero */
+        '<div style="position:absolute;bottom:16px;left:20px;right:20px;z-index:20">' +
+          '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:white;' +
+            'font-family:' + T.serif + ';line-height:1.2;margin-bottom:8px;' +
+            'text-shadow:0 2px 8px rgba(0,0,0,0.4)">' + RECIPE.title + '</div>' +
+          '<div style="display:flex;align-items:center;gap:10px">' +
+            /* Stars */
+            stars(RECIPE.rating, th) +
+            '<span style="font-size:12px;color:rgba(255,255,255,0.9);font-weight:600">' + RECIPE.rating + '</span>' +
+            '<span style="font-size:11px;color:rgba(255,255,255,0.65)">(' + RECIPE.ratingCount.toLocaleString() + ')</span>' +
+            /* Source */
+            '<span style="font-size:10px;background:rgba(255,255,255,0.2);border-radius:' + R.pill + ';' +
+              'padding:2px 9px;color:white;font-weight:600">' + RECIPE.sourceUrl + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Meta pills row */
+      '<div style="display:flex;gap:7px;padding:12px 20px;overflow-x:auto;' +
+        'scrollbar-width:none;background:' + th.bg + ';flex-shrink:0">' +
+        [
+          [iconSvg('M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 5v5l3 3',14,th.primary), RECIPE.time],
+          [iconSvg('M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',14,th.muted), (otState.servings||RECIPE.servings) + ' servings'],
+          [iconSvg('M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',14,th.muted), RECIPE.cost],
+          [iconSvg('M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z',14,th.muted), RECIPE.difficulty]
+        ].map(function (m) {
+          return '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0;padding:6px 12px;' +
+            'background:' + th.card + ';border:0.5px solid ' + th.border + ';border-radius:' + R.pill + '">' +
+            m[0] + '<span style="font-size:11px;color:' + th.text + ';font-weight:' + T.wt.med + '">' + m[1] + '</span>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+
+      /* Tab bar */
+      tabBar(th, tab) +
+
+      /* Scrollable tab content */
+      '<div style="flex:1;overflow-y:auto;padding:16px 20px 20px;scrollbar-width:none">' +
+        tabContent +
+      '</div>' +
+
+      /* Sticky bottom CTA (only on overview + ingredients) */
+      (tab !== 'instructions' ?
+        '<div style="flex-shrink:0;padding:10px 20px 16px;background:' + th.bg + ';' +
+          'border-top:0.5px solid ' + th.border + '">' +
+          c.btn(th, '👨‍🍳  Start Cooking Mode', "otGo('cookingMode')", 'primary') +
+        '</div>' : '') +
+
+    '</div>';
+  }
+
+  /* ── 2. DIETARY CONFLICT DETAIL ─────────────────────────── */
+  function sConflictDetail(th) {
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* Header */
+      '<div style="padding:4px ' + S.xl + ' 14px">' +
+        c.backBtn(th, 'Recipe') +
+        '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
+          'font-family:' + T.serif + ';margin-top:8px">Dietary Conflicts</div>' +
+        '<div style="font-size:13px;color:' + th.muted + ';margin-top:4px">' +
+          'We found 1 issue for your household' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 ' + S.xl + ';scrollbar-width:none">' +
+
+        /* Conflict card */
+        '<div style="background:' + th.card + ';border:0.5px solid ' + th.border + ';' +
+          'border-radius:' + R.lg + ';overflow:hidden;margin-bottom:16px">' +
+
+          /* Member row */
+          '<div style="padding:14px 16px;border-bottom:0.5px solid ' + th.border + ';' +
+            'display:flex;align-items:center;gap:12px">' +
+            c.avatar(th, 'E', null, '38px') +
+            '<div>' +
+              '<div style="font-size:14px;font-weight:' + T.wt.bold + ';color:' + th.text + '">Emma</div>' +
+              '<div style="font-size:11px;color:' + th.muted + '">Dairy-Free diet</div>' +
+            '</div>' +
+            '<div style="margin-left:auto;background:' + (th._name === 'dark' ? '#3A1A1A' : '#FEE2E2') + ';' +
+              'border-radius:' + R.pill + ';padding:4px 10px;font-size:10px;font-weight:700;' +
+              'color:' + th.error + '">1 conflict</div>' +
+          '</div>' +
+
+          /* Conflict detail */
+          '<div style="padding:14px 16px">' +
+            /* Problematic ingredient */
+            '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+              'letter-spacing:0.05em;margin-bottom:8px">CONFLICTING INGREDIENT</div>' +
+            '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;' +
+              'background:' + (th._name === 'dark' ? '#3A1A1A' : '#FEF2F2') + ';' +
+              'border-radius:' + R.md + ';margin-bottom:14px">' +
+              '<span style="font-size:20px">🥛</span>' +
+              '<div>' +
+                '<div style="font-size:13px;font-weight:' + T.wt.bold + ';color:' + th.error + '">Heavy Cream</div>' +
+                '<div style="font-size:11px;color:' + th.muted + '">1 cup — in Cream Sauce</div>' +
+              '</div>' +
+            '</div>' +
+
+            /* Arrow */
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+              '<div style="flex:1;height:1px;background:' + th.border + '"></div>' +
+              '<div style="font-size:20px">↕️</div>' +
+              '<div style="flex:1;height:1px;background:' + th.border + '"></div>' +
+            '</div>' +
+
+            /* Suggested swap */
+            '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+              'letter-spacing:0.05em;margin-bottom:8px">SUGGESTED SWAP</div>' +
+            '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;' +
+              'background:' + (th._name === 'dark' ? '#1A2E1A' : '#F0FDF4') + ';' +
+              'border:1px solid ' + (th._name === 'dark' ? '#2A5A2A' : '#BBF7D0') + ';' +
+              'border-radius:' + R.md + ';margin-bottom:16px">' +
+              '<span style="font-size:20px">🥥</span>' +
+              '<div style="flex:1">' +
+                '<div style="font-size:13px;font-weight:' + T.wt.bold + ';color:' + th.secondary + '">Full-Fat Coconut Cream</div>' +
+                '<div style="font-size:11px;color:' + th.muted + '">Same quantity — works great in this sauce</div>' +
+              '</div>' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + th.secondary + '" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>' +
+            '</div>' +
+
+            /* Taste note */
+            '<div style="padding:10px 12px;background:' + th.chip + ';border-radius:' + R.md + ';' +
+              'font-size:11px;color:' + th.muted + ';line-height:1.6;margin-bottom:16px">' +
+              '💡 <strong style="color:' + th.text + '">Chef tip:</strong> Coconut cream adds a subtle sweetness that pairs beautifully with sun-dried tomatoes. The sauce will be slightly thinner — simmer 1–2 extra minutes if you prefer it thicker.' +
+            '</div>' +
+
+            /* Actions */
+            '<div style="display:flex;flex-direction:column;gap:8px">' +
+              c.btn(th, '✓ Accept swap for Emma', 'otAcceptSwap();otBack()', 'primary') +
+              c.btn(th, 'Keep original recipe', 'otBack()', 'secondary') +
+            '</div>' +
+          '</div>' +
+
+        '</div>' +
+
+        /* All members OK panel */
+        '<div style="background:' + th.card + ';border:0.5px solid ' + th.border + ';' +
+          'border-radius:' + R.lg + ';padding:14px 16px;margin-bottom:24px">' +
+          '<div style="font-size:12px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+            'letter-spacing:0.05em;margin-bottom:10px">YOUR HOUSEHOLD</div>' +
+          ['Will — No restrictions ✓', 'Emma — Dairy-Free ⚠', 'Lily — No restrictions ✓'].map(function (m) {
+            var hasConflict = m.indexOf('⚠') >= 0;
+            return '<div style="display:flex;align-items:center;justify-content:space-between;' +
+              'padding:8px 0;border-bottom:0.5px solid ' + th.border + '">' +
+              '<span style="font-size:13px;color:' + th.text + '">' + m.split(' —')[0] + '</span>' +
+              '<div style="font-size:11px;color:' + (hasConflict ? th.warning : th.secondary) + ';font-weight:' + T.wt.semi + '">' +
+                (hasConflict ? '⚠ 1 conflict' : '✓ No conflicts') +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 3. COOKING MODE ────────────────────────────────────── */
+  function sCookingMode(th) {
+    var stepIdx  = otState.cookingStep || 0;
+    var step     = INSTRUCTIONS[stepIdx];
+    var total    = INSTRUCTIONS.length;
+    var isFirst  = stepIdx === 0;
+    var isLast   = stepIdx === total - 1;
+    var pct      = Math.round(((stepIdx + 1) / total) * 100);
+
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+
+      /* Top bar */
+      c.notch() +
+      '<div style="padding:38px ' + S.xl + ' 10px;display:flex;align-items:center;justify-content:space-between">' +
+        /* Exit */
+        '<div onclick="otExitCooking()" style="width:34px;height:34px;border-radius:50%;' +
+          'background:' + th.chip + ';display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+          iconSvg('M18 6L6 18M6 6l12 12', 16, th.muted, '2') +
+        '</div>' +
+
+        /* Title + step count */
+        '<div style="text-align:center">' +
+          '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+            'letter-spacing:0.08em">COOKING MODE</div>' +
+          '<div style="font-size:13px;font-weight:' + T.wt.bold + ';color:' + th.text + '">' +
+            'Step ' + (stepIdx + 1) + ' of ' + total +
+          '</div>' +
+        '</div>' +
+
+        /* Keep screen on indicator */
+        '<div style="width:34px;height:34px;border-radius:50%;background:' + th.chip + ';' +
+          'display:flex;align-items:center;justify-content:center">' +
+          '<span style="font-size:14px">🔆</span>' +
+        '</div>' +
+      '</div>' +
+
+      /* Progress bar */
+      '<div style="padding:0 ' + S.xl + ' 10px">' +
+        '<div style="height:4px;border-radius:' + R.pill + ';background:' + th.chip + ';overflow:hidden">' +
+          '<div style="height:100%;border-radius:' + R.pill + ';background:' + th.primary + ';' +
+            'width:' + pct + '%;transition:width 0.3s ease"></div>' +
+        '</div>' +
+        /* Step dots */
+        '<div style="display:flex;justify-content:center;gap:4px;margin-top:8px">' +
+          INSTRUCTIONS.map(function (_, i) {
+            var done    = i < stepIdx;
+            var current = i === stepIdx;
+            return '<div style="width:' + (current ? '18px' : '6px') + ';height:6px;' +
+              'border-radius:' + R.pill + ';transition:all 0.2s;' +
+              'background:' + (current ? th.primary : done ? th.secondary : th.chip) + '"></div>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+
+      /* Step card */
+      '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;' +
+        'padding:10px ' + S.xl + ' 10px;overflow:hidden">' +
+        c.cookingStepCard(th, step) +
+
+        /* Ingredient callout for this step (contextual) */
+        (stepIdx === 1 || stepIdx === 4 ?
+          '<div style="margin-top:14px;padding:12px 14px;background:' + th.card + ';' +
+            'border:0.5px solid ' + th.border + ';border-radius:' + R.md + '">' +
+            '<div style="font-size:10px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+              'letter-spacing:0.05em;margin-bottom:8px">INGREDIENTS FOR THIS STEP</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+              (stepIdx === 1
+                ? ['Salmon fillets', 'Olive oil', 'Salt & pepper'].map(function (i) {
+                    return '<span style="font-size:10px;padding:3px 9px;border-radius:' + R.pill + ';' +
+                      'background:' + th.chip + ';color:' + th.chipTx + '">' + i + '</span>';
+                  }).join('')
+                : ['Butter', 'Garlic', 'Sun-dried tomatoes', 'Cherry tomatoes'].map(function (i) {
+                    return '<span style="font-size:10px;padding:3px 9px;border-radius:' + R.pill + ';' +
+                      'background:' + th.chip + ';color:' + th.chipTx + '">' + i + '</span>';
+                  }).join('')
+              ) +
+            '</div>' +
+          '</div>'
+        : '') +
+
+      '</div>' +
+
+      /* Navigation buttons */
+      '<div style="padding:8px ' + S.xl + ' 24px">' +
+
+        /* Prev / Next */
+        '<div style="display:flex;gap:10px;margin-bottom:10px">' +
+          /* Prev */
+          '<button onclick="otCookingPrev()" ' +
+            (isFirst ? 'disabled ' : '') +
+            'style="flex:1;padding:14px;border-radius:' + R.md + ';' +
+            'border:1.5px solid ' + th.border + ';background:transparent;' +
+            'color:' + (isFirst ? th.muted : th.text) + ';font-size:14px;font-weight:' + T.wt.bold + ';' +
+            'cursor:' + (isFirst ? 'default' : 'pointer') + ';font-family:' + T.sans + ';' +
+            'opacity:' + (isFirst ? '0.4' : '1') + '">← Prev</button>' +
+
+          /* Next / Finish */
+          (isLast
+            ? '<button onclick="otCookingFinish()" style="flex:2;padding:14px;border-radius:' + R.md + ';' +
+                'border:none;background:' + th.secondary + ';color:white;font-size:14px;' +
+                'font-weight:' + T.wt.bold + ';cursor:pointer;font-family:' + T.sans + '">🎉 Done!</button>'
+            : '<button onclick="otCookingNext()" style="flex:2;padding:14px;border-radius:' + R.md + ';' +
+                'border:none;background:' + th.primary + ';color:white;font-size:14px;' +
+                'font-weight:' + T.wt.bold + ';cursor:pointer;font-family:' + T.sans + ';' +
+                'box-shadow:0 6px 18px ' + th.primary + '44">Next →</button>'
+          ) +
+        '</div>' +
+
+        /* Recipe name reminder */
+        '<div style="text-align:center;font-size:11px;color:' + th.muted + '">' +
+          RECIPE.title +
+        '</div>' +
+
+      '</div>' +
+
+    '</div>';
+  }
+
+  /* ── 4. COOKING COMPLETE (after last step) ──────────────── */
+  function sCookingDone(th) {
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'align-items:center;justify-content:center;font-family:' + T.sans + ';padding:32px;text-align:center">' +
+
+      /* Confetti-ish decoration */
+      '<div style="font-size:72px;margin-bottom:6px;animation:fadeScaleUp 0.5s ease">🎉</div>' +
+      '<div style="font-size:24px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
+        'font-family:' + T.serif + ';margin-bottom:8px">That\'s a wrap!</div>' +
+      '<div style="font-size:14px;color:' + th.muted + ';line-height:1.7;max-width:260px;margin-bottom:32px">' +
+        'You just cooked <strong style="color:' + th.text + '">' + RECIPE.title + '</strong>. Hope it tastes amazing!' +
+      '</div>' +
+
+      /* Action cards */
+      '<div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:24px">' +
+        [
+          ['⭐', 'Rate this recipe', 'How did it turn out?', th.primary],
+          ['📸', 'Add a photo', 'Share how yours looks', th.secondary],
+          ['📝', 'Add notes', 'Tweaks for next time', th.muted]
+        ].map(function (a) {
+          return '<div onclick="return false" style="display:flex;align-items:center;gap:14px;' +
+            'padding:14px 16px;background:' + th.card + ';border:0.5px solid ' + th.border + ';' +
+            'border-radius:' + R.lg + ';cursor:pointer;text-align:left">' +
+            '<div style="width:40px;height:40px;border-radius:' + R.md + ';background:' + a[3] + '22;' +
+              'display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">' + a[0] + '</div>' +
+            '<div>' +
+              '<div style="font-size:14px;font-weight:' + T.wt.semi + ';color:' + th.text + '">' + a[1] + '</div>' +
+              '<div style="font-size:11px;color:' + th.muted + '">' + a[2] + '</div>' +
+            '</div>' +
+            '<div style="margin-left:auto">' +
+              iconSvg('M9 18l6-6-6-6', 16, th.muted) +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+
+      c.btn(th, 'Back to Recipe', "otGo('recipeDetail')", 'secondary', 'width:auto;padding:12px 32px') +
+
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     NAV WIRING
+  ══════════════════════════════════════════════════════════ */
+
+  OT.nav(
+    {
+      recipeDetail:   sRecipeDetail,
+      conflictDetail: sConflictDetail,
+      cookingMode:    sCookingMode,
+      cookingDone:    sCookingDone
+    },
+    'recipeDetail',
+    'phone-screen',
+    {
+      mainScreens: ['recipeDetail'],
+      state: {
+        recipeTab:           'overview',
+        servings:            4,
+        checkedIngredients:  [],
+        recipeSaved:         false,
+        swapAccepted:        false,
+        cookingStep:         0
+      },
+      onRender: function (state, theme) {
+        var el = document.getElementById('screen-label');
+        if (el) el.textContent = SCREEN_NAMES[state.screen] || state.screen;
+
+        var dotsEl = document.getElementById('screen-dots');
+        if (dotsEl) {
+          var visible = ['recipeDetail', 'conflictDetail', 'cookingMode'];
+          var idx = visible.indexOf(state.screen);
+          if (idx < 0) idx = 0;
+          dotsEl.innerHTML = visible.map(function (_, i) {
+            return '<div class="dot' + (i === idx ? ' on' : '') + '"></div>';
+          }).join('');
+        }
+
+        var btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = theme._name === 'dark' ? '☀ Light Mode' : '☾ Dark Mode';
+      }
+    }
+  );
+
+  /* ── Global handlers ────────────────────────────────────── */
+
+  window.otSetTab = function (tab) {
+    otState.recipeTab = tab;
+    otRender();
+  };
+
+  window.otToggleSave = function () {
+    otState.recipeSaved = !otState.recipeSaved;
+    otRender();
+  };
+
+  window.otAcceptSwap = function () {
+    otState.swapAccepted = true;
+    otRender();
+  };
+
+  window.otCheckIngredient = function (idx) {
+    var arr = otState.checkedIngredients || [];
+    var pos = arr.indexOf(idx);
+    if (pos >= 0) arr.splice(pos, 1);
+    else arr.push(idx);
+    otState.checkedIngredients = arr;
+    otRender();
+  };
+
+  window.otAdjustServings = function (delta) {
+    var s = (otState.servings || 4) + delta;
+    if (s < 1) s = 1;
+    if (s > 12) s = 12;
+    otState.servings = s;
+    otRender();
+  };
+
+  window.otAddToGroceryList = function () {
+    /* In a real app this would push to shared grocery list state */
+    otState._toastMsg = 'Added to Grocery List!';
+    otRender();
+    setTimeout(function () { otState._toastMsg = null; }, 2200);
+  };
+
+  window.otCookingNext = function () {
+    var next = (otState.cookingStep || 0) + 1;
+    if (next >= INSTRUCTIONS.length) { otGo('cookingDone'); return; }
+    otState.cookingStep = next;
+    otRender();
+  };
+
+  window.otCookingPrev = function () {
+    var prev = (otState.cookingStep || 0) - 1;
+    if (prev < 0) return;
+    otState.cookingStep = prev;
+    otRender();
+  };
+
+  window.otCookingFinish = function () {
+    otGo('cookingDone');
+  };
+
+  window.otExitCooking = function () {
+    otState.cookingStep = 0;
+    otBack();
+  };
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Table — Family Recipe Book</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #EDE8E2; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .phone-outer { position: relative; filter: drop-shadow(0 28px 56px rgba(0,0,0,0.26)); }
+  .side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
+  .side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
+  .phone-body { width:370px;height:760px;background:#0D0D0D;border-radius:54px;padding:12px;border:1px solid #1A1A1A;box-shadow:inset 0 1px 1px rgba(255,255,255,0.07),inset 0 -1px 0 rgba(0,0,0,0.5); }
+  #phone-screen { width:100%;height:100%;border-radius:44px;overflow:hidden;position:relative; }
+  .controls { text-align:center;margin-top:24px; }
+  #screen-label { font-size:11px;font-weight:700;color:#8A7060;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px; }
+  .hint { font-size:11px;color:#B0A090;margin-bottom:14px; }
+  #screen-dots { display:flex;gap:7px;align-items:center;justify-content:center;margin-bottom:14px; }
+  #screen-dots .dot { width:7px;height:7px;border-radius:50%;background:#C8B8A8;transition:all 0.2s; }
+  #screen-dots .dot.on { width:22px;border-radius:4px;background:#1B3A5C; }
+  .theme-btn { background:rgba(0,0,0,0.07);border:1.5px solid rgba(0,0,0,0.14);color:#2C2416;font-size:12px;font-weight:600;padding:8px 20px;border-radius:100px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px; }
+</style>
+</head>
+<body>
+
+<div class="phone-outer">
+  <div class="side-l"></div>
+  <div class="side-r"></div>
+  <div class="phone-body">
+    <div id="phone-screen"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div id="screen-label">Family Recipe Book</div>
+  <div class="hint">Browse chapters, open a recipe, or share the book</div>
+  <div id="screen-dots"></div>
+  <button class="theme-btn" id="theme-btn" onclick="otToggleTheme()">☾ Dark Mode</button>
+</div>
+
+<script src="./our-table-design-system.js"></script>
+<script>
+(function () {
+  var T = OT.T, S = OT.S, R = OT.R, c = OT.c;
+
+  var SCREEN_NAMES = {
+    bookCover:    'Family Recipe Book',
+    bookChapter:  'Chapter',
+    bookRecipe:   'Recipe Entry',
+    partyMode:    'Party Mode',
+    printExport:  'Print & Share'
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     DATA
+  ══════════════════════════════════════════════════════════ */
+
+  var BOOK = {
+    title:    'The Wilson Family Recipes',
+    subtitle: 'Collected with love since 2024',
+    members:  ['Will','Emma','Lily'],
+    totalRecipes: 60,
+    chapters: [
+      {
+        title:    'Weeknight Favourites',
+        emoji:    '🍝',
+        color:    '#D4A848',
+        count:    18,
+        recipes: [
+          { title:'Creamy Tuscan Salmon',    author:'Will',  heroColor:'#D4A848', note:'The whole family loves this one!', rating:4.9, cooked:12 },
+          { title:'Pasta al Pomodoro',       author:'Will',  heroColor:'#C89040', note:'Simple, perfect, never fails.', rating:4.8, cooked:8 },
+          { title:'Dairy-Free Pasta Bake',   author:'Emma',  heroColor:'#3A6898', note:'Emma\'s dairy-free twist — just as good!', rating:4.7, cooked:5 }
+        ]
+      },
+      {
+        title:    'Emma\'s Kitchen',
+        emoji:    '🥥',
+        color:    '#E8A84A',
+        count:    12,
+        recipes: [
+          { title:'Coconut Curry',            author:'Emma',  heroColor:'#E8A84A', note:'Dairy-free and absolutely delicious.', rating:4.8, cooked:6 },
+          { title:'Oat Banana Pancakes',      author:'Emma',  heroColor:'#C89040', note:'Lily requests these every Sunday.', rating:4.9, cooked:14 }
+        ]
+      },
+      {
+        title:    'Grandma\'s Classics',
+        emoji:    '👵',
+        color:    '#C89040',
+        count:    9,
+        recipes: [
+          { title:'Sunday Roast Chicken',     author:'Grandma', heroColor:'#C89040', note:'Passed down from 1962. Never change a thing.', rating:5.0, cooked:22 },
+          { title:'Apple & Cinnamon Crumble', author:'Grandma', heroColor:'#D4A848', note:'Use Bramley apples, always.', rating:4.9, cooked:15 }
+        ]
+      },
+      {
+        title:    'Quick & Healthy',
+        emoji:    '⚡',
+        color:    '#3A6898',
+        count:    14,
+        recipes: [
+          { title:'Shakshuka',                author:'Will',  heroColor:'#C89040', note:'Under 25 minutes. Perfect brunch.', rating:4.7, cooked:7 },
+          { title:'Green Goddess Salad',      author:'Lily',  heroColor:'#3A6898', note:'Lily\'s first recipe — so proud!', rating:4.6, cooked:4 }
+        ]
+      },
+      {
+        title:    'Special Occasions',
+        emoji:    '🎉',
+        color:    '#1B3A5C',
+        count:    7,
+        recipes: [
+          { title:'Beef Wellington',          author:'Will',  heroColor:'#D4A848', note:'Save for Christmas dinner only.', rating:5.0, cooked:3 },
+          { title:'Chocolate Lava Cakes',     author:'Emma',  heroColor:'#0F2240', note:'Makes 4. Everyone gets their own.', rating:5.0, cooked:5 }
+        ]
+      }
+    ]
+  };
+
+  var PARTY_RECIPES = [
+    { title:'Bruschetta Trio',         serves:12, heroColor:'#D4A848', time:'20 min' },
+    { title:'Pasta Salad Bar',         serves:20, heroColor:'#C89040', time:'35 min' },
+    { title:'Slow-Cooker Chilli',      serves:15, heroColor:'#1B3A5C', time:'4 hr'   },
+    { title:'Sheet Pan Fajitas',       serves:12, heroColor:'#3A6898', time:'40 min' },
+    { title:'Chocolate Brownie Bites', serves:24, heroColor:'#0F2240', time:'45 min' }
+  ];
+
+  /* ══════════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════════ */
+
+  function iconSvg(path, size, color, sw) {
+    return '<svg width="'+(size||20)+'" height="'+(size||20)+'" viewBox="0 0 24 24" fill="none" '+
+      'stroke="'+(color||'currentColor')+'" stroke-width="'+(sw||'1.8')+'" '+
+      'stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg>';
+  }
+
+  function memberColor(name) {
+    var map = { Will:'#1B3A5C', Emma:'#E8A84A', Lily:'#3A6898', Grandma:'#C89040' };
+    return map[name] || '#8A7060';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SCREENS
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── 1. BOOK COVER / HOME ───────────────────────────────── */
+  function sBookCover(th) {
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="flex:1;overflow-y:auto;padding-bottom:24px;scrollbar-width:none">' +
+
+        /* Book header */
+        '<div style="margin:8px '+S.xl+' 20px;padding:24px 20px;border-radius:'+R.xl+';'+
+          'position:relative;overflow:hidden;background:'+
+          (th._name==='dark'
+            ? 'linear-gradient(135deg,#2E1A18 0%,#1C1917 100%)'
+            : 'linear-gradient(135deg,#1B3A5C 0%,#0F2240 100%)')+';'+
+          'box-shadow:0 16px 40px rgba(0,0,0,0.2)">' +
+
+          /* Decorative texture lines */
+          '<div style="position:absolute;top:-20px;right:-20px;width:160px;height:160px;'+
+            'border-radius:50%;border:1px solid rgba(255,255,255,0.08)"></div>' +
+          '<div style="position:absolute;top:-40px;right:-40px;width:220px;height:220px;'+
+            'border-radius:50%;border:1px solid rgba(255,255,255,0.05)"></div>' +
+
+          '<div style="position:relative;z-index:1">' +
+            /* Book icon */
+            '<div style="margin-bottom:14px">' +
+              '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round">'+
+                '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5M4 19.5V4.5A2.5 2.5 0 0 1 6.5 2H20v15"/>'+
+              '</svg>' +
+            '</div>' +
+            '<div style="font-size:20px;font-weight:'+T.wt.heavy+';color:white;font-family:'+T.serif+';'+
+              'line-height:1.2;margin-bottom:6px">'+BOOK.title+'</div>' +
+            '<div style="font-size:11px;color:rgba(255,255,255,0.65);margin-bottom:16px;font-style:italic">'+BOOK.subtitle+'</div>' +
+            /* Members */
+            '<div style="display:flex;align-items:center;gap:-4px;margin-bottom:14px">' +
+              BOOK.members.map(function (m, i) {
+                return '<div style="width:28px;height:28px;border-radius:50%;background:'+memberColor(m)+';'+
+                  'display:flex;align-items:center;justify-content:center;'+
+                  'border:2px solid rgba(0,0,0,0.2);margin-left:'+(i>0?'-6px':'0')+'">' +
+                  '<span style="font-size:11px;font-weight:'+T.wt.heavy+';color:white">'+m[0]+'</span>' +
+                '</div>';
+              }).join('') +
+              '<span style="margin-left:10px;font-size:11px;color:rgba(255,255,255,0.7)">'+BOOK.totalRecipes+' recipes collected</span>' +
+            '</div>' +
+            /* Actions */
+            '<div style="display:flex;gap:8px">' +
+              '<div onclick="otGo(\'printExport\')" style="flex:1;padding:9px;text-align:center;'+
+                'background:rgba(255,255,255,0.15);border-radius:'+R.md+';border:1px solid rgba(255,255,255,0.2);'+
+                'font-size:11px;font-weight:'+T.wt.semi+';color:white;cursor:pointer">'+
+                '📤 Share' +
+              '</div>' +
+              '<div onclick="otGo(\'partyMode\')" style="flex:1;padding:9px;text-align:center;'+
+                'background:rgba(255,255,255,0.15);border-radius:'+R.md+';border:1px solid rgba(255,255,255,0.2);'+
+                'font-size:11px;font-weight:'+T.wt.semi+';color:white;cursor:pointer">'+
+                '🎉 Party Mode' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Chapters */
+        '<div style="padding:0 '+S.xl+'">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+            'letter-spacing:0.06em;margin-bottom:12px">CHAPTERS ('+BOOK.chapters.length+')</div>' +
+
+          '<div style="display:flex;flex-direction:column;gap:10px">' +
+            BOOK.chapters.map(function (ch) {
+              return '<div onclick="otState.viewingChapter=\''+ch.title+'\';otGo(\'bookChapter\')" '+
+                'style="display:flex;align-items:center;gap:14px;padding:14px 16px;'+
+                'background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';cursor:pointer;'+
+                'box-shadow:0 2px 6px rgba(0,0,0,0.05)">' +
+                /* Chapter color dot */
+                '<div style="width:52px;height:52px;border-radius:'+R.md+';background:'+ch.color+';'+
+                  'display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">'+ch.emoji+'</div>' +
+                '<div style="flex:1">' +
+                  '<div style="font-size:14px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:3px">'+ch.title+'</div>' +
+                  '<div style="font-size:11px;color:'+th.muted+'">'+ch.count+' recipes</div>' +
+                '</div>' +
+                iconSvg('M9 18l6-6-6-6', 14, th.muted) +
+              '</div>';
+            }).join('') +
+          '</div>' +
+
+          /* Add chapter */
+          '<div onclick="return false" style="margin-top:10px;display:flex;align-items:center;gap:10px;'+
+            'padding:14px 16px;border:1.5px dashed '+th.primary+';border-radius:'+R.lg+';cursor:pointer">' +
+            '<div style="width:52px;height:52px;border-radius:'+R.md+';border:2px dashed '+th.primary+';'+
+              'display:flex;align-items:center;justify-content:center;font-size:22px">+</div>' +
+            '<div>' +
+              '<div style="font-size:13px;font-weight:'+T.wt.semi+';color:'+th.primary+'">New chapter</div>' +
+              '<div style="font-size:11px;color:'+th.muted+'">Group recipes by theme or occasion</div>' +
+            '</div>' +
+          '</div>' +
+
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 2. CHAPTER VIEW ────────────────────────────────────── */
+  function sBookChapter(th) {
+    var chTitle = otState.viewingChapter || BOOK.chapters[0].title;
+    var chapter = BOOK.chapters.filter(function (c) { return c.title===chTitle; })[0] || BOOK.chapters[0];
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* Chapter hero */
+      '<div style="flex-shrink:0;height:160px;position:relative;overflow:hidden;'+
+        'background:'+chapter.color+'">' +
+        '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5),transparent 50%)"></div>' +
+        '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;'+
+          'font-size:64px;opacity:0.3">'+chapter.emoji+'</div>' +
+
+        /* Top controls */
+        c.notch() +
+        '<div style="position:absolute;top:38px;left:18px;right:18px;display:flex;justify-content:space-between;z-index:20">' +
+          '<div onclick="otBack()" style="width:34px;height:34px;border-radius:50%;'+
+            'background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+            iconSvg('M15 18l-6-6 6-6', 18, 'white', '2') +
+          '</div>' +
+          '<div onclick="return false" style="width:34px;height:34px;border-radius:50%;'+
+            'background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+            iconSvg('M12 5v14M5 12h14', 16, 'white') +
+          '</div>' +
+        '</div>' +
+
+        /* Chapter title */
+        '<div style="position:absolute;bottom:14px;left:20px;right:20px;z-index:20">' +
+          '<div style="font-size:22px;font-weight:'+T.wt.heavy+';color:white;'+
+            'font-family:'+T.serif+';text-shadow:0 2px 8px rgba(0,0,0,0.4)">'+chapter.title+'</div>' +
+          '<div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:3px">'+chapter.count+' recipes</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:16px '+S.xl+' 24px;scrollbar-width:none">' +
+
+        /* Recipes in chapter */
+        '<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px">' +
+          chapter.recipes.map(function (recipe) {
+            return '<div onclick="otState.viewingRecipe=\''+recipe.title+'\';otGo(\'bookRecipe\')" '+
+              'style="background:'+th.card+';border:0.5px solid '+th.border+';'+
+              'border-radius:'+R.lg+';overflow:hidden;cursor:pointer;'+
+              'box-shadow:0 3px 10px rgba(0,0,0,0.08)">' +
+
+              '<div style="display:flex">' +
+                /* Color block */
+                '<div style="width:80px;background:'+recipe.heroColor+';position:relative;flex-shrink:0">' +
+                  '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;'+
+                    'font-size:28px;opacity:0.5">🍽️</div>' +
+                '</div>' +
+
+                '<div style="flex:1;padding:14px">' +
+                  /* Title */
+                  '<div style="font-size:14px;font-weight:'+T.wt.bold+';color:'+th.text+';'+
+                    'font-family:'+T.serif+';margin-bottom:5px">'+recipe.title+'</div>' +
+                  /* Personal note */
+                  (recipe.note ? '<div style="font-size:11px;color:'+th.muted+';font-style:italic;'+
+                    'line-height:1.5;margin-bottom:8px">"'+recipe.note+'"</div>' : '') +
+                  /* Meta row */
+                  '<div style="display:flex;align-items:center;gap:10px">' +
+                    /* Author avatar */
+                    '<div style="display:flex;align-items:center;gap:5px">' +
+                      '<div style="width:18px;height:18px;border-radius:50%;background:'+memberColor(recipe.author)+';'+
+                        'display:flex;align-items:center;justify-content:center">' +
+                        '<span style="font-size:8px;font-weight:'+T.wt.heavy+';color:white">'+recipe.author[0]+'</span>' +
+                      '</div>' +
+                      '<span style="font-size:10px;color:'+th.muted+'">'+recipe.author+'</span>' +
+                    '</div>' +
+                    /* Rating */
+                    '<span style="font-size:10px;color:#FFD060">★ '+recipe.rating+'</span>' +
+                    /* Cooked count */
+                    '<span style="font-size:10px;color:'+th.muted+'">Cooked '+recipe.cooked+'×</span>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Add recipe to chapter */
+        '<div onclick="return false" style="display:flex;align-items:center;gap:12px;padding:14px;'+
+          'border:1.5px dashed '+th.border+';border-radius:'+R.lg+';cursor:pointer">' +
+          '<div style="width:52px;height:52px;border-radius:'+R.md+';border:2px dashed '+th.primary+';'+
+            'display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">+</div>' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:'+T.wt.semi+';color:'+th.primary+'">Add recipe to chapter</div>' +
+            '<div style="font-size:11px;color:'+th.muted+'">From My Recipes or add new</div>' +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 3. SINGLE RECIPE ENTRY (book view) ─────────────────── */
+  function sBookRecipe(th) {
+    var ch   = BOOK.chapters.filter(function (c) { return c.title === (otState.viewingChapter || BOOK.chapters[0].title); })[0] || BOOK.chapters[0];
+    var name = otState.viewingRecipe || ch.recipes[0].title;
+    var recipe = null;
+    for (var ci = 0; ci < BOOK.chapters.length && !recipe; ci++) {
+      for (var ri = 0; ri < BOOK.chapters[ci].recipes.length; ri++) {
+        if (BOOK.chapters[ci].recipes[ri].title === name) { recipe = BOOK.chapters[ci].recipes[ri]; break; }
+      }
+    }
+    if (!recipe) recipe = BOOK.chapters[0].recipes[0];
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      /* Hero */
+      '<div style="flex-shrink:0;height:200px;position:relative;overflow:hidden;background:'+recipe.heroColor+'">' +
+        '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;'+
+          'font-size:80px;opacity:0.25">🍽️</div>' +
+        '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55),transparent 50%)"></div>' +
+
+        c.notch() +
+        '<div style="position:absolute;top:38px;left:18px;right:18px;display:flex;justify-content:space-between;z-index:20">' +
+          '<div onclick="otBack()" style="width:34px;height:34px;border-radius:50%;'+
+            'background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+            iconSvg('M15 18l-6-6 6-6', 18, 'white', '2') +
+          '</div>' +
+          '<div style="display:flex;gap:7px">' +
+            '<div onclick="return false" style="width:34px;height:34px;border-radius:50%;'+
+              'background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+              iconSvg('M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13', 16, 'white', '2') +
+            '</div>' +
+            '<div onclick="otGo(\'printExport\')" style="width:34px;height:34px;border-radius:50%;'+
+              'background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+              '<span style="font-size:16px">📤</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div style="position:absolute;bottom:14px;left:20px;right:20px;z-index:20">' +
+          '<div style="font-size:22px;font-weight:'+T.wt.heavy+';color:white;font-family:'+T.serif+';'+
+            'text-shadow:0 2px 8px rgba(0,0,0,0.4);margin-bottom:6px">'+recipe.title+'</div>' +
+          '<div style="display:flex;align-items:center;gap:10px">' +
+            '<div style="display:flex;align-items:center;gap:5px">' +
+              '<div style="width:20px;height:20px;border-radius:50%;background:'+memberColor(recipe.author)+';'+
+                'display:flex;align-items:center;justify-content:center">' +
+                '<span style="font-size:9px;font-weight:'+T.wt.heavy+';color:white">'+recipe.author[0]+'</span>' +
+              '</div>' +
+              '<span style="font-size:11px;color:rgba(255,255,255,0.85)">'+recipe.author+'\'s recipe</span>' +
+            '</div>' +
+            '<span style="font-size:11px;color:#FFD060">★ '+recipe.rating+'</span>' +
+            '<span style="font-size:11px;color:rgba(255,255,255,0.7)">Cooked '+recipe.cooked+'×</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:18px '+S.xl+' 24px;scrollbar-width:none">' +
+
+        /* Family note */
+        '<div style="background:'+(th._name==='dark'?'#2E2820':'#FFF8F0')+';'+
+          'border-left:3px solid '+recipe.heroColor+';border-radius:0 '+R.md+' '+R.md+' 0;'+
+          'padding:12px 14px;margin-bottom:18px">' +
+          '<div style="font-size:10px;font-weight:'+T.wt.semi+';color:'+th.muted+';margin-bottom:5px">'+recipe.author.toUpperCase()+'\'S NOTE</div>' +
+          '<div style="font-size:13px;color:'+th.text+';font-style:italic;line-height:1.65">'+
+            '"'+recipe.note+'"' +
+          '</div>' +
+        '</div>' +
+
+        /* Ingredients preview */
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:10px">INGREDIENTS</div>' +
+        '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+';'+
+          'overflow:hidden;margin-bottom:18px">' +
+          ['Salmon fillets (4 × 6oz)','Heavy cream (1 cup)','Baby spinach (3 cups)',
+           'Sun-dried tomatoes (⅓ cup)','Garlic (4 cloves)'].map(function (ing) {
+            return '<div style="padding:10px 14px;border-bottom:0.5px solid '+th.border+';'+
+              'font-size:12px;color:'+th.text+'">• '+ing+'</div>';
+          }).join('') +
+          '<div style="padding:9px 14px;font-size:11px;color:'+th.muted+';font-style:italic">+ 7 more</div>' +
+        '</div>' +
+
+        /* Steps preview */
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:10px">METHOD</div>' +
+        '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">' +
+          ['Season and sear the salmon until crispy-skinned.',
+           'Make the sauce: garlic, sun-dried tomatoes, cream, parmesan.',
+           'Wilt spinach, return salmon to pan, squeeze over lemon.'].map(function (step, i) {
+            return '<div style="display:flex;gap:10px">' +
+              '<div style="width:22px;height:22px;border-radius:50%;background:'+recipe.heroColor+';'+
+                'flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px">' +
+                '<span style="font-size:10px;font-weight:'+T.wt.heavy+';color:white">'+(i+1)+'</span>' +
+              '</div>' +
+              '<div style="font-size:12px;color:'+th.muted+';line-height:1.65;flex:1">'+step+'</div>' +
+            '</div>';
+          }).join('') +
+          '<div style="font-size:11px;color:'+th.primary+';cursor:pointer;margin-left:32px">+ 4 more steps</div>' +
+        '</div>' +
+
+        /* Add personal note */
+        '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+';padding:12px 14px;margin-bottom:18px">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';margin-bottom:8px">ADD YOUR NOTE</div>' +
+          '<textarea placeholder="Add a family memory, tip, or variation…" '+
+            'style="width:100%;height:60px;border:none;background:transparent;'+
+            'font-size:12px;font-family:'+T.sans+';color:'+th.text+';resize:none;outline:none;'+
+            'font-style:italic;line-height:1.6"></textarea>' +
+        '</div>' +
+
+        /* Cook it */
+        c.btn(th, '👨‍🍳  Cook This Recipe', "otBack()", 'primary') +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 4. PARTY MODE ──────────────────────────────────────── */
+  function sPartyMode(th) {
+    var guests = otState.partyGuests || 12;
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 16px">' +
+        c.backBtn(th, 'Recipe Book') +
+        '<div style="margin-top:8px">' +
+          '<div style="font-size:22px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+'">🎉 Party Mode</div>' +
+          '<div style="font-size:12px;color:'+th.muted+';margin-top:4px">Auto-scales recipes for your guest count</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 24px;scrollbar-width:none">' +
+
+        /* Guest count */
+        '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';'+
+          'padding:18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between">' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:4px">Guest count</div>' +
+            '<div style="font-size:11px;color:'+th.muted+'">Quantities scale automatically</div>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:0;border:1.5px solid '+th.border+';border-radius:'+R.md+';overflow:hidden">' +
+            '<button onclick="otPartyGuests(-1)" style="width:38px;height:38px;border:none;background:'+th.chip+';'+
+              'color:'+th.text+';font-size:20px;cursor:pointer;font-family:'+T.sans+'">−</button>' +
+            '<div style="min-width:44px;height:38px;display:flex;align-items:center;justify-content:center;'+
+              'font-size:18px;font-weight:'+T.wt.heavy+';color:'+th.text+'">'+guests+'</div>' +
+            '<button onclick="otPartyGuests(1)" style="width:38px;height:38px;border:none;background:'+th.chip+';'+
+              'color:'+th.text+';font-size:20px;cursor:pointer;font-family:'+T.sans+'">+</button>' +
+          '</div>' +
+        '</div>' +
+
+        /* Party recipes */
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:10px">CROWD-FRIENDLY RECIPES</div>' +
+        '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">' +
+          PARTY_RECIPES.map(function (r) {
+            var scaled = Math.ceil((guests / r.serves) * 100) / 100;
+            return '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;'+
+              'background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';cursor:pointer">' +
+              '<div style="width:50px;height:50px;border-radius:'+R.md+';background:'+r.heroColor+';flex-shrink:0"></div>' +
+              '<div style="flex:1">' +
+                '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:3px">'+r.title+'</div>' +
+                '<div style="font-size:10px;color:'+th.muted+'">' +
+                  '⏱ '+r.time+' · Base: '+r.serves+' servings' +
+                '</div>' +
+              '</div>' +
+              /* Scaled badge */
+              '<div style="background:'+th.primary+'22;border-radius:'+R.pill+';padding:4px 10px;text-align:center">' +
+                '<div style="font-size:13px;font-weight:'+T.wt.heavy+';color:'+th.primary+'">×'+scaled+'</div>' +
+                '<div style="font-size:8px;color:'+th.muted+'">scaled</div>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Generate list */
+        c.btn(th, '🛒  Create Scaled Grocery List', "return false", 'primary') +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 5. PRINT & SHARE ───────────────────────────────────── */
+  function sPrintExport(th) {
+    var options = [
+      { icon:'📄', label:'Export as PDF',          sub:'Full recipe book with photos',     badge:null },
+      { icon:'🖨️', label:'Print Recipe Book',       sub:'Formatted for home printing',      badge:null },
+      { icon:'🔗', label:'Share link',              sub:'Anyone with link can view online', badge:'Household' },
+      { icon:'💬', label:'Share to WhatsApp/iMessage', sub:'Send a recipe or the whole book',  badge:null },
+      { icon:'📋', label:'Copy recipe text',        sub:'Plain text — paste anywhere',      badge:null },
+      { icon:'📸', label:'Share as image',          sub:'Beautiful recipe card image',      badge:null }
+    ];
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 16px">' +
+        c.backBtn(th, 'Recipe Book') +
+        '<div style="margin-top:8px">' +
+          '<div style="font-size:22px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+'">Print & Share</div>' +
+          '<div style="font-size:12px;color:'+th.muted+';margin-top:4px">Share recipes or export your entire book</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 24px;scrollbar-width:none">' +
+
+        /* Web book URL */
+        '<div style="background:'+(th._name==='dark'?'#1A2E1A':'#F0FDF4')+';'+
+          'border:1px solid '+(th._name==='dark'?'#2A5A2A':'#BBF7D0')+';'+
+          'border-radius:'+R.lg+';padding:14px 16px;margin-bottom:18px">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.secondary+';margin-bottom:6px">'+
+            '🌐 YOUR RECIPE BOOK WEBSITE' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<div style="flex:1;font-size:12px;font-weight:'+T.wt.mono+';color:'+th.text+';'+
+              'background:'+th.chip+';border-radius:'+R.sm+';padding:8px 10px;word-break:break-all">'+
+              'recipebook.ourtable.app/wilson' +
+            '</div>' +
+            '<div onclick="return false" style="background:'+th.secondary+';color:white;'+
+              'border-radius:'+R.sm+';padding:8px 12px;font-size:11px;font-weight:'+T.wt.bold+';cursor:pointer">Copy</div>' +
+          '</div>' +
+          '<div style="font-size:10px;color:'+th.muted+';margin-top:6px">'+
+            'Shared with: Family only · Last visited 2 days ago' +
+          '</div>' +
+        '</div>' +
+
+        /* Options */
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:10px">EXPORT OPTIONS</div>' +
+        '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';overflow:hidden;margin-bottom:18px">' +
+          options.map(function (opt) {
+            return '<div onclick="return false" style="display:flex;align-items:center;gap:13px;padding:13px 16px;'+
+              'border-bottom:0.5px solid '+th.border+';cursor:pointer">' +
+              '<div style="width:36px;height:36px;border-radius:'+R.sm+';background:'+th.chip+';'+
+                'display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">'+opt.icon+'</div>' +
+              '<div style="flex:1">' +
+                '<div style="font-size:13px;color:'+th.text+';font-weight:'+T.wt.med+'">'+opt.label+'</div>' +
+                '<div style="font-size:10px;color:'+th.muted+';margin-top:2px">'+opt.sub+'</div>' +
+              '</div>' +
+              (opt.badge ? '<div style="background:'+th.primary+'22;border-radius:'+R.pill+';'+
+                'padding:2px 8px;font-size:9px;font-weight:'+T.wt.bold+';color:'+th.primary+'">'+opt.badge+'</div>' : '') +
+              iconSvg('M9 18l6-6-6-6', 14, th.muted) +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* What to share */
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:10px">WHAT TO SHARE</div>' +
+        '<div style="display:flex;gap:8px">' +
+          ['This recipe','This chapter','Full book'].map(function (s, i) {
+            var active = i === 2;
+            return '<div onclick="return false" style="flex:1;padding:10px 8px;text-align:center;border-radius:'+R.md+';'+
+              'border:1.5px solid '+(active?th.primary:th.border)+';background:'+(active?th.primary+'18':'transparent')+';'+
+              'font-size:11px;font-weight:'+(active?T.wt.semi:T.wt.reg)+';color:'+(active?th.primary:th.muted)+';cursor:pointer">'+s+'</div>';
+          }).join('') +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     NAV WIRING
+  ══════════════════════════════════════════════════════════ */
+
+  OT.nav(
+    {
+      bookCover:   sBookCover,
+      bookChapter: sBookChapter,
+      bookRecipe:  sBookRecipe,
+      partyMode:   sPartyMode,
+      printExport: sPrintExport
+    },
+    'bookCover',
+    'phone-screen',
+    {
+      mainScreens: ['bookCover'],
+      state: {
+        viewingChapter: BOOK.chapters[0].title,
+        viewingRecipe:  BOOK.chapters[0].recipes[0].title,
+        partyGuests:    12
+      },
+      onRender: function (state, theme) {
+        var el = document.getElementById('screen-label');
+        if (el) el.textContent = SCREEN_NAMES[state.screen] || state.screen;
+
+        var dotsEl = document.getElementById('screen-dots');
+        if (dotsEl) {
+          var visible = ['bookCover','bookChapter','bookRecipe','partyMode','printExport'];
+          var idx = visible.indexOf(state.screen);
+          if (idx < 0) idx = 0;
+          dotsEl.innerHTML = visible.map(function (_, i) {
+            return '<div class="dot'+(i===idx?' on':'')+'" ></div>';
+          }).join('');
+        }
+
+        var btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = theme._name === 'dark' ? '☀ Light Mode' : '☾ Dark Mode';
+      }
+    }
+  );
+
+  /* ── Global handlers ─────────────────────────────────────── */
+  window.otPartyGuests = function (delta) {
+    var g = (otState.partyGuests || 12) + delta;
+    if (g < 2) g = 2;
+    if (g > 100) g = 100;
+    otState.partyGuests = g;
+    otRender();
+  };
+
+})();
+</script>
+</body>
+</html>

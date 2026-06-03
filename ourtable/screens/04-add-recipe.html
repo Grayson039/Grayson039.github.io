@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Table — Add Recipe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #EDE8E2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .phone-outer { position: relative; filter: drop-shadow(0 28px 56px rgba(0,0,0,0.26)); }
+  .side-l {
+    position: absolute; left: -4px; top: 108px;
+    width: 4px; height: 32px;
+    background: #1A1A1A; border-radius: 4px 0 0 4px;
+    box-shadow: 0 46px 0 #1A1A1A;
+  }
+  .side-r {
+    position: absolute; right: -4px; top: 130px;
+    width: 4px; height: 64px;
+    background: #1A1A1A; border-radius: 0 4px 4px 0;
+  }
+  .phone-body {
+    width: 370px; height: 760px;
+    background: #0D0D0D; border-radius: 54px; padding: 12px;
+    border: 1px solid #1A1A1A;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.07), inset 0 -1px 0 rgba(0,0,0,0.5);
+  }
+  #phone-screen {
+    width: 100%; height: 100%;
+    border-radius: 44px; overflow: hidden;
+    position: relative;
+  }
+  .controls { text-align: center; margin-top: 24px; }
+  #screen-label {
+    font-size: 11px; font-weight: 700; color: #8A7060;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;
+  }
+  .hint { font-size: 11px; color: #B0A090; margin-bottom: 14px; }
+  #screen-dots {
+    display: flex; gap: 7px; align-items: center;
+    justify-content: center; margin-bottom: 14px;
+  }
+  #screen-dots .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #C8B8A8; transition: all 0.2s;
+  }
+  #screen-dots .dot.on { width: 22px; border-radius: 4px; background: #1B3A5C; }
+  .theme-btn {
+    background: rgba(0,0,0,0.07); border: 1.5px solid rgba(0,0,0,0.14);
+    color: #2C2416; font-size: 12px; font-weight: 600;
+    padding: 8px 20px; border-radius: 100px;
+    cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-outer">
+  <div class="side-l"></div>
+  <div class="side-r"></div>
+  <div class="phone-body">
+    <div id="phone-screen"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div id="screen-label">Add Recipe</div>
+  <div class="hint">Tap import options, paste a URL, or enter manually</div>
+  <div id="screen-dots"></div>
+  <button class="theme-btn" id="theme-btn" onclick="otToggleTheme()">☾ Dark Mode</button>
+</div>
+
+<script src="./our-table-design-system.js"></script>
+<script>
+(function () {
+  var T = OT.T, S = OT.S, R = OT.R, c = OT.c;
+
+  var SCREEN_NAMES = {
+    addPicker:    'Add Recipe',
+    urlImport:    'Import from URL',
+    urlParsing:   'Importing…',
+    urlPreview:   'Review Import',
+    socialImport: 'Import from Social',
+    socialResult: 'Review Social Import',
+    manualEntry:  'Add Manually',
+    manualStep2:  'Ingredients',
+    manualStep3:  'Instructions',
+    importDone:   'Recipe Saved!'
+  };
+
+  /* ── Sample parsed recipe (simulates what URL parser returns) ── */
+  var PARSED_RECIPE = {
+    title:      'One-Pan Lemon Herb Chicken',
+    source:     'halfbakedharvest.com',
+    time:       '35 min',
+    servings:   4,
+    difficulty: 'Easy',
+    tags:       ['Gluten-Free', 'High Protein'],
+    heroColor:  '#3A6898',
+    ingredients: [
+      'Chicken thighs, bone-in skin-on (4)',
+      'Olive oil (3 tbsp)',
+      'Garlic cloves, smashed (6)',
+      'Fresh thyme (6 sprigs)',
+      'Fresh rosemary (2 sprigs)',
+      'Lemon, sliced (1)',
+      'Chicken stock (½ cup)',
+      'Salt & pepper to taste'
+    ],
+    steps: [
+      'Preheat oven to 425°F. Season chicken all over with salt and pepper.',
+      'Heat oil in an oven-safe skillet. Sear chicken skin-side down 5 min until golden.',
+      'Flip chicken, add garlic, herbs, and lemon. Pour in stock.',
+      'Transfer to oven and roast 20–25 min until internal temp reaches 165°F.',
+      'Rest 5 minutes. Serve with pan juices spooned over top.'
+    ]
+  };
+
+  var SOCIAL_SAMPLE = {
+    platform:   'TikTok',
+    creator:    '@feelgoodfoodie',
+    handle:     'Yumna Jawad',
+    followers:  '4.2M',
+    videoTitle: 'The BEST Marry Me Chicken 😍',
+    heroColor:  '#D4A848',
+    time:       '30 min',
+    ingredients: [
+      'Chicken breasts (4, pounded thin)',
+      'Sun-dried tomatoes (⅓ cup)',
+      'Heavy cream (1 cup)',
+      'Parmesan, grated (½ cup)',
+      'Garlic cloves (4)',
+      'Italian seasoning (1 tsp)',
+      'Red pepper flakes (pinch)',
+      'Fresh basil to garnish'
+    ]
+  };
+
+  var DIET_OPTS = ['None','Vegetarian','Vegan','Gluten-Free','Dairy-Free','Nut-Free','High Protein','Quick'];
+
+  /* ══════════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════════ */
+
+  function iconSvg(path, size, color, sw) {
+    return '<svg width="'+(size||20)+'" height="'+(size||20)+'" viewBox="0 0 24 24" fill="none" '+
+      'stroke="'+(color||'currentColor')+'" stroke-width="'+(sw||'1.8')+'" '+
+      'stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg>';
+  }
+
+  function stepHeader(th, label, step, total) {
+    return '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
+      '<div>' +
+        c.backBtn(th) +
+        '<div style="font-size:20px;font-weight:'+T.wt.heavy+';color:'+th.text+';'+
+          'font-family:'+T.serif+';margin-top:6px">'+label+'</div>' +
+      '</div>' +
+      c.stepDots(th, step, total) +
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SCREENS
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── 1. ADD PICKER ──────────────────────────────────────── */
+  function sAddPicker(th) {
+    var methods = [
+      {
+        icon: '🔗',
+        title: 'Import from URL',
+        sub:   'Paste any recipe website link',
+        badge: null,
+        go:    'urlImport',
+        accent: th.primary
+      },
+      {
+        icon: '▶',
+        title: 'Import from Social',
+        sub:   'TikTok, Instagram & YouTube',
+        badge: 'Popular',
+        go:    'socialImport',
+        accent: '#FF2D55'
+      },
+      {
+        icon: '✏️',
+        title: 'Enter Manually',
+        sub:   'Type ingredients & steps yourself',
+        badge: null,
+        go:    'manualEntry',
+        accent: th.secondary
+      },
+      {
+        icon: '📷',
+        title: 'Scan from Photo',
+        sub:   'Take a photo of a printed recipe',
+        badge: 'Plus',
+        go:    'urlImport',
+        accent: th.muted
+      }
+    ];
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* Header */
+      '<div style="padding:4px '+S.xl+' 20px">' +
+        c.backBtn(th) +
+        '<div style="margin-top:8px">' +
+          '<div style="font-size:26px;font-weight:'+T.wt.heavy+';color:'+th.text+';'+
+            'font-family:'+T.serif+';line-height:1.2">Add a Recipe</div>' +
+          '<div style="font-size:13px;color:'+th.muted+';margin-top:6px">'+
+            'Choose how you\'d like to save it' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 20px;scrollbar-width:none">' +
+
+        /* Method cards */
+        '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px">' +
+          methods.map(function (m) {
+            return '<div onclick="otGo(\''+m.go+'\')" style="display:flex;align-items:center;gap:14px;'+
+              'padding:16px;background:'+th.card+';border:0.5px solid '+th.border+';'+
+              'border-radius:'+R.lg+';cursor:pointer;position:relative;overflow:hidden;'+
+              'box-shadow:0 2px 8px rgba(0,0,0,0.06)">' +
+              /* Accent strip */
+              '<div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:'+m.accent+'"></div>' +
+              /* Icon */
+              '<div style="width:48px;height:48px;border-radius:'+R.md+';background:'+m.accent+'18;'+
+                'display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">' +
+                m.icon +
+              '</div>' +
+              '<div style="flex:1">' +
+                '<div style="font-size:15px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:3px">'+
+                  m.title +
+                '</div>' +
+                '<div style="font-size:12px;color:'+th.muted+'">'+m.sub+'</div>' +
+              '</div>' +
+              (m.badge ? '<div style="background:'+(m.badge==='Plus' ? th.warning : th.primary)+'22;'+
+                'border-radius:'+R.pill+';padding:3px 9px;font-size:9px;font-weight:'+T.wt.heavy+';'+
+                'color:'+(m.badge==='Plus' ? th.warning : th.primary)+';flex-shrink:0">'+m.badge+'</div>' : '') +
+              iconSvg('M9 18l6-6-6-6', 16, th.muted) +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Recently imported */
+        '<div style="margin-bottom:8px">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+            'letter-spacing:0.06em;margin-bottom:10px">RECENTLY IMPORTED</div>' +
+          '<div style="display:flex;flex-direction:column;gap:8px">' +
+            [
+              { title:'Baked Feta Pasta', src:'TikTok', color:'#D4A848', ago:'2 days ago' },
+              { title:'Birria Tacos',     src:'Web',    color:'#C89040', ago:'1 week ago' }
+            ].map(function (r) {
+              return '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;'+
+                'background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+'">' +
+                '<div style="width:44px;height:44px;border-radius:'+R.sm+';background:'+r.color+';flex-shrink:0"></div>' +
+                '<div style="flex:1">' +
+                  '<div style="font-size:13px;font-weight:'+T.wt.semi+';color:'+th.text+'">'+r.title+'</div>' +
+                  '<div style="font-size:11px;color:'+th.muted+'">from '+r.src+' · '+r.ago+'</div>' +
+                '</div>' +
+                iconSvg('M9 18l6-6-6-6', 14, th.muted) +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 2. URL IMPORT ──────────────────────────────────────── */
+  function sUrlImport(th) {
+    var url = otState.importUrl || '';
+    var hasUrl = url.length > 6;
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 16px">' +
+        stepHeader(th, 'Import from URL', 0, 2) +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 24px;scrollbar-width:none">' +
+
+        /* URL input card */
+        '<div style="background:'+th.card+';border:0.5px solid '+th.border+';'+
+          'border-radius:'+R.lg+';padding:18px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,0.06)">' +
+          '<div style="font-size:12px;font-weight:'+T.wt.semi+';color:'+th.muted+';margin-bottom:10px">'+
+            'Paste a link from any recipe website' +
+          '</div>' +
+          /* URL input */
+          '<div style="display:flex;align-items:center;gap:8px;background:'+th.input+';'+
+            'border:1.5px solid '+(hasUrl ? th.secondary : th.border)+';border-radius:'+R.md+';'+
+            'padding:11px 14px;margin-bottom:12px">' +
+            iconSvg('M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71', 16, hasUrl ? th.secondary : th.muted) +
+            '<input id="url-input" type="url" placeholder="https://..." '+
+              'value="'+url+'" '+
+              'oninput="otState.importUrl=this.value;otRender()" '+
+              'style="flex:1;border:none;background:transparent;font-size:13px;'+
+              'color:'+th.text+';font-family:'+T.sans+';outline:none"> '+
+            (hasUrl ? '<div onclick="otState.importUrl=\'\';otRender()" style="color:'+th.muted+';'+
+              'cursor:pointer;font-size:18px;line-height:1;padding:0 2px">×</div>' : '') +
+          '</div>' +
+          c.btn(th, hasUrl ? 'Import Recipe →' : 'Paste a link first', hasUrl ? "otGo('urlParsing')" : "return false",
+            hasUrl ? 'primary' : 'secondary') +
+        '</div>' +
+
+        /* Supported sites */
+        '<div style="margin-bottom:18px">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+            'letter-spacing:0.06em;margin-bottom:10px">WORKS WITH 50,000+ SITES</div>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+            ['AllRecipes','NYT Cooking','Bon Appétit','Serious Eats','Food52','BBC Good Food',
+             'Tasty','Epicurious','Half Baked Harvest','Smitten Kitchen'].map(function (s) {
+              return '<span style="padding:4px 11px;border-radius:'+R.pill+';font-size:10px;'+
+                'background:'+th.chip+';color:'+th.chipTx+';border:0.5px solid '+th.border+'">'+s+'</span>';
+            }).join('') +
+            '<span style="padding:4px 11px;border-radius:'+R.pill+';font-size:10px;'+
+              'background:'+th.chip+';color:'+th.primary+';border:0.5px solid '+th.border+
+              ';font-weight:'+T.wt.semi+'">+ more</span>' +
+          '</div>' +
+        '</div>' +
+
+        /* Demo links */
+        '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';overflow:hidden">' +
+          '<div style="padding:12px 14px;border-bottom:0.5px solid '+th.border+';'+
+            'font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';letter-spacing:0.05em">TRY A SAMPLE</div>' +
+          [
+            'bonappetit.com/recipe/creamy-salmon',
+            'allrecipes.com/recipe/cheese-pasta',
+            'halfbakedharvest.com/lemon-chicken'
+          ].map(function (url) {
+            return '<div onclick="otState.importUrl=\'https://\'+\''+url+'\';otGo(\'urlParsing\')" '+
+              'style="display:flex;align-items:center;gap:10px;padding:11px 14px;'+
+              'border-bottom:0.5px solid '+th.border+';cursor:pointer">' +
+              iconSvg('M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71', 14, th.primary) +
+              '<span style="font-size:12px;color:'+th.text+'">https://'+url+'</span>' +
+              iconSvg('M9 18l6-6-6-6', 13, th.muted) +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 3. URL PARSING (loading state) ─────────────────────── */
+  function sUrlParsing(th) {
+    /* Auto-advance after showing this screen */
+    if (!otState._parsingTimer) {
+      otState._parsingTimer = true;
+      setTimeout(function () {
+        otState._parsingTimer = false;
+        otGo('urlPreview');
+      }, 1800);
+    }
+
+    var steps = [
+      { done: true,  label: 'Connecting to website' },
+      { done: true,  label: 'Extracting recipe content' },
+      { done: false, label: 'Parsing ingredients & steps', active: true },
+      { done: false, label: 'Detecting dietary info' }
+    ];
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'align-items:center;justify-content:center;font-family:'+T.sans+';padding:'+S.xl+'">' +
+
+      /* Animated logo mark */
+      '<div style="width:72px;height:72px;border-radius:22px;background:'+th.primary+';'+
+        'display:flex;align-items:center;justify-content:center;margin-bottom:24px;'+
+        'box-shadow:0 12px 32px '+th.primary+'50;animation:fadeScaleUp 0.5s ease">' +
+        '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">'+
+          '<path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/>'+
+        '</svg>' +
+      '</div>' +
+
+      '<div style="font-size:18px;font-weight:'+T.wt.heavy+';color:'+th.text+';'+
+        'font-family:'+T.serif+';margin-bottom:6px;text-align:center">Importing recipe…</div>' +
+      '<div style="font-size:12px;color:'+th.muted+';margin-bottom:32px;text-align:center;max-width:220px">'+
+        'Reading from '+(otState.importUrl ? otState.importUrl.replace('https://','').split('/')[0] : 'recipe website')+
+      '</div>' +
+
+      /* Progress steps */
+      '<div style="width:100%;max-width:280px;display:flex;flex-direction:column;gap:12px">' +
+        steps.map(function (s) {
+          return '<div style="display:flex;align-items:center;gap:12px">' +
+            '<div style="width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;'+
+              'align-items:center;justify-content:center;'+
+              (s.done ? 'background:'+th.secondary+';' : s.active ? 'background:'+th.primary+';' : 'background:'+th.chip+';border:1.5px solid '+th.border+';') + '">' +
+              (s.done ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' :
+               s.active ? '<div style="width:8px;height:8px;border-radius:50%;background:white;animation:fadeScaleUp 0.5s ease infinite alternate"></div>' : '') +
+            '</div>' +
+            '<span style="font-size:13px;color:'+(s.done ? th.muted : s.active ? th.text : th.muted)+';'+
+              (s.done ? 'text-decoration:line-through;' : '')+
+              'font-weight:'+(s.active ? T.wt.bold : T.wt.reg)+'">'+s.label+'</span>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 4. URL PREVIEW (review before saving) ──────────────── */
+  function sUrlPreview(th) {
+    var r = PARSED_RECIPE;
+    var editingTitle = otState.editingTitle;
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 12px">' +
+        stepHeader(th, 'Review Import', 1, 2) +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 100px;scrollbar-width:none">' +
+
+        /* Success banner */
+        '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;'+
+          'background:'+(th._name==='dark' ? '#1A2E1A' : '#F0FDF4')+';'+
+          'border:1px solid '+(th._name==='dark' ? '#2A5A2A' : '#BBF7D0')+';'+
+          'border-radius:'+R.md+';margin-bottom:16px">' +
+          '<span style="font-size:18px">✅</span>' +
+          '<div>' +
+            '<div style="font-size:12px;font-weight:'+T.wt.bold+';color:'+th.secondary+'">Recipe found!</div>' +
+            '<div style="font-size:10px;color:'+th.muted+'">Found all ingredients and instructions — review below</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Hero preview */
+        '<div style="height:130px;border-radius:'+R.lg+';background:'+r.heroColor+';'+
+          'margin-bottom:14px;position:relative;overflow:hidden">' +
+          '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.45),transparent 60%)"></div>' +
+          '<div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.4);'+
+            'border-radius:'+R.pill+';padding:3px 10px;font-size:10px;color:white">'+r.source+'</div>' +
+          '<div style="position:absolute;bottom:10px;left:12px;font-size:18px;font-weight:'+T.wt.heavy+';'+
+            'color:white;font-family:'+T.serif+'">'+r.title+'</div>' +
+        '</div>' +
+
+        /* Editable title */
+        '<div style="margin-bottom:14px">' +
+          c.field(th, 'recipe-title', 'text', 'Recipe title', r.title, r.title) +
+        '</div>' +
+
+        /* Meta row */
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">' +
+          [['⏱ Time', r.time], ['🍽 Servings', r.servings], ['📊 Difficulty', r.difficulty]].map(function (m) {
+            return '<div style="background:'+th.card+';border:0.5px solid '+th.border+';'+
+              'border-radius:'+R.md+';padding:10px;text-align:center">' +
+              '<div style="font-size:13px;font-weight:'+T.wt.heavy+';color:'+th.text+'">'+m[1]+'</div>' +
+              '<div style="font-size:9px;color:'+th.muted+';margin-top:2px">'+m[0]+'</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Detected dietary */
+        '<div style="margin-bottom:16px">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+            'letter-spacing:0.06em;margin-bottom:8px">DETECTED DIETARY TAGS</div>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+            r.tags.map(function (tag) {
+              return '<span style="padding:4px 12px;border-radius:'+R.pill+';font-size:11px;'+
+                'background:'+th.secondary+'22;color:'+th.secondary+';border:1px solid '+th.secondary+'44;'+
+                'font-weight:'+T.wt.semi+'">✓ '+tag+'</span>';
+            }).join('') +
+            '<span onclick="return false" style="padding:4px 12px;border-radius:'+R.pill+';font-size:11px;'+
+              'background:'+th.chip+';color:'+th.chipTx+';border:1px solid '+th.border+';cursor:pointer">+ Add tag</span>' +
+          '</div>' +
+        '</div>' +
+
+        /* Ingredients preview */
+        '<div style="margin-bottom:16px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+            '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';letter-spacing:0.06em">'+
+              'INGREDIENTS ('+r.ingredients.length+')' +
+            '</div>' +
+            '<div onclick="return false" style="font-size:11px;color:'+th.primary+';cursor:pointer;font-weight:'+T.wt.semi+'">Edit</div>' +
+          '</div>' +
+          '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+';overflow:hidden">' +
+            r.ingredients.slice(0,4).map(function (ing, i) {
+              return '<div style="padding:9px 14px;border-bottom:0.5px solid '+th.border+';'+
+                'font-size:12px;color:'+th.text+'">'+ing+'</div>';
+            }).join('') +
+            '<div style="padding:9px 14px;font-size:11px;color:'+th.muted+';'+
+              'font-style:italic">+ '+(r.ingredients.length - 4)+' more ingredients</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Steps preview */
+        '<div style="margin-bottom:16px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+            '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';letter-spacing:0.06em">'+
+              'INSTRUCTIONS ('+r.steps.length+' steps)' +
+            '</div>' +
+            '<div onclick="return false" style="font-size:11px;color:'+th.primary+';cursor:pointer;font-weight:'+T.wt.semi+'">Edit</div>' +
+          '</div>' +
+          '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+';padding:12px 14px">' +
+            '<div style="font-size:12px;color:'+th.muted+'">Step 1 of '+r.steps.length+'</div>' +
+            '<div style="font-size:12px;color:'+th.text+';margin-top:4px;line-height:1.6">'+r.steps[0]+'</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Folder */
+        '<div style="margin-bottom:16px">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+            'letter-spacing:0.06em;margin-bottom:8px">SAVE TO COLLECTION</div>' +
+          '<div style="display:flex;gap:7px;flex-wrap:wrap">' +
+            ['My Recipes','Weeknight Dinners','Chicken Recipes','+ New Collection'].map(function (f, i) {
+              var active = i === 0;
+              return '<span onclick="return false" style="padding:5px 13px;border-radius:'+R.pill+';font-size:11px;'+
+                'background:'+(active ? th.primary : th.chip)+';color:'+(active ? 'white' : th.chipTx)+';'+
+                'border:1px solid '+(active ? th.primary : th.border)+';cursor:pointer">'+f+'</span>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      /* Bottom save button */
+      '<div style="position:absolute;bottom:0;left:0;right:0;padding:12px '+S.xl+' 24px;'+
+        'background:'+th.bg+';border-top:0.5px solid '+th.border+'">' +
+        c.btn(th, '✓ Save to My Recipes', "otGo('importDone')", 'primary') +
+      '</div>' +
+
+    '</div>';
+  }
+
+  /* ── 5. SOCIAL IMPORT ───────────────────────────────────── */
+  function sSocialImport(th) {
+    var platform = otState.socialPlatform || null;
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 16px">' +
+        c.backBtn(th) +
+        '<div style="margin-top:8px">' +
+          '<div style="font-size:20px;font-weight:'+T.wt.heavy+';color:'+th.text+';'+
+            'font-family:'+T.serif+'">Import from Social</div>' +
+          '<div style="font-size:12px;color:'+th.muted+';margin-top:4px">'+
+            'Paste a link or share directly from the app' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 24px;scrollbar-width:none">' +
+
+        /* Platform select */
+        '<div style="margin-bottom:18px">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+            'letter-spacing:0.06em;margin-bottom:10px">SELECT PLATFORM</div>' +
+          '<div style="display:flex;gap:10px">' +
+            [
+              { id:'TikTok',    color:'#FF2D55', bg:'#FF2D5518', label:'TikTok',    icon:'▶' },
+              { id:'Instagram', color:'#C13584', bg:'#C1358418', label:'Instagram', icon:'◈' },
+              { id:'YouTube',   color:'#FF0000', bg:'#FF000018', label:'YouTube',   icon:'▷' }
+            ].map(function (p) {
+              var active = platform === p.id;
+              return '<div onclick="otState.socialPlatform=\''+p.id+'\';otRender()" '+
+                'style="flex:1;padding:14px 8px;border-radius:'+R.lg+';text-align:center;cursor:pointer;'+
+                'background:'+(active ? p.bg : th.card)+';'+
+                'border:1.5px solid '+(active ? p.color : th.border)+'">' +
+                '<div style="font-size:22px;margin-bottom:6px">'+p.icon+'</div>' +
+                '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+(active ? p.color : th.muted)+'">'+p.label+'</div>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+        /* URL paste */
+        '<div style="margin-bottom:18px">' +
+          '<div style="display:flex;align-items:center;gap:8px;background:'+th.card+';'+
+            'border:1.5px solid '+th.border+';border-radius:'+R.lg+';padding:12px 14px">' +
+            iconSvg('M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71', 16, th.muted) +
+            '<div style="flex:1;font-size:13px;color:'+th.muted+'">Paste video link here…</div>' +
+            '<div onclick="otGo(\'socialResult\')" style="background:'+th.primary+';color:white;'+
+              'border-radius:'+R.sm+';padding:6px 12px;font-size:11px;font-weight:'+T.wt.bold+';cursor:pointer">Go</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Or share from app */
+        c.divider(th, 'or share directly from the app') +
+
+        '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';'+
+          'padding:18px;margin-bottom:18px;text-align:center">' +
+          '<div style="font-size:32px;margin-bottom:10px">📲</div>' +
+          '<div style="font-size:14px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:6px">'+
+            'Share from TikTok / Instagram' +
+          '</div>' +
+          '<div style="font-size:12px;color:'+th.muted+';line-height:1.6;margin-bottom:14px">' +
+            'Find a recipe video, tap Share, and choose <strong style="color:'+th.text+'">Our Table</strong> from the share sheet' +
+          '</div>' +
+          '<div style="display:flex;justify-content:center;gap:8px">' +
+            ['TikTok', 'Instagram'].map(function (p) {
+              return '<div style="display:flex;align-items:center;gap:6px;padding:7px 14px;'+
+                'border-radius:'+R.pill+';background:'+th.chip+';border:0.5px solid '+th.border+'">' +
+                '<span style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.text+'">▶ '+p+'</span>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+        /* Recent social saves */
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:10px">TRENDING SAVES THIS WEEK</div>' +
+        '<div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px">' +
+          [
+            { title:'Marry Me Chicken', color:'#E8A84A', platform:'TikTok',    saves:'1.8M' },
+            { title:'Cucumber Salad',   color:'#2A5080', platform:'TikTok',    saves:'2.4M' },
+            { title:'Feta Pasta',       color:'#D4A848', platform:'Instagram', saves:'890K' }
+          ].map(function (v) {
+            return '<div onclick="otGo(\'socialResult\')" style="flex-shrink:0;width:130px;cursor:pointer">' +
+              '<div style="height:100px;border-radius:'+R.md+';background:'+v.color+';'+
+                'position:relative;margin-bottom:7px;overflow:hidden">' +
+                '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.4),transparent 60%)"></div>' +
+                '<div style="position:absolute;top:7px;left:7px;background:'+
+                  (v.platform==='TikTok' ? '#FF2D55' : '#C13584')+';border-radius:'+R.pill+';'+
+                  'padding:2px 7px;font-size:9px;color:white;font-weight:700">'+v.platform+'</div>' +
+                '<div style="position:absolute;bottom:7px;left:7px;font-size:9px;color:rgba(255,255,255,0.85)">'+
+                  '♥ '+v.saves+' saves</div>' +
+              '</div>' +
+              '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.text+'">'+v.title+'</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 6. SOCIAL RESULT (after paste/share) ───────────────── */
+  function sSocialResult(th) {
+    var r = SOCIAL_SAMPLE;
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 12px">' +
+        c.backBtn(th, 'Social Import') +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 100px;scrollbar-width:none">' +
+
+        /* Video preview card */
+        '<div style="background:'+th.card+';border:0.5px solid '+th.border+';'+
+          'border-radius:'+R.lg+';overflow:hidden;margin-bottom:16px">' +
+          /* Fake video thumbnail */
+          '<div style="height:160px;background:'+r.heroColor+';position:relative">' +
+            '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5),transparent 50%)"></div>' +
+            /* Play button */
+            '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">' +
+              '<div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.25);'+
+                'display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">' +
+                '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M5 3l14 9-14 9V3z"/></svg>' +
+              '</div>' +
+            '</div>' +
+            /* TikTok badge */
+            '<div style="position:absolute;top:10px;left:10px;background:#FF2D55;'+
+              'border-radius:'+R.pill+';padding:3px 10px;font-size:10px;color:white;font-weight:700">▶ TikTok</div>' +
+            /* Title overlay */
+            '<div style="position:absolute;bottom:10px;left:12px;right:12px;'+
+              'font-size:13px;font-weight:'+T.wt.bold+';color:white;line-height:1.3">'+r.videoTitle+'</div>' +
+          '</div>' +
+          /* Creator info */
+          '<div style="padding:12px 14px;display:flex;align-items:center;gap:10px">' +
+            c.avatar(th, r.creator.slice(1,3).toUpperCase(), null, '36px') +
+            '<div>' +
+              '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.text+'">'+r.handle+'</div>' +
+              '<div style="font-size:11px;color:'+th.muted+'">'+r.creator+' · '+r.followers+' followers</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* What was extracted */
+        '<div style="margin-bottom:16px">' +
+          '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+            'letter-spacing:0.06em;margin-bottom:10px">EXTRACTED FROM VIDEO</div>' +
+
+          /* Ingredients */
+          '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+';overflow:hidden;margin-bottom:8px">' +
+            '<div style="padding:10px 14px;border-bottom:0.5px solid '+th.border+';'+
+              'display:flex;justify-content:space-between;align-items:center">' +
+              '<span style="font-size:12px;font-weight:'+T.wt.bold+';color:'+th.text+'">'+
+                '🥕 Ingredients ('+r.ingredients.length+')</span>' +
+              '<span style="font-size:11px;color:'+th.secondary+';font-weight:'+T.wt.semi+'">✓ All found</span>' +
+            '</div>' +
+            r.ingredients.slice(0,3).map(function (i) {
+              return '<div style="padding:8px 14px;border-bottom:0.5px solid '+th.border+';'+
+                'font-size:12px;color:'+th.text+'">'+i+'</div>';
+            }).join('') +
+            '<div style="padding:8px 14px;font-size:11px;color:'+th.muted+';font-style:italic">'+
+              '+ '+(r.ingredients.length-3)+' more</div>' +
+          '</div>' +
+
+          /* Missing info */
+          '<div style="background:'+(th._name==='dark' ? '#3A2A1A' : '#FFFBF0')+';'+
+            'border:1px solid '+(th._name==='dark' ? '#5A3A1A' : '#FDE68A')+';'+
+            'border-radius:'+R.md+';padding:12px 14px;display:flex;align-items:flex-start;gap:8px">' +
+            '<span style="font-size:16px">⚠️</span>' +
+            '<div>' +
+              '<div style="font-size:12px;font-weight:'+T.wt.bold+';color:'+th.warning+';margin-bottom:3px">'+
+                'Instructions not found in video description</div>' +
+              '<div style="font-size:11px;color:'+th.muted+'">'+
+                'You\'ll need to add the steps manually, or we can watch the video and extract them.' +
+              '</div>' +
+              '<div onclick="return false" style="margin-top:8px;display:inline-flex;align-items:center;gap:5px;'+
+                'font-size:11px;color:'+th.primary+';font-weight:'+T.wt.semi+';cursor:pointer">'+
+                '✨ Extract from video (AI) →</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Save options */
+        '<div style="display:flex;flex-direction:column;gap:8px">' +
+          c.btn(th, '✓ Save & add steps later', "otGo('importDone')", 'primary') +
+          c.btn(th, 'Add instructions now', "otGo('manualStep3')", 'secondary') +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 7. MANUAL ENTRY — Step 1: Basic info ───────────────── */
+  function sManualEntry(th) {
+    var tags = otState.manualTags || [];
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 12px">' +
+        stepHeader(th, 'Basic Info', 0, 3) +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 100px;scrollbar-width:none">' +
+
+        /* Photo upload area */
+        '<div onclick="return false" style="height:120px;border-radius:'+R.lg+';background:'+th.chip+';'+
+          'border:2px dashed '+th.border+';display:flex;flex-direction:column;align-items:center;'+
+          'justify-content:center;cursor:pointer;margin-bottom:16px">' +
+          '<div style="font-size:28px;margin-bottom:8px">📷</div>' +
+          '<div style="font-size:12px;font-weight:'+T.wt.semi+';color:'+th.muted+'">Add a cover photo</div>' +
+          '<div style="font-size:10px;color:'+th.muted+';margin-top:2px">Optional</div>' +
+        '</div>' +
+
+        /* Fields */
+        '<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px">' +
+          c.field(th, 'r-title', 'text', 'Recipe name *', 'e.g. Grandma\'s Lasagna', '') +
+          '<div style="display:flex;gap:10px">' +
+            '<div style="flex:1">'+c.field(th, 'r-time', 'text', 'Total time', 'e.g. 45 min', '')+'</div>' +
+            '<div style="flex:1">'+c.field(th, 'r-servings', 'number', 'Servings', '4', '')+'</div>' +
+          '</div>' +
+          '<div>' +
+            c.inputLabel(th, 'Difficulty') +
+            '<div style="display:flex;gap:8px;margin-top:2px">' +
+              ['Easy','Medium','Hard'].map(function (d) {
+                var active = otState.manualDifficulty === d;
+                return '<div onclick="otState.manualDifficulty=\''+d+'\';otRender()" '+
+                  'style="flex:1;padding:10px;text-align:center;border-radius:'+R.md+';'+
+                  'border:1.5px solid '+(active ? th.primary : th.border)+';'+
+                  'background:'+(active ? th.primary+'18' : th.card)+';cursor:pointer;'+
+                  'font-size:12px;font-weight:'+T.wt.semi+';color:'+(active ? th.primary : th.muted)+'">'+d+'</div>';
+              }).join('') +
+            '</div>' +
+          '</div>' +
+          '<div>' +
+            c.inputLabel(th, 'Description (optional)') +
+            '<textarea placeholder="Brief description of the dish…" '+
+              'style="width:100%;height:72px;padding:12px 14px;border-radius:'+R.md+';'+
+              'border:1.5px solid '+th.border+';background:'+th.input+';font-size:13px;'+
+              'font-family:'+T.sans+';color:'+th.text+';outline:none;resize:none;display:block"></textarea>' +
+          '</div>' +
+        '</div>' +
+
+        /* Dietary tags */
+        '<div style="margin-bottom:18px">' +
+          c.inputLabel(th, 'Dietary tags (select all that apply)') +
+          '<div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px">' +
+            DIET_OPTS.map(function (opt) {
+              var sel = tags.indexOf(opt) >= 0;
+              return c.dietTag(th, opt, sel, 'otToggleManualTag(\''+opt+'\')');
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div style="position:absolute;bottom:0;left:0;right:0;padding:12px '+S.xl+' 24px;'+
+        'background:'+th.bg+';border-top:0.5px solid '+th.border+'">' +
+        c.btn(th, 'Next: Ingredients →', "otGo('manualStep2')", 'primary') +
+      '</div>' +
+
+    '</div>';
+  }
+
+  /* ── 8. MANUAL ENTRY — Step 2: Ingredients ─────────────── */
+  function sManualStep2(th) {
+    var ingredients = otState.manualIngredients || [
+      { qty: '4', unit: 'pcs', name: '' },
+      { qty: '',  unit: '',    name: '' }
+    ];
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 12px">' +
+        stepHeader(th, 'Ingredients', 1, 3) +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 100px;scrollbar-width:none">' +
+
+        '<div style="font-size:12px;color:'+th.muted+';margin-bottom:14px;line-height:1.6">' +
+          'List each ingredient on its own line. Tap + to add more.' +
+        '</div>' +
+
+        /* Ingredient rows */
+        '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">' +
+          [
+            { qty:'4 fillets', name:'Salmon, skin-on' },
+            { qty:'2 tbsp',    name:'Olive oil' },
+            { qty:'4 cloves',  name:'Garlic, minced' },
+            { qty:'1 cup',     name:'Heavy cream' },
+            { qty:'',          name:'' }
+          ].map(function (ing, i) {
+            var isEmpty = !ing.name && !ing.qty;
+            return '<div style="display:flex;align-items:center;gap:8px">' +
+              /* Qty */
+              '<input type="text" placeholder="Qty" value="'+ing.qty+'" '+
+                'style="width:72px;padding:10px 10px;border-radius:'+R.md+';'+
+                'border:1.5px solid '+(isEmpty ? th.primary : th.border)+';background:'+th.input+';'+
+                'font-size:12px;font-family:'+T.sans+';color:'+th.text+';outline:none">' +
+              /* Name */
+              '<input type="text" placeholder="'+(isEmpty ? 'Add ingredient…' : 'Ingredient name')+'" value="'+ing.name+'" '+
+                'style="flex:1;padding:10px 12px;border-radius:'+R.md+';'+
+                'border:1.5px solid '+(isEmpty ? th.primary : th.border)+';background:'+th.input+';'+
+                'font-size:12px;font-family:'+T.sans+';color:'+th.text+';outline:none"> ' +
+              /* Remove */
+              (!isEmpty ? '<div onclick="return false" style="width:28px;height:28px;border-radius:50%;'+
+                'background:'+th.chip+';display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+                '<span style="font-size:14px;color:'+th.muted+';line-height:1">×</span></div>' : '') +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Add ingredient button */
+        '<div onclick="return false" style="display:flex;align-items:center;gap:8px;padding:10px 14px;'+
+          'border:1.5px dashed '+th.secondary+';border-radius:'+R.md+';cursor:pointer">' +
+          '<div style="width:22px;height:22px;border-radius:50%;background:'+th.secondary+';'+
+            'display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0">+</div>' +
+          '<span style="font-size:12px;color:'+th.secondary+';font-weight:'+T.wt.semi+'">Add another ingredient</span>' +
+        '</div>' +
+
+        /* Sections */
+        '<div style="margin-top:16px;padding:12px 14px;background:'+th.card+';'+
+          'border:0.5px solid '+th.border+';border-radius:'+R.md+'">' +
+          '<div style="font-size:12px;font-weight:'+T.wt.semi+';color:'+th.text+';margin-bottom:4px">'+
+            'Organize by section?' +
+          '</div>' +
+          '<div style="font-size:11px;color:'+th.muted+';margin-bottom:8px">'+
+            'Group ingredients like "For the sauce", "For serving"' +
+          '</div>' +
+          '<div onclick="return false" style="font-size:11px;color:'+th.primary+';font-weight:'+T.wt.semi+';cursor:pointer">'+
+            '+ Add section header</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div style="position:absolute;bottom:0;left:0;right:0;padding:12px '+S.xl+' 24px;'+
+        'background:'+th.bg+';border-top:0.5px solid '+th.border+'">' +
+        c.btn(th, 'Next: Instructions →', "otGo('manualStep3')", 'primary') +
+      '</div>' +
+
+    '</div>';
+  }
+
+  /* ── 9. MANUAL ENTRY — Step 3: Instructions ────────────── */
+  function sManualStep3(th) {
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 12px">' +
+        stepHeader(th, 'Instructions', 2, 3) +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 100px;scrollbar-width:none">' +
+
+        '<div style="font-size:12px;color:'+th.muted+';margin-bottom:14px">' +
+          'Add each step in order. You can drag to reorder later.' +
+        '</div>' +
+
+        /* Step rows */
+        '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:14px">' +
+          [
+            'Preheat your oven to 400°F and season the salmon fillets generously.',
+            'Heat oil in an oven-safe pan over medium-high. Sear salmon skin-down for 4 minutes.',
+            ''
+          ].map(function (step, i) {
+            var isEmpty = !step;
+            return '<div style="display:flex;gap:10px;align-items:flex-start">' +
+              /* Step number */
+              '<div style="width:28px;height:28px;border-radius:50%;flex-shrink:0;margin-top:4px;'+
+                'background:'+(isEmpty ? th.chip : th.primary)+';'+
+                'border:'+(isEmpty ? '1.5px dashed '+th.primary : 'none')+';'+
+                'display:flex;align-items:center;justify-content:center">' +
+                '<span style="font-size:11px;font-weight:'+T.wt.heavy+';color:'+(isEmpty ? th.primary : 'white')+'">'+
+                  (isEmpty ? '+' : (i+1)) +
+                '</span>' +
+              '</div>' +
+              /* Text area */
+              '<textarea placeholder="Describe step '+(i+1)+'…" '+
+                'style="flex:1;min-height:'+(isEmpty ? '44' : '72')+'px;padding:10px 12px;'+
+                'border-radius:'+R.md+';border:1.5px solid '+(isEmpty ? th.primary : th.border)+';'+
+                'background:'+th.input+';font-size:13px;font-family:'+T.sans+';color:'+th.text+';'+
+                'outline:none;resize:none;line-height:1.5">' + (step||'') + '</textarea>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Timer toggle */
+        '<div style="padding:12px 14px;background:'+th.card+';border:0.5px solid '+th.border+';'+
+          'border-radius:'+R.md+';display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:'+T.wt.semi+';color:'+th.text+'">Add step timers?</div>' +
+            '<div style="font-size:11px;color:'+th.muted+'">Show a timer for timed steps in Cooking Mode</div>' +
+          '</div>' +
+          /* Toggle */
+          '<div onclick="otState.showTimers=!otState.showTimers;otRender()" '+
+            'style="width:44px;height:26px;border-radius:'+R.pill+';cursor:pointer;'+
+            'background:'+(otState.showTimers ? th.secondary : th.chip)+';'+
+            'position:relative;transition:background 0.2s">' +
+            '<div style="position:absolute;top:3px;left:'+(otState.showTimers ? '21' : '3')+'px;'+
+              'width:20px;height:20px;border-radius:50%;background:white;transition:left 0.2s;'+
+              'box-shadow:0 2px 4px rgba(0,0,0,0.2)"></div>' +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div style="position:absolute;bottom:0;left:0;right:0;padding:12px '+S.xl+' 24px;'+
+        'background:'+th.bg+';border-top:0.5px solid '+th.border+'">' +
+        c.btn(th, '✓ Save Recipe', "otGo('importDone')", 'primary') +
+      '</div>' +
+
+    '</div>';
+  }
+
+  /* ── 10. IMPORT DONE ────────────────────────────────────── */
+  function sImportDone(th) {
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'align-items:center;justify-content:center;font-family:'+T.sans+';padding:32px;text-align:center">' +
+
+      '<div style="width:80px;height:80px;border-radius:28px;background:'+th.secondary+';'+
+        'display:flex;align-items:center;justify-content:center;margin-bottom:20px;'+
+        'box-shadow:0 16px 40px '+th.secondary+'50">' +
+        '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>' +
+      '</div>' +
+
+      '<div style="font-size:26px;font-weight:'+T.wt.heavy+';color:'+th.text+';'+
+        'font-family:'+T.serif+';margin-bottom:8px">Recipe saved!</div>' +
+      '<div style="font-size:13px;color:'+th.muted+';line-height:1.7;max-width:240px;margin-bottom:32px">'+
+        'It\'s in <strong style="color:'+th.text+'">My Recipes</strong> and ready to use in your grocery list and cooking mode.' +
+      '</div>' +
+
+      /* Next action cards */
+      '<div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:24px">' +
+        [
+          ['🛒', 'Add to Grocery List', "otGo('addPicker')"],
+          ['👨‍🍳', 'Start Cooking Now',  "otGo('addPicker')"],
+          ['📚', 'Go to My Recipes',   "otGo('addPicker')"]
+        ].map(function (a) {
+          return '<div onclick="'+a[2]+'" style="display:flex;align-items:center;gap:14px;'+
+            'padding:14px 16px;background:'+th.card+';border:0.5px solid '+th.border+';'+
+            'border-radius:'+R.lg+';cursor:pointer;text-align:left">' +
+            '<span style="font-size:22px">'+a[0]+'</span>' +
+            '<span style="font-size:14px;font-weight:'+T.wt.semi+';color:'+th.text+';flex:1">'+a[1]+'</span>' +
+            iconSvg('M9 18l6-6-6-6', 16, th.muted) +
+          '</div>';
+        }).join('') +
+      '</div>' +
+
+      '<div onclick="otGo(\'addPicker\')" style="font-size:12px;color:'+th.muted+';cursor:pointer;'+
+        'text-decoration:underline">Add another recipe</div>' +
+
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     NAV WIRING
+  ══════════════════════════════════════════════════════════ */
+
+  OT.nav(
+    {
+      addPicker:    sAddPicker,
+      urlImport:    sUrlImport,
+      urlParsing:   sUrlParsing,
+      urlPreview:   sUrlPreview,
+      socialImport: sSocialImport,
+      socialResult: sSocialResult,
+      manualEntry:  sManualEntry,
+      manualStep2:  sManualStep2,
+      manualStep3:  sManualStep3,
+      importDone:   sImportDone
+    },
+    'addPicker',
+    'phone-screen',
+    {
+      mainScreens: ['addPicker', 'importDone'],
+      state: {
+        importUrl:         '',
+        socialPlatform:    'TikTok',
+        manualTags:        [],
+        manualDifficulty:  'Easy',
+        showTimers:        false,
+        _parsingTimer:     false
+      },
+      onRender: function (state, theme) {
+        var el = document.getElementById('screen-label');
+        if (el) el.textContent = SCREEN_NAMES[state.screen] || state.screen;
+
+        var dotsEl = document.getElementById('screen-dots');
+        if (dotsEl) {
+          var visible = ['addPicker','urlImport','urlParsing','urlPreview','socialImport','socialResult',
+                         'manualEntry','manualStep2','manualStep3','importDone'];
+          var idx = visible.indexOf(state.screen);
+          if (idx < 0) idx = 0;
+          dotsEl.innerHTML = [0,1,2,3].map(function (i) {
+            var groups = [[0],[1,2,3],[4,5],[6,7,8]];
+            var active = groups[i].indexOf(idx) >= 0;
+            return '<div class="dot'+(active?' on':'')+'" style="'+(i===3&&idx===9?'background:#1B3A5C':'')+'"></div>';
+          }).join('');
+        }
+
+        var btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = theme._name === 'dark' ? '☀ Light Mode' : '☾ Dark Mode';
+      }
+    }
+  );
+
+  /* ── Global handlers ───────────────────────────── */
+  window.otToggleManualTag = function (tag) {
+    var arr = otState.manualTags || [];
+    var i = arr.indexOf(tag);
+    if (i >= 0) arr.splice(i, 1); else arr.push(tag);
+    otState.manualTags = arr;
+    otRender();
+  };
+
+})();
+</script>
+</body>
+</html>

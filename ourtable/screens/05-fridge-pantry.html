@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Table — Fridge & Pantry</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #EDE8E2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .phone-outer { position: relative; filter: drop-shadow(0 28px 56px rgba(0,0,0,0.26)); }
+  .side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
+  .side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
+  .phone-body { width:370px;height:760px;background:#0D0D0D;border-radius:54px;padding:12px;border:1px solid #1A1A1A;box-shadow:inset 0 1px 1px rgba(255,255,255,0.07),inset 0 -1px 0 rgba(0,0,0,0.5); }
+  #phone-screen { width:100%;height:100%;border-radius:44px;overflow:hidden;position:relative; }
+  .controls { text-align:center;margin-top:24px; }
+  #screen-label { font-size:11px;font-weight:700;color:#8A7060;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px; }
+  .hint { font-size:11px;color:#B0A090;margin-bottom:14px; }
+  #screen-dots { display:flex;gap:7px;align-items:center;justify-content:center;margin-bottom:14px; }
+  #screen-dots .dot { width:7px;height:7px;border-radius:50%;background:#C8B8A8;transition:all 0.2s; }
+  #screen-dots .dot.on { width:22px;border-radius:4px;background:#1B3A5C; }
+  .theme-btn { background:rgba(0,0,0,0.07);border:1.5px solid rgba(0,0,0,0.14);color:#2C2416;font-size:12px;font-weight:600;padding:8px 20px;border-radius:100px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px; }
+</style>
+</head>
+<body>
+
+<div class="phone-outer">
+  <div class="side-l"></div>
+  <div class="side-r"></div>
+  <div class="phone-body">
+    <div id="phone-screen"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div id="screen-label">Fridge Scanner</div>
+  <div class="hint">Tap Scan, browse your pantry, or see what you can make</div>
+  <div id="screen-dots"></div>
+  <button class="theme-btn" id="theme-btn" onclick="otToggleTheme()">☾ Dark Mode</button>
+</div>
+
+<script src="./our-table-design-system.js"></script>
+<script>
+(function () {
+  var T = OT.T, S = OT.S, R = OT.R, c = OT.c;
+
+  var SCREEN_NAMES = {
+    fridgeHome:    'Fridge & Pantry',
+    fridgeScan:    'Scan Fridge',
+    fridgeScanDone:'Scan Complete',
+    pantryList:    'My Pantry',
+    whatCanIMake:  'What Can I Make?',
+    wasteMode:     'Food Waste Mode'
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     DATA
+  ══════════════════════════════════════════════════════════ */
+
+  var PANTRY_ITEMS = [
+    /* fridge */
+    { name:'Salmon fillets',    qty:'4',       unit:'pcs',  category:'Fridge',  expires:2,  emoji:'🐟' },
+    { name:'Heavy cream',       qty:'½ cup',   unit:'',     category:'Fridge',  expires:5,  emoji:'🥛' },
+    { name:'Baby spinach',      qty:'2 cups',  unit:'',     category:'Fridge',  expires:3,  emoji:'🥬' },
+    { name:'Cherry tomatoes',   qty:'1 cup',   unit:'',     category:'Fridge',  expires:6,  emoji:'🍅' },
+    { name:'Eggs',              qty:'8',       unit:'',     category:'Fridge',  expires:14, emoji:'🥚' },
+    { name:'Cheddar cheese',    qty:'200g',    unit:'',     category:'Fridge',  expires:12, emoji:'🧀' },
+    { name:'Greek yoghurt',     qty:'500g',    unit:'',     category:'Fridge',  expires:7,  emoji:'🫙' },
+    { name:'Butter',            qty:'100g',    unit:'',     category:'Fridge',  expires:21, emoji:'🧈' },
+    /* pantry */
+    { name:'Garlic cloves',     qty:'1 head',  unit:'',     category:'Pantry',  expires:30, emoji:'🧄' },
+    { name:'Olive oil',         qty:'400ml',   unit:'',     category:'Pantry',  expires:180,emoji:'🫒' },
+    { name:'Pasta (penne)',      qty:'500g',    unit:'',     category:'Pantry',  expires:365,emoji:'🍝' },
+    { name:'Canned tomatoes',   qty:'2 cans',  unit:'',     category:'Pantry',  expires:730,emoji:'🥫' },
+    { name:'Chicken stock',     qty:'1 litre', unit:'',     category:'Pantry',  expires:180,emoji:'🍲' },
+    { name:'Parmesan (grated)', qty:'50g',     unit:'',     category:'Pantry',  expires:45, emoji:'🧀' },
+    { name:'Red pepper flakes', qty:'1 jar',   unit:'',     category:'Pantry',  expires:365,emoji:'🌶️' },
+    /* freezer */
+    { name:'Peas',              qty:'300g',    unit:'',     category:'Freezer', expires:90, emoji:'🟢' },
+    { name:'Shrimp',            qty:'500g',    unit:'',     category:'Freezer', expires:60, emoji:'🦐' }
+  ];
+
+  var MAKEABLE_RECIPES = [
+    {
+      title:'Creamy Tuscan Salmon',
+      match: 95,
+      missing: [],
+      time:'28 min',
+      heroColor:'#D4A848',
+      tags:['Uses expiring items']
+    },
+    {
+      title:'Pasta al Pomodoro',
+      match: 100,
+      missing: [],
+      time:'20 min',
+      heroColor:'#C89040',
+      tags:['All ingredients on hand']
+    },
+    {
+      title:'Spinach & Egg Frittata',
+      match: 90,
+      missing: ['Parmesan'],
+      time:'18 min',
+      heroColor:'#3A6898',
+      tags:['Quick', 'High Protein']
+    },
+    {
+      title:'Garlic Butter Shrimp Pasta',
+      match: 85,
+      missing: ['Lemon'],
+      time:'22 min',
+      heroColor:'#D4A848',
+      tags:['Uses freezer items']
+    },
+    {
+      title:'Greek Yoghurt Chicken',
+      match: 70,
+      missing: ['Chicken breast', 'Cucumber'],
+      time:'40 min',
+      heroColor:'#2A5080',
+      tags:[]
+    }
+  ];
+
+  var EXPIRING_SOON = PANTRY_ITEMS.filter(function (i) { return i.expires <= 5; });
+
+  /* ══════════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════════ */
+
+  function iconSvg(path, size, color, sw) {
+    return '<svg width="'+(size||20)+'" height="'+(size||20)+'" viewBox="0 0 24 24" fill="none" '+
+      'stroke="'+(color||'currentColor')+'" stroke-width="'+(sw||'1.8')+'" '+
+      'stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg>';
+  }
+
+  function expiryLabel(days) {
+    if (days <= 2) return { label: 'Expires today!' + (days===2?' tomorrow':''), color: '#D46A5A' };
+    if (days <= 5) return { label: 'Expires in '+days+' days', color: '#D4A870' };
+    return { label: days+'d left', color: null };
+  }
+
+  function matchBar(th, pct) {
+    var color = pct >= 90 ? th.secondary : pct >= 70 ? th.warning : th.muted;
+    return '<div style="height:4px;border-radius:'+R.pill+';background:'+th.chip+';margin-top:6px">' +
+      '<div style="height:100%;border-radius:'+R.pill+';background:'+color+';width:'+pct+'%;"></div>' +
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SCREENS
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── 1. FRIDGE HOME ─────────────────────────────────────── */
+  function sFridgeHome(th) {
+    var fridgeCount   = PANTRY_ITEMS.filter(function (i) { return i.category === 'Fridge'; }).length;
+    var pantryCount   = PANTRY_ITEMS.filter(function (i) { return i.category === 'Pantry'; }).length;
+    var freezerCount  = PANTRY_ITEMS.filter(function (i) { return i.category === 'Freezer'; }).length;
+    var expiringCount = EXPIRING_SOON.length;
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="flex:1;overflow-y:auto;padding-bottom:90px;scrollbar-width:none">' +
+
+        /* Header */
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;'+
+          'padding:8px '+S.xl+' 16px">' +
+          '<div>' +
+            '<div style="font-size:22px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+'">'+
+              'Fridge & Pantry</div>' +
+            '<div style="font-size:12px;color:'+th.muted+';margin-top:4px">'+
+              PANTRY_ITEMS.length+' items tracked' +
+            '</div>' +
+          '</div>' +
+          '<div onclick="otGo(\'fridgeScan\')" style="background:'+th.primary+';color:white;'+
+            'border-radius:'+R.pill+';padding:8px 16px;font-size:12px;font-weight:'+T.wt.bold+';'+
+            'cursor:pointer;display:flex;align-items:center;gap:6px">'+
+            iconSvg('M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', 14, 'white') +
+            'Scan' +
+          '</div>' +
+        '</div>' +
+
+        /* Expiring soon alert */
+        (expiringCount > 0 ?
+          '<div onclick="otGo(\'wasteMode\')" style="margin:0 '+S.xl+' 14px;padding:12px 14px;'+
+            'background:'+(th._name==='dark' ? '#3A2A1A' : '#FFFBF0')+';'+
+            'border:1px solid '+(th._name==='dark' ? '#5A3A1A' : '#FDE68A')+';'+
+            'border-radius:'+R.lg+';cursor:pointer;display:flex;align-items:center;gap:10px">' +
+            '<span style="font-size:22px">⚠️</span>' +
+            '<div style="flex:1">' +
+              '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.warning+'">'+
+                expiringCount+' item'+(expiringCount>1?'s':'')+' expiring soon</div>' +
+              '<div style="font-size:11px;color:'+th.muted+'">'+
+                EXPIRING_SOON.map(function (i) { return i.name; }).join(', ') +
+              '</div>' +
+            '</div>' +
+            iconSvg('M9 18l6-6-6-6', 14, th.warning) +
+          '</div>'
+        : '') +
+
+        /* Quick stats row */
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 '+S.xl+';margin-bottom:20px">' +
+          [
+            { label:'Fridge', count:fridgeCount, emoji:'❄️', go:'pantryList' },
+            { label:'Pantry', count:pantryCount, emoji:'🫙', go:'pantryList' },
+            { label:'Freezer', count:freezerCount, emoji:'🧊', go:'pantryList' }
+          ].map(function (cat) {
+            return '<div onclick="otState.pantryFilter=\''+cat.label+'\';otGo(\'pantryList\')" '+
+              'style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';'+
+              'padding:14px 10px;text-align:center;cursor:pointer">' +
+              '<div style="font-size:26px;margin-bottom:6px">'+cat.emoji+'</div>' +
+              '<div style="font-size:20px;font-weight:'+T.wt.heavy+';color:'+th.text+'">'+cat.count+'</div>' +
+              '<div style="font-size:11px;color:'+th.muted+'">'+cat.label+'</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* What Can I Make CTA */
+        '<div onclick="otGo(\'whatCanIMake\')" style="margin:0 '+S.xl+' 20px;padding:18px;'+
+          'border-radius:'+R.xl+';overflow:hidden;position:relative;cursor:pointer;'+
+          'background:'+(th._name==='dark'
+            ? 'linear-gradient(135deg,#1A2A40 0%,#0F1A28 100%)'
+            : 'linear-gradient(135deg,#1B3A5C 0%,#0F2240 100%)')+'">' +
+          /* Decorative */
+          '<div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;'+
+            'border-radius:50%;background:rgba(255,255,255,0.06)"></div>' +
+          '<div style="position:relative;z-index:1">' +
+            '<div style="font-size:28px;margin-bottom:8px">🤔</div>' +
+            '<div style="font-size:18px;font-weight:'+T.wt.heavy+';color:white;font-family:'+T.serif+';margin-bottom:4px">'+
+              'What Can I Make?' +
+            '</div>' +
+            '<div style="font-size:12px;color:rgba(255,255,255,0.75);margin-bottom:14px">'+
+              'We found '+MAKEABLE_RECIPES.length+' recipes you can make right now' +
+            '</div>' +
+            '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);'+
+              'border-radius:'+R.pill+';padding:7px 16px;font-size:12px;font-weight:'+T.wt.bold+';color:white">'+
+              'See recipes →' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Recent scan */
+        '<div style="padding:0 '+S.xl+';margin-bottom:20px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
+            '<div style="font-size:14px;font-weight:'+T.wt.bold+';color:'+th.text+'">Recent Scan</div>' +
+            '<div onclick="otGo(\'fridgeScan\')" style="font-size:12px;color:'+th.primary+';cursor:pointer;font-weight:'+T.wt.semi+'">Scan again</div>' +
+          '</div>' +
+          '<div style="background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';'+
+            'padding:14px;display:flex;align-items:center;gap:14px">' +
+            '<div style="width:52px;height:52px;border-radius:'+R.md+';background:'+
+              (th._name==='dark' ? '#1C2830' : '#E8EFF6')+
+              ';display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">📸</div>' +
+            '<div style="flex:1">' +
+              '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:3px">'+
+                'Fridge scan — Today, 8:22am</div>' +
+              '<div style="font-size:11px;color:'+th.muted+'">Detected 12 items · 3 new additions</div>' +
+            '</div>' +
+            iconSvg('M9 18l6-6-6-6', 14, th.muted) +
+          '</div>' +
+        '</div>' +
+
+        /* Quick-add items */
+        '<div style="padding:0 '+S.xl+';margin-bottom:20px">' +
+          '<div style="font-size:14px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:10px">'+
+            'Quick Add</div>' +
+          '<div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none">' +
+            ['🧅 Onion','🥕 Carrots','🥦 Broccoli','🍋 Lemon','🧃 Stock','🧴 Cream'].map(function (item) {
+              return '<div onclick="return false" style="flex-shrink:0;display:flex;align-items:center;gap:6px;'+
+                'padding:8px 13px;background:'+th.card+';border:1px dashed '+th.border+';border-radius:'+R.pill+';cursor:pointer">' +
+                '<span style="font-size:16px">'+item.split(' ')[0]+'</span>' +
+                '<span style="font-size:11px;color:'+th.text+';font-weight:'+T.wt.med+'">'+item.split(' ')[1]+'</span>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      c.navBar(th, 2, 'otNavBar') +
+
+    '</div>';
+  }
+
+  /* ── 2. FRIDGE SCAN (camera view) ───────────────────────── */
+  function sFridgeScan(th) {
+    var scanning = otState.scanning;
+
+    return '<div style="height:100%;background:#0A0A0A;display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      /* Camera viewfinder */
+      '<div style="position:absolute;inset:0;background:'+
+        (th._name==='dark' ? '#0A0F0A' : '#0D120D')+'">' +
+
+        /* Grid overlay (simulates camera grid) */
+        '<div style="position:absolute;inset:0;opacity:0.15;' +
+          'background-image:linear-gradient(rgba(255,255,255,0.5) 1px,transparent 1px),'+
+          'linear-gradient(90deg,rgba(255,255,255,0.5) 1px,transparent 1px);'+
+          'background-size:33.3% 33.3%"></div>' +
+
+        /* Scan line animation */
+        '<div style="position:absolute;left:10%;right:10%;top:20%;bottom:20%;'+
+          'border:2px solid rgba(255,255,255,0.6);border-radius:'+R.lg+'">' +
+
+          /* Corner accents */
+          '<div style="position:absolute;top:-2px;left:-2px;width:24px;height:24px;'+
+            'border-top:3px solid '+th.secondary+';border-left:3px solid '+th.secondary+'"></div>' +
+          '<div style="position:absolute;top:-2px;right:-2px;width:24px;height:24px;'+
+            'border-top:3px solid '+th.secondary+';border-right:3px solid '+th.secondary+'"></div>' +
+          '<div style="position:absolute;bottom:-2px;left:-2px;width:24px;height:24px;'+
+            'border-bottom:3px solid '+th.secondary+';border-left:3px solid '+th.secondary+'"></div>' +
+          '<div style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;'+
+            'border-bottom:3px solid '+th.secondary+';border-right:3px solid '+th.secondary+'"></div>' +
+
+          /* Scan beam */
+          '<div style="position:absolute;left:0;right:0;height:2px;top:40%;'+
+            'background:linear-gradient(90deg,transparent,'+th.secondary+',transparent);'+
+            'animation:scanLine 2s ease-in-out infinite"></div>' +
+
+          /* Instruction text */
+          '<div style="position:absolute;bottom:14px;left:0;right:0;text-align:center;'+
+            'font-size:12px;color:rgba(255,255,255,0.8);font-weight:'+T.wt.semi+'">'+
+            'Point at your open fridge' +
+          '</div>' +
+        '</div>' +
+
+        /* Simulated fridge items being detected */
+        (scanning ? '' :
+          '<div style="position:absolute;left:10%;right:10%;top:22%;display:flex;flex-wrap:wrap;'+
+            'gap:6px;padding:10px;justify-content:center">' +
+            ['🐟 Salmon','🥛 Cream','🥬 Spinach','🍅 Tomatoes','🥚 Eggs','🧀 Cheese','🧈 Butter'].map(function (item) {
+              return '<div style="background:rgba(0,0,0,0.6);border:1px solid rgba('+
+                (th._name==='dark' ? '154,184,106' : '90,138,82')+',0.7);border-radius:'+R.pill+';'+
+                'padding:4px 10px;font-size:10px;color:white;backdrop-filter:blur(4px)">'+item+'</div>';
+            }).join('') +
+          '</div>'
+        ) +
+
+      '</div>' +
+
+      /* Top bar overlay */
+      c.notch() +
+      '<div style="position:absolute;top:0;left:0;right:0;z-index:20;'+
+        'padding:38px '+S.xl+' 12px;display:flex;justify-content:space-between;align-items:center">' +
+        /* Close */
+        '<div onclick="otBack()" style="width:36px;height:36px;border-radius:50%;'+
+          'background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+          iconSvg('M18 6L6 18M6 6l12 12', 18, 'white', '2') +
+        '</div>' +
+        '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:white">Fridge Scanner</div>' +
+        /* Flash */
+        '<div onclick="return false" style="width:36px;height:36px;border-radius:50%;'+
+          'background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+          '<span style="font-size:18px">⚡</span>' +
+        '</div>' +
+      '</div>' +
+
+      /* Bottom controls */
+      '<div style="position:absolute;bottom:0;left:0;right:0;z-index:20;'+
+        'padding:20px '+S.xl+' 36px;background:linear-gradient(to top,rgba(0,0,0,0.85),transparent)">' +
+
+        /* Detected count */
+        '<div style="text-align:center;margin-bottom:16px">' +
+          '<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.6);'+
+            'border-radius:'+R.pill+';padding:6px 18px;border:1px solid rgba(255,255,255,0.2)">' +
+            '<div style="width:8px;height:8px;border-radius:50%;background:'+th.secondary+';'+
+              'animation:fadeScaleUp 1s ease infinite alternate"></div>' +
+            '<span style="font-size:12px;color:white;font-weight:'+T.wt.semi+'">7 items detected</span>' +
+          '</div>' +
+        '</div>' +
+
+        /* Shutter button */
+        '<div style="display:flex;align-items:center;justify-content:center;gap:28px">' +
+          /* Gallery */
+          '<div onclick="return false" style="width:42px;height:42px;border-radius:'+R.sm+';'+
+            'background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+            iconSvg('M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM8.5 10a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm10.5 6H5l4-5 3 3.5 3-3 5 4.5z', 20, 'white') +
+          '</div>' +
+          /* Shutter */
+          '<div onclick="otGo(\'fridgeScanDone\')" style="width:72px;height:72px;border-radius:50%;'+
+            'background:white;border:4px solid rgba(255,255,255,0.4);cursor:pointer;'+
+            'display:flex;align-items:center;justify-content:center">' +
+            '<div style="width:56px;height:56px;border-radius:50%;background:white;'+
+              'box-shadow:inset 0 0 0 3px rgba(0,0,0,0.1)"></div>' +
+          '</div>' +
+          /* Flip camera */
+          '<div onclick="return false" style="width:42px;height:42px;border-radius:50%;'+
+            'background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+            iconSvg('M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15', 20, 'white') +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 3. SCAN DONE (results) ─────────────────────────────── */
+  function sFridgeScanDone(th) {
+    var newItems = [
+      { name:'Greek yoghurt', qty:'500g',    emoji:'🫙', status:'new' },
+      { name:'Butter',        qty:'100g',    emoji:'🧈', status:'new' },
+      { name:'Cheddar cheese',qty:'200g',    emoji:'🧀', status:'updated' },
+      { name:'Baby spinach',  qty:'2 cups',  emoji:'🥬', status:'expiring' },
+      { name:'Salmon fillets',qty:'4 pcs',   emoji:'🐟', status:'expiring' }
+    ];
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 14px">' +
+        c.backBtn(th, 'Scanner') +
+        '<div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between">' +
+          '<div style="font-size:20px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+'">Scan Complete</div>' +
+          '<div style="background:'+(th._name==='dark' ? '#1E2A38' : '#E8EFF6')+';'+
+            'border-radius:'+R.pill+';padding:4px 12px;font-size:11px;font-weight:'+T.wt.bold+';color:'+th.secondary+'">'+
+            '12 items' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 24px;scrollbar-width:none">' +
+
+        /* Summary row */
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px">' +
+          [
+            { icon:'✨', val:'3', label:'New items',     color:th.secondary },
+            { icon:'🔄', val:'4', label:'Updated',       color:th.primary },
+            { icon:'⚠️', val:'2', label:'Expiring soon', color:th.warning }
+          ].map(function (s) {
+            return '<div style="background:'+th.card+';border:0.5px solid '+th.border+';'+
+              'border-radius:'+R.md+';padding:10px;text-align:center">' +
+              '<div style="font-size:9px">'+s.icon+'</div>' +
+              '<div style="font-size:20px;font-weight:'+T.wt.heavy+';color:'+s.color+';margin:2px 0">'+s.val+'</div>' +
+              '<div style="font-size:9px;color:'+th.muted+'">'+s.label+'</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Detected items */
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:10px">DETECTED IN THIS SCAN</div>' +
+
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">' +
+          newItems.map(function (item) {
+            var statusMap = {
+              new:      { label:'New',      bg:th._name==='dark'?'#1E2A38':'#E8EFF6',  color:th.secondary },
+              updated:  { label:'Updated',  bg:th._name==='dark'?'#1A1A2E':'#EFF6FF',  color:'#3B82F6'    },
+              expiring: { label:'Expiring', bg:th._name==='dark'?'#3A2A1A':'#FFFBF0',  color:th.warning   }
+            };
+            var s = statusMap[item.status];
+            return '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;'+
+              'background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+'">' +
+              '<div style="width:40px;height:40px;border-radius:'+R.md+';background:'+th.chip+';'+
+                'display:flex;align-items:center;justify-content:center;font-size:20px">'+item.emoji+'</div>' +
+              '<div style="flex:1">' +
+                '<div style="font-size:13px;font-weight:'+T.wt.semi+';color:'+th.text+'">'+item.name+'</div>' +
+                '<div style="font-size:11px;color:'+th.muted+'">'+item.qty+'</div>' +
+              '</div>' +
+              '<div style="background:'+s.bg+';border-radius:'+R.pill+';padding:3px 9px;'+
+                'font-size:9px;font-weight:'+T.wt.bold+';color:'+s.color+'">'+s.label+'</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Not recognized */
+        '<div style="padding:12px 14px;background:'+th.chip+';border-radius:'+R.md+';'+
+          'margin-bottom:18px;display:flex;align-items:center;justify-content:space-between">' +
+          '<div>' +
+            '<div style="font-size:12px;font-weight:'+T.wt.semi+';color:'+th.text+';margin-bottom:2px">'+
+              'Couldn\'t identify 2 items</div>' +
+            '<div style="font-size:11px;color:'+th.muted+'">Tap to add manually</div>' +
+          '</div>' +
+          '<div onclick="return false" style="font-size:11px;color:'+th.primary+';cursor:pointer;font-weight:'+T.wt.semi+'">Add →</div>' +
+        '</div>' +
+
+        /* What can I make */
+        '<div onclick="otGo(\'whatCanIMake\')" style="padding:14px;border-radius:'+R.lg+';'+
+          'background:'+th.secondary+';cursor:pointer;display:flex;align-items:center;gap:12px;'+
+          'box-shadow:0 8px 24px '+th.secondary+'44">' +
+          '<span style="font-size:28px">🍽️</span>' +
+          '<div style="flex:1">' +
+            '<div style="font-size:14px;font-weight:'+T.wt.bold+';color:white;margin-bottom:2px">'+
+              'See what you can make</div>' +
+            '<div style="font-size:11px;color:rgba(255,255,255,0.8)">Based on your updated pantry</div>' +
+          '</div>' +
+          iconSvg('M9 18l6-6-6-6', 16, 'white') +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 4. PANTRY LIST ─────────────────────────────────────── */
+  function sPantryList(th) {
+    var filter   = otState.pantryFilter || 'Fridge';
+    var filters  = ['Fridge','Pantry','Freezer','All'];
+    var shown    = filter === 'All' ? PANTRY_ITEMS : PANTRY_ITEMS.filter(function (i) { return i.category === filter; });
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 12px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">' +
+          c.backBtn(th, 'Fridge') +
+          '<div onclick="return false" style="width:34px;height:34px;border-radius:50%;'+
+            'background:'+th.chip+';display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+            iconSvg('M12 5v14M5 12l7 7 7-7', 16, th.muted) +
+          '</div>' +
+        '</div>' +
+
+        /* Filter row */
+        '<div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">' +
+          filters.map(function (f) {
+            var active = f === filter;
+            return '<div onclick="otState.pantryFilter=\''+f+'\';otRender()" '+
+              'style="flex-shrink:0;padding:6px 16px;border-radius:'+R.pill+';font-size:11px;'+
+              'font-weight:'+(active?T.wt.semi:T.wt.reg)+';'+
+              'background:'+(active?th.primary:th.chip)+';color:'+(active?'white':th.chipTx)+';'+
+              'cursor:pointer;border:1px solid '+(active?th.primary:th.border)+'">'+f+'</div>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+
+      /* Item list */
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 20px;scrollbar-width:none">' +
+
+        /* Items */
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">' +
+          shown.map(function (item) {
+            var exp = expiryLabel(item.expires);
+            return '<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;'+
+              'background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+'">' +
+              /* Emoji */
+              '<div style="width:38px;height:38px;border-radius:'+R.sm+';background:'+th.chip+';'+
+                'display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">'+item.emoji+'</div>' +
+              /* Info */
+              '<div style="flex:1">' +
+                '<div style="font-size:13px;font-weight:'+T.wt.semi+';color:'+th.text+'">'+item.name+'</div>' +
+                '<div style="display:flex;align-items:center;gap:8px;margin-top:2px">' +
+                  '<span style="font-size:11px;color:'+th.muted+'">'+item.qty+(item.unit?' '+item.unit:'')+'</span>' +
+                  (exp.color ? '<span style="font-size:9px;color:'+exp.color+';font-weight:'+T.wt.semi+'">'+exp.label+'</span>' : '') +
+                '</div>' +
+              '</div>' +
+              /* Actions */
+              '<div style="display:flex;gap:6px">' +
+                '<div onclick="return false" style="width:28px;height:28px;border-radius:'+R.sm+';'+
+                  'background:'+th.chip+';display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+                  iconSvg('M12 5v14M5 12h14', 13, th.muted) +
+                '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Add item button */
+        '<div onclick="return false" style="display:flex;align-items:center;gap:10px;padding:12px 14px;'+
+          'border:1.5px dashed '+th.primary+';border-radius:'+R.md+';cursor:pointer">' +
+          '<div style="width:28px;height:28px;border-radius:50%;background:'+th.primary+';'+
+            'display:flex;align-items:center;justify-content:center;font-size:16px;color:white">+</div>' +
+          '<span style="font-size:13px;color:'+th.primary+';font-weight:'+T.wt.semi+'">Add item manually</span>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 5. WHAT CAN I MAKE? ────────────────────────────────── */
+  function sWhatCanIMake(th) {
+    var filter = otState.makeFilter || 'All';
+    var filters = ['All','Quick (under 30m)','Vegetarian','Use expiring'];
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* Header */
+      '<div style="padding:4px '+S.xl+' 14px">' +
+        c.backBtn(th, 'Fridge') +
+        '<div style="margin-top:8px">' +
+          '<div style="font-size:22px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+'">'+
+            'What Can I Make?</div>' +
+          '<div style="font-size:12px;color:'+th.muted+';margin-top:4px">'+
+            'Based on '+PANTRY_ITEMS.length+' items in your kitchen' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Filter chips */
+      '<div style="display:flex;gap:7px;overflow-x:auto;padding:0 '+S.xl+' 12px;scrollbar-width:none">' +
+        filters.map(function (f) {
+          var active = f === filter;
+          return '<div onclick="otState.makeFilter=\''+f+'\';otRender()" '+
+            'style="flex-shrink:0;padding:6px 14px;border-radius:'+R.pill+';font-size:11px;'+
+            'font-weight:'+(active?T.wt.semi:T.wt.reg)+';cursor:pointer;'+
+            'background:'+(active?th.primary:th.chip)+';color:'+(active?'white':th.chipTx)+';'+
+            'border:1px solid '+(active?th.primary:th.border)+'">'+f+'</div>';
+        }).join('') +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:8px '+S.xl+' 24px;scrollbar-width:none">' +
+
+        MAKEABLE_RECIPES.map(function (recipe) {
+          var borderColor = recipe.match >= 90 ? th.secondary : recipe.match >= 70 ? th.warning : th.border;
+          return '<div onclick="return false" style="background:'+th.card+';border:0.5px solid '+borderColor+';'+
+            'border-radius:'+R.lg+';overflow:hidden;margin-bottom:12px;cursor:pointer;'+
+            'box-shadow:0 2px 8px rgba(0,0,0,0.06)">' +
+
+            '<div style="display:flex">' +
+              /* Color swatch */
+              '<div style="width:90px;background:'+recipe.heroColor+';position:relative;flex-shrink:0">' +
+                '<div style="position:absolute;inset:0;background:linear-gradient(to right,transparent,rgba(0,0,0,0.1))"></div>' +
+                /* Match % badge */
+                '<div style="position:absolute;bottom:8px;left:0;right:0;text-align:center">' +
+                  '<div style="display:inline-block;background:rgba(0,0,0,0.55);border-radius:'+R.pill+';'+
+                    'padding:3px 9px;font-size:11px;font-weight:'+T.wt.heavy+';color:white">'+recipe.match+'%</div>' +
+                '</div>' +
+              '</div>' +
+
+              /* Info */
+              '<div style="flex:1;padding:12px 14px">' +
+                '<div style="font-size:14px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:4px;line-height:1.3">'+
+                  recipe.title +
+                '</div>' +
+
+                /* Tags */
+                (recipe.tags.length ? '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px">' +
+                  recipe.tags.map(function (tag) {
+                    return '<span style="font-size:9px;padding:2px 7px;border-radius:'+R.pill+';'+
+                      'background:'+th.chip+';color:'+th.chipTx+'">'+tag+'</span>';
+                  }).join('') + '</div>' : '') +
+
+                /* Match bar */
+                matchBar(th, recipe.match) +
+
+                /* Missing items */
+                (recipe.missing.length > 0 ?
+                  '<div style="margin-top:7px;font-size:10px;color:'+th.warning+'">' +
+                    '⚠ Need: '+recipe.missing.join(', ') +
+                  '</div>'
+                : '<div style="margin-top:7px;font-size:10px;color:'+th.secondary+'">✓ All ingredients on hand</div>') +
+
+                /* Meta */
+                '<div style="display:flex;align-items:center;gap:10px;margin-top:8px">' +
+                  '<span style="font-size:10px;color:'+th.muted+'">⏱ '+recipe.time+'</span>' +
+                  (recipe.missing.length === 0 ?
+                    '<div onclick="return false" style="margin-left:auto;background:'+th.secondary+';color:white;'+
+                      'border-radius:'+R.pill+';padding:4px 12px;font-size:10px;font-weight:'+T.wt.bold+';cursor:pointer">Cook Now</div>'
+                  : '<div onclick="return false" style="margin-left:auto;background:'+th.chip+';color:'+th.primary+';'+
+                      'border-radius:'+R.pill+';padding:4px 12px;font-size:10px;font-weight:'+T.wt.bold+';cursor:pointer;'+
+                      'border:1px solid '+th.primary+'">Add '+recipe.missing.length+' item'+(recipe.missing.length>1?'s':'')+' →</div>') +
+                '</div>' +
+
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 6. FOOD WASTE MODE ─────────────────────────────────── */
+  function sWasteMode(th) {
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 14px">' +
+        c.backBtn(th, 'Fridge') +
+        '<div style="margin-top:8px">' +
+          '<div style="font-size:22px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+'">'+
+            'Food Waste Mode 🌱</div>' +
+          '<div style="font-size:12px;color:'+th.muted+';margin-top:4px">Recipes that use your expiring items first</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 24px;scrollbar-width:none">' +
+
+        /* Stat banner */
+        '<div style="background:linear-gradient(135deg,'+
+          (th._name==='dark' ? '#1A2A40,#0F1A28' : '#1B3A5C,#0F2240')+');'+
+          'border-radius:'+R.lg+';padding:18px;margin-bottom:18px;display:flex;gap:14px">' +
+          '<span style="font-size:32px">♻️</span>' +
+          '<div>' +
+            '<div style="font-size:14px;font-weight:'+T.wt.bold+';color:white;margin-bottom:4px">'+
+              EXPIRING_SOON.length+' items expiring within '+Math.max.apply(null, EXPIRING_SOON.map(function(i){return i.expires;}))+' days</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+              EXPIRING_SOON.map(function (item) {
+                return '<span style="background:rgba(255,255,255,0.2);border-radius:'+R.pill+';'+
+                  'padding:3px 9px;font-size:10px;color:white">'+item.emoji+' '+item.name+'</span>';
+              }).join('') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Recipes using expiring */
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:12px">USES YOUR EXPIRING ITEMS</div>' +
+
+        MAKEABLE_RECIPES.slice(0,3).map(function (r) {
+          return '<div onclick="return false" style="display:flex;gap:12px;padding:12px;'+
+            'background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';'+
+            'margin-bottom:10px;cursor:pointer">' +
+            '<div style="width:60px;height:60px;border-radius:'+R.md+';background:'+r.heroColor+';flex-shrink:0"></div>' +
+            '<div style="flex:1">' +
+              '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.text+';margin-bottom:4px">'+r.title+'</div>' +
+              '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px">' +
+                EXPIRING_SOON.slice(0,2).map(function (e) {
+                  return '<span style="font-size:9px;padding:2px 7px;border-radius:'+R.pill+';'+
+                    'background:'+(th._name==='dark'?'#3A2A1A':'#FFFBF0')+';color:'+th.warning+';'+
+                    'border:0.5px solid '+th.warning+'44">Uses '+e.emoji+' '+e.name.split(' ')[0]+'</span>';
+                }).join('') +
+              '</div>' +
+              '<div style="font-size:10px;color:'+th.muted+'">⏱ '+r.time+' · '+r.match+'% match</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+
+        /* Weekly waste saved */
+        '<div style="padding:14px;background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.lg+';text-align:center">' +
+          '<div style="font-size:11px;color:'+th.muted+';margin-bottom:6px">🌱 Food waste saved this month</div>' +
+          '<div style="font-size:28px;font-weight:'+T.wt.heavy+';color:'+th.secondary+'">$24.60</div>' +
+          '<div style="font-size:11px;color:'+th.muted+';margin-top:4px">Across 8 meals this month</div>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     NAV WIRING
+  ══════════════════════════════════════════════════════════ */
+
+  OT.nav(
+    {
+      fridgeHome:    sFridgeHome,
+      fridgeScan:    sFridgeScan,
+      fridgeScanDone:sFridgeScanDone,
+      pantryList:    sPantryList,
+      whatCanIMake:  sWhatCanIMake,
+      wasteMode:     sWasteMode
+    },
+    'fridgeHome',
+    'phone-screen',
+    {
+      mainScreens: ['fridgeHome', 'whatCanIMake'],
+      state: {
+        pantryFilter: 'Fridge',
+        makeFilter:   'All',
+        scanning:     false
+      },
+      onRender: function (state, theme) {
+        var el = document.getElementById('screen-label');
+        if (el) el.textContent = SCREEN_NAMES[state.screen] || state.screen;
+
+        var dotsEl = document.getElementById('screen-dots');
+        if (dotsEl) {
+          var visible = ['fridgeHome','fridgeScan','fridgeScanDone','pantryList','whatCanIMake','wasteMode'];
+          var idx = visible.indexOf(state.screen);
+          dotsEl.innerHTML = visible.map(function (_, i) {
+            return '<div class="dot'+(i===idx?' on':'')+'" ></div>';
+          }).join('');
+        }
+
+        var btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = theme._name === 'dark' ? '☀ Light Mode' : '☾ Dark Mode';
+
+        OT.injectAnimations();
+      }
+    }
+  );
+
+  /* Map nav bar tabs to screens in this prototype */
+  window.otNavBar = function (id) {
+    if (id === 'fridge') { otGo('fridgeHome'); return; }
+    if (id === 'home')   { otGo('fridgeHome'); return; }
+    otGo(id);
+  };
+
+})();
+</script>
+</body>
+</html>

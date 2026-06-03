@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Table — Grocery List</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #EDE8E2; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .phone-outer { position: relative; filter: drop-shadow(0 28px 56px rgba(0,0,0,0.26)); }
+  .side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
+  .side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
+  .phone-body { width:370px;height:760px;background:#0D0D0D;border-radius:54px;padding:12px;border:1px solid #1A1A1A;box-shadow:inset 0 1px 1px rgba(255,255,255,0.07),inset 0 -1px 0 rgba(0,0,0,0.5); }
+  #phone-screen { width:100%;height:100%;border-radius:44px;overflow:hidden;position:relative; }
+  .controls { text-align:center;margin-top:24px; }
+  #screen-label { font-size:11px;font-weight:700;color:#8A7060;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px; }
+  .hint { font-size:11px;color:#B0A090;margin-bottom:14px; }
+  #screen-dots { display:flex;gap:7px;align-items:center;justify-content:center;margin-bottom:14px; }
+  #screen-dots .dot { width:7px;height:7px;border-radius:50%;background:#C8B8A8;transition:all 0.2s; }
+  #screen-dots .dot.on { width:22px;border-radius:4px;background:#1B3A5C; }
+  .theme-btn { background:rgba(0,0,0,0.07);border:1.5px solid rgba(0,0,0,0.14);color:#2C2416;font-size:12px;font-weight:600;padding:8px 20px;border-radius:100px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px; }
+</style>
+</head>
+<body>
+
+<div class="phone-outer">
+  <div class="side-l"></div>
+  <div class="side-r"></div>
+  <div class="phone-body">
+    <div id="phone-screen"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div id="screen-label">Grocery List</div>
+  <div class="hint">Tap items to check off, swipe between views</div>
+  <div id="screen-dots"></div>
+  <button class="theme-btn" id="theme-btn" onclick="otToggleTheme()">☾ Dark Mode</button>
+</div>
+
+<script src="./our-table-design-system.js"></script>
+<script>
+(function () {
+  var T = OT.T, S = OT.S, R = OT.R, c = OT.c;
+
+  var SCREEN_NAMES = {
+    groceryList:    'Grocery List',
+    aisleView:      'By Aisle',
+    selectRecipes:  'Add from Recipes',
+    listDone:       'Shopping Done!'
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     DATA
+  ══════════════════════════════════════════════════════════ */
+
+  var ALL_ITEMS = [
+    /* Produce */
+    { id:0,  name:'Baby spinach',      qty:'3 cups',   aisle:'Produce',       recipe:'Tuscan Salmon', checked:false, emoji:'🥬' },
+    { id:1,  name:'Cherry tomatoes',   qty:'1 cup',    aisle:'Produce',       recipe:'Tuscan Salmon', checked:false, emoji:'🍅' },
+    { id:2,  name:'Lemon',             qty:'1',        aisle:'Produce',       recipe:'Tuscan Salmon', checked:true,  emoji:'🍋' },
+    { id:3,  name:'Fresh basil',       qty:'¼ cup',    aisle:'Produce',       recipe:'Tuscan Salmon', checked:false, emoji:'🌿' },
+    { id:4,  name:'Garlic',            qty:'1 head',   aisle:'Produce',       recipe:'Multiple',      checked:true,  emoji:'🧄' },
+    /* Meat & Fish */
+    { id:5,  name:'Salmon fillets',    qty:'4 × 6oz',  aisle:'Meat & Fish',   recipe:'Tuscan Salmon', checked:false, emoji:'🐟' },
+    /* Dairy */
+    { id:6,  name:'Heavy cream',       qty:'1 cup',    aisle:'Dairy',         recipe:'Tuscan Salmon', checked:false, emoji:'🥛' },
+    { id:7,  name:'Parmesan',          qty:'½ cup',    aisle:'Dairy',         recipe:'Tuscan Salmon', checked:false, emoji:'🧀' },
+    { id:8,  name:'Butter, unsalted',  qty:'2 tbsp',   aisle:'Dairy',         recipe:'Multiple',      checked:true,  emoji:'🧈' },
+    /* Pantry */
+    { id:9,  name:'Sun-dried tomatoes',qty:'⅓ cup',    aisle:'Pantry',        recipe:'Tuscan Salmon', checked:false, emoji:'🍅' },
+    { id:10, name:'Chicken stock',     qty:'½ cup',    aisle:'Pantry',        recipe:'Tuscan Salmon', checked:false, emoji:'🍲' },
+    { id:11, name:'Olive oil',         qty:'2 tbsp',   aisle:'Pantry',        recipe:'Multiple',      checked:true,  emoji:'🫒' },
+    { id:12, name:'Penne pasta',       qty:'500g',     aisle:'Pantry',        recipe:'Pasta',         checked:false, emoji:'🍝' },
+    { id:13, name:'Canned tomatoes',   qty:'2 × 400g', aisle:'Pantry',        recipe:'Pasta',         checked:false, emoji:'🥫' },
+    /* Other */
+    { id:14, name:'Red pepper flakes', qty:'pinch',    aisle:'Spices',        recipe:'Tuscan Salmon', checked:false, emoji:'🌶️' },
+    { id:15, name:'Greek yoghurt',     qty:'500g',     aisle:'Dairy',         recipe:'Snacks',        checked:false, emoji:'🫙' }
+  ];
+
+  var SOURCE_RECIPES = [
+    { title:'Creamy Tuscan Salmon', items:6, heroColor:'#E8A84A', added:true },
+    { title:'Pasta al Pomodoro',    items:4, heroColor:'#C89040', added:true },
+    { title:'Avocado Toast',        items:3, heroColor:'#2A5080', added:false },
+    { title:'Thai Green Curry',     items:8, heroColor:'#3A6898', added:false },
+    { title:'Miso Glazed Eggplant', items:5, heroColor:'#1B3A5C', added:false }
+  ];
+
+  var AISLES = ['Produce','Meat & Fish','Dairy','Pantry','Spices'];
+
+  /* ══════════════════════════════════════════════════════════
+     STATE HELPERS
+  ══════════════════════════════════════════════════════════ */
+
+  function getItems() {
+    var overrides = otState.itemOverrides || {};
+    return ALL_ITEMS.map(function (item) {
+      return Object.assign({}, item, overrides[item.id] !== undefined ? { checked: overrides[item.id] } : {});
+    });
+  }
+
+  function checkedCount() {
+    return getItems().filter(function (i) { return i.checked; }).length;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════════ */
+
+  function iconSvg(path, size, color, sw) {
+    return '<svg width="'+(size||20)+'" height="'+(size||20)+'" viewBox="0 0 24 24" fill="none" '+
+      'stroke="'+(color||'currentColor')+'" stroke-width="'+(sw||'1.8')+'" '+
+      'stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg>';
+  }
+
+  function groceryRow(th, item) {
+    return '<div onclick="otCheckItem('+item.id+')" style="display:flex;align-items:center;gap:11px;'+
+      'padding:10px 14px;border-radius:'+R.md+';cursor:pointer;'+
+      'background:'+(item.checked ? th.chip : th.card)+';'+
+      'border:0.5px solid '+th.border+';margin-bottom:7px">' +
+      /* Checkbox */
+      '<div style="width:24px;height:24px;border-radius:6px;flex-shrink:0;display:flex;'+
+        'align-items:center;justify-content:center;'+
+        (item.checked
+          ? 'background:'+th.secondary+';'
+          : 'border:1.5px solid '+th.border+';background:'+th.input+';') + '">' +
+        (item.checked ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : '') +
+      '</div>' +
+      /* Emoji + text */
+      '<span style="font-size:18px;flex-shrink:0">'+item.emoji+'</span>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:13px;font-weight:'+T.wt.med+';color:'+(item.checked?th.muted:th.text)+';'+
+          (item.checked?'text-decoration:line-through;':'')+'">'+item.name+'</div>' +
+        '<div style="font-size:10px;color:'+th.muted+';margin-top:1px">'+
+          item.qty+(item.recipe ? ' · '+item.recipe : '') +
+        '</div>' +
+      '</div>' +
+      /* Qty badge */
+      '<div style="font-size:11px;color:'+th.muted+';font-weight:'+T.wt.semi+';'+
+        (item.checked?'text-decoration:line-through;':'')+'">'+item.qty+'</div>' +
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SCREENS
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── 1. GROCERY LIST (main) ─────────────────────────────── */
+  function sGroceryList(th) {
+    var items    = getItems();
+    var total    = items.length;
+    var checked  = checkedCount();
+    var unchecked= items.filter(function (i) { return !i.checked; });
+    var done     = items.filter(function (i) { return i.checked; });
+    var view     = otState.listView || 'list';  // 'list' | 'aisle'
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* Header */
+      '<div style="padding:6px '+S.xl+' 12px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
+          '<div style="font-size:22px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+'">'+
+            'Grocery List' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;align-items:center">' +
+            /* Add items */
+            '<div onclick="otGo(\'selectRecipes\')" style="width:32px;height:32px;border-radius:50%;'+
+              'background:'+th.primary+';display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+              '<span style="font-size:18px;color:white;line-height:1">+</span>' +
+            '</div>' +
+            /* Aisle view toggle */
+            '<div onclick="otGo(\'aisleView\')" style="width:32px;height:32px;border-radius:50%;'+
+              'background:'+th.chip+';display:flex;align-items:center;justify-content:center;cursor:pointer">'+
+              iconSvg('M4 6h16M4 10h16M4 14h16M4 18h16', 14, th.muted) +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Progress bar */
+        '<div style="margin-bottom:4px">' +
+          c.progressBar(th, checked, total, th.secondary) +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:11px;color:'+th.muted+'">' +
+          '<span>'+checked+' of '+total+' items got</span>' +
+          (checked === total && total > 0
+            ? '<span onclick="otGo(\'listDone\')" style="color:'+th.secondary+';font-weight:'+T.wt.semi+';cursor:pointer">Done shopping →</span>'
+            : '<span>'+Math.round((checked/total)*100)+'% complete</span>') +
+        '</div>' +
+      '</div>' +
+
+      /* Scrollable list */
+      '<div style="flex:1;overflow-y:auto;padding:6px '+S.xl+' 90px;scrollbar-width:none">' +
+
+        /* Quick add */
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;'+
+          'background:'+th.card+';border:1.5px dashed '+th.border+';border-radius:'+R.md+';padding:10px 12px">' +
+          iconSvg('M12 5v14M5 12h14', 16, th.muted) +
+          '<input type="text" placeholder="Quick add an item…" '+
+            'style="flex:1;border:none;background:transparent;font-size:13px;'+
+            'font-family:'+T.sans+';color:'+th.text+';outline:none">' +
+        '</div>' +
+
+        /* Recipe source chips */
+        '<div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px">' +
+          SOURCE_RECIPES.filter(function (r) { return r.added; }).map(function (r) {
+            return '<div style="flex-shrink:0;display:flex;align-items:center;gap:6px;padding:5px 12px;'+
+              'background:'+th.card+';border:1px solid '+th.border+';border-radius:'+R.pill+'">' +
+              '<div style="width:12px;height:12px;border-radius:3px;background:'+r.heroColor+'"></div>' +
+              '<span style="font-size:11px;color:'+th.text+';font-weight:'+T.wt.med+'">'+r.title.split(' ').slice(0,2).join(' ')+'</span>' +
+            '</div>';
+          }).join('') +
+          '<div onclick="otGo(\'selectRecipes\')" style="flex-shrink:0;display:flex;align-items:center;gap:5px;padding:5px 12px;'+
+            'border:1px dashed '+th.primary+';border-radius:'+R.pill+';cursor:pointer">' +
+            '<span style="font-size:14px;color:'+th.primary+'">+</span>' +
+            '<span style="font-size:11px;color:'+th.primary+';font-weight:'+T.wt.semi+'">Add recipe</span>' +
+          '</div>' +
+        '</div>' +
+
+        /* Items to get */
+        (unchecked.length > 0 ? '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:8px">TO GET ('+unchecked.length+')</div>' : '') +
+        unchecked.map(function (item) { return groceryRow(th, item); }).join('') +
+
+        /* Checked divider */
+        (done.length > 0 ?
+          '<div style="display:flex;align-items:center;gap:8px;margin:16px 0 10px">' +
+            '<div style="flex:1;height:0.5px;background:'+th.border+'"></div>' +
+            '<span style="font-size:10px;color:'+th.muted+'">In basket ('+done.length+')</span>' +
+            '<div style="flex:1;height:0.5px;background:'+th.border+'"></div>' +
+          '</div>' +
+          done.map(function (item) { return groceryRow(th, item); }).join('')
+        : '') +
+
+        /* Clear checked */
+        (done.length > 0 ?
+          '<div onclick="otClearChecked()" style="text-align:center;margin-top:10px;font-size:11px;'+
+            'color:'+th.muted+';cursor:pointer;text-decoration:underline">Clear checked items</div>'
+        : '') +
+
+      '</div>' +
+
+      c.navBar(th, 3, 'otNavBar') +
+
+    '</div>';
+  }
+
+  /* ── 2. AISLE VIEW ──────────────────────────────────────── */
+  function sAisleView(th) {
+    var items = getItems();
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 12px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between">' +
+          '<div style="display:flex;align-items:center;gap:0">' +
+            c.backBtn(th) +
+            '<div style="font-size:20px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+';margin-left:4px">By Aisle</div>' +
+          '</div>' +
+          '<div style="font-size:11px;color:'+th.muted+'">'+checkedCount()+'/'+items.length+' checked</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 20px;scrollbar-width:none">' +
+
+        AISLES.map(function (aisle) {
+          var aisleItems = items.filter(function (i) { return i.aisle === aisle; });
+          if (!aisleItems.length) return '';
+          var aisleChecked = aisleItems.filter(function (i) { return i.checked; }).length;
+          var allDone = aisleChecked === aisleItems.length;
+          var emojiMap = {
+            'Produce': '🥦', 'Meat & Fish': '🐟', 'Dairy': '🧀',
+            'Pantry': '🫙', 'Spices': '🌶️'
+          };
+
+          return '<div style="margin-bottom:16px">' +
+            /* Aisle header */
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:8px 12px;'+
+              'background:'+(allDone ? (th._name==='dark'?'#1A2E1A':'#F0FDF4') : th.chip)+';'+
+              'border-radius:'+R.md+';border:0.5px solid '+(allDone ? th.secondary : th.border)+'">' +
+              '<span style="font-size:18px">'+(emojiMap[aisle]||'🛒')+'</span>' +
+              '<div style="flex:1">' +
+                '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.text+'">'+aisle+'</div>' +
+                '<div style="font-size:10px;color:'+th.muted+'">'+aisleChecked+' of '+aisleItems.length+' items</div>' +
+              '</div>' +
+              (allDone ? '<span style="font-size:14px;color:'+th.secondary+'">✓ Done</span>' :
+                '<div style="font-size:11px;background:'+th.primary+'22;border-radius:'+R.pill+';'+
+                  'padding:3px 9px;color:'+th.primary+';font-weight:'+T.wt.semi+'">'+(aisleItems.length-aisleChecked)+' left</div>') +
+            '</div>' +
+            /* Items */
+            aisleItems.map(function (item) { return groceryRow(th, item); }).join('') +
+          '</div>';
+        }).join('') +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 3. SELECT RECIPES ──────────────────────────────────── */
+  function sSelectRecipes(th) {
+    var addedIds = otState.addedRecipes || SOURCE_RECIPES.filter(function (r) { return r.added; }).map(function (r) { return r.title; });
+
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'position:relative;font-family:'+T.sans+'">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px '+S.xl+' 14px">' +
+        c.backBtn(th, 'Grocery List') +
+        '<div style="margin-top:8px">' +
+          '<div style="font-size:20px;font-weight:'+T.wt.heavy+';color:'+th.text+';font-family:'+T.serif+'">Add from Recipes</div>' +
+          '<div style="font-size:12px;color:'+th.muted+';margin-top:4px">Ingredients added automatically</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="flex:1;overflow-y:auto;padding:0 '+S.xl+' 100px;scrollbar-width:none">' +
+
+        '<div style="font-size:11px;font-weight:'+T.wt.semi+';color:'+th.muted+';'+
+          'letter-spacing:0.06em;margin-bottom:10px">YOUR SAVED RECIPES</div>' +
+
+        '<div style="display:flex;flex-direction:column;gap:10px">' +
+          SOURCE_RECIPES.map(function (recipe) {
+            var isAdded = addedIds.indexOf(recipe.title) >= 0;
+            return '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;'+
+              'background:'+th.card+';border:0.5px solid '+(isAdded?th.secondary:th.border)+';'+
+              'border-radius:'+R.lg+(isAdded?';background:'+(th._name==='dark'?'#1A2E1A22':'#F0FDF422'):'')+'">' +
+              /* Color swatch */
+              '<div style="width:52px;height:52px;border-radius:'+R.md+';background:'+recipe.heroColor+';flex-shrink:0"></div>' +
+              /* Info */
+              '<div style="flex:1">' +
+                '<div style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.text+'">'+recipe.title+'</div>' +
+                '<div style="font-size:11px;color:'+th.muted+';margin-top:3px">'+recipe.items+' ingredients</div>' +
+              '</div>' +
+              /* Toggle button */
+              '<div onclick="otToggleRecipe(\''+recipe.title+'\')" '+
+                'style="padding:7px 14px;border-radius:'+R.pill+';border:1.5px solid '+(isAdded?th.secondary:th.primary)+';'+
+                'background:'+(isAdded?th.secondary:'transparent')+';'+
+                'color:'+(isAdded?'white':th.primary)+';font-size:11px;font-weight:'+T.wt.bold+';cursor:pointer;'+
+                'font-family:'+T.sans+'">'+
+                (isAdded ? '✓ Added' : '+ Add') +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        /* Manual add */
+        '<div style="margin-top:16px;padding:14px;background:'+th.card+';border:1px dashed '+th.border+';'+
+          'border-radius:'+R.lg+';text-align:center">' +
+          '<div style="font-size:13px;font-weight:'+T.wt.semi+';color:'+th.text+';margin-bottom:4px">'+
+            'Add item manually</div>' +
+          '<div style="display:flex;gap:8px;margin-top:8px">' +
+            '<input type="text" placeholder="Item name…" style="flex:1;padding:9px 12px;'+
+              'border-radius:'+R.md+';border:1.5px solid '+th.border+';background:'+th.input+';'+
+              'font-size:12px;font-family:'+T.sans+';color:'+th.text+';outline:none">' +
+            '<input type="text" placeholder="Qty" style="width:64px;padding:9px 10px;'+
+              'border-radius:'+R.md+';border:1.5px solid '+th.border+';background:'+th.input+';'+
+              'font-size:12px;font-family:'+T.sans+';color:'+th.text+';outline:none">' +
+          '</div>' +
+          '<div style="margin-top:8px">' +
+            c.btn(th, '+ Add to list', 'return false', 'ghost') +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      /* Done */
+      '<div style="position:absolute;bottom:0;left:0;right:0;padding:12px '+S.xl+' 24px;'+
+        'background:'+th.bg+';border-top:0.5px solid '+th.border+'">' +
+        c.btn(th, 'Done — Back to List', "otBack()", 'primary') +
+      '</div>' +
+
+    '</div>';
+  }
+
+  /* ── 4. LIST DONE (shopping complete) ───────────────────── */
+  function sListDone(th) {
+    return '<div style="height:100%;background:'+th.bg+';display:flex;flex-direction:column;'+
+      'align-items:center;justify-content:center;font-family:'+T.sans+';padding:32px;text-align:center">' +
+
+      '<div style="font-size:72px;margin-bottom:12px">🛒</div>' +
+      '<div style="font-size:26px;font-weight:'+T.wt.heavy+';color:'+th.text+';'+
+        'font-family:'+T.serif+';margin-bottom:8px">You\'re all set!</div>' +
+      '<div style="font-size:13px;color:'+th.muted+';line-height:1.7;max-width:240px;margin-bottom:30px">' +
+        'All '+ALL_ITEMS.length+' items are in the basket. Time to cook something delicious.' +
+      '</div>' +
+
+      /* Receipt-style summary */
+      '<div style="width:100%;background:'+th.card+';border:0.5px solid '+th.border+';'+
+        'border-radius:'+R.lg+';overflow:hidden;margin-bottom:24px">' +
+        '<div style="padding:12px 16px;border-bottom:0.5px solid '+th.border+';'+
+          'display:flex;justify-content:space-between">' +
+          '<span style="font-size:12px;font-weight:'+T.wt.bold+';color:'+th.text+'">Shopping Summary</span>' +
+          '<span style="font-size:11px;color:'+th.muted+'">Today</span>' +
+        '</div>' +
+        [
+          ['Items collected',    ALL_ITEMS.length+' items'],
+          ['Recipes covered',    '2 recipes'],
+          ['Est. total cost',    '$24.80'],
+          ['Cost per serving',   '~$4.13'],
+        ].map(function (row) {
+          return '<div style="display:flex;justify-content:space-between;align-items:center;'+
+            'padding:10px 16px;border-bottom:0.5px solid '+th.border+'">' +
+            '<span style="font-size:12px;color:'+th.muted+'">'+row[0]+'</span>' +
+            '<span style="font-size:13px;font-weight:'+T.wt.semi+';color:'+th.text+'">'+row[1]+'</span>' +
+          '</div>';
+        }).join('') +
+        '<div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center">' +
+          '<span style="font-size:11px;color:'+th.muted+'">🌱 Saved vs. eating out</span>' +
+          '<span style="font-size:13px;font-weight:'+T.wt.bold+';color:'+th.secondary+'">$38.20</span>' +
+        '</div>' +
+      '</div>' +
+
+      /* Actions */
+      '<div style="width:100%;display:flex;flex-direction:column;gap:10px">' +
+        c.btn(th, '👨‍🍳  Start Cooking', "otGo('groceryList')", 'primary') +
+        c.btn(th, 'Back to List', "otBack()", 'secondary') +
+      '</div>' +
+
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     NAV WIRING
+  ══════════════════════════════════════════════════════════ */
+
+  OT.nav(
+    {
+      groceryList:   sGroceryList,
+      aisleView:     sAisleView,
+      selectRecipes: sSelectRecipes,
+      listDone:      sListDone
+    },
+    'groceryList',
+    'phone-screen',
+    {
+      mainScreens: ['groceryList', 'listDone'],
+      state: {
+        itemOverrides: {},
+        addedRecipes: ['Creamy Tuscan Salmon', 'Pasta al Pomodoro'],
+        listView: 'list'
+      },
+      onRender: function (state, theme) {
+        var el = document.getElementById('screen-label');
+        if (el) el.textContent = SCREEN_NAMES[state.screen] || state.screen;
+
+        var dotsEl = document.getElementById('screen-dots');
+        if (dotsEl) {
+          var visible = ['groceryList','aisleView','selectRecipes'];
+          var idx = visible.indexOf(state.screen);
+          if (idx < 0) idx = 0;
+          dotsEl.innerHTML = visible.map(function (_, i) {
+            return '<div class="dot'+(i===idx?' on':'')+'" ></div>';
+          }).join('');
+        }
+
+        var btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = theme._name === 'dark' ? '☀ Light Mode' : '☾ Dark Mode';
+      }
+    }
+  );
+
+  /* ── Global handlers ─────────────────────────────────────── */
+
+  window.otCheckItem = function (id) {
+    var overrides = otState.itemOverrides || {};
+    var current   = ALL_ITEMS.find ? ALL_ITEMS.find(function (i) { return i.id===id; }) : null;
+    // fallback for older browsers
+    if (!current) { for (var k=0;k<ALL_ITEMS.length;k++) { if (ALL_ITEMS[k].id===id) { current=ALL_ITEMS[k]; break; } } }
+    var wasChecked = overrides[id] !== undefined ? overrides[id] : current.checked;
+    overrides[id] = !wasChecked;
+    otState.itemOverrides = overrides;
+    otRender();
+  };
+
+  window.otClearChecked = function () {
+    var overrides = {};
+    getItems().forEach(function (item) {
+      if (!item.checked) overrides[item.id] = false;
+      else overrides[item.id] = false;  // uncheck all
+    });
+    otState.itemOverrides = overrides;
+    otRender();
+  };
+
+  window.otToggleRecipe = function (title) {
+    var arr = otState.addedRecipes || [];
+    var idx = arr.indexOf(title);
+    if (idx >= 0) arr.splice(idx, 1);
+    else arr.push(title);
+    otState.addedRecipes = arr;
+    otRender();
+  };
+
+  window.otNavBar = function (id) {
+    if (id === 'list') { otGo('groceryList'); return; }
+    otGo(id);
+  };
+
+})();
+</script>
+</body>
+</html>

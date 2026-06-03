@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Table — Home, Search & Library</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #EDE8E2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  /* ── Phone frame ── */
+  .phone-outer {
+    position: relative;
+    filter: drop-shadow(0 28px 56px rgba(0,0,0,0.26));
+  }
+  .side-l {
+    position: absolute; left: -4px; top: 108px;
+    width: 4px; height: 32px;
+    background: #1A1A1A; border-radius: 4px 0 0 4px;
+    box-shadow: 0 46px 0 #1A1A1A;
+  }
+  .side-r {
+    position: absolute; right: -4px; top: 130px;
+    width: 4px; height: 64px;
+    background: #1A1A1A; border-radius: 0 4px 4px 0;
+  }
+  .phone-body {
+    width: 370px; height: 760px;
+    background: #0D0D0D; border-radius: 54px; padding: 12px;
+    border: 1px solid #1A1A1A;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.07), inset 0 -1px 0 rgba(0,0,0,0.5);
+  }
+  #phone-screen {
+    width: 100%; height: 100%;
+    border-radius: 44px; overflow: hidden;
+    position: relative;
+    transition: background 0.3s ease;
+  }
+
+  /* ── Controls below phone ── */
+  .controls {
+    text-align: center;
+    margin-top: 24px;
+  }
+  #screen-label {
+    font-size: 11px; font-weight: 700;
+    color: #8A7060; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 4px;
+  }
+  .hint { font-size: 11px; color: #B0A090; margin-bottom: 14px; }
+  #screen-dots {
+    display: flex; gap: 7px; align-items: center;
+    justify-content: center; margin-bottom: 14px;
+  }
+  #screen-dots .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #C8B8A8; transition: all 0.2s;
+  }
+  #screen-dots .dot.on {
+    width: 22px; border-radius: 4px; background: #1B3A5C;
+  }
+  .theme-btn {
+    background: rgba(0,0,0,0.07); border: 1.5px solid rgba(0,0,0,0.14);
+    color: #2C2416; font-size: 12px; font-weight: 600;
+    padding: 8px 20px; border-radius: 100px;
+    cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-outer">
+  <div class="side-l"></div>
+  <div class="side-r"></div>
+  <div class="phone-body">
+    <div id="phone-screen"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div id="screen-label">Home</div>
+  <div class="hint">Tap recipes and nav items to explore</div>
+  <div id="screen-dots"></div>
+  <button class="theme-btn" id="theme-btn" onclick="otToggleTheme()">☾ Dark Mode</button>
+</div>
+
+<script src="./our-table-design-system.js"></script>
+<script>
+(function () {
+  var T = OT.T, S = OT.S, R = OT.R, c = OT.c;
+
+  var SCREEN_NAMES = {
+    home:          'Home',
+    search:        'Search',
+    searchResults: 'Search Results',
+    library:       'My Recipes'
+  };
+
+  var NAV_SCREENS = ['home', 'search', 'library'];
+
+  /* ══════════════════════════════════════════════════════════
+     SAMPLE DATA
+  ══════════════════════════════════════════════════════════ */
+
+  var FEATURED = {
+    title: 'Creamy Tuscan Salmon',
+    heroColor: null,  // uses gradient
+    time: '28 min',
+    rating: '4.9',
+    difficulty: 'Medium',
+    source: 'Web',
+    tags: ['High Protein', 'Dairy'],
+    servings: '4'
+  };
+
+  var SAVED_RECIPES = [
+    { title: 'Avocado Toast\nwith Poached Egg', heroColor: '#2A5080', time: '12 min', source: null },
+    { title: 'Thai Green\nCurry', heroColor: '#3A6898', time: '35 min', source: 'Instagram' },
+    { title: 'Birria Tacos', heroColor: '#C89040', time: '3 hr', source: 'TikTok' },
+    { title: 'Miso Glazed\nEggplant', heroColor: '#1B3A5C', time: '22 min', source: 'Web' }
+  ];
+
+  var SOCIAL_SAVES = [
+    { title: "Baked Feta Pasta", platform: 'TikTok', heroColor: '#D4A848', time: '30 min', saves: '2.1M' },
+    { title: "Dubai Chocolate\nBrownie", platform: 'Instagram', heroColor: '#0F2240', time: '45 min', saves: '890K' },
+    { title: "Viral Smash\nBurgers", platform: 'TikTok', heroColor: '#B07830', time: '20 min', saves: '3.4M' }
+  ];
+
+  var BROWSE_CATEGORIES = [
+    { emoji: '🍝', label: 'Italian' },
+    { emoji: '🥢', label: 'Asian' },
+    { emoji: '🌮', label: 'Mexican' },
+    { emoji: '🥗', label: 'Healthy' },
+    { emoji: '⚡', label: 'Quick' },
+    { emoji: '🍲', label: 'Comfort' },
+    { emoji: '🥐', label: 'Baking' },
+    { emoji: '🥩', label: 'Grilling' }
+  ];
+
+  var TRENDING = [
+    { title: 'Cucumber Salad', heroColor: '#3A6898', time: '10 min', rating: '4.8' },
+    { title: 'Marry Me Chicken', heroColor: '#E8A84A', time: '32 min', rating: '4.9' },
+    { title: 'Brown Butter\nRigatoni', heroColor: '#C89040', time: '25 min', rating: '4.7' },
+    { title: 'Street Corn\nDip', heroColor: '#F0B84A', time: '15 min', rating: '4.6' },
+    { title: 'Miso Ramen', heroColor: '#1B3A5C', time: '40 min', rating: '4.8' },
+    { title: 'Cardamom French\nToast', heroColor: '#D4A848', time: '18 min', rating: '4.5' }
+  ];
+
+  var LIBRARY_RECIPES = [
+    { title: 'Creamy Tuscan Salmon', heroColor: '#E8A84A', time: '28 min', rating: '4.9', tags: ['Saved'] },
+    { title: 'Avocado Toast', heroColor: '#2A5080', time: '12 min', rating: '4.7', tags: ['Quick'] },
+    { title: 'Birria Tacos', heroColor: '#C89040', time: '3 hr', rating: '4.8', tags: ['TikTok'] },
+    { title: 'Thai Green Curry', heroColor: '#3A6898', time: '35 min', rating: '4.6', tags: ['Vegetarian'] },
+    { title: 'Miso Glazed Eggplant', heroColor: '#1B3A5C', time: '22 min', rating: '4.5', tags: ['Vegan'] },
+    { title: 'Dubai Chocolate Brownies', heroColor: '#0F2240', time: '45 min', rating: '4.9', tags: ['Instagram'] },
+    { title: 'Marry Me Chicken', heroColor: '#D4A848', time: '32 min', rating: '4.9', tags: [] },
+    { title: 'Homemade Sourdough', heroColor: '#B07830', time: '4 hr', rating: '4.6', tags: ['Baking'] }
+  ];
+
+  /* ══════════════════════════════════════════════════════════
+     REUSABLE HELPERS (local to this file)
+  ══════════════════════════════════════════════════════════ */
+
+  function iconSvg(path, size, color, strokeW) {
+    var sz = size || 20;
+    return '<svg width="' + sz + '" height="' + sz + '" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="' + (color || 'currentColor') + '" stroke-width="' + (strokeW || '1.8') + '" ' +
+      'stroke-linecap="round" stroke-linejoin="round"><path d="' + path + '"/></svg>';
+  }
+
+  function notifBell(th) {
+    return '<div onclick="return false" style="position:relative;cursor:pointer">' +
+      iconSvg('M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0', 22, th.text) +
+      '<div style="position:absolute;top:-1px;right:-1px;width:8px;height:8px;' +
+        'background:' + th.primary + ';border-radius:50%;border:1.5px solid ' + th.bg + '"></div>' +
+    '</div>';
+  }
+
+  /* Featured hero card — full width, tall, gradient overlay */
+  function featuredCard(th, recipe) {
+    var grad = 'linear-gradient(160deg, #1B3A5C 0%, #0F2A48 100%)';
+    if (th._name === 'dark') grad = 'linear-gradient(160deg, #1A2A40 0%, #0F1A28 100%)';
+
+    return '<div onclick="otGo(\'recipe\')" style="margin:0 ' + S.xl + ' ' + S.section + ';' +
+      'border-radius:' + R.xl + ';overflow:hidden;cursor:pointer;' +
+      'box-shadow:0 12px 32px rgba(0,0,0,0.18);position:relative;height:200px;' +
+      'background:' + grad + '">' +
+
+      /* Decorative food illustration area */
+      '<div style="position:absolute;right:-10px;top:-10px;width:180px;height:220px;' +
+        'opacity:' + (th._name === 'dark' ? '0.12' : '0.15') + '">' +
+        '<svg viewBox="0 0 100 100" fill="white"><circle cx="50" cy="50" r="40"/>' +
+        '<circle cx="30" cy="40" r="12" fill="rgba(255,255,255,0.5)"/>' +
+        '<circle cx="65" cy="35" r="8" fill="rgba(255,255,255,0.3)"/>' +
+        '<circle cx="55" cy="62" r="15" fill="rgba(255,255,255,0.4)"/></svg>' +
+      '</div>' +
+
+      /* Content */
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;' +
+        'justify-content:space-between;padding:20px">' +
+
+        /* Top row: badge */
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+          '<div style="background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.3);' +
+            'border-radius:' + R.pill + ';padding:4px 12px;font-size:10px;font-weight:700;' +
+            'color:white;letter-spacing:0.06em">✦ FEATURED TODAY</div>' +
+          '<div style="background:rgba(0,0,0,0.22);border-radius:' + R.pill + ';' +
+            'padding:4px 10px;font-size:11px;color:white;font-weight:600;' +
+            'display:flex;align-items:center;gap:4px">' +
+            '<span style="color:#FFD060">★</span>' + recipe.rating +
+          '</div>' +
+        '</div>' +
+
+        /* Bottom: title + meta */
+        '<div>' +
+          '<div style="font-size:22px;font-weight:800;color:white;' +
+            'font-family:' + T.serif + ';line-height:1.2;margin-bottom:10px;' +
+            'text-shadow:0 2px 8px rgba(0,0,0,0.3)">' + recipe.title + '</div>' +
+          '<div style="display:flex;align-items:center;gap:12px">' +
+            '<span style="font-size:11px;color:rgba(255,255,255,0.85);display:flex;align-items:center;gap:4px">' +
+              iconSvg('M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10', 13, 'rgba(255,255,255,0.85)') +
+              recipe.time +
+            '</span>' +
+            '<span style="font-size:11px;color:rgba(255,255,255,0.85);display:flex;align-items:center;gap:4px">' +
+              iconSvg('M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75', 13, 'rgba(255,255,255,0.85)') +
+              recipe.servings + ' servings' +
+            '</span>' +
+            '<span style="font-size:11px;background:rgba(255,255,255,0.22);' +
+              'border-radius:' + R.pill + ';padding:2px 8px;color:white;font-weight:600">' +
+              recipe.difficulty +
+            '</span>' +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* Horizontal-scroll recipe card (small, for "Your Recipes" row) */
+  function smallRecipeCard(th, recipe, goFn) {
+    var emojiMap = { TikTok: '▶', Instagram: '◈', Web: '⊕' };
+    return '<div onclick="' + (goFn || "otGo('recipe')") + '" style="flex-shrink:0;width:130px;cursor:pointer">' +
+      /* Image area */
+      '<div style="width:130px;height:110px;border-radius:' + R.lg + ';background:' + recipe.heroColor + ';' +
+        'margin-bottom:8px;position:relative;overflow:hidden;' +
+        'box-shadow:0 4px 14px rgba(0,0,0,0.12)">' +
+        /* Gradient overlay */
+        '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.35) 0%,transparent 60%)"></div>' +
+        /* Source badge */
+        (recipe.source ? '<div style="position:absolute;top:7px;right:7px;background:rgba(0,0,0,0.55);' +
+          'border-radius:' + R.pill + ';padding:2px 7px;font-size:9px;color:white;font-weight:700">' +
+          (emojiMap[recipe.source] || '') + ' ' + recipe.source + '</div>' : '') +
+        /* Time badge */
+        '<div style="position:absolute;bottom:7px;left:7px;background:rgba(0,0,0,0.5);' +
+          'border-radius:' + R.pill + ';padding:2px 7px;font-size:9px;color:white">' + recipe.time + '</div>' +
+      '</div>' +
+      '<div style="font-size:12px;font-weight:600;color:' + th.text + ';line-height:1.35;' +
+        'white-space:pre-line">' + recipe.title + '</div>' +
+    '</div>';
+  }
+
+  /* Social save card (wider card for "Trending on Social" row) */
+  function socialCard(th, recipe) {
+    var platformColor = recipe.platform === 'TikTok' ? '#FF2D55' : '#C13584';
+    var platformIcon = recipe.platform === 'TikTok'
+      ? '<svg width="11" height="13" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.79 1.54V6.78a4.85 4.85 0 0 1-1.02-.09z"/></svg>'
+      : '<svg width="12" height="12" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="white" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="white" stroke-width="2"/></svg>';
+
+    return '<div onclick="otGo(\'recipe\')" style="flex-shrink:0;width:150px;cursor:pointer">' +
+      '<div style="width:150px;height:130px;border-radius:' + R.lg + ';background:' + recipe.heroColor + ';' +
+        'margin-bottom:8px;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.12)">' +
+        '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.4) 0%,transparent 55%)"></div>' +
+        /* Platform badge */
+        '<div style="position:absolute;top:8px;left:8px;background:' + platformColor + ';' +
+          'border-radius:' + R.pill + ';padding:3px 8px;font-size:9px;color:white;font-weight:700;' +
+          'display:flex;align-items:center;gap:4px">' + platformIcon + recipe.platform + '</div>' +
+        /* Saves count */
+        '<div style="position:absolute;bottom:7px;left:8px;font-size:9px;color:rgba(255,255,255,0.9)">' +
+          '♥ ' + recipe.saves + ' saves' +
+        '</div>' +
+        '<div style="position:absolute;bottom:7px;right:8px;background:rgba(0,0,0,0.5);' +
+          'border-radius:' + R.pill + ';padding:2px 7px;font-size:9px;color:white">' + recipe.time + '</div>' +
+      '</div>' +
+      '<div style="font-size:12px;font-weight:600;color:' + th.text + ';line-height:1.35;' +
+        'white-space:pre-line">' + recipe.title + '</div>' +
+    '</div>';
+  }
+
+  /* Category pill for browse grid */
+  function categoryPill(th, cat) {
+    return '<div onclick="otGo(\'searchResults\')" style="display:flex;flex-direction:column;' +
+      'align-items:center;gap:5px;cursor:pointer;padding:10px 6px;' +
+      'background:' + th.card + ';border-radius:' + R.md + ';' +
+      'border:1px solid ' + th.border + ';box-shadow:0 2px 6px rgba(0,0,0,0.06)">' +
+      '<span style="font-size:22px">' + cat.emoji + '</span>' +
+      '<span style="font-size:10px;font-weight:600;color:' + th.text + ';text-align:center">' + cat.label + '</span>' +
+    '</div>';
+  }
+
+  /* Trending 2-col card */
+  function trendingCard(th, recipe) {
+    return '<div onclick="otGo(\'recipe\')" style="cursor:pointer">' +
+      '<div style="border-radius:' + R.lg + ';background:' + recipe.heroColor + ';height:110px;' +
+        'margin-bottom:8px;position:relative;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,0.1)">' +
+        '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.3) 0%,transparent 60%)"></div>' +
+        '<div style="position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,0.45);' +
+          'border-radius:' + R.pill + ';padding:2px 7px;font-size:9px;color:white;' +
+          'display:flex;align-items:center;gap:3px"><span style="color:#FFD060">★</span>' + recipe.rating + '</div>' +
+      '</div>' +
+      '<div style="font-size:11px;font-weight:600;color:' + th.text + ';line-height:1.3;' +
+        'white-space:pre-line;margin-bottom:2px">' + recipe.title + '</div>' +
+      '<div style="font-size:10px;color:' + th.muted + '">' + recipe.time + '</div>' +
+    '</div>';
+  }
+
+  /* Library 2-col card */
+  function libraryCard(th, recipe) {
+    return '<div onclick="otGo(\'recipe\')" style="cursor:pointer">' +
+      '<div style="border-radius:' + R.lg + ';background:' + recipe.heroColor + ';height:120px;' +
+        'margin-bottom:8px;position:relative;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,0.1)">' +
+        '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.35) 0%,transparent 60%)"></div>' +
+        /* Rating */
+        '<div style="position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,0.45);' +
+          'border-radius:' + R.pill + ';padding:2px 7px;font-size:9px;color:white;' +
+          'display:flex;align-items:center;gap:3px"><span style="color:#FFD060">★</span>' + recipe.rating + '</div>' +
+        /* Tag if present */
+        (recipe.tags && recipe.tags.length
+          ? '<div style="position:absolute;top:7px;left:7px;background:rgba(0,0,0,0.5);' +
+              'border-radius:' + R.pill + ';padding:2px 7px;font-size:9px;color:white;font-weight:600">' +
+              recipe.tags[0] + '</div>'
+          : '') +
+      '</div>' +
+      '<div style="font-size:11px;font-weight:600;color:' + th.text + ';line-height:1.3;' +
+        'margin-bottom:2px">' + recipe.title + '</div>' +
+      '<div style="font-size:10px;color:' + th.muted + '">' + recipe.time + '</div>' +
+    '</div>';
+  }
+
+  /* Section header with optional "See all" link */
+  function sectionHeader(th, title, seeAllFn) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;' +
+      'padding:0 ' + S.xl + ';margin-bottom:10px">' +
+      '<div style="font-size:' + T.sz.md + ';font-weight:' + T.wt.bold + ';color:' + th.text + '">' + title + '</div>' +
+      (seeAllFn
+        ? '<div onclick="' + seeAllFn + '" style="font-size:12px;color:' + th.primary + ';' +
+            'font-weight:' + T.wt.semi + ';cursor:pointer">See all</div>'
+        : '') +
+    '</div>';
+  }
+
+  /* Filter chips horizontal row (with internal state via class toggle) */
+  function filterChipsRow(th, chips, activeChip) {
+    var html = '<div style="display:flex;gap:7px;overflow-x:auto;padding:0 ' + S.xl + ';' +
+      'margin-bottom:' + S.section + ';scrollbar-width:none;-webkit-overflow-scrolling:touch">';
+    chips.forEach(function (chip) {
+      var active = chip === activeChip;
+      html += '<div onclick="otFilterHome(\'' + chip + '\')" style="flex-shrink:0;padding:6px 14px;' +
+        'border-radius:' + R.pill + ';font-size:11px;font-weight:' + (active ? T.wt.semi : T.wt.reg) + ';' +
+        'background:' + (active ? th.primary : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
+        'cursor:pointer;white-space:nowrap;border:1px solid ' + (active ? th.primary : th.border) + '">' +
+        chip + '</div>';
+    });
+    return html + '</div>';
+  }
+
+
+  /* ══════════════════════════════════════════════════════════
+     SCREENS
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── 1. HOME ────────────────────────────────────────────── */
+  function sHome(th) {
+    var filter = otState.homeFilter || 'All';
+    var chips = ['All', 'Quick', 'Vegetarian', 'High Protein', 'Budget', 'Family'];
+
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* ── Scrollable content ── */
+      '<div style="flex:1;overflow-y:auto;padding-bottom:90px;scrollbar-width:none">' +
+
+        /* Header */
+        '<div style="display:flex;justify-content:space-between;align-items:center;' +
+          'padding:8px ' + S.xl + ' 14px">' +
+          '<div>' +
+            '<div style="font-size:12px;color:' + th.muted + ';margin-bottom:3px">Good morning 👋</div>' +
+            '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
+              'font-family:' + T.serif + '">What\'s cooking, Will?</div>' +
+          '</div>' +
+          notifBell(th) +
+        '</div>' +
+
+        /* Featured recipe card */
+        featuredCard(th, FEATURED) +
+
+        /* Filter chips */
+        filterChipsRow(th, chips, filter) +
+
+        /* Your Recipes */
+        sectionHeader(th, 'Your Recipes', "otGo('library')") +
+        '<div style="display:flex;gap:12px;overflow-x:auto;padding:0 ' + S.xl + ';' +
+          'margin-bottom:' + S.xl + ';scrollbar-width:none;-webkit-overflow-scrolling:touch">' +
+          SAVED_RECIPES.map(function (r) { return smallRecipeCard(th, r); }).join('') +
+        '</div>' +
+
+        /* Trending on Social */
+        sectionHeader(th, 'Trending on Social', "otGo('search')") +
+        '<div style="display:flex;gap:12px;overflow-x:auto;padding:0 ' + S.xl + ';' +
+          'margin-bottom:' + S.xl + ';scrollbar-width:none;-webkit-overflow-scrolling:touch">' +
+          SOCIAL_SAVES.map(function (r) { return socialCard(th, r); }).join('') +
+        '</div>' +
+
+        /* What can I make? CTA banner */
+        '<div onclick="otGo(\'fridge\')" style="margin:0 ' + S.xl + ' ' + S.xl + ';' +
+          'padding:16px 18px;border-radius:' + R.lg + ';' +
+          'background:' + (th._name === 'dark' ? th.card : th.chip) + ';' +
+          'border:1.5px dashed ' + th.secondary + ';cursor:pointer;' +
+          'display:flex;align-items:center;justify-content:space-between">' +
+          '<div>' +
+            '<div style="font-size:13px;font-weight:' + T.wt.bold + ';color:' + th.text + ';margin-bottom:3px">' +
+              '❓ What Can I Make?' +
+            '</div>' +
+            '<div style="font-size:11px;color:' + th.muted + '">Scan your fridge to find out</div>' +
+          '</div>' +
+          '<div style="background:' + th.secondary + ';color:white;padding:8px 14px;' +
+            'border-radius:' + R.pill + ';font-size:11px;font-weight:' + T.wt.bold + '">Scan →</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      /* Nav bar */
+      c.navBar(th, 0, 'otGo') +
+
+    '</div>';
+  }
+
+  /* ── 2. SEARCH ──────────────────────────────────────────── */
+  function sSearch(th) {
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* Search header (sticky-style at top) */
+      '<div style="padding:4px ' + S.xl + ' 12px;background:' + th.bg + ';z-index:5">' +
+        '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
+          'font-family:' + T.serif + ';margin-bottom:12px">Discover</div>' +
+
+        /* Search bar */
+        '<div style="display:flex;align-items:center;gap:10px;background:' + th.card + ';' +
+          'border:1.5px solid ' + th.border + ';border-radius:' + R.lg + ';' +
+          'padding:11px 14px;box-shadow:0 2px 8px rgba(0,0,0,0.06)">' +
+          iconSvg('M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z', 18, th.muted) +
+          '<div onclick="otGo(\'searchResults\')" style="flex:1;font-size:13px;color:' + th.muted + ';cursor:text">' +
+            'Search recipes, ingredients...' +
+          '</div>' +
+          '<div onclick="return false" style="background:' + th.chip + ';border-radius:' + R.sm + ';' +
+            'padding:5px 9px;font-size:10px;font-weight:' + T.wt.semi + ';color:' + th.chipTx + ';cursor:pointer">' +
+            iconSvg('M4 6h16M8 12h8M11 18h2', 14, th.chipTx) +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Scrollable content */
+      '<div style="flex:1;overflow-y:auto;padding-bottom:90px;scrollbar-width:none">' +
+
+        /* Recent searches */
+        '<div style="padding:2px ' + S.xl + ' ' + S.section + '">' +
+          '<div style="font-size:11px;font-weight:' + T.wt.semi + ';color:' + th.muted + ';' +
+            'letter-spacing:0.06em;margin-bottom:9px">RECENT SEARCHES</div>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:7px">' +
+            ['Pasta recipes', 'Chicken thighs', 'Vegan desserts', '30-min meals', 'Salmon'].map(function (q) {
+              return '<div onclick="otGo(\'searchResults\')" style="padding:5px 13px;' +
+                'border-radius:' + R.pill + ';background:' + th.chip + ';border:1px solid ' + th.border + ';' +
+                'font-size:11px;color:' + th.chipTx + ';cursor:pointer;display:flex;align-items:center;gap:5px">' +
+                '<span style="font-size:10px">🕐</span>' + q + '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+        /* Browse by category */
+        sectionHeader(th, 'Browse by Cuisine') +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;' +
+          'padding:0 ' + S.xl + ';margin-bottom:' + S.xl + '">' +
+          BROWSE_CATEGORIES.map(function (cat) { return categoryPill(th, cat); }).join('') +
+        '</div>' +
+
+        /* Trending this week */
+        sectionHeader(th, 'Trending This Week', "otGo('searchResults')") +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;' +
+          'padding:0 ' + S.xl + ';margin-bottom:' + S.xl + '">' +
+          TRENDING.map(function (r) { return trendingCard(th, r); }).join('') +
+        '</div>' +
+
+      '</div>' +
+
+      c.navBar(th, 1, 'otGo') +
+
+    '</div>';
+  }
+
+  /* ── 3. SEARCH RESULTS ──────────────────────────────────── */
+  function sSearchResults(th) {
+    var ALL_RESULTS = TRENDING.concat([
+      { title: 'Shakshuka', heroColor: '#C89040', time: '25 min', rating: '4.7' },
+      { title: 'Pad Thai', heroColor: '#2A5080', time: '20 min', rating: '4.8' }
+    ]);
+    var activeFilter = otState.searchFilter || 'All';
+    var filters = ['All', 'Quick', 'Vegetarian', 'Vegan', 'Gluten-Free', 'High Protein'];
+
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* Search bar with back */
+      '<div style="padding:4px ' + S.xl + ' 10px">' +
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">' +
+          c.backBtn(th, '', 'otBack()') +
+          '<div style="flex:1;display:flex;align-items:center;gap:8px;background:' + th.card + ';' +
+            'border:1.5px solid ' + th.primary + ';border-radius:' + R.lg + ';padding:10px 14px;' +
+            'box-shadow:0 0 0 3px ' + th.primary + '20">' +
+            iconSvg('M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z', 16, th.primary) +
+            '<div style="flex:1;font-size:13px;color:' + th.text + '">Pasta recipes</div>' +
+            '<div onclick="return false" style="font-size:16px;color:' + th.muted + ';cursor:pointer;' +
+              'line-height:1;padding:0 2px">×</div>' +
+          '</div>' +
+        '</div>' +
+        /* Result count */
+        '<div style="font-size:12px;color:' + th.muted + ';margin-bottom:10px">' +
+          '<span style="font-weight:' + T.wt.semi + ';color:' + th.text + '">' + ALL_RESULTS.length + ' recipes</span>' +
+          ' found for "pasta recipes"' +
+        '</div>' +
+        /* Filter chips */
+        '<div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">' +
+          filters.map(function (f) {
+            var active = f === activeFilter;
+            return '<div onclick="otSearchFilter(\'' + f + '\')" style="flex-shrink:0;padding:5px 13px;' +
+              'border-radius:' + R.pill + ';font-size:11px;font-weight:' + (active ? T.wt.semi : T.wt.reg) + ';' +
+              'background:' + (active ? th.primary : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
+              'cursor:pointer;border:1px solid ' + (active ? th.primary : th.border) + '">' + f + '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+
+      /* Results grid */
+      '<div style="flex:1;overflow-y:auto;padding-bottom:90px;scrollbar-width:none">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:8px ' + S.xl + '">' +
+          ALL_RESULTS.map(function (r) { return trendingCard(th, r); }).join('') +
+        '</div>' +
+      '</div>' +
+
+      c.navBar(th, 1, 'otGo') +
+
+    '</div>';
+  }
+
+  /* ── 4. LIBRARY ─────────────────────────────────────────── */
+  function sLibrary(th) {
+    var sortOpts = ['Recent', 'A–Z', 'Quick First', 'Rating'];
+    var activeSort = otState.librarySort || 'Recent';
+
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+
+      c.notch() + c.statusBar(th) +
+
+      /* Header */
+      '<div style="padding:4px ' + S.xl + ' 12px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
+          '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
+            'font-family:' + T.serif + '">My Recipes</div>' +
+          '<div style="display:flex;gap:9px">' +
+            /* Search icon */
+            '<div onclick="otGo(\'search\')" style="width:36px;height:36px;border-radius:' + R.sm + ';' +
+              'background:' + th.chip + ';display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+              iconSvg('M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z', 17, th.muted) +
+            '</div>' +
+            /* Filter icon */
+            '<div onclick="return false" style="width:36px;height:36px;border-radius:' + R.sm + ';' +
+              'background:' + th.chip + ';display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+              iconSvg('M4 6h16M8 12h8M11 18h2', 17, th.muted) +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Sort row */
+        '<div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none">' +
+          sortOpts.map(function (s) {
+            var active = s === activeSort;
+            return '<div onclick="otLibrarySort(\'' + s + '\')" style="flex-shrink:0;padding:5px 13px;' +
+              'border-radius:' + R.pill + ';font-size:11px;font-weight:' + (active ? T.wt.semi : T.wt.reg) + ';' +
+              'background:' + (active ? th.primary : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
+              'cursor:pointer;border:1px solid ' + (active ? th.primary : th.border) + '">' + s + '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+
+      /* Recipe count */
+      '<div style="padding:0 ' + S.xl + ' 10px;font-size:11px;color:' + th.muted + '">' +
+        LIBRARY_RECIPES.length + ' recipes saved' +
+      '</div>' +
+
+      /* Grid */
+      '<div style="flex:1;overflow-y:auto;padding-bottom:90px;scrollbar-width:none">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 ' + S.xl + '">' +
+          LIBRARY_RECIPES.map(function (r) { return libraryCard(th, r); }).join('') +
+        '</div>' +
+      '</div>' +
+
+      c.navBar(th, 0, 'otGo') +
+
+    '</div>';
+  }
+
+  /* ── PLACEHOLDER: recipe detail (linked from cards) ───── */
+  function sRecipe(th) {
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'align-items:center;justify-content:center;font-family:' + T.sans + '">' +
+      '<div style="font-size:48px;margin-bottom:14px">🍳</div>' +
+      '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Recipe Detail</div>' +
+      '<div style="font-size:12px;color:' + th.muted + ';text-align:center;padding:0 32px;margin-bottom:24px">' +
+        'Coming in 03-recipe-detail.html' +
+      '</div>' +
+      c.btn(th, '← Back', 'otBack()', 'secondary', 'width:auto;padding:10px 24px') +
+    '</div>';
+  }
+
+  /* ── PLACEHOLDER: fridge screen ─────────────────────────── */
+  function sFridge(th) {
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column">' +
+        '<div style="font-size:48px;margin-bottom:14px">❄️</div>' +
+        '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Fridge Scanner</div>' +
+        '<div style="font-size:12px;color:' + th.muted + ';text-align:center;padding:0 32px">' +
+          'Coming in 04-fridge-pantry.html' +
+        '</div>' +
+      '</div>' +
+      c.navBar(th, 2, 'otGo') +
+    '</div>';
+  }
+
+  /* ── PLACEHOLDER: grocery list ──────────────────────────── */
+  function sList(th) {
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column">' +
+        '<div style="font-size:48px;margin-bottom:14px">🛒</div>' +
+        '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Grocery List</div>' +
+        '<div style="font-size:12px;color:' + th.muted + ';text-align:center;padding:0 32px">' +
+          'Coming in 05-grocery-list.html' +
+        '</div>' +
+      '</div>' +
+      c.navBar(th, 3, 'otGo') +
+    '</div>';
+  }
+
+  /* ── PLACEHOLDER: profile/me ─────────────────────────────── */
+  function sProfile(th) {
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'position:relative;font-family:' + T.sans + '">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column">' +
+        '<div style="font-size:48px;margin-bottom:14px">👤</div>' +
+        '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Profile & Settings</div>' +
+        '<div style="font-size:12px;color:' + th.muted + ';text-align:center;padding:0 32px">' +
+          'Coming in 06-profile-settings.html' +
+        '</div>' +
+      '</div>' +
+      c.navBar(th, 4, 'otGo') +
+    '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     NAV WIRING
+  ══════════════════════════════════════════════════════════ */
+
+  OT.nav(
+    {
+      home:          sHome,
+      search:        sSearch,
+      searchResults: sSearchResults,
+      library:       sLibrary,
+      recipe:        sRecipe,
+      fridge:        sFridge,
+      list:          sList,
+      profile:       sProfile
+    },
+    'home',
+    'phone-screen',
+    {
+      mainScreens: ['home', 'search', 'library', 'fridge', 'list', 'profile'],
+      state: {
+        homeFilter:    'All',
+        searchFilter:  'All',
+        librarySort:   'Recent'
+      },
+      onRender: function (state, theme) {
+        /* Update screen label */
+        var el = document.getElementById('screen-label');
+        if (el) el.textContent = SCREEN_NAMES[state.screen] || state.screen;
+
+        /* Update step dots */
+        var dotsEl = document.getElementById('screen-dots');
+        if (dotsEl) {
+          var visible = ['home','search','library'];
+          var idx = visible.indexOf(state.screen);
+          dotsEl.innerHTML = visible.map(function (_, i) {
+            return '<div class="dot' + (i === idx ? ' on' : '') + '"></div>';
+          }).join('');
+        }
+
+        /* Theme button label */
+        var btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = theme._name === 'dark' ? '☀ Light Mode' : '☾ Dark Mode';
+      }
+    }
+  );
+
+  /* ── Global action handlers ──────────────────────────────── */
+
+  window.otFilterHome = function (filter) {
+    otState.homeFilter = filter;
+    otRender();
+  };
+
+  window.otSearchFilter = function (filter) {
+    otState.searchFilter = filter;
+    otRender();
+  };
+
+  window.otLibrarySort = function (sort) {
+    otState.librarySort = sort;
+    otRender();
+  };
+
+  /* Map nav tab IDs → screen IDs */
+  window.otGo = (function (_orig) {
+    return function (id) {
+      var map = { fridge: 'fridge', list: 'list', profile: 'profile' };
+      _orig(map[id] || id);
+    };
+  })(window.otGo);
+
+})();
+</script>
+</body>
+</html>

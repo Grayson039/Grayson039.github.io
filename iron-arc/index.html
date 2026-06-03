@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iron Arc — Brand Identity Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0A0A0A;
+  --card:    #111111;
+  --border:  #1E1E1E;
+  --text:    #F0F0F0;
+  --sub:     #999999;
+  --purple:  #7E22CE;
+  --purple-l:#A855F7;
+  --orange:  #EA580C;
+  --deep:    #3B0764;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── BACK NAV ── */
+.back-nav { position: fixed; top: 20px; left: 24px; z-index: 999; }
+.back-nav a {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(62,7,100,0.85); backdrop-filter: blur(10px);
+  border: 1px solid rgba(168,85,247,0.3);
+  color: #fff; text-decoration: none;
+  padding: 10px 16px; border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+.back-nav a:hover { background: rgba(62,7,100,0.98); border-color: rgba(234,88,12,0.6); }
+.back-nav a svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center;
+  padding: 100px 40px 80px;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(62,7,100,0.6) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 80% 60%, rgba(234,88,12,0.15) 0%, transparent 60%),
+              var(--bg);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(168,85,247,0.04) 40px),
+                    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(168,85,247,0.04) 40px);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--orange); margin-bottom: 24px;
+}
+.hero-logo {
+  width: 180px; height: auto; margin-bottom: 32px;
+  filter: drop-shadow(0 0 40px rgba(168,85,247,0.4));
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 9vw, 120px);
+  line-height: 0.9; letter-spacing: 3px;
+  background: linear-gradient(135deg, #A855F7 0%, #7E22CE 40%, #EA580C 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+.hero-tagline {
+  font-size: 18px; font-style: italic; color: rgba(255,255,255,0.6);
+  margin-bottom: 48px; max-width: 480px;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 32px;
+}
+.hero-meta-item .label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--sub); margin-bottom: 4px;
+}
+.hero-meta-item .value { font-size: 14px; font-weight: 600; color: #ccc; }
+
+/* ── STICKY NAV ── */
+.sticky-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex; gap: 0; overflow-x: auto;
+}
+.sticky-nav a {
+  color: var(--sub); text-decoration: none;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+  padding: 14px 20px;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+.sticky-nav a:hover { color: var(--text); }
+.sticky-nav a.active { color: var(--text); border-bottom-color: var(--orange); }
+
+/* ── SECTIONS ── */
+.section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 80px 40px;
+  border-bottom: 1px solid var(--border);
+}
+.section:last-child { border-bottom: none; }
+
+.section-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--orange); margin-bottom: 12px;
+}
+.section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(32px, 4vw, 56px);
+  letter-spacing: 1px; color: #fff;
+  margin-bottom: 16px; line-height: 1;
+}
+.section-body {
+  font-size: 15px; line-height: 1.75; color: #aaa;
+  max-width: 680px; margin-bottom: 16px;
+}
+.section-body:last-child { margin-bottom: 0; }
+
+/* ── TWO-COL ── */
+.two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+  align-items: start; margin-top: 48px;
+}
+
+/* ── LOGO SHOWCASE ── */
+.logos-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px;
+}
+.logo-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 48px 32px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+  text-align: center;
+}
+.logo-card img { width: 160px; height: auto; }
+.logo-card-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.logo-card-use { font-size: 12px; color: var(--sub); line-height: 1.5; }
+
+/* ── COLOR PALETTE ── */
+.palette {
+  display: flex; gap: 12px; margin-top: 40px; flex-wrap: wrap;
+}
+.swatch {
+  flex: 1; min-width: 120px;
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.swatch-color { height: 80px; }
+.swatch-info { padding: 12px; background: var(--card); }
+.swatch-hex { font-size: 12px; font-weight: 700; color: var(--text); font-family: monospace; }
+.swatch-name { font-size: 11px; color: var(--sub); margin-top: 2px; }
+.swatch-use { font-size: 10px; color: #555; margin-top: 2px; }
+
+/* ── CONTENT PILLARS ── */
+.pillars {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 40px;
+}
+.pillar {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px;
+}
+.pillar-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 48px;
+  background: linear-gradient(135deg, var(--purple-l), var(--orange));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; line-height: 1; margin-bottom: 8px;
+}
+.pillar h4 { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.pillar ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.pillar ul li {
+  font-size: 12px; color: var(--sub); padding-left: 12px; position: relative; line-height: 1.5;
+}
+.pillar ul li::before { content: '›'; position: absolute; left: 0; color: var(--orange); }
+
+/* ── DELIVERABLES ── */
+.deliverables {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 40px;
+}
+.deliverable {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.deliverable-icon { font-size: 24px; }
+.deliverable h4 { font-size: 13px; font-weight: 700; color: var(--text); }
+.deliverable p { font-size: 12px; color: var(--sub); line-height: 1.5; }
+.deliverable-tag {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--orange); background: rgba(234,88,12,0.1);
+  border-radius: 4px; padding: 2px 8px; width: fit-content;
+}
+
+/* ── VOICE CARD ── */
+.voice-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 40px;
+}
+.voice-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px;
+}
+.voice-card .label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.voice-card.do .label { color: var(--purple-l); }
+.voice-card.dont .label { color: #ef4444; }
+.voice-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.voice-card ul li { font-size: 13px; color: var(--sub); padding-left: 16px; position: relative; }
+.voice-card.do ul li::before { content: '✓'; position: absolute; left: 0; color: var(--purple-l); font-weight: 700; }
+.voice-card.dont ul li::before { content: '✕'; position: absolute; left: 0; color: #ef4444; font-weight: 700; }
+
+/* ── RESULT BANNER ── */
+.result-banner {
+  background: linear-gradient(135deg, rgba(62,7,100,0.5), rgba(234,88,12,0.15));
+  border: 1px solid rgba(168,85,247,0.25);
+  border-radius: 20px; padding: 48px;
+  text-align: center; margin-top: 40px;
+}
+.result-banner h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px; letter-spacing: 1px; color: #fff; margin-bottom: 12px;
+}
+.result-banner p { font-size: 15px; color: #aaa; max-width: 560px; margin: 0 auto; line-height: 1.7; }
+.result-stats {
+  display: flex; justify-content: center; gap: 48px; margin-top: 32px; flex-wrap: wrap;
+}
+.result-stat .num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px; line-height: 1;
+  background: linear-gradient(135deg, var(--purple-l), var(--orange));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.result-stat .lbl { font-size: 11px; color: var(--sub); margin-top: 4px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .two-col, .logos-grid, .pillars, .deliverables, .voice-grid { grid-template-columns: 1fr; }
+  .section { padding: 56px 20px; }
+  .hero { padding: 100px 24px 64px; }
+  .sticky-nav { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="back-nav">
+  <a href="../">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Case Study, 08 / 09 · Client Work · Delivered</div>
+  <img src="logo-2.png" alt="Iron Arc Strength Training" class="hero-logo">
+  <h1>Iron Arc</h1>
+  <p class="hero-tagline">"Every great character has an arc. Start yours."</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="label">Role</div><div class="value">Brand Strategy · Visual Identity</div></div>
+    <div class="hero-meta-item"><div class="label">Client</div><div class="value">Andrew — Personal Trainer, LA</div></div>
+    <div class="hero-meta-item"><div class="label">Deliverables</div><div class="value">9 Brand Assets Shipped</div></div>
+    <div class="hero-meta-item"><div class="label">Status</div><div class="value">Delivered · In Production</div></div>
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <a href="#brief" class="active">The Brief</a>
+  <a href="#identity">Visual Identity</a>
+  <a href="#voice">Brand Voice</a>
+  <a href="#pillars">Content Strategy</a>
+  <a href="#delivered">Delivered</a>
+</nav>
+
+<!-- THE BRIEF -->
+<div class="section" id="brief">
+  <div class="section-eyebrow">The Brief</div>
+  <h2>A Trainer With a Niche Nobody Else Owned</h2>
+  <div class="two-col">
+    <div>
+      <p class="section-body">Andrew is a personal trainer in Los Angeles with a built-in differentiator most brands would bury: he's obsessed with anime. The same shows his clients watch. He uses that shared passion to get people in the gym and keep them there.</p>
+      <p class="section-body">The challenge wasn't finding a hook — the hook was obvious. The challenge was building a brand around it that didn't alienate beginners. Andrew's clientele isn't just die-hard fans. It's also people who just need the right guide, who happen to connect with him through shared culture.</p>
+      <p class="section-body">He needed a full brand system: identity, voice, content strategy, and a client operations kit — everything to launch and run the business professionally from day one.</p>
+    </div>
+    <div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:20px;">
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:6px">The Name</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">Iron <span style="color:var(--purple-l)">+</span> Arc</div>
+          <div style="font-size:13px;color:var(--sub)">Iron = the weight you lift. The metal you forge yourself into.<br>Arc = your story. Every great character has one.</div>
+        </div>
+        <div style="height:1px;background:var(--border)"></div>
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:8px">Tagline Options Developed</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="font-size:12px;color:var(--text);font-style:italic;padding:8px 12px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);border-radius:8px">"Every great character has an arc. Start yours."</div>
+            <div style="font-size:12px;color:var(--sub);font-style:italic;padding:8px 12px;background:var(--border);border-radius:8px;border:1px solid var(--border)">"Train like your character's life depends on it."</div>
+            <div style="font-size:12px;color:var(--sub);font-style:italic;padding:8px 12px;background:var(--border);border-radius:8px;border:1px solid var(--border)">"Start Your Training Arc."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VISUAL IDENTITY -->
+<div class="section" id="identity">
+  <div class="section-eyebrow">Visual Identity</div>
+  <h2>Two Logos. One System.</h2>
+  <p class="section-body">Two logo directions for different contexts — a full wordmark for marketing and a crest monogram for watermarks, merchandise, and profile pictures. Both work independently. Neither dilutes the other.</p>
+
+  <div class="logos-grid">
+    <div class="logo-card">
+      <img src="logo-2.png" alt="Iron Arc Wordmark">
+      <div>
+        <div class="logo-card-name">Full Wordmark</div>
+        <div class="logo-card-use">Barbell + sword icon above "IRON ARC / STRENGTH TRAINING" in purple-to-orange gradient. Use on merch, social bios, websites, marketing materials.</div>
+      </div>
+    </div>
+    <div class="logo-card">
+      <img src="logo-1.png" alt="Iron Arc Crest Monogram">
+      <div>
+        <div class="logo-card-name">Crest Monogram</div>
+        <div class="logo-card-use">Stylized "IA" lettermark inside a shield with a sword through it, silver on black. Use on pocket logos, watermarks, embroidery, profile pictures.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:56px">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:20px;text-transform:uppercase;letter-spacing:1px">Color Palette</div>
+    <div class="palette">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#0A0A0A;border-bottom:1px solid #222"></div>
+        <div class="swatch-info">
+          <div class="swatch-hex">#0A0A0A</div>
+          <div class="swatch-name">Near Black</div>
+          <div class="swatch-use">Background · Text</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#3B0764"></div>
+        <div class="swatch-info">
+          <div class="swatch-hex">#3B0764</div>
+          <div class="swatch-name">Deep Purple</div>
+          <div class="swatch-use">Dark base · Shadows</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#7E22CE"></div>
+        <div class="swatch-info">
+          <div class="swatch-hex">#7E22CE</div>
+          <div class="swatch-name">Brand Purple</div>
+          <div class="swatch-use">Primary · Headers · CTAs</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#A855F7"></div>
+        <div class="swatch-info">
+          <div class="swatch-hex">#A855F7</div>
+          <div class="swatch-name">Electric Purple</div>
+          <div class="swatch-use">Aura glow · Accents · Energy</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EA580C"></div>
+        <div class="swatch-info">
+          <div class="swatch-hex">#EA580C</div>
+          <div class="swatch-name">Iron Orange</div>
+          <div class="swatch-use">Fire energy · PRs · Wins · CTAs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BRAND VOICE -->
+<div class="section" id="voice">
+  <div class="section-eyebrow">Brand Voice</div>
+  <h2>Hype. Nerdy. Never Corporate.</h2>
+  <p class="section-body">The voice is the brand. Andrew talks the way he trains — loud, genuine, always in your corner. Anime references aren't the gimmick. They're the language. The rules: celebrate every win like a boss fight victory, make beginners feel like main characters from day one, and never shame anyone for where they're starting.</p>
+
+  <div class="voice-grid">
+    <div class="voice-card do">
+      <div class="label">Iron Arc Always</div>
+      <ul>
+        <li>Celebrates every win like it's a level up</li>
+        <li>Uses anime as the language, not the punchline</li>
+        <li>Makes beginners feel like the main character</li>
+        <li>Shares Andrew's grind authentically — multiple jobs, real hustle</li>
+        <li>Hype, funny, nerdy, motivational</li>
+        <li>Talks to people, not at them</li>
+      </ul>
+    </div>
+    <div class="voice-card dont">
+      <div class="label">Iron Arc Never</div>
+      <ul>
+        <li>Corporate or clinical language</li>
+        <li>Body shaming or before/after guilt</li>
+        <li>Anime as a gimmick that excludes non-fans</li>
+        <li>Gatekeeping who "deserves" to train</li>
+        <li>Generic fitness motivation clichés</li>
+        <li>Anything that sounds like a chain gym ad</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:32px;background:var(--card);border:1px solid rgba(168,85,247,0.2);border-radius:16px;padding:28px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple-l);margin-bottom:16px">Sample Post Copy</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.15);border-radius:10px;padding:16px;">
+        <div style="font-size:10px;color:var(--orange);font-weight:700;letter-spacing:1px;margin-bottom:8px">ARC MOMENT POST</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6">EPISODE 23: POWER LEVEL UNLOCKED.<br>[Client] just pulled 225 for the first time. Three months ago they couldn't lift the bar.<br>This is what a training arc looks like. Your arc is waiting.</div>
+      </div>
+      <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.15);border-radius:10px;padding:16px;">
+        <div style="font-size:10px;color:var(--orange);font-weight:700;letter-spacing:1px;margin-bottom:8px">ANIME HOOK POST</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6">Rock Lee couldn't use ninjutsu. So he just outworked everyone.<br>No shortcuts. No talent. Just reps.<br>You have gym access and 45 minutes. Rock Lee had less. Your excuse just ran out.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT STRATEGY -->
+<div class="section" id="pillars">
+  <div class="section-eyebrow">Content Strategy</div>
+  <h2>4 Pillars. Every Post Fits One.</h2>
+  <p class="section-body">A content system that keeps the feed balanced and the audience engaged. Every post Andrew creates fits one of these four categories — and the category determines the format, the tone, and the goal. No more staring at a blank screen wondering what to post.</p>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-num">01</div>
+      <h4>Arc Moments</h4>
+      <p style="font-size:12px;color:var(--sub);margin-bottom:10px">Client PRs and transformation milestones. The emotional core. Celebrate loudly.</p>
+      <ul>
+        <li>"Power Level Unlocked" posts</li>
+        <li>Episode Recap format (client PRs as anime episodes)</li>
+        <li>Before/after strength comparisons</li>
+        <li>Client quotes + Andrew's hype reaction</li>
+      </ul>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">02</div>
+      <h4>Anime Hooks</h4>
+      <p style="font-size:12px;color:var(--sub);margin-bottom:10px">Scroll-stopping content that brings the audience in. The most shareable material.</p>
+      <ul>
+        <li>Character physique challenges</li>
+        <li>"Who trained harder?" comparisons</li>
+        <li>Power Level graphics showing client stats rising</li>
+        <li>Training scenes edited with real gym footage</li>
+      </ul>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">03</div>
+      <h4>Teach the Lift</h4>
+      <p style="font-size:12px;color:var(--sub);margin-bottom:10px">Form tips, myth-busting, beginner education. The Sensai Posts.</p>
+      <ul>
+        <li>Anime-analogy form cues ("Goku doesn't hold his breath on a deadlift")</li>
+        <li>15-second form correction reels</li>
+        <li>5-beginner-myth carousel posts</li>
+        <li>Technique breakdowns via character comparisons</li>
+      </ul>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">04</div>
+      <h4>The Grind</h4>
+      <p style="font-size:12px;color:var(--sub);margin-bottom:10px">Andrew's hustle, behind the scenes, personal journey. Authentic and raw.</p>
+      <ul>
+        <li>Day-in-the-life: multiple jobs + training clients</li>
+        <li>Andrew's own training footage — cinematic, phonk music</li>
+        <li>Honest posts about the trainer grind</li>
+        <li>"Why I train" personal story content</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- DELIVERED -->
+<div class="section" id="delivered">
+  <div class="section-eyebrow">What Was Delivered</div>
+  <h2>9 Assets. Client in Production.</h2>
+  <p class="section-body">Iron Arc wasn't just a logo drop. Every deliverable was built to be used — fillable, actionable, and ready to hand to a client or post immediately. Andrew walked away with a complete operating system for his brand.</p>
+
+  <div class="deliverables">
+    <div class="deliverable">
+      <div class="deliverable-icon">📋</div>
+      <div class="deliverable-tag">Strategy</div>
+      <h4>Brand Strategy & Content Playbook</h4>
+      <p>12-page document covering brand pillars, voice guidelines, content formats, hashtag strategy, platform approach, and weekly calendar framework.</p>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-icon">🎨</div>
+      <div class="deliverable-tag">Identity</div>
+      <h4>Visual Identity System</h4>
+      <p>Two logo directions (full wordmark + crest monogram), complete 5-color palette with usage guidelines, and logo application rules.</p>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-icon">📱</div>
+      <div class="deliverable-tag">Content</div>
+      <h4>30 Social Media Caption Templates</h4>
+      <p>Done-for-you captions across all 4 content pillars — Client Wins, Anime Hooks, Education, and Your Story. Fillable and ready to customize.</p>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-icon">🤖</div>
+      <div class="deliverable-tag">AI Tools</div>
+      <h4>50 AI Prompts for Trainers</h4>
+      <p>Ready-to-use Claude/ChatGPT prompts for captions, emails, programs, DMs, and client communications. Copy, paste, edit, post.</p>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-icon">📅</div>
+      <div class="deliverable-tag">Planning</div>
+      <h4>90-Day Content Calendar</h4>
+      <p>Complete 3-month posting plan mapped by week, platform, and content type. Pre-structured for consistent execution.</p>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-icon">💪</div>
+      <div class="deliverable-tag">Operations</div>
+      <h4>4 Workout Program Templates</h4>
+      <p>Fillable PDF templates for Beginner Foundation, Fat Loss Circuit, Strength Builder, and Athletic Performance programs.</p>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-icon">🤝</div>
+      <div class="deliverable-tag">Client Ops</div>
+      <h4>Client Onboarding Kit</h4>
+      <p>Welcome message template, client intake form, goal-setting worksheet, liability waiver, and session notes template. Professional from day one.</p>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-icon">📝</div>
+      <div class="deliverable-tag">Brand</div>
+      <h4>Iron Arc Branded Workout Log</h4>
+      <p>Printable session log with Iron Arc branding, sets/reps/weight tracking, and a PR tracker built in.</p>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-icon">☁️</div>
+      <div class="deliverable-tag">Systems</div>
+      <h4>Google Drive Client Filing System</h4>
+      <p>Complete setup guide for organizing client records digitally — folder structure, scan workflow, and session-by-session filing in under 30 seconds.</p>
+    </div>
+  </div>
+
+  <div class="result-banner">
+    <h3>Full Brand System. Client in Production.</h3>
+    <p>Iron Arc is proof that the best brand work comes from listening to who the client actually is — not smoothing them into something generic. A trainer who cosplays isn't a liability. It's the entire differentiator. The brand leans into it completely.</p>
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="num">9</div>
+        <div class="lbl">Deliverables Shipped</div>
+      </div>
+      <div class="result-stat">
+        <div class="num">4</div>
+        <div class="lbl">Content Pillars Defined</div>
+      </div>
+      <div class="result-stat">
+        <div class="num">2</div>
+        <div class="lbl">Logo Directions</div>
+      </div>
+      <div class="result-stat">
+        <div class="num">✓</div>
+        <div class="lbl">In Production</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Sticky nav active state on scroll
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.sticky-nav a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.sticky-nav a[href="#${entry.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

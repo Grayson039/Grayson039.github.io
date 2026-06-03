@@ -1065,6 +1065,8 @@
     <p class="cs-body" style="margin-top:10px"><strong>Two equal color systems.</strong> Dark Vintage (#0C0C0C base, Marshall tolex texture) and Vintage Bold (#EDE6D3 warm cream). Both modes are full citizens. Gold (#D4A853) is the shared accent across both &mdash; the connective thread that makes them feel like one product.</p>
     <p class="cs-body" style="margin-top:10px"><strong>Type does the heavy lifting.</strong> Playfair Display Italic for artist names and show titles. Crimson Pro for setlist text. DM Mono for all metadata and labels. Syne 800 for usernames. Four fonts, each with a specific job &mdash; nothing decorative.</p>
     <p class="cs-body" style="margin-top:10px"><strong>AI as a feature, not a gimmick.</strong> Phase 2 includes Claude API-powered fuzzy logging assist &mdash; type a vague memory, get a Setlist.fm-matched result. ~200 tokens per call. Roughly free at scale.</p>
+    <div class="cs-section-head">Why This Works</div>
+    <p class="cs-body">Concert history is the stickiest content a user can create &mdash; it&rsquo;s irreplaceable, deeply personal, and grows over time. A user who logs 50 shows isn&rsquo;t switching apps. The &ldquo;from memory&rdquo; log removes the #1 reason fans never start: proof requirements. No ticket, no check-in, no gatekeeping means every die-hard fan with 200 shows in their head is an active user from day one &mdash; not someday.</p>
     <div class="cs-section-head">Phase Roadmap</div>
     <p class="cs-body"><strong style="color:var(--gold)">Phase 1 &mdash; Complete:</strong> Competitive analysis, user personas, user journeys, information architecture.<br><br><strong style="color:var(--gold)">Phase 2 &mdash; Complete:</strong> UX architecture, feature prioritization (P0/P1/P2), data model, tech stack decisions.<br><br><strong style="color:var(--gold)">Phase 3 &mdash; In Progress:</strong> UI design &amp; asset creation. 14 of 14 MVP screens built.<br><br><strong style="color:var(--gold)">Phase 4 &mdash; Locked:</strong> React Native prototype, Setlist.fm API integration, GitHub repo.<br><br><strong style="color:var(--gold)">Phase 5 &mdash; Locked:</strong> Case study compilation, portfolio readiness.</p>
     <div class="cs-divider"></div>
@@ -1274,6 +1276,7 @@
     <p class="cs-body"><strong>Light mode vs. dark mode:</strong> V1 launched in dark mode because it felt premium and modern. V1.5 formally tested both. Dark mode lost. The insight: recipe apps are used in kitchens under warm lighting, often handed to another person to read. Dark mode felt like a command center, not a kitchen. Light mode with the navy/cream/gold palette felt like a cookbook. Emotional context overrode aesthetic preference.</p>
     <p class="cs-body" style="margin-top:10px"><strong>Household-first vs. individual-first onboarding:</strong> Most apps onboard the individual and bolt on household features later. We inverted it &mdash; the first question is "who&rsquo;s at your table?" The tradeoff is a slightly longer onboarding flow. The payoff is that dietary conflict warnings work from the first recipe and the app immediately feels like it was built for your household, not adapted for it. Complexity upfront, simplicity forever after.</p>
     <p class="cs-body" style="margin-top:10px"><strong>One-time payment vs. subscription:</strong> The Plus tier is $9.99 one-time, not monthly. The decision came from product values &mdash; a recipe book should feel like something you own, not something you rent. Subscription fatigue is real, especially for utility apps used daily. A one-time payment builds more trust at the point of purchase and reduces churn to zero for that tier.</p>
+    <p class="cs-body" style="margin-top:10px"><strong>Retention by design:</strong> A household that builds a shared recipe book doesn&rsquo;t churn. The Family Recipe Book is both a feature and a lock-in mechanic &mdash; the more a household contributes, the more irreplaceable the platform becomes. This is the difference between a utility someone deletes after a week and a platform that earns a permanent spot in the household.</p>
     <div class="cs-section-head">The Business Model</div>
     <p class="cs-body">Three tiers designed from first principles. Free: up to 30 recipes, basic grocery list, fridge scanner 5x/month, 1 member. Plus at $9.99 one-time: unlimited saves, URL and social import, unlimited fridge scanning, cooking mode, cost tracker, Family Recipe Book. Household at $19.99/year: everything in Plus, up to 6 members, shared grocery lists, dietary conflict warnings, household stats, and web access at recipebook.ourtable.app. No ads. No subscriptions on the core tier. Yours forever.</p>
 
@@ -1319,6 +1322,7 @@
     </div>
     <div class="cs-section-head">The Validation Work</div>
     <p class="cs-body">Before writing production code, I built a full outreach system &mdash; prospect tracker, cold email sequences, follow-up cadences &mdash; and ran campaigns across law firms, dental offices, insurance agencies, and accounting firms in the LA area. 40+ businesses contacted. That outreach generated real market signal about messaging, pricing sensitivity, and the verticals most likely to convert first.</p>
+    <p class="cs-body" style="margin-top:10px">The average SMB spends \That outreach generated real market signal about messaging, pricing sensitivity, and the verticals most likely to convert first.</p>,500&ndash;\$4,000/month on a part-time IT contractor. TriageAI&rsquo;s \$400 entry tier replaces that spend entirely. The financial model shows profitability at 5 clients on the Growth tier &mdash; a realistic first-year target for a one-person operation. The pitch isn&rsquo;t &ldquo;try AI helpdesk.&rdquo; It&rsquo;s &ldquo;cut your IT spend by 70% and never miss a ticket.&rdquo;</p>
     <div class="cs-section-head">The Build Artifacts</div>
     <p class="cs-body">Alongside validation I built: a working interactive demo (v4), a break-even calculator modeling the $400/$650/$999 subscription tiers, a full system wireframe covering Phase 1 and Phase 1.5, and a GitHub research checklist for the technical build. The financial model shows profitability at 5 clients on the Growth tier.</p>
     <div class="cs-section-head">Phase Roadmap</div>
@@ -1392,6 +1396,7 @@
     <div class="cs-section-head">The Result</div>
     <p class="cs-body">A redesigned flow that gets users to the menu in a single tap, eliminates the pre-commitment friction that drives abandonment, and makes the Caesar Crown loyalty program visible enough to actually influence behavior. The before/after documentation shows not just what changed but why &mdash; each decision traced back to a specific user friction point.</p>
     <p class="cs-body" style="margin-top:10px">This is speculative work built with the LC design team in mind. The goal wasn&rsquo;t to reimagine the brand &mdash; it was to demonstrate exactly what I&rsquo;d fix and why, backed by working prototypes and documented rationale. This is what day one looks like.</p>
+    <p class="cs-body" style="margin-top:10px">At LC&rsquo;s order volume, shaving even a fraction of abandonment off a four-screen gate isn&rsquo;t a UX win &mdash; it&rsquo;s a revenue story. That&rsquo;s the case this redesign makes.</p>
     <p class="cs-body" style="margin-top:10px; color: var(--gold); font-style: italic;">If you&rsquo;re on the LC team and reading this: hi.</p>
     <div class="cs-divider"></div>
     <a href="little-caesars/" target="_blank" class="cs-link" style="margin-right:24px">View Full Case Study &#x2192;</a>
@@ -1423,6 +1428,8 @@
     <p class="cs-body">Paste any article, long email, press release, or wall of text. Briefed calls the Claude API and returns the essential truth of what you just read — in exactly 15 words or less. Not a rewrite of the headline. Not a bulleted summary. The one core claim the whole piece is really about.</p>
     <div class="cs-section-head">Design Decisions</div>
     <p class="cs-body">The 15-word constraint is the product. It forces precision in a way that "summarize this" never does. Playfair Display gives it editorial credibility — it should feel like a sharp editor, not a chatbot. The dark UI with yellow-green signal color (`#e8ff47`) creates a signal-vs-noise visual language that reinforces the core idea.</p>
+    <div class="cs-section-head">How the AI Was Designed</div>
+    <p class="cs-body">The 15-word constraint didn&rsquo;t come from intuition &mdash; it came from failure. Early prompts returned summaries that were technically accurate but 40&ndash;60 words long. They weren&rsquo;t wrong, they were just useless for the use case. Tightening the constraint surfaced a new failure mode: the model started truncating instead of distilling, cutting off context rather than identifying the core claim. The final prompt architecture separates those two jobs &mdash; first identify the single most important claim, then express it in 15 words or fewer. The constraint is the product. The prompt engineering is what makes it work.</p>
     <div class="cs-grid-2">
       <div class="cs-stat-box"><div class="cs-stat-num">15</div><div class="cs-stat-label">Word Hard Cap</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">1</div><div class="cs-stat-label">API Call Per Summary</div></div>
@@ -1450,6 +1457,8 @@
     <p class="cs-body">Paste any message — a frustrated text, a passive-aggressive email, something you typed in a heated moment — and ReplyRight returns three rewrites simultaneously: Calm (de-escalates, neutral), Warm (relational, empathetic), and Assertive (direct, no softening). Same point, three different registers. Pick the one that fits.</p>
     <div class="cs-section-head">Design Decisions</div>
     <p class="cs-body">Three results served at once instead of asking you to pick a tone first — comparison is the whole value. Color-coded left borders (blue / amber / red) let you scan the register before you read the words. Light UI so the tool disappears into the workflow rather than demanding attention. The app icon and branding stay minimal because this is a utility, not a statement.</p>
+    <div class="cs-section-head">How the AI Was Designed</div>
+    <p class="cs-body">The hardest prompt engineering problem in ReplyRight wasn&rsquo;t generating three tones &mdash; it was preventing the model from being sycophantic in Warm mode and aggressive in Assertive mode. Early outputs had Warm rewriting the user&rsquo;s point entirely to avoid conflict, and Assertive dropping all empathy in ways that would escalate rather than resolve. The fix was explicit constraints per tone: Warm preserves the core message and adds relational acknowledgment; Assertive keeps the point but removes apology language only. Same message, calibrated register &mdash; not a different message per tone.</p>
     <div class="cs-grid-2">
       <div class="cs-stat-box"><div class="cs-stat-num">3</div><div class="cs-stat-label">Tone Modes (Calm · Warm · Assertive)</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">1</div><div class="cs-stat-label">API Call, 3 Results</div></div>
@@ -1504,5 +1513,6 @@
 </script>
 </body>
 </html>
+
 
 

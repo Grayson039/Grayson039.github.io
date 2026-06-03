@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SceneOne — Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0F0F0F; color: #E5E5E5; font-family: 'Inter', sans-serif; min-height: 100vh; padding: 48px 24px 64px; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: 0.4; }
+  .header { max-width: 640px; margin: 0 auto 56px; text-align: center; }
+  .logo-dot { width: 10px; height: 10px; background: #3EEDE7; border-radius: 50%; display: inline-block; margin-bottom: 24px; box-shadow: 0 0 12px rgba(62,237,231,0.5); }
+  .title { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(42px, 8vw, 72px); font-weight: 700; color: #FFFFFF; line-height: 1; margin-bottom: 16px; }
+  .title span { color: #3EEDE7; }
+  .subtitle { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+  .tagline { font-size: 12px; color: #888; letter-spacing: 0.03em; line-height: 1.7; }
+  .divider { width: 40px; height: 1px; background: rgba(62,237,231,0.15); margin: 32px auto; }
+  .phase-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: #3EEDE7; text-align: center; margin-bottom: 32px; }
+  .grid { max-width: 780px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px; background: rgba(62,237,231,0.06); }
+  .screen-card { background: #111; padding: 28px 24px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 8px; transition: background 0.2s; }
+  .screen-card:hover { background: #161616; }
+  .screen-card:hover .arrow { color: #3EEDE7; }
+  .screen-card.hero-card { background: #0D1A1A; }
+  .screen-card.hero-card:hover { background: #0F1F1F; }
+  .screen-num { font-size: 9px; color: #333; letter-spacing: 0.12em; }
+  .screen-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; font-style: italic; color: #F0F0F0; line-height: 1.2; }
+  .screen-desc { font-size: 10px; color: #555; line-height: 1.6; flex: 1; }
+  .arrow { font-size: 14px; color: #333; transition: color 0.2s; align-self: flex-end; }
+  .badge { font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; padding: 2px 8px; border-radius: 3px; align-self: flex-start; }
+  .badge-hero { background: rgba(62,237,231,0.1); color: #3EEDE7; border: 1px solid rgba(62,237,231,0.2); }
+  .footer { max-width: 780px; margin: 48px auto 0; display: flex; justify-content: space-between; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 12px; }
+  .footer span { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: #333; }
+  .cyan { color: #3EEDE7; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo-dot"></div>
+  <div class="title">Scene<span>One</span></div>
+  <div class="subtitle">AI Screenplay Coverage &middot; 4 Screens</div>
+  <div class="tagline">Before your script goes anywhere &mdash; it starts here.<br>Professional-grade coverage. Free. Built for writers who can&rsquo;t afford to wait.</div>
+  <div class="divider"></div>
+  <div class="phase-label">&#9679; UI Prototype &mdash; Design Complete</div>
+</div>
+<div class="grid">
+  <a href="landing.html" class="screen-card">
+    <div class="screen-num">01 / 04</div>
+    <div class="screen-name">Landing</div>
+    <div class="screen-desc">The product pitch. Tagline, features, the 3-step flow. Converts a curious writer into a believer.</div>
+    <div class="arrow">&#x2197;</div>
+  </a>
+  <a href="upload.html" class="screen-card">
+    <div class="screen-num">02 / 04</div>
+    <div class="screen-name">Upload</div>
+    <div class="screen-desc">Drag &amp; drop or browse. Accepts PDF, FDX, and Fountain. Confirms the script is in safe hands before analysis begins.</div>
+    <div class="arrow">&#x2197;</div>
+  </a>
+  <a href="processing.html" class="screen-card">
+    <div class="screen-num">03 / 04</div>
+    <div class="screen-name">Processing</div>
+    <div class="screen-desc">Live Reading Stream &mdash; Star Wars crawl as the AI works through acts, characters, and scenes in real time.</div>
+    <div class="arrow">&#x2197;</div>
+  </a>
+  <a href="coverage.html" class="screen-card hero-card">
+    <div class="screen-num">04 / 04</div>
+    <div class="badge badge-hero">Hero Screen</div>
+    <div class="screen-name">Coverage Report</div>
+    <div class="screen-desc">Writer Mode &amp; Exec Mode. Win Statement, 7 category scores, Fix-It Notes, Story DNA. The full professional read.</div>
+    <div class="arrow">&#x2197;</div>
+  </a>
+</div>
+<div class="footer">
+  <span>SceneOne &middot; <span class="cyan">Will Grayson</span></span>
+  <span>React + Claude API + Supabase</span>
+</div>
+</body>
+</html>

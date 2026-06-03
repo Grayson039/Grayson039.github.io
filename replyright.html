@@ -527,6 +527,9 @@ Return ONLY valid JSON in this exact format, nothing else:
       });
 
       const data = await response.json();
+      if (!data.content || !data.content[0]) {
+        throw new Error(data.error?.message || JSON.stringify(data));
+      }
       const raw = data.content[0].text.replace(/```json|```/g, '').trim();
       const parsed = JSON.parse(raw);
 

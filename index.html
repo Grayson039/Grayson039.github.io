@@ -497,6 +497,27 @@
   }
   .case-close:hover { color: var(--orange); }
 
+  .back-nav-pill {
+    position: fixed; top: 24px; left: 28px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(5, 54, 56, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 138, 61, 0.25);
+    color: #fff;
+    font-family: -apple-system, sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.2px;
+    padding: 10px 16px; border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    z-index: 2001;
+  }
+  .back-nav-pill:hover {
+    background: rgba(5, 54, 56, 0.98);
+    border-color: rgba(255, 138, 61, 0.6);
+  }
+  .back-nav-pill svg { width: 14px; height: 14px; flex-shrink: 0; }
+
   .cs-eyebrow {
     font-family: 'Space Mono', monospace;
     font-size: 10px; letter-spacing: 0.2em;
@@ -1090,7 +1111,12 @@
 
 <!-- CASE STUDY OVERLAYS -->
 <div class="case-overlay" id="case-aftershow">
+<<<<<<< HEAD
   <button class="case-close" onclick="closeCase()">&#x2715; &nbsp;Close</button>
+=======
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
+>>>>>>> 81d6488 (Add Portfolio back button pill to all case study overlays and pages)
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 04 / 09</div>
     <div class="cs-title">Aftershow</div>
@@ -1133,6 +1159,7 @@
 
 <div class="case-overlay" id="case-cutman">
   <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 09 / 09</div>
     <div class="cs-title">Cutman</div>
@@ -1153,12 +1180,12 @@
     </div>
     <div class="cs-section-head">Where It Stands</div>
     <p class="cs-body">Phase 1, Data Layer is in progress. Home screen, fight card view, and fighter profile screens are designed. Backend scraping pipeline is being built and validated before the full mobile app phase begins.</p>
-    <a href="https://grayson039.github.io/cutman/" target="_blank" class="cs-link">View Prototype →</a>
   </div>
 </div>
 
 <div class="case-overlay" id="case-scrapd">
   <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 03 / 09</div>
     <div class="cs-title">Scrap'd</div>
@@ -1258,6 +1285,7 @@
 
 <div class="case-overlay" id="case-ourtable">
   <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 02 / 09 · Personal Project</div>
     <div class="cs-title">OurTable</div>
@@ -1347,7 +1375,12 @@
 </div>
 
 <div class="case-overlay" id="case-triageai">
+<<<<<<< HEAD
   <button class="case-close" onclick="closeCase()">&#x2715; &nbsp;Close</button>
+=======
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
+>>>>>>> 81d6488 (Add Portfolio back button pill to all case study overlays and pages)
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 07 / 09</div>
     <div class="cs-title">TriageAI</div>
@@ -1358,6 +1391,7 @@
     <div class="cs-section-head">The Origin</div>
     <p class="cs-body">I work helpdesk at a nationwide company &mdash; four people covering the entire org. Every day the challenge isn&rsquo;t the work itself, it&rsquo;s knowing what to handle first. I saw the same problem everywhere at SMBs: no dedicated IT staff, tickets piling up, no intelligent layer to sort signal from noise. So I started building one.</p>
     <div class="cs-divider"></div>
+<<<<<<< HEAD
     <div class="cs-section-head">What I Built</div>
     <p class="cs-body">TriageAI is an AI-powered Tier 1 helpdesk subscription platform for small businesses. The system handles first-response, classifies and routes tickets, attempts resolution via a knowledge base, and only escalates what actually needs a human. Built for teams of zero to four &mdash; not enterprise IT departments.</p>
     <div class="cs-grid-2">
@@ -1369,6 +1403,27 @@
         <div class="cs-stat-num">40+</div>
         <div class="cs-stat-label">SMBs Cold Outreached</div>
       </div>
+=======
+    <div class="cs-section-head">The Validation Attempt</div>
+    <p class="cs-body">Before designing a single screen, I reached out to 40 SMBs — companies with no dedicated helpdesk or outsourced IT support. I wanted to hear their specific pain points directly. The response rate was zero. That silence was real market data, and it shaped the decision to pause outbound validation and build the concept proof-first.</p>
+    <div class="cs-section-head">The Concept</div>
+    <p class="cs-body">An AI-powered triage layer that doesn't replace helpdesk support — it multiplies it. SMBs get an intelligent first-response system that routes, prioritizes, and resolves common issues before a human ever touches the ticket. Built for teams of zero to four, not enterprise IT departments.</p>
+    <div class="cs-section-head">Why It Matters</div>
+    <p class="cs-body">Knowing when to pause is a product skill. The 40-company outreach wasn't a failure — it was due diligence. TriageAI is paused at concept stage pending real customer conversations, not abandoned. There's a difference between a founder and a hobbyist, and that difference is this paragraph.</p>
+    <a href="https://grayson039.github.io/triageai/" target="_blank" class="cs-link">View Prototype →</a>
+  </div>
+</div>
+
+<div class="case-overlay" id="case-aiquest">
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
+  <div class="case-inner">
+    <div class="cs-eyebrow">Case Study, 06 / 09</div>
+    <div class="cs-title">AI Quest</div>
+    <div class="cs-subtitle">Interactive AI Experience · Early Prototype</div>
+    <div class="cs-tags">
+      <span class="cs-tag">Early Prototype</span><span class="cs-tag">AI Build</span><span class="cs-tag">Interactive Storytelling</span>
+>>>>>>> 81d6488 (Add Portfolio back button pill to all case study overlays and pages)
     </div>
     <div class="cs-section-head">The Validation Work</div>
     <p class="cs-body">Before writing production code, I built a full outreach system &mdash; prospect tracker, cold email sequences, follow-up cadences &mdash; and ran campaigns across law firms, dental offices, insurance agencies, and accounting firms in the LA area. 40+ businesses contacted. That outreach generated real market signal about messaging, pricing sensitivity, and the verticals most likely to convert first.</p>
@@ -1381,7 +1436,12 @@
   </div>
 </div>
 <div class="case-overlay" id="case-ironarc">
+<<<<<<< HEAD
   <button class="case-close" onclick="closeCase()">&#x2715; &nbsp;Close</button>
+=======
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
+>>>>>>> 81d6488 (Add Portfolio back button pill to all case study overlays and pages)
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 08 / 09 &middot; Client Work &middot; Delivered</div>
     <div class="cs-title">Iron Arc</div>
@@ -1400,6 +1460,29 @@
       <div class="cs-stat-box"><div class="cs-stat-num">30</div><div class="cs-stat-label">Caption Templates</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">90</div><div class="cs-stat-label">Day Content Plan</div></div>
     </div>
+<<<<<<< HEAD
+=======
+    <div class="cs-section-head">Why This Matters</div>
+    <p class="cs-body">Iron Arc is proof that the best brand work comes from listening to who the client actually is — not smoothing them into something generic. A trainer who cosplays isn't a liability. It's the entire differentiator. The brand leans into it completely.</p>
+  </div>
+</div>
+
+<div class="case-overlay" id="case-lc">
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
+  <div class="case-inner">
+    <div class="cs-eyebrow">Case Study, 07 / 09 · Speculative</div>
+    <div class="cs-title">Little Caesars</div>
+    <div class="cs-subtitle">Mobile App Redesign · 7 Screens, Interactive Prototype</div>
+    <div class="cs-tags">
+      <span class="cs-tag">UX Design</span><span class="cs-tag">Mobile App</span><span class="cs-tag">Before &amp; After</span><span class="cs-tag">Interactive Prototype</span><span class="cs-tag">Speculative</span>
+    </div>
+    <div class="cs-section-head">The Problem</div>
+    <p class="cs-body">The Little Caesars app has a conversion problem hiding in plain sight. Before a user can see a single menu item, they're forced through four sequential commitment screens: choose Pick-Up or Delivery, select a location, set a pickup time — and only then does the menu appear.</p>
+    <p class="cs-body" style="margin-top:10px">There's no browse mode. No way to check prices or decide what you want before committing to a location and order type. Users who just want to look around have nowhere to go. So they leave.</p>
+    <p class="cs-body" style="margin-top:10px">Four gate screens before a menu isn't a UX quirk — it's abandoned carts.</p>
+    <div class="cs-divider"></div>
+>>>>>>> 81d6488 (Add Portfolio back button pill to all case study overlays and pages)
     <div class="cs-section-head">The Approach</div>
     <p class="cs-body">The brand leans into the cosplay identity completely. The name, voice, visual direction, and content strategy all treat it as the differentiator it is &mdash; not something to hide. A trainer who cosplays isn&rsquo;t a liability. It&rsquo;s the entire hook. The clients who connect with that identity become the most loyal ones.</p>
     <div class="cs-section-head">The Pivot</div>
@@ -1411,10 +1494,41 @@
   </div>
 </div>
 
+<<<<<<< HEAD
 
+=======
+<div class="case-overlay" id="case-briefed">
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
+  <div class="case-inner">
+    <div class="cs-eyebrow">AI Tool, 08 / 09 · Live Demo</div>
+    <div class="cs-title">Briefed</div>
+    <div class="cs-subtitle">AI News Summarizer · 15 Words or Less · Claude-Powered</div>
+    <div class="cs-tags">
+      <span class="cs-tag">Claude API</span><span class="cs-tag">AI Product</span><span class="cs-tag">News</span><span class="cs-tag">Live Tool</span>
+    </div>
+    <div class="cs-section-head">The Problem</div>
+    <p class="cs-body">News articles bury the actual point. Headlines lie or sensationalize. TL;DR summaries give you five bullet points when you needed one sentence. Nobody has time to read 800 words to find the thing that actually matters.</p>
+    <div class="cs-divider"></div>
+    <div class="cs-section-head">What It Does</div>
+    <p class="cs-body">Paste any article, long email, press release, or wall of text. Briefed calls the Claude API and returns the essential truth of what you just read — in exactly 15 words or less. Not a rewrite of the headline. Not a bulleted summary. The one core claim the whole piece is really about.</p>
+    <div class="cs-section-head">Design Decisions</div>
+    <p class="cs-body">The 15-word constraint is the product. It forces precision in a way that "summarize this" never does. Playfair Display gives it editorial credibility — it should feel like a sharp editor, not a chatbot. The dark UI with yellow-green signal color (`#e8ff47`) creates a signal-vs-noise visual language that reinforces the core idea.</p>
+    <div class="cs-grid-2">
+      <div class="cs-stat-box"><div class="cs-stat-num">15</div><div class="cs-stat-label">Word Hard Cap</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">1</div><div class="cs-stat-label">API Call Per Summary</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">3</div><div class="cs-stat-label">Example Articles Preloaded</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">&lt;2s</div><div class="cs-stat-label">Avg Response Time</div></div>
+    </div>
+    <div class="cs-divider"></div>
+    <a href="briefed.html" target="_blank" class="cs-link">Open Briefed →</a>
+  </div>
+</div>
+>>>>>>> 81d6488 (Add Portfolio back button pill to all case study overlays and pages)
 
 <div class="case-overlay" id="case-replyright">
   <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="back-nav-pill" onclick="closeCase()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Portfolio</button>
   <div class="case-inner">
     <div class="cs-eyebrow">AI Tool, 06 / 09 · Live Demo</div>
     <div class="cs-title">ReplyRight</div>

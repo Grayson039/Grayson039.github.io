@@ -27,7 +27,6 @@ var CM = (function () {
   };
   var R = { sm: '6px', md: '10px', lg: '14px', xl: '18px', pill: '100px' };
   var S = { xs: '8px', sm: '16px', md: '24px', lg: '32px', xl: '16px', section: '24px' };
-  var HEX = "url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2228%22 height=%2249%22%3E%3Cpath d=%22M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.49L26 15v14.98L13 37.48 0 30z%22 fill=%22none%22 stroke=%22%23E8272A%22 stroke-opacity=%220.1%22 stroke-width=%221%22/%3E%3C/svg%3E')";
 
   /* ── COMPONENTS ──────────────────────────────────────────── */
   var c = {};
@@ -251,5 +250,5 @@ var CM = (function () {
     render();
   }
 
-  return { D: D, L: L, T: T, R: R, S: S, HEX: HEX, c: c, nav: nav };
+  return { D: D, L: L, T: T, R: R, S: S, c: c, nav: nav };
 })();

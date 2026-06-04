@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SceneOne — AI Screenplay Coverage</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0A0A0A;
+  --card:    #111111;
+  --border:  #1E1E1E;
+  --text:    #F0F0F0;
+  --sub:     #888888;
+  --red:     #C0392B;
+  --red-l:   #E74C3C;
+  --gold:    #D4A843;
+  --gold-l:  #F0C060;
+  --deep:    #1A0A08;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── BACK NAV ── */
+.back-nav { position: fixed; top: 20px; left: 24px; z-index: 999; }
+.back-nav a {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(26,10,8,0.9); backdrop-filter: blur(10px);
+  border: 1px solid rgba(192,57,43,0.35);
+  color: #fff; text-decoration: none;
+  padding: 10px 16px; border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+.back-nav a:hover { background: rgba(26,10,8,0.99); border-color: rgba(212,168,67,0.6); }
+.back-nav a svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center;
+  padding: 100px 40px 80px;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 40%, rgba(192,57,43,0.35) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 35% at 75% 55%, rgba(212,168,67,0.12) 0%, transparent 60%),
+    var(--bg);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(192,57,43,0.03) 60px),
+    repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(192,57,43,0.03) 60px);
+  pointer-events: none;
+}
+
+/* Film countdown leader rings */
+.hero-leader {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; overflow: hidden; opacity: 0.04;
+}
+.hero-leader::before {
+  content: '';
+  position: absolute; top: -200px; right: -200px;
+  width: 600px; height: 600px; border-radius: 50%;
+  border: 60px solid #fff;
+}
+.hero-leader::after {
+  content: '';
+  position: absolute; bottom: -150px; left: -150px;
+  width: 400px; height: 400px; border-radius: 50%;
+  border: 40px solid #fff;
+}
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 24px;
+  position: relative;
+}
+
+/* Clapperboard icon */
+.hero-icon {
+  font-size: 56px; margin-bottom: 24px; position: relative;
+  filter: drop-shadow(0 0 40px rgba(192,57,43,0.5));
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(52px, 9vw, 110px);
+  font-weight: 900; line-height: 0.9;
+  background: linear-gradient(135deg, #F0C060 0%, #D4A843 35%, #E74C3C 80%, #C0392B 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px; position: relative;
+}
+
+.hero-tagline {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-style: italic;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 48px; max-width: 500px; position: relative;
+}
+
+.hero-meta {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 32px;
+  position: relative;
+}
+.hero-meta-item .label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--sub); margin-bottom: 4px;
+}
+.hero-meta-item .value { font-size: 14px; font-weight: 600; color: #ccc; }
+
+/* ── STICKY NAV ── */
+.sticky-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,10,0.93); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex; gap: 0; overflow-x: auto;
+}
+.sticky-nav a {
+  color: var(--sub); text-decoration: none;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+  padding: 14px 20px;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+.sticky-nav a:hover { color: var(--text); }
+.sticky-nav a.active { color: var(--text); border-bottom-color: var(--gold); }
+
+/* ── SECTIONS ── */
+.section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 80px 40px;
+  border-bottom: 1px solid var(--border);
+}
+.section:last-child { border-bottom: none; }
+
+.section-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+}
+.section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 3.5vw, 48px);
+  font-weight: 900; color: #fff;
+  margin-bottom: 16px; line-height: 1.1;
+}
+.section-body {
+  font-size: 15px; line-height: 1.78; color: #aaa;
+  max-width: 680px; margin-bottom: 16px;
+}
+.section-body:last-child { margin-bottom: 0; }
+
+/* ── TWO-COL ── */
+.two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+  align-items: start; margin-top: 48px;
+}
+
+/* ── SCORE CARD (coverage report mockup) ── */
+.coverage-report {
+  background: var(--card); border: 1px solid rgba(192,57,43,0.25);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+}
+.coverage-header {
+  background: linear-gradient(135deg, rgba(192,57,43,0.3), rgba(212,168,67,0.1));
+  border-bottom: 1px solid rgba(192,57,43,0.2);
+  padding: 20px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.coverage-title { font-size: 13px; font-weight: 700; color: #fff; }
+.coverage-badge {
+  font-size: 9px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); background: rgba(212,168,67,0.1);
+  border: 1px solid rgba(212,168,67,0.3); border-radius: 20px; padding: 4px 10px;
+}
+.coverage-scores {
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.score-row { display: flex; align-items: center; gap: 12px; }
+.score-label { font-size: 12px; font-weight: 600; color: #aaa; width: 140px; flex-shrink: 0; }
+.score-bar-wrap {
+  flex: 1; height: 6px; background: rgba(255,255,255,0.06);
+  border-radius: 3px; overflow: hidden;
+}
+.score-bar { height: 100%; border-radius: 3px; }
+.score-num { font-size: 12px; font-weight: 800; color: var(--gold-l); width: 32px; text-align: right; }
+.coverage-verdict {
+  padding: 16px 24px;
+  background: rgba(212,168,67,0.06);
+  border-top: 1px solid rgba(212,168,67,0.15);
+  display: flex; align-items: center; gap: 12px;
+}
+.verdict-pill {
+  font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+  color: #0A0A0A; background: var(--gold); border-radius: 4px; padding: 4px 10px;
+}
+.verdict-label { font-size: 12px; color: #888; }
+
+/* ── FEATURE CARDS ── */
+.features-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 40px;
+}
+.feature-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 22px;
+}
+.feature-icon { font-size: 28px; margin-bottom: 12px; }
+.feature-card h4 { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.feature-card p { font-size: 12px; color: var(--sub); line-height: 1.55; }
+.feature-card .fix-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  color: var(--gold); background: rgba(212,168,67,0.08);
+  border: 1px solid rgba(212,168,67,0.2); border-radius: 6px; padding: 4px 10px;
+}
+
+/* ── INSIGHT BLOCK ── */
+.insight {
+  background: linear-gradient(135deg, rgba(192,57,43,0.12), rgba(212,168,67,0.06));
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 16px; padding: 32px; margin-top: 32px;
+}
+.insight-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--red-l); margin-bottom: 12px;
+}
+.insight p { font-size: 15px; line-height: 1.75; color: rgba(255,255,255,0.75); font-style: italic; }
+
+/* ── LOADING EXPERIENCES ── */
+.loading-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 40px;
+}
+.loading-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; text-align: center;
+}
+.loading-card .emoji { font-size: 32px; margin-bottom: 10px; display: block; }
+.loading-card h4 { font-size: 12px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.loading-card p { font-size: 11px; color: var(--sub); line-height: 1.5; }
+.loading-card .phrase {
+  margin-top: 10px; font-size: 10px; font-style: italic; color: var(--gold);
+  font-family: 'Playfair Display', serif;
+}
+
+/* ── PRICING TABLE ── */
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 40px;
+}
+.pricing-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.pricing-card.featured {
+  border-color: rgba(212,168,67,0.4);
+  background: linear-gradient(160deg, rgba(212,168,67,0.07), var(--card));
+}
+.pricing-tier { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--sub); }
+.pricing-price {
+  font-size: 32px; font-weight: 900; color: var(--text); line-height: 1;
+}
+.pricing-price span { font-size: 14px; font-weight: 400; color: var(--sub); }
+.pricing-perks { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.pricing-perks li {
+  font-size: 12px; color: var(--sub); padding-left: 16px; position: relative; line-height: 1.45;
+}
+.pricing-perks li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+/* ── MISSION BANNER ── */
+.mission-banner {
+  background: linear-gradient(135deg, rgba(26,10,8,0.8), rgba(192,57,43,0.15));
+  border: 1px solid rgba(192,57,43,0.25);
+  border-radius: 20px; padding: 48px;
+  text-align: center; margin-top: 40px;
+}
+.mission-banner h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px; font-weight: 900; color: #fff; margin-bottom: 12px; line-height: 1.2;
+}
+.mission-banner p { font-size: 15px; color: #aaa; max-width: 600px; margin: 0 auto; line-height: 1.75; }
+.mission-stats {
+  display: flex; justify-content: center; gap: 48px; margin-top: 36px; flex-wrap: wrap;
+}
+.mission-stat .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px; font-weight: 900; line-height: 1;
+  background: linear-gradient(135deg, var(--gold-l), var(--red-l));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.mission-stat .lbl { font-size: 11px; color: var(--sub); margin-top: 4px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .two-col, .features-grid, .loading-grid, .pricing-grid { grid-template-columns: 1fr; }
+  .section { padding: 56px 20px; }
+  .hero { padding: 100px 24px 64px; }
+  .sticky-nav { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="back-nav">
+  <a href="../">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-leader"></div>
+  <div class="hero-eyebrow">Case Study · AI Product Designer · Entertainment / Film</div>
+  <div class="hero-icon">🎬</div>
+  <h1>SceneOne</h1>
+  <p class="hero-tagline">"Grammarly for screenwriters."</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="label">Role</div><div class="value">Product Design · Prompt Engineering</div></div>
+    <div class="hero-meta-item"><div class="label">Category</div><div class="value">AI-Powered Coverage Tool</div></div>
+    <div class="hero-meta-item"><div class="label">Industry</div><div class="value">Film · Entertainment · EdTech</div></div>
+    <div class="hero-meta-item"><div class="label">Break-even</div><div class="value">~250 paying users</div></div>
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <a href="#problem" class="active">The Problem</a>
+  <a href="#product">The Product</a>
+  <a href="#design">Design Philosophy</a>
+  <a href="#detail">The Detail</a>
+  <a href="#mission">The Mission</a>
+  <a href="#model">Business Model</a>
+</nav>
+
+<!-- THE PROBLEM -->
+<div class="section" id="problem">
+  <div class="section-eyebrow">The Problem</div>
+  <h2>$100 for Feedback You Shouldn't Have to Pay For</h2>
+  <div class="two-col">
+    <div>
+      <p class="section-body">Professional script coverage costs $30–$100 per read. Writers submit blind, get rejected without feedback, and have no way to improve. The only writers who can afford real feedback are the ones who already have money and connections.</p>
+      <p class="section-body">That's not a feedback gap. That's a gatekeeping problem.</p>
+      <p class="section-body">The entertainment industry has always filtered talent by access — access to film school, to agents, to the right rooms. The writers who most need feedback are exactly the ones least likely to get it.</p>
+    </div>
+    <div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:16px">The Coverage Industry</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.2);border-radius:8px;">
+            <span style="font-size:13px;color:#ccc">Standard coverage</span>
+            <span style="font-size:14px;font-weight:800;color:var(--red-l)">$30–$100</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.2);border-radius:8px;">
+            <span style="font-size:13px;color:#ccc">Notes turnaround</span>
+            <span style="font-size:14px;font-weight:800;color:var(--red-l)">3–10 days</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.2);border-radius:8px;">
+            <span style="font-size:13px;color:#ccc">SceneOne</span>
+            <span style="font-size:14px;font-weight:800;color:var(--gold)">Free · Seconds</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THE PRODUCT -->
+<div class="section" id="product">
+  <div class="section-eyebrow">The Product</div>
+  <h2>AI Coverage. The Same Feedback a Reader Charges $100 For.</h2>
+  <p class="section-body">Paste your script, get a structured report grading Structure, Conflict, Dialogue, Pacing, and Visual Storytelling. Every score includes specific page references, what's working, what needs work, and exactly how to fix it.</p>
+  <p class="section-body">Writers get better before they ever reach a human reader.</p>
+
+  <div class="two-col" style="margin-top:48px;align-items:center;">
+    <div class="coverage-report">
+      <div class="coverage-header">
+        <div class="coverage-title">THE LAST HOUR — Draft 2</div>
+        <div class="coverage-badge">Building Momentum</div>
+      </div>
+      <div class="coverage-scores">
+        <div class="score-row">
+          <div class="score-label">Structure</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:82%;background:linear-gradient(90deg,#C0392B,#D4A843)"></div></div>
+          <div class="score-num">82</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">Conflict</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:75%;background:linear-gradient(90deg,#C0392B,#D4A843)"></div></div>
+          <div class="score-num">75</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">Dialogue</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:91%;background:linear-gradient(90deg,#C0392B,#E8C050)"></div></div>
+          <div class="score-num">91</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">Pacing</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:68%;background:linear-gradient(90deg,#C0392B,#D4A843)"></div></div>
+          <div class="score-num">68</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">Visual Storytelling</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:79%;background:linear-gradient(90deg,#C0392B,#D4A843)"></div></div>
+          <div class="score-num">79</div>
+        </div>
+      </div>
+      <div class="coverage-verdict">
+        <div class="verdict-pill">Building Momentum</div>
+        <div class="verdict-label">Dialogue is a clear strength. Pacing flags p.34–51.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:10px">Pacing — p.34–51</div>
+        <p style="font-size:13px;color:#aaa;line-height:1.65;margin-bottom:12px">The mid-section loses momentum. Three consecutive scenes establish the same emotional beat — the protagonist's hesitation — without escalating conflict or moving the plot forward. Consider collapsing into one strong scene.</p>
+        <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--gold);background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.2);border-radius:6px;padding:5px 12px;cursor:pointer;">Fix It → <span style="font-size:9px;color:var(--sub);font-weight:400">Opens inline editor for this scene</span></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:10px">Dialogue — Win</div>
+        <p style="font-size:13px;color:#aaa;line-height:1.65">The exchange on p.62 is a standout — subtext does the work completely. The argument is never about what the characters say it's about. This is the script's voice at its best.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DESIGN PHILOSOPHY -->
+<div class="section" id="design">
+  <div class="section-eyebrow">Design Philosophy</div>
+  <h2>Writers Are Emotionally Vulnerable. The Design Knows That.</h2>
+  <p class="section-body">Script coverage is high-stakes feedback on months or years of work. Every interaction pattern was built with that emotional context in mind.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <h4>Win First, Always</h4>
+      <p>Every score is preceded by a specific, data-driven win — not generic encouragement. Real, page-referenced praise before any critique.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏷️</div>
+      <h4>Reframed Status Language</h4>
+      <p>"Building Momentum" replaces Pass. "Submission Ready" replaces Recommend. The same information, without the sting of industry jargon.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✏️</div>
+      <h4>Fix It → Inline</h4>
+      <p>Every flagged note has a Fix It button — opens an inline editor for just that scene, re-analyzes instantly, logs the revision automatically.</p>
+      <div class="fix-btn">Fix It → Re-analyzes in &lt;2s</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h4>Craft, Not Taste</h4>
+      <p>AI grades structure, conflict, dialogue, pacing, visual storytelling. Never subjective taste. "This doesn't interest me" isn't feedback — it's gatekeeping.</p>
+    </div>
+  </div>
+</div>
+
+<!-- THE DETAIL -->
+<div class="section" id="detail">
+  <div class="section-eyebrow">The Interesting Detail</div>
+  <h2>Virality Baked Into the Loading Screen</h2>
+  <p class="section-body">Every time a writer uploads a script, they get a randomly assigned loading experience. Writers start uploading scripts just to see which one they get.</p>
+
+  <div class="loading-grid">
+    <div class="loading-card">
+      <span class="emoji">🌌</span>
+      <h4>Star Wars Crawl</h4>
+      <p>The script title and logline scroll as an opening crawl. Cinematic. Makes writers feel like their story is already on screen.</p>
+      <div class="phrase">"A long time ago, in a galaxy far, far away..."</div>
+    </div>
+    <div class="loading-card">
+      <span class="emoji">🎞️</span>
+      <h4>Film Countdown Leader</h4>
+      <p>The classic 8-7-6-5-4-3-2-1 countdown with film grain. Feels like you're about to watch your own movie.</p>
+      <div class="phrase">"Picture lock. Analyzing..."</div>
+    </div>
+    <div class="loading-card">
+      <span class="emoji">🎬</span>
+      <h4>Clapperboard Animation</h4>
+      <p>An animated clapperboard slates the script with title, draft number, and the "director." Ends on a take.</p>
+      <div class="phrase">"Scene One. Take it from the top."</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-label">The Design Insight</div>
+    <p>"Each loading experience ends with a film-specific phrase instead of generic UI copy. Nobody expects a coverage tool to open with 'A long time ago in a galaxy far, far away...' That's the whole point."</p>
+  </div>
+</div>
+
+<!-- THE MISSION -->
+<div class="section" id="mission">
+  <div class="section-eyebrow">The Bigger Mission</div>
+  <h2>The Film School That Never Gatekept Anyone</h2>
+  <p class="section-body">I couldn't afford film school. Millions of writers can't. SceneOne starts as a coverage tool and grows into an education layer — triggered by your specific script's weaknesses, not a $60,000 tuition bill.</p>
+  <p class="section-body">Bad dialogue? SceneOne links you to the exact lesson. Act Two falling apart? The module triggers automatically. Education tied to your work, not a semester calendar.</p>
+
+  <div class="mission-banner">
+    <h3>Access Isn't a Feature. It's the Entire Product Thesis.</h3>
+    <p>The entertainment industry filters talent by proximity to money and connections. SceneOne is built to remove every single one of those filters — starting with feedback.</p>
+    <div class="mission-stats">
+      <div class="mission-stat">
+        <div class="num">$0</div>
+        <div class="lbl">Cost for first script</div>
+      </div>
+      <div class="mission-stat">
+        <div class="num">&lt;2s</div>
+        <div class="lbl">Avg response time</div>
+      </div>
+      <div class="mission-stat">
+        <div class="num">5</div>
+        <div class="lbl">Craft dimensions scored</div>
+      </div>
+      <div class="mission-stat">
+        <div class="num">3</div>
+        <div class="lbl">Loading experiences</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BUSINESS MODEL -->
+<div class="section" id="model">
+  <div class="section-eyebrow">Business Model</div>
+  <h2>Free Access. Sustainable Business.</h2>
+  <p class="section-body">Break-even at ~250 paying users. Grant targets include Sundance Institute, Tribeca, and WGA Foundation — organizations already funding access for underrepresented writers.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-tier">Free</div>
+      <div class="pricing-price">$0</div>
+      <ul class="pricing-perks">
+        <li>1 script per month</li>
+        <li>Full coverage report</li>
+        <li>All 5 dimensions scored</li>
+        <li>Page-specific notes</li>
+      </ul>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-tier">Pro</div>
+      <div class="pricing-price">$12 <span>/ mo</span></div>
+      <ul class="pricing-perks">
+        <li>5 scripts per month</li>
+        <li>Revision tracking</li>
+        <li>PDF export</li>
+        <li>Inline Fix It editor</li>
+        <li>Revision history logged</li>
+      </ul>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-tier">Pro Unlimited</div>
+      <div class="pricing-price">$29 <span>/ mo</span></div>
+      <ul class="pricing-perks">
+        <li>Unlimited scripts</li>
+        <li>All Pro features</li>
+        <li>Priority analysis</li>
+        <li>Early access to education layer</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;background:var(--card);border:1px solid rgba(212,168,67,0.2);border-radius:14px;padding:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:6px">Grant Targets</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text)">Sundance Institute · Tribeca · WGA Foundation</div>
+    </div>
+    <div style="width:1px;height:36px;background:var(--border);flex-shrink:0;"></div>
+    <div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:6px">Break-Even</div>
+      <div style="font-size:14px;font-weight:600;color:var(--gold)">~250 paying users</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.sticky-nav a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.sticky-nav a[href="#${entry.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

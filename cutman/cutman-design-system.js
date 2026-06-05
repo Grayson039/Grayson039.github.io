@@ -229,9 +229,8 @@ var CM = (function () {
       var el = document.getElementById(containerId);
       if (!el) return;
       el.innerHTML = screens[state.cur] ? screens[state.cur](th, state) : '<div style="color:red;padding:20px">Screen not found: ' + state.cur + '</div>';
-      el.style.backgroundColor = th.bg;
-      el.style.backgroundImage = '';
-      el.style.backgroundSize = '';
+      el.style.background = th.bg;
+      el.style.backgroundImage = 'none';
       if (opts && opts.onRender) opts.onRender(state, th);
     }
 

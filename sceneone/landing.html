@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2553,7 +2553,7 @@ She grabs her jacket.</textarea>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--sub);line-height:1.65;">
             <strong style="color:rgba(255,255,255,0.6);">2 pending requests.</strong> You have 72 hours to respond to each. No response = auto-decline.
-            <button style="display:block;margin-top:8px;padding:7px 12px;border-radius:7px;border:1px solid rgba(62,237,231,0.25);background:rgba(62,237,231,0.07);color:var(--cyan);font-size:11px;font-weight:700;cursor:pointer;">Review Requests →</button>
+            <button onclick="goTo('requests')" style="display:block;margin-top:8px;padding:7px 12px;border-radius:7px;border:1px solid rgba(62,237,231,0.25);background:rgba(62,237,231,0.07);color:var(--cyan);font-size:11px;font-weight:700;cursor:pointer;">Review Requests &rarr;</button>
           </div>
         </div>
       </div>
@@ -2567,6 +2567,90 @@ She grabs her jacket.</textarea>
 
     </main>
   </div>
+
+<!-- SCREEN: REVIEW REQUESTS -->
+<div class="screen" id="screen-requests">
+  <nav class="top-nav">
+    <div class="nav-brand">Scene<span>One</span></div>
+    <div class="nav-actions">
+      <button class="nav-btn" onclick="goTo('report')">&#8592; Back to Report</button>
+    </div>
+  </nav>
+  <div class="screen-inner" style="max-width:680px;margin:0 auto;padding:32px 20px;">
+
+    <div style="margin-bottom:28px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;">My Listing &mdash; Pending Requests</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;">2 Pending Requests</h2>
+      <p style="font-size:13px;color:var(--sub);line-height:1.65;">You have 72 hours to respond to each request. No response = auto-decline. Approving gives read-only access for 14 days &mdash; no rights transfer.</p>
+    </div>
+
+    <!-- Request 1 -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#053154,#0a4a7a);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--cyan);flex-shrink:0;">JM</div>
+            <div>
+              <div style="font-size:14px;font-weight:800;color:#fff;">Jordan Meyers</div>
+              <div style="font-size:10px;color:var(--sub);">Development Executive &mdash; A24</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; IMDbPro Verified</span>
+            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; Company Email</span>
+            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; LinkedIn</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:rgba(255,255,255,0.55);font-style:italic;line-height:1.6;">"The logline caught my eye &mdash; we're actively developing projects in this space. Would love to read the full draft."</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:9px;color:var(--sub);margin-bottom:4px;">Requested</div>
+          <div style="font-size:11px;font-weight:700;color:#fff;">June 7, 2026</div>
+          <div style="font-size:9px;color:var(--amber);margin-top:6px;font-weight:700;">51 hrs left</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="approveRequest(this,'req1')" style="flex:1;padding:10px;border-radius:9px;border:none;background:var(--cyan);color:#0F0F0F;font-size:12px;font-weight:800;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#5ff5ef'" onmouseout="this.style.background='var(--cyan)'">Approve &mdash; 14-Day Access</button>
+        <button onclick="declineRequest(this,'req1')" style="padding:10px 20px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--sub)'">Decline</button>
+      </div>
+    </div>
+
+    <!-- Request 2 -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:28px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2a1a05,#5a3a10);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--amber);flex-shrink:0;">SR</div>
+            <div>
+              <div style="font-size:14px;font-weight:800;color:#fff;">Sofia Reyes</div>
+              <div style="font-size:10px;color:var(--sub);">Creative Executive &mdash; Blumhouse Productions</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; IMDbPro Verified</span>
+            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; Company Email</span>
+            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(255,200,50,0.1);color:#F4C430;border:1px solid rgba(255,200,50,0.2);">&#9679; LinkedIn Pending</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:rgba(255,255,255,0.55);font-style:italic;line-height:1.6;">"Strong concept and DNA comps. Blumhouse is always looking for contained, high-tension features. Happy to give feedback either way."</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:9px;color:var(--sub);margin-bottom:4px;">Requested</div>
+          <div style="font-size:11px;font-weight:700;color:#fff;">June 8, 2026</div>
+          <div style="font-size:9px;color:var(--green);margin-top:6px;font-weight:700;">68 hrs left</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="approveRequest(this,'req2')" style="flex:1;padding:10px;border-radius:9px;border:none;background:var(--cyan);color:#0F0F0F;font-size:12px;font-weight:800;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#5ff5ef'" onmouseout="this.style.background='var(--cyan)'">Approve &mdash; 14-Day Access</button>
+        <button onclick="declineRequest(this,'req2')" style="padding:10px 20px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--sub)'">Decline</button>
+      </div>
+    </div>
+
+    <!-- Policy reminder -->
+    <div style="background:rgba(62,237,231,0.04);border:1px solid rgba(62,237,231,0.12);border-radius:10px;padding:14px 16px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;">
+      <strong style="color:rgba(62,237,231,0.7);">Approval grants read-only access for 14 days.</strong> The reader receives your full script file. No rights transfer. Access expires automatically. You can revoke early from your Writer Profile. Contact preference: <strong style="color:rgba(255,255,255,0.5);">SceneOne Messaging</strong>.
+    </div>
+
+  </div>
+</div>
 </div>
 
 <script>

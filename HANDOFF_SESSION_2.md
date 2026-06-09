@@ -1,4 +1,4 @@
-# SceneOne — Claude Code Session Handoff
+﻿# SceneOne — Claude Code Session Handoff
 **Date:** June 8, 2026
 **Session:** 2 (continuation of Session 1)
 **From:** Claude Code
@@ -78,7 +78,7 @@ Key communities: r/Screenwriting, r/screenplay, r/filmmaking, Done Deal Pro, Sta
 **Cloudflare Email Routing setup:**
 1. Cloudflare Dashboard → select sceneone.app → Email → Email Routing
 2. Enable Email Routing
-3. Add these 5 forwarding rules (all → w1lldebeest3@gmail.com):
+3. Add these 5 forwarding rules (all → willgrayson039@gmail.com):
    - hello@sceneone.app
    - legal@sceneone.app
    - privacy@sceneone.app

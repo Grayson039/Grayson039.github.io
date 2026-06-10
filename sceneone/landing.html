@@ -1251,13 +1251,13 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="upload-desc">Drop your script below. We accept PDF, FDX, and Fountain files. Analysis takes 2–4 minutes — good feedback takes time. Even ours.</div>
 
     <div class="drop-zone" id="drop-zone">
-      <input type="file" id="file-input" accept=".pdf,.fdx,.fountain,.txt" onchange="handleFile(this)">
+      <input type="file" id="file-input" accept=".pdf" onchange="handleFile(this)">
       <div class="drop-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
       </div>
       <div class="drop-main">Drop your script here</div>
       <div class="drop-sub">or click to browse</div>
-      <div class="drop-formats">PDF &nbsp;·&nbsp; FDX &nbsp;·&nbsp; FOUNTAIN</div>
+      <div class="drop-formats">PDF only &nbsp;·&nbsp; Export from Word or Final Draft</div>
     </div>
 
     <div class="file-row" id="file-row">
@@ -2989,7 +2989,12 @@ function runCountdown(){
 
   // Reading phrases cycle after countdown
   let pi = 0;
-
+  function cycleReading(){
+    if (readingEl && pi < countdownPhrases.length){
+      readingEl.textContent = countdownPhrases[pi++];
+      setTimeout(cycleReading, 1700 + Math.random()*700);
+    }
+  }
   setTimeout(cycleReading, 9000);
 
   runProgressBar(countdownPhrases, 18000, '"Scene Set. Action."');
@@ -3865,8 +3870,32 @@ function requestScriptAccess(btn) {
 // ─── TITLE + CO-WRITERS ───
 let cowriterCount = 0;
 
+function showUploadError(msg) {
+  // Go back to upload screen and show error
+  showScreen('upload');
+  const zone = document.querySelector('.drop-zone');
+  let err = document.getElementById('upload-error-msg');
+  if (!err) {
+    err = document.createElement('div');
+    err.id = 'upload-error-msg';
+    err.style.cssText = 'margin-top:14px;padding:12px 16px;background:rgba(232,146,58,0.1);border:1px solid rgba(232,146,58,0.35);border-radius:10px;color:#E8923A;font-size:13px;line-height:1.5;';
+    zone.after(err);
+  }
+  err.textContent = msg;
+  err.style.display = 'block';
+}
+
 function handleFile(i) {
-  if (i.files[0]) setFile(i.files[0]);
+  const f = i.files[0];
+  if (!f) return;
+  const err = document.getElementById('upload-error-msg');
+  if (err) err.style.display = 'none';
+  if (!f.name.toLowerCase().endsWith('.pdf')) {
+    showUploadError('SceneOne only accepts PDF files. Export your script as a PDF from Word, Final Draft, or Google Docs first.');
+    i.value = '';
+    return;
+  }
+  setFile(f);
 }
 
 function setFile(f) {
@@ -4031,8 +4060,7 @@ async function _runAnalysis() {
     const scriptText = await extractScriptText(file);
 
     if (!scriptText || scriptText.trim().length < 200) {
-      console.warn('SceneOne: Could not extract text — showing demo report');
-      _isSample = true;
+      showUploadError('We couldn\'t read your file. Make sure it\'s a PDF — Word docs and Final Draft files need to be exported as PDF first.');
       return;
     }
 

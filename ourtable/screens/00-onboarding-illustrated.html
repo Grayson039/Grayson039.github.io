@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kitchen Bandits — Welcome</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple-deep:  #3A2470;
+      --purple-mid:   #6B4FA8;
+      --lavender:     #C3B1E1;
+      --gold:         #F6C45C;
+      --white:        #FFFFFF;
+      --font:         'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--purple-deep);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      touch-action: none;
+    }
+
+    /* ── Phone shell ── */
+    #shell {
+      width: 390px; height: 844px;
+      position: relative; overflow: hidden;
+      margin: 0 auto;
+      border-radius: 44px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.45);
+    }
+    @media (max-height: 860px) {
+      #shell { transform: scale(calc(100vh / 844)); transform-origin: top center; }
+    }
+    @media (max-width: 420px) {
+      #shell { width: 100vw; height: 100dvh; border-radius: 0; box-shadow: none; }
+    }
+
+    /* ── Slide track ── */
+    #track {
+      display: flex;
+      width: 500%; /* 5 slides */
+      height: 100%;
+      transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    /* ── Each slide ── */
+    .slide {
+      width: 390px; height: 844px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Full-bleed illustration */
+    .slide-img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    /* Bottom panel — frosted card rising from bottom */
+    .slide-panel {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 28px 28px 48px;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0)  0%,
+        rgba(232,224,248,0.72) 18%,
+        rgba(248,245,255,0.96) 36%,
+        rgba(250,247,255,1)   100%
+      );
+      backdrop-filter: blur(0px);
+    }
+
+    /* Progress dots */
+    .dots {
+      display: flex;
+      gap: 7px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(107,79,168,0.22);
+      transition: all 0.3s ease;
+    }
+    .dot.active {
+      width: 24px;
+      border-radius: 4px;
+      background: var(--purple-mid);
+    }
+
+    /* Headline */
+    .slide-headline {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.15;
+      color: #1E1A2E;
+      text-align: center;
+      margin-bottom: 10px;
+      letter-spacing: -0.4px;
+    }
+
+    /* Body copy */
+    .slide-body {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.55;
+      color: #5A5070;
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 0 4px;
+    }
+
+    /* CTA button */
+    .btn-next {
+      display: block;
+      width: 100%;
+      padding: 17px 0;
+      border-radius: 18px;
+      border: none;
+      background: var(--purple-mid);
+      color: #FFFFFF;
+      font-family: var(--font);
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      box-shadow: 0 6px 20px rgba(107,79,168,0.38);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-next:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 8px rgba(107,79,168,0.28);
+    }
+
+    /* Skip link (slides 1–4) */
+    .skip-link {
+      display: block;
+      text-align: center;
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #9A8AB8;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: 0.1px;
+    }
+    .skip-link.hidden { visibility: hidden; }
+
+    /* iOS status bar area */
+    .status-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px 0;
+      z-index: 10;
+    }
+    .status-time {
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.92);
+    }
+    .status-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .status-icons svg { display: block; }
+  </style>
+</head>
+<body>
+
+<div id="shell">
+
+  <!-- Status bar (always visible over slides) -->
+  <div class="status-bar" id="statusBar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <!-- Signal -->
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="8" width="3" height="4" rx="0.8" fill="rgba(255,255,255,0.9)"/>
+        <rect x="4.5" y="5.5" width="3" height="6.5" rx="0.8" fill="rgba(255,255,255,0.9)"/>
+        <rect x="9" y="2.5" width="3" height="9.5" rx="0.8" fill="rgba(255,255,255,0.9)"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.8" fill="rgba(255,255,255,0.9)"/>
+      </svg>
+      <!-- Wifi -->
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z" fill="rgba(255,255,255,0.9)"/>
+        <path d="M3.2 6.5a7 7 0 0 1 9.6 0" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M0.5 3.8a10.8 10.8 0 0 1 15 0" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      <!-- Battery -->
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,0.9)" stroke-width="1"/>
+        <rect x="22" y="3.5" width="2.5" height="5" rx="1.25" fill="rgba(255,255,255,0.9)"/>
+        <rect x="2" y="2" width="16" height="8" rx="2" fill="rgba(255,255,255,0.9)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Slide track -->
+  <div id="track">
+
+    <!-- SLIDE 1 — Welcome -->
+    <div class="slide">
+      <img class="slide-img" src="../ob-1.png" alt="Whisker waving on a cloud">
+      <div class="slide-panel">
+        <div class="dots" id="dots"></div>
+        <div class="slide-headline">Welcome to Kitchen&nbsp;Bandits</div>
+        <div class="slide-body">Your sous-chef for the real world. Outsmart picky eaters and feed your whole crew — every night.</div>
+        <button class="btn-next" onclick="advance()">Next</button>
+        <span class="skip-link" onclick="skipAll()">Skip</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 — Save Recipes from Anywhere -->
+    <div class="slide">
+      <img class="slide-img" src="../ob-2.png" alt="Whisker saving recipes from phone">
+      <div class="slide-panel">
+        <div class="dots"></div>
+        <div class="slide-headline">Save Recipes from Anywhere</div>
+        <div class="slide-body">Spotted something on TikTok? Instagram? A website? Paste the link — Whisker pulls the recipe, no typing needed.</div>
+        <button class="btn-next" onclick="advance()">Next</button>
+        <span class="skip-link" onclick="skipAll()">Skip</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 — What Can I Make? -->
+    <div class="slide">
+      <img class="slide-img" src="../ob-3.png" alt="Whisker scanning the fridge">
+      <div class="slide-panel">
+        <div class="dots"></div>
+        <div class="slide-headline">What Can I Make?</div>
+        <div class="slide-body">Tell us what's in your fridge. We'll match it to recipes you can actually cook tonight — no extra grocery run required.</div>
+        <button class="btn-next" onclick="advance()">Next</button>
+        <span class="skip-link" onclick="skipAll()">Skip</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 — Feed Your Whole Crew -->
+    <div class="slide">
+      <img class="slide-img" src="../ob-4.png" alt="Whisker with household profiles">
+      <div class="slide-panel">
+        <div class="dots"></div>
+        <div class="slide-headline">Feed Your Whole&nbsp;Crew</div>
+        <div class="slide-body">Set up profiles for everyone at your table — allergies, preferences, picky habits and all. Whisker remembers so you don't have to.</div>
+        <button class="btn-next" onclick="advance()">Next</button>
+        <span class="skip-link" onclick="skipAll()">Skip</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 — Smart Grocery Lists -->
+    <div class="slide">
+      <img class="slide-img" src="../ob-5.png" alt="Whisker with grocery cart">
+      <div class="slide-panel">
+        <div class="dots"></div>
+        <div class="slide-headline">Your List Writes Itself</div>
+        <div class="slide-body">Pick your meals for the week and your grocery list is done. One tap to check off items as you shop.</div>
+        <button class="btn-next" id="finalBtn" onclick="finish()">Let's Cook!</button>
+        <span class="skip-link hidden">Skip</span>
+      </div>
+    </div>
+
+  </div><!-- /track -->
+
+</div><!-- /shell -->
+
+<script>
+  var current = 0;
+  var TOTAL   = 5;
+  var track   = document.getElementById('track');
+  var allDotContainers = document.querySelectorAll('.dots');
+
+  // Build dots in every panel
+  allDotContainers.forEach(function(container) {
+    for (var i = 0; i < TOTAL; i++) {
+      var d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('data-i', i);
+      container.appendChild(d);
+    }
+  });
+
+  function goTo(idx) {
+    current = idx;
+    track.style.transform = 'translateX(-' + (idx * 390) + 'px)';
+    // Update all dot containers
+    document.querySelectorAll('.dot').forEach(function(d) {
+      d.classList.toggle('active', parseInt(d.getAttribute('data-i')) === idx);
+    });
+    // Show/hide status bar tint based on slide bg
+    document.getElementById('statusBar').style.opacity = '1';
+  }
+
+  function advance() {
+    if (current < TOTAL - 1) goTo(current + 1);
+  }
+
+  function finish() {
+    window.location.href = '01-auth-onboarding.html';
+  }
+
+  function skipAll() {
+    finish();
+  }
+
+  /* ── Swipe gesture ── */
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var dragging    = false;
+
+  document.getElementById('shell').addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    dragging = true;
+  }, { passive: true });
+
+  document.getElementById('shell').addEventListener('touchend', function(e) {
+    if (!dragging) return;
+    dragging = false;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 44) {
+      if (dx < 0 && current < TOTAL - 1) goTo(current + 1);
+      if (dx > 0 && current > 0) goTo(current - 1);
+    }
+  }, { passive: true });
+
+  /* ── Keyboard nav (for desktop preview) ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') advance();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { if (current > 0) goTo(current - 1); }
+    if (e.key === 'Enter') { current === TOTAL - 1 ? finish() : advance(); }
+  });
+</script>
+
+</body>
+</html>

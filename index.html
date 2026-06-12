@@ -76,9 +76,7 @@
     padding: 18px 48px;
     display: flex; justify-content: space-between; align-items: center;
     z-index: 500;
-    background: linear-gradient(to bottom, rgba(4,46,48,0.92) 0%, rgba(4,46,48,0.60) 60%, transparent 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(to bottom, rgba(4,46,48,0.97) 0%, transparent 100%);
   }
   .nav-logo {
     font-family: 'Bebas Neue', sans-serif;
@@ -198,18 +196,7 @@
     backdrop-filter: blur(4px);
     position: relative;
   }
-  .vel-item::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: 1px solid transparent;
-    background:
-      linear-gradient(rgba(5,54,56,0), rgba(5,54,56,0)) padding-box,
-      linear-gradient(135deg, rgba(255,91,4,0.55), rgba(255,230,225,0.10), rgba(254,209,106,0.35)) border-box;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .vel-item:not(:last-child)::before { border-right-color: transparent; }
+  .vel-item:not(:last-child) { border-right: 1px solid rgba(255,230,225,0.12); }
   .vel-num {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(36px, 5vw, 56px);
@@ -253,8 +240,7 @@
   }
   .scroll-line {
     width: 50px; height: 1px;
-    background: linear-gradient(to right, var(--orange), transparent);
-    animation: scrollPulse 2s ease infinite;
+    background: rgba(255,230,225,0.35);
   }
   @media (max-width: 768px) {
     .hero { padding: 120px 24px 80px; }
@@ -450,7 +436,7 @@
     position: absolute;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 28vw;
-    color: rgba(255,91,4,0.07);
+    color: rgba(255,91,4,0);
     pointer-events: none;
     white-space: nowrap;
     top: 50%; left: 50%;
@@ -648,8 +634,8 @@
     to   { opacity:1; transform:translateY(0); }
   }
   @keyframes scrollPulse {
-    0%,100% { opacity:.35; width: 50px; }
-    50%      { opacity:1;   width: 68px; }
+    0%,100% { opacity:.35; }
+    50%      { opacity:1; }
   }
   .reveal { opacity:0; transform:translateY(36px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.visible { opacity:1; transform:translateY(0); }
@@ -811,103 +797,69 @@
       </div>
     </div>
 
-    <div class="project-card stagger-child" onclick="openCase('lc')" style="cursor:pointer;">
+    <div class="project-card stagger-child" onclick="window.location.href='little-caesars/'" style="cursor:pointer;">
       <div class="p-num">02 / 10</div>
-      <div class="p-screenshot" style="padding:10px 12px; background:#080808; border-color:rgba(244,115,33,0.18); display:flex; flex-direction:column; gap:6px; aspect-ratio:unset; height:220px;">
-
-        <!-- Labels row -->
-        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-          <div style="flex:1;text-align:center;font-family:'Space Mono',monospace;font-size:7px;font-weight:700;color:#F87171;letter-spacing:1.2px;text-transform:uppercase;">BEFORE — ACTUAL APP</div>
-          <div style="width:16px;flex-shrink:0;"></div>
-          <div style="flex:1;text-align:center;font-family:'Space Mono',monospace;font-size:7px;font-weight:700;color:#4ADE80;letter-spacing:1.2px;text-transform:uppercase;">AFTER — INTERACTIVE</div>
+      <div class="p-screenshot" style="padding:0; background:#f5f5f5; border-color:rgba(244,115,33,0.30); overflow:hidden; aspect-ratio:unset; height:220px; display:flex; flex-direction:column; font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
+        <!-- Status bar -->
+        <div style="background:#F47321;padding:9px 14px 3px;display:flex;justify-content:space-between;flex-shrink:0;">
+          <span style="font-size:7.5px;font-weight:700;color:rgba(255,255,255,0.9);">9:41</span>
+          <span style="font-size:7px;color:rgba(255,255,255,0.8);">&#9679;&#9679;&#9679;</span>
         </div>
-
-        <!-- Phones row -->
-        <div style="display:flex;gap:10px;align-items:flex-start;flex:1;min-height:0;">
-
-          <!-- BEFORE: real screenshot -->
-          <div style="flex:1;border-radius:10px;overflow:hidden;border:1px solid #2a2a2a;min-width:0;height:100%;position:relative;">
-            <img src="little-caesars/original/20260527_145816000_iOS.png" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
-          </div>
-
-          <!-- Arrow -->
-          <div style="display:flex;align-items:center;flex-shrink:0;color:rgba(244,115,33,0.65);font-size:15px;height:100%;padding-bottom:4px;">→</div>
-
-          <!-- AFTER: CSS art of redesigned screen -->
-          <div style="flex:1;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;background:#f0f0f0;border:1px solid rgba(244,115,33,0.3);min-width:0;height:100%;">
-            <!-- Header redesigned -->
-            <div style="background:#F47321;padding:5px 7px 4px;flex-shrink:0;">
-              <div style="display:flex;align-items:center;gap:3px;">
-                <div style="width:14px;height:14px;background:rgba(0,0,0,0.22);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><span style="font-size:5px;font-weight:900;color:white;font-family:'Bebas Neue',sans-serif;letter-spacing:0.5px;">LC</span></div>
-                <div style="flex:1;background:rgba(0,0,0,0.15);border-radius:4px;height:12px;display:flex;align-items:center;gap:2px;padding:0 5px;">
-                  <div style="width:3px;height:3px;background:rgba(255,255,255,0.65);border-radius:50%;flex-shrink:0;"></div>
-                  <div style="flex:1;height:2px;background:rgba(255,255,255,0.45);border-radius:1px;"></div>
-                </div>
-                <div style="width:14px;height:14px;background:rgba(0,0,0,0.15);border-radius:3px;flex-shrink:0;"></div>
-              </div>
+        <!-- Orange header -->
+        <div style="background:#F47321;padding:2px 14px 10px;flex-shrink:0;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.80);margin-bottom:2px;">Hey, Will &#x1F355;</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:0.8px;color:#fff;line-height:1.05;">READY FOR A<br>HOT-N-READY?</div>
             </div>
-            <!-- Greeting -->
-            <div style="padding:5px 6px 3px;flex-shrink:0;">
-              <div style="height:4px;background:#333;border-radius:2px;width:55%;margin-bottom:2px;"></div>
-              <div style="height:3px;background:#ccc;border-radius:2px;width:38%;"></div>
-            </div>
-            <!-- Screen content -->
-            <div style="flex:1;padding:3px 5px 5px;display:flex;flex-direction:column;gap:3px;overflow:hidden;">
-              <!-- HNR green card -->
-              <div style="background:#16A34A;border-radius:5px;padding:4px 6px;display:flex;align-items:center;gap:4px;flex-shrink:0;">
-                <div style="width:10px;height:10px;background:rgba(255,255,255,0.25);border-radius:2px;flex-shrink:0;"></div>
-                <div style="flex:1;"><div style="height:3px;background:rgba(255,255,255,0.8);border-radius:1px;margin-bottom:1.5px;width:55%;"></div><div style="height:2px;background:rgba(255,255,255,0.4);border-radius:1px;width:38%;"></div></div>
-                <div style="font-size:7px;font-weight:900;color:white;flex-shrink:0;font-family:'Space Mono',monospace;">$5</div>
-              </div>
-              <!-- Category chips -->
-              <div style="display:flex;gap:2px;flex-shrink:0;">
-                <div style="background:#F47321;border-radius:8px;padding:2px 6px;flex-shrink:0;"><span style="font-size:5.5px;font-weight:700;color:white;font-family:'Space Mono',monospace;">All</span></div>
-                <div style="background:white;border-radius:8px;padding:2px 5px;border:1px solid #ddd;flex-shrink:0;"><span style="font-size:5.5px;color:#999;font-family:'Space Mono',monospace;">Pizza</span></div>
-                <div style="background:white;border-radius:8px;padding:2px 5px;border:1px solid #ddd;flex-shrink:0;"><span style="font-size:5.5px;color:#999;font-family:'Space Mono',monospace;">Wings</span></div>
-              </div>
-              <!-- Menu item 1 -->
-              <div style="background:white;border-radius:5px;padding:4px 5px;display:flex;align-items:center;gap:4px;border:1px solid #e8e8e8;flex-shrink:0;">
-                <div style="width:20px;height:20px;background:#FFF3EB;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><div style="width:11px;height:11px;border-radius:50%;background:rgba(244,115,33,0.25);"></div></div>
-                <div style="flex:1;min-width:0;"><div style="height:3px;background:#ddd;border-radius:1px;margin-bottom:2px;width:75%;"></div><div style="height:2px;background:#e8e8e8;border-radius:1px;width:45%;"></div></div>
-                <div style="font-size:6.5px;font-weight:800;color:#F47321;flex-shrink:0;font-family:'Space Mono',monospace;">$6</div>
-              </div>
-              <!-- Menu item 2 -->
-              <div style="background:white;border-radius:5px;padding:4px 5px;display:flex;align-items:center;gap:4px;border:1px solid #e8e8e8;flex-shrink:0;">
-                <div style="width:20px;height:20px;background:#FFF3EB;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><div style="width:11px;height:11px;border-radius:50%;background:rgba(244,115,33,0.25);"></div></div>
-                <div style="flex:1;min-width:0;"><div style="height:3px;background:#ddd;border-radius:1px;margin-bottom:2px;width:60%;"></div><div style="height:2px;background:#e8e8e8;border-radius:1px;width:35%;"></div></div>
-                <div style="font-size:6.5px;font-weight:800;color:#F47321;flex-shrink:0;font-family:'Space Mono',monospace;">$9</div>
-              </div>
-            </div>
-            <!-- New 5-tab nav with orange center -->
-            <div style="background:white;flex-shrink:0;display:flex;align-items:center;padding:4px 0 3px;border-top:1px solid #eee;">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1.5px;"><div style="width:7px;height:7px;background:#ddd;border-radius:1px;"></div><div style="height:2px;width:10px;background:#eee;border-radius:1px;"></div></div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1.5px;"><div style="width:7px;height:7px;background:#ddd;border-radius:1px;"></div><div style="height:2px;width:10px;background:#eee;border-radius:1px;"></div></div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1.5px;margin-top:-7px;"><div style="width:16px;height:16px;background:#F47321;border-radius:50%;border:2px solid white;box-shadow:0 0 0 1px #e8e8e8;"></div><div style="height:2px;width:10px;background:#FFF3EB;border-radius:1px;"></div></div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1.5px;"><div style="width:7px;height:7px;background:#ddd;border-radius:1px;"></div><div style="height:2px;width:10px;background:#eee;border-radius:1px;"></div></div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1.5px;"><div style="width:7px;height:7px;background:#ddd;border-radius:1px;"></div><div style="height:2px;width:10px;background:#eee;border-radius:1px;"></div></div>
+            <div style="width:30px;height:30px;background:rgba(0,0,0,0.18);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:14px;">&#x1F355;</span>
             </div>
           </div>
-
+          <div style="display:inline-flex;align-items:center;gap:3px;background:rgba(0,0,0,0.18);border-radius:8px;padding:2px 7px;margin-top:6px;">
+            <div style="width:4px;height:4px;background:#1db954;border-radius:50%;flex-shrink:0;"></div>
+            <span style="font-size:6.5px;color:rgba(255,255,255,0.9);font-weight:600;">Michigan Ave &middot; Open</span>
+          </div>
+        </div>
+        <!-- Content area -->
+        <div style="flex:1;background:#f7f7f7;overflow:hidden;display:flex;flex-direction:column;padding:7px 8px;gap:5px;">
+          <!-- Hot-N-Ready card -->
+          <div style="background:#16A34A;border-radius:8px;padding:6px 9px;display:flex;align-items:center;gap:6px;flex-shrink:0;">
+            <div style="flex:1;">
+              <div style="font-size:5.5px;font-weight:600;color:rgba(255,255,255,0.75);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:1px;">Hot&middot;N&middot;Ready Status</div>
+              <div style="font-size:8px;font-weight:800;color:#fff;">Ready Now! &middot; 2 left</div>
+            </div>
+            <div style="font-size:11px;font-weight:900;color:#fff;font-family:'Space Mono',monospace;">$5</div>
+          </div>
+          <!-- Section label -->
+          <div style="font-size:7.5px;font-weight:700;color:#222;">What are you craving?</div>
+          <!-- 3x2 category grid -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;flex-shrink:0;">
+            <div style="background:#fff;border-radius:5px;padding:5px 3px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.07);"><div style="font-size:11px;margin-bottom:1px;">&#x1F355;</div><div style="font-size:6px;color:#333;font-weight:600;">Pizza</div></div>
+            <div style="background:#fff;border-radius:5px;padding:5px 3px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.07);"><div style="font-size:11px;margin-bottom:1px;">&#x1F357;</div><div style="font-size:6px;color:#333;font-weight:600;">Wings</div></div>
+            <div style="background:#fff;border-radius:5px;padding:5px 3px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.07);"><div style="font-size:11px;margin-bottom:1px;">&#x1F956;</div><div style="font-size:6px;color:#333;font-weight:600;">Bread</div></div>
+            <div style="background:#fff;border-radius:5px;padding:5px 3px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.07);"><div style="font-size:11px;margin-bottom:1px;">&#x1F957;</div><div style="font-size:6px;color:#333;font-weight:600;">Sides</div></div>
+            <div style="background:#fff;border-radius:5px;padding:5px 3px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.07);"><div style="font-size:11px;margin-bottom:1px;">&#x1F964;</div><div style="font-size:6px;color:#333;font-weight:600;">Drinks</div></div>
+            <div style="background:#fff;border-radius:5px;padding:5px 3px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.07);"><div style="font-size:11px;margin-bottom:1px;">&#x1F3AB;</div><div style="font-size:6px;color:#333;font-weight:600;">Deals</div></div>
+          </div>
+        </div>
+        <!-- Bottom nav -->
+        <div style="background:#fff;border-top:1px solid #eee;display:flex;align-items:center;padding:4px 0 5px;flex-shrink:0;">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;"><div style="width:10px;height:10px;background:#F47321;border-radius:2px;opacity:0.8;"></div><div style="height:1.5px;width:11px;background:#F47321;border-radius:1px;opacity:0.5;"></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;"><div style="width:10px;height:10px;background:#e0e0e0;border-radius:2px;"></div><div style="height:1.5px;width:11px;background:#e8e8e8;border-radius:1px;"></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;margin-top:-8px;"><div style="width:20px;height:20px;background:#F47321;border-radius:50%;box-shadow:0 2px 6px rgba(244,115,33,0.45);display:flex;align-items:center;justify-content:center;"><span style="font-size:11px;font-weight:900;color:white;line-height:1;">+</span></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;"><div style="width:10px;height:10px;background:#e0e0e0;border-radius:2px;"></div><div style="height:1.5px;width:11px;background:#e8e8e8;border-radius:1px;"></div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;"><div style="width:10px;height:10px;background:#e0e0e0;border-radius:2px;"></div><div style="height:1.5px;width:11px;background:#e8e8e8;border-radius:1px;"></div></div>
         </div>
       </div>
-      <div class="p-name">Little Caesars</div>
-      <div class="p-type">Mobile App Redesign · Speculative</div>
-      <p class="p-desc">A full redesign of the Little Caesars mobile ordering app. Seven screens, side-by-side before/after documentation with real screenshots from a live account, and a fully interactive prototype covering the complete order flow — browse, customize, cart, checkout, and tracking.</p>
-      <div class="p-footer">
-        <div class="p-tags">
-          <span class="p-tag">UX Design</span>
-          <span class="p-tag prototype">Live Prototype</span>
-          <span class="p-tag client">Speculative</span>
-        </div>
-        <div class="p-actions">
-          <a href="#" class="p-case-link" onclick="openCase('lc');return false;">Case Study →</a>
+          <a href="little-caesars/" class="p-case-link">Case Study &#x2192;</a>
         </div>
       </div>
     </div>
 
     <div class="project-card stagger-child" onclick="openCase('cutman')" style="cursor:pointer;">
       <div class="p-num">03 / 10</div>
-      <div class="p-screenshot" style="background:#0A0A0A; border-color:rgba(232,39,42,0.2); position:relative; overflow:hidden; padding:0; display:flex; flex-direction:column; aspect-ratio:unset; height:220px; font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;">
+      <div class="p-screenshot" style="background:#0A0A0A; border-color:rgba(232,39,42,0.2); position:relative; overflow:hidden; padding:0; display:flex; flex-direction:column; font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px 8px;background:#0A0A0A;flex-shrink:0">
           <div style="font-size:16px;font-weight:900;color:#fff;letter-spacing:-0.03em">Cutman</div>
           <div style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.35)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
@@ -1494,48 +1446,6 @@
     <div class="cs-section-head">Why This Matters</div>
     <p class="cs-body">Iron Arc is proof of two things: that the best brand work comes from listening to who the client actually is, and that good systems are worth more than one use. The work shipped. The pivot shipped. Both count.</p>
     <div class="cs-divider"></div>
-  </div>
-</div>
-
-<div class="case-overlay" id="case-lc">
-  <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">&#x2715; &nbsp;Close</button>
-  <div class="case-inner">
-    <div class="cs-eyebrow">Case Study, 01 / 10 &middot; Speculative</div>
-    <div class="cs-title">Little Caesars</div>
-    <div class="cs-subtitle">Mobile App Redesign &middot; 7 Screens &middot; Interactive Prototype</div>
-    <div class="cs-tags">
-      <span class="cs-tag">UX Design</span><span class="cs-tag">Mobile App</span><span class="cs-tag">Before &amp; After</span><span class="cs-tag">Interactive Prototype</span><span class="cs-tag">Speculative</span>
-    </div>
-    <a href="little-caesars/" target="_blank" class="cs-link" style="margin-right:24px">View Full Case Study &#x2192;</a>
-    <a href="little-caesars/01-home-screen.html?mode=prototype" target="_blank" class="cs-link">Launch Interactive Prototype &#x2192;</a>
-    <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">The Little Caesars app has a conversion problem hiding in plain sight. Before a user can see a single menu item, they&rsquo;re forced through four sequential commitment screens: choose Pick-Up or Delivery, select a location, set a pickup time &mdash; and only then does the menu appear.</p>
-    <p class="cs-body" style="margin-top:10px">There&rsquo;s no browse mode. No way to check prices or decide what you want before committing to a location and order type. Users who just want to look around have nowhere to go. So they leave.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Four gate screens before a menu isn&rsquo;t a UX quirk &mdash; it&rsquo;s abandoned carts.</strong></p>
-    <div class="cs-divider"></div>
-    <div class="cs-section-head">The Approach</div>
-    <p class="cs-body">Rather than a full rebrand, this redesign targets the specific friction points. Seven screens redesigned with side-by-side documentation &mdash; every before screen is a real screenshot from a live account, paired with the redesigned version and annotated callouts explaining exactly what changed and why.</p>
-    <p class="cs-body" style="margin-top:10px">The interactive prototype covers the complete order flow in a single HTML file: browse, customize, cart, checkout, and order tracking. No Figma handoff theater &mdash; a fully clickable product.</p>
-    <div class="cs-section-head">Key Design Decisions</div>
-    <p class="cs-body"><strong>Menu access with zero commitment.</strong> One tap from the home screen gets you to the full menu &mdash; no location, no order type, no schedule required. Browse first, commit when you&rsquo;re ready. Removes the single biggest drop-off point in the flow.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Context-aware item detail sheet.</strong> A single adaptive component handles pizza, wings, sides, drinks, and combos &mdash; instead of separate templates per category that drift out of sync and create inconsistent experiences.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Caesar Crown loyalty surfaced, not buried.</strong> Points balance visible on the account screen. Active deals promoted to the main nav. Previously hidden under a sub-tab most users never found &mdash; a loyalty program that&rsquo;s invisible isn&rsquo;t a retention tool.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Real data throughout.</strong> Every screen uses actual rewards, actual store data, and actual order history &mdash; not lorem ipsum. The redesign had to work with the real product, not around it.</p>
-    <div class="cs-grid-2">
-      <div class="cs-stat-box"><div class="cs-stat-num">4</div><div class="cs-stat-label">Gate Screens Removed</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">7</div><div class="cs-stat-label">Screens Redesigned</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">1</div><div class="cs-stat-label">Tap to Browse (was 4)</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">100%</div><div class="cs-stat-label">Real Data, No Lorem Ipsum</div></div>
-    </div>
-    <div class="cs-section-head">The Tradeoffs</div>
-    <p class="cs-body"><strong>Browse-first vs. location-first:</strong> The obvious counter-argument is that Little Caesars needs your location to show accurate pricing and availability. We considered keeping location as step one. The tradeoff: a small percentage of menu items vary by location, but 100% of users hit the gate. The decision was to let people browse the full menu freely and only ask for location at the point of ordering &mdash; when they&rsquo;ve already decided they want something. Commitment after intent, not before it.</p>
-    <p class="cs-body" style="margin-top:10px"><strong>Single component vs. category templates:</strong> Building one adaptive item detail sheet instead of separate templates per category means slightly more complex logic for edge cases like combos. The tradeoff was worth it &mdash; separate templates drift out of sync over time and create inconsistent experiences. One source of truth, maintained in one place, is the right long-term call even if it&rsquo;s harder to build initially.</p>
-    <div class="cs-section-head">The Result</div>
-    <p class="cs-body">A redesigned flow that gets users to the menu in a single tap, eliminates the pre-commitment friction that drives abandonment, and makes the Caesar Crown loyalty program visible enough to actually influence behavior. The before/after documentation shows not just what changed but why &mdash; each decision traced back to a specific user friction point.</p>
-    <p class="cs-body" style="margin-top:10px">This is speculative work built with the LC design team in mind. The goal wasn&rsquo;t to reimagine the brand &mdash; it was to demonstrate exactly what I&rsquo;d fix and why, backed by working prototypes and documented rationale. This is what day one looks like.</p>
-    <p class="cs-body" style="margin-top:10px">At LC&rsquo;s order volume, shaving even a fraction of abandonment off a four-screen gate isn&rsquo;t a UX win &mdash; it&rsquo;s a revenue story. That&rsquo;s the case this redesign makes.</p>
-    <p class="cs-body" style="margin-top:10px; color: var(--gold); font-style: italic;">If you&rsquo;re on the LC team and reading this: hi.</p>
   </div>
 </div>
 

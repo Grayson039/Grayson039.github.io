@@ -137,14 +137,14 @@
   ];
 
   var BROWSE_CATEGORIES = [
-    { emoji: '🍝', label: 'Italian' },
-    { emoji: '🥢', label: 'Asian' },
-    { emoji: '🌮', label: 'Mexican' },
-    { emoji: '🥗', label: 'Healthy' },
-    { emoji: '⚡', label: 'Quick' },
-    { emoji: '🍲', label: 'Comfort' },
-    { emoji: '🥐', label: 'Baking' },
-    { emoji: '🥩', label: 'Grilling' }
+    { emoji: '🍝', label: 'Italian',  color: '#E86040' },
+    { emoji: '🥢', label: 'Asian',    color: '#E8A040' },
+    { emoji: '🌮', label: 'Mexican',  color: '#40A888' },
+    { emoji: '🥗', label: 'Healthy',  color: '#50A850' },
+    { emoji: '⚡', label: 'Quick',    color: '#7060C4' },
+    { emoji: '🍲', label: 'Comfort',  color: '#C47840' },
+    { emoji: '🥐', label: 'Baking',   color: '#C44880' },
+    { emoji: '🥩', label: 'Grilling', color: '#4878B8' }
   ];
 
   var TRENDING = [
@@ -298,10 +298,13 @@
 
   /* Category pill for browse grid */
   function categoryPill(th, cat) {
+    var isDark = th._name === 'dark';
+    var bg     = cat.color ? cat.color + (isDark ? '28' : '18') : th.card;
+    var border = cat.color ? cat.color + '44' : th.border;
     return '<div onclick="otGo(\'searchResults\')" style="display:flex;flex-direction:column;' +
       'align-items:center;gap:5px;cursor:pointer;padding:10px 6px;' +
-      'background:' + th.card + ';border-radius:' + R.md + ';' +
-      'border:1px solid ' + th.border + ';box-shadow:0 2px 6px rgba(0,0,0,0.06)">' +
+      'background:' + bg + ';border-radius:' + R.md + ';' +
+      'border:1px solid ' + border + ';box-shadow:0 2px 6px rgba(0,0,0,0.06)">' +
       '<span style="font-size:22px">' + cat.emoji + '</span>' +
       '<span style="font-size:10px;font-weight:600;color:' + th.text + ';text-align:center">' + cat.label + '</span>' +
     '</div>';
@@ -366,8 +369,8 @@
       var active = chip === activeChip;
       html += '<div onclick="otFilterHome(\'' + chip + '\')" style="flex-shrink:0;padding:6px 14px;' +
         'border-radius:' + R.pill + ';font-size:11px;font-weight:' + (active ? T.wt.semi : T.wt.reg) + ';' +
-        'background:' + (active ? th.primary : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
-        'cursor:pointer;white-space:nowrap;border:1px solid ' + (active ? th.primary : th.border) + '">' +
+        'background:' + (active ? (th.teal || th.primary) : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
+        'cursor:pointer;white-space:nowrap;border:1px solid ' + (active ? (th.teal || th.primary) : th.border) + '">' +
         chip + '</div>';
     });
     return html + '</div>';
@@ -549,8 +552,8 @@
             var active = f === activeFilter;
             return '<div onclick="otSearchFilter(\'' + f + '\')" style="flex-shrink:0;padding:5px 13px;' +
               'border-radius:' + R.pill + ';font-size:11px;font-weight:' + (active ? T.wt.semi : T.wt.reg) + ';' +
-              'background:' + (active ? th.primary : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
-              'cursor:pointer;border:1px solid ' + (active ? th.primary : th.border) + '">' + f + '</div>';
+              'background:' + (active ? (th.teal || th.primary) : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
+              'cursor:pointer;border:1px solid ' + (active ? (th.teal || th.primary) : th.border) + '">' + f + '</div>';
           }).join('') +
         '</div>' +
       '</div>' +
@@ -602,8 +605,8 @@
             var active = s === activeSort;
             return '<div onclick="otLibrarySort(\'' + s + '\')" style="flex-shrink:0;padding:5px 13px;' +
               'border-radius:' + R.pill + ';font-size:11px;font-weight:' + (active ? T.wt.semi : T.wt.reg) + ';' +
-              'background:' + (active ? th.primary : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
-              'cursor:pointer;border:1px solid ' + (active ? th.primary : th.border) + '">' + s + '</div>';
+              'background:' + (active ? (th.teal || th.primary) : th.chip) + ';color:' + (active ? 'white' : th.chipTx) + ';' +
+              'cursor:pointer;border:1px solid ' + (active ? (th.teal || th.primary) : th.border) + '">' + s + '</div>';
           }).join('') +
         '</div>' +
       '</div>' +

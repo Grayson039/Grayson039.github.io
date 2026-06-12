@@ -647,6 +647,64 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 @media(max-width:600px){.tos-footer{padding:6px 16px;}.exec-grid{grid-template-columns:repeat(2,1fr);}}
 
+/* ─── REQUESTS SCREEN ─── */
+.top-nav{position:sticky;top:0;z-index:100;background:rgba(20,20,22,0.98);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.nav-brand{font-family:'Playfair Display',serif;font-size:17px;font-weight:900;color:#fff;}
+.nav-brand span{color:var(--cyan);}
+.nav-actions{display:flex;gap:8px;align-items:center;}
+.nav-btn{padding:6px 13px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--sub);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;}
+.nav-btn:hover{color:var(--text);border-color:rgba(255,255,255,0.2);}
+.nav-btn.accent{color:var(--cyan);background:rgba(62,237,231,0.07);border-color:rgba(62,237,231,0.22);}
+
+.req-wrap{max-width:680px;margin:0 auto;padding:32px 20px 64px;}
+.req-eyebrow{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;}
+.req-heading{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;}
+.req-sub{font-size:13px;color:var(--sub);line-height:1.65;margin-bottom:28px;}
+
+.req-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:14px;transition:border-color .3s,opacity .3s;}
+.req-card.approved{border-color:rgba(76,175,125,0.35);}
+.req-card.declined{opacity:0.45;}
+
+.req-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;}
+.req-reader{display:flex;align-items:center;gap:11px;margin-bottom:10px;}
+.req-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.req-name{font-size:14px;font-weight:800;color:#fff;margin-bottom:2px;}
+.req-role{font-size:11px;color:var(--sub);}
+.req-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.req-badge{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;}
+.rb-green{background:rgba(76,175,125,0.1);color:var(--green);border:1px solid rgba(76,175,125,0.2);}
+.rb-amber{background:rgba(255,200,50,0.1);color:#F4C430;border:1px solid rgba(255,200,50,0.2);}
+.req-note{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:12px;color:rgba(255,255,255,0.5);font-style:italic;line-height:1.65;}
+.req-meta{text-align:right;flex-shrink:0;}
+.req-meta-label{font-size:9px;color:var(--sub);margin-bottom:3px;}
+.req-meta-date{font-size:11px;font-weight:700;color:#fff;margin-bottom:6px;}
+.req-timer{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;}
+.rt-urgent{color:var(--amber);background:rgba(232,146,58,0.1);}
+.rt-ok{color:var(--green);background:rgba(76,175,125,0.1);}
+
+.req-actions{display:flex;gap:10px;}
+.req-approve{flex:1;padding:11px;border-radius:9px;border:none;background:var(--cyan);color:#0F0F0F;font-size:12px;font-weight:800;cursor:pointer;transition:all .15s;}
+.req-approve:hover{background:#5ff5ef;transform:translateY(-1px);}
+.req-decline{padding:11px 20px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.req-decline:hover{color:#fff;border-color:rgba(255,255,255,0.25);}
+
+.req-approved-state{display:flex;align-items:flex-start;gap:12px;background:rgba(76,175,125,0.06);border:1px solid rgba(76,175,125,0.2);border-radius:10px;padding:14px;}
+.req-approved-icon{width:32px;height:32px;border-radius:8px;background:rgba(76,175,125,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.req-approved-title{font-size:12px;font-weight:800;color:var(--green);margin-bottom:4px;}
+.req-approved-detail{font-size:11px;color:var(--sub);line-height:1.6;}
+.req-approved-contact{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:700;color:var(--cyan);background:rgba(62,237,231,0.07);border:1px solid rgba(62,237,231,0.2);border-radius:6px;padding:4px 10px;}
+
+.req-declined-state{display:flex;align-items:center;gap:10px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--sub);}
+
+.req-policy{background:rgba(62,237,231,0.04);border:1px solid rgba(62,237,231,0.12);border-radius:10px;padding:14px 16px;font-size:11px;color:rgba(255,255,255,0.38);line-height:1.7;margin-top:8px;}
+.req-policy strong{color:rgba(62,237,231,0.65);}
+
+.req-empty{text-align:center;padding:60px 20px;display:none;}
+.req-empty.show{display:block;}
+.req-empty-icon{font-size:40px;margin-bottom:16px;}
+.req-empty-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;}
+.req-empty-sub{font-size:13px;color:var(--sub);margin-bottom:24px;line-height:1.65;}
+
 /* ─── VISUAL POLISH ─── */
 
 /* Focus states — keyboard nav + accessibility */
@@ -2650,81 +2708,86 @@ She grabs her jacket.</textarea>
       <button class="nav-btn" onclick="goTo('report')">&#8592; Back to Report</button>
     </div>
   </nav>
-  <div class="screen-inner" style="max-width:680px;margin:0 auto;padding:32px 20px;">
 
-    <div style="margin-bottom:28px;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;">My Listing &mdash; Pending Requests</div>
-      <h2 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;">2 Pending Requests</h2>
-      <p style="font-size:13px;color:var(--sub);line-height:1.65;">You have 72 hours to respond to each request. No response = auto-decline. Approving gives read-only access for 14 days &mdash; no rights transfer.</p>
-    </div>
+  <div class="req-wrap">
 
-    <!-- Request 1 -->
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;">
-        <div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#053154,#0a4a7a);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--cyan);flex-shrink:0;">JM</div>
+    <div class="req-eyebrow">Discovery Dashboard &mdash; My Listing</div>
+    <h2 class="req-heading" id="req-heading">2 Pending Requests</h2>
+    <p class="req-sub">You have 72 hours to respond to each request. No response = auto-decline. Approving gives read-only access for 14 days — no rights transfer.</p>
+
+    <!-- Request 1: Jordan Meyers / A24 -->
+    <div class="req-card" id="req-card-1">
+      <div class="req-card-top">
+        <div style="flex:1;min-width:0;">
+          <div class="req-reader">
+            <div class="req-avatar" style="background:linear-gradient(135deg,#053154,#0a4a7a);color:var(--cyan);">JM</div>
             <div>
-              <div style="font-size:14px;font-weight:800;color:#fff;">Jordan Meyers</div>
-              <div style="font-size:10px;color:var(--sub);">Development Executive &mdash; A24</div>
+              <div class="req-name">Jordan Meyers</div>
+              <div class="req-role">Development Executive &mdash; A24</div>
             </div>
           </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
-            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; IMDbPro Verified</span>
-            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; Company Email</span>
-            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; LinkedIn</span>
+          <div class="req-badges">
+            <span class="req-badge rb-green">&#10003; IMDbPro Verified</span>
+            <span class="req-badge rb-green">&#10003; Company Email</span>
+            <span class="req-badge rb-green">&#10003; LinkedIn</span>
           </div>
-          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:rgba(255,255,255,0.55);font-style:italic;line-height:1.6;">"The logline caught my eye &mdash; we're actively developing projects in this space. Would love to read the full draft."</div>
+          <div class="req-note">"The logline caught my eye &mdash; we're actively developing projects in this space. Would love to read the full draft."</div>
         </div>
-        <div style="text-align:right;flex-shrink:0;">
-          <div style="font-size:9px;color:var(--sub);margin-bottom:4px;">Requested</div>
-          <div style="font-size:11px;font-weight:700;color:#fff;">June 7, 2026</div>
-          <div style="font-size:9px;color:var(--amber);margin-top:6px;font-weight:700;">51 hrs left</div>
+        <div class="req-meta">
+          <div class="req-meta-label">Requested</div>
+          <div class="req-meta-date">June 7, 2026</div>
+          <div class="req-timer rt-urgent">51 hrs left</div>
         </div>
       </div>
-      <div style="display:flex;gap:10px;">
-        <button onclick="approveRequest(this,'req1')" style="flex:1;padding:10px;border-radius:9px;border:none;background:var(--cyan);color:#0F0F0F;font-size:12px;font-weight:800;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#5ff5ef'" onmouseout="this.style.background='var(--cyan)'">Approve &mdash; 14-Day Access</button>
-        <button onclick="declineRequest(this,'req1')" style="padding:10px 20px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--sub)'">Decline</button>
+      <div class="req-actions" id="req-actions-1">
+        <button class="req-approve" onclick="approveRequest(1,'Jordan Meyers','A24','jmeyers@a24films.com')">Approve &mdash; 14-Day Access</button>
+        <button class="req-decline" onclick="declineRequest(1)">Decline</button>
       </div>
     </div>
 
-    <!-- Request 2 -->
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:28px;">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;">
-        <div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2a1a05,#5a3a10);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--amber);flex-shrink:0;">SR</div>
+    <!-- Request 2: Sofia Reyes / Blumhouse -->
+    <div class="req-card" id="req-card-2">
+      <div class="req-card-top">
+        <div style="flex:1;min-width:0;">
+          <div class="req-reader">
+            <div class="req-avatar" style="background:linear-gradient(135deg,#2a1a05,#5a3a10);color:var(--amber);">SR</div>
             <div>
-              <div style="font-size:14px;font-weight:800;color:#fff;">Sofia Reyes</div>
-              <div style="font-size:10px;color:var(--sub);">Creative Executive &mdash; Blumhouse Productions</div>
+              <div class="req-name">Sofia Reyes</div>
+              <div class="req-role">Creative Executive &mdash; Blumhouse Productions</div>
             </div>
           </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
-            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; IMDbPro Verified</span>
-            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(76,175,125,0.1);color:#4CAF7D;border:1px solid rgba(76,175,125,0.2);">&#10003; Company Email</span>
-            <span style="font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:rgba(255,200,50,0.1);color:#F4C430;border:1px solid rgba(255,200,50,0.2);">&#9679; LinkedIn Pending</span>
+          <div class="req-badges">
+            <span class="req-badge rb-green">&#10003; IMDbPro Verified</span>
+            <span class="req-badge rb-green">&#10003; Company Email</span>
+            <span class="req-badge rb-amber">&#9679; LinkedIn Pending</span>
           </div>
-          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:rgba(255,255,255,0.55);font-style:italic;line-height:1.6;">"Strong concept and DNA comps. Blumhouse is always looking for contained, high-tension features. Happy to give feedback either way."</div>
+          <div class="req-note">"Strong concept and DNA comps. Blumhouse is always looking for contained, high-tension features. Happy to give feedback either way."</div>
         </div>
-        <div style="text-align:right;flex-shrink:0;">
-          <div style="font-size:9px;color:var(--sub);margin-bottom:4px;">Requested</div>
-          <div style="font-size:11px;font-weight:700;color:#fff;">June 8, 2026</div>
-          <div style="font-size:9px;color:var(--green);margin-top:6px;font-weight:700;">68 hrs left</div>
+        <div class="req-meta">
+          <div class="req-meta-label">Requested</div>
+          <div class="req-meta-date">June 8, 2026</div>
+          <div class="req-timer rt-ok">68 hrs left</div>
         </div>
       </div>
-      <div style="display:flex;gap:10px;">
-        <button onclick="approveRequest(this,'req2')" style="flex:1;padding:10px;border-radius:9px;border:none;background:var(--cyan);color:#0F0F0F;font-size:12px;font-weight:800;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#5ff5ef'" onmouseout="this.style.background='var(--cyan)'">Approve &mdash; 14-Day Access</button>
-        <button onclick="declineRequest(this,'req2')" style="padding:10px 20px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--sub)'">Decline</button>
+      <div class="req-actions" id="req-actions-2">
+        <button class="req-approve" onclick="approveRequest(2,'Sofia Reyes','Blumhouse Productions','sreyes@blumhouse.com')">Approve &mdash; 14-Day Access</button>
+        <button class="req-decline" onclick="declineRequest(2)">Decline</button>
       </div>
     </div>
 
-    <!-- Policy reminder -->
-    <div style="background:rgba(62,237,231,0.04);border:1px solid rgba(62,237,231,0.12);border-radius:10px;padding:14px 16px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;">
-      <strong style="color:rgba(62,237,231,0.7);">Approval grants read-only access for 14 days.</strong> The reader receives your full script file. No rights transfer. Access expires automatically. You can revoke early from your Writer Profile. Contact preference: <strong style="color:rgba(255,255,255,0.5);">SceneOne Messaging</strong>.
+    <!-- Empty state -->
+    <div class="req-empty" id="req-empty">
+      <div class="req-empty-icon">&#10003;</div>
+      <div class="req-empty-title">You're all caught up.</div>
+      <div class="req-empty-sub">No pending requests. When industry readers find your listing and request access, they'll appear here.</div>
+      <button class="resub-btn" onclick="goTo('report')">Back to Report</button>
+    </div>
+
+    <div class="req-policy" id="req-policy">
+      <strong>Approval grants read-only access for 14 days.</strong> The reader receives your full script. No rights transfer. Access expires automatically. You can revoke early from your Writer Profile.
     </div>
 
   </div>
-</div>
 </div>
 
 <script>
@@ -3998,6 +4061,67 @@ function showGoodLuck() {
       overlay.style.transition = '';
     }, 800);
   }, 3200);
+}
+
+// ─── REQUEST REVIEW ───
+let _pendingCount = 2;
+
+function approveRequest(id, name, company, email) {
+  const card = document.getElementById('req-card-' + id);
+  const actions = document.getElementById('req-actions-' + id);
+  if (!card || !actions) return;
+
+  card.classList.add('approved');
+
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + 14);
+  const expiryStr = expiry.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  actions.innerHTML = `
+    <div class="req-approved-state">
+      <div class="req-approved-icon">&#10003;</div>
+      <div>
+        <div class="req-approved-title">Approved &mdash; 14-Day Access Granted</div>
+        <div class="req-approved-detail">${name} at ${company} can now read your script. Access expires ${expiryStr}.</div>
+        <div class="req-approved-contact">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          ${email}
+        </div>
+      </div>
+    </div>`;
+
+  _pendingCount--;
+  _updateRequestsHeader();
+}
+
+function declineRequest(id) {
+  const card = document.getElementById('req-card-' + id);
+  const actions = document.getElementById('req-actions-' + id);
+  if (!card || !actions) return;
+
+  card.classList.add('declined');
+  actions.innerHTML = `
+    <div class="req-declined-state">
+      <span style="font-size:16px;">&#8722;</span>
+      <span>Request declined. The reader has been notified. No further action needed.</span>
+    </div>`;
+
+  _pendingCount--;
+  _updateRequestsHeader();
+}
+
+function _updateRequestsHeader() {
+  const heading = document.getElementById('req-heading');
+  const empty = document.getElementById('req-empty');
+  const policy = document.getElementById('req-policy');
+
+  if (_pendingCount <= 0) {
+    if (heading) heading.textContent = 'All Requests Handled';
+    if (empty) empty.classList.add('show');
+    if (policy) policy.style.display = 'none';
+  } else {
+    if (heading) heading.textContent = _pendingCount + ' Pending Request' + (_pendingCount === 1 ? '' : 's');
+  }
 }
 
 // ─── READER MARKETPLACE ───

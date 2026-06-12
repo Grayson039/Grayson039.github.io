@@ -115,26 +115,23 @@
 
   var FEATURED = {
     title: 'Creamy Tuscan Salmon',
-    heroColor: null,  // uses gradient
-    time: '28 min',
-    rating: '4.9',
-    difficulty: 'Medium',
-    source: 'Web',
-    tags: ['High Protein', 'Dairy'],
-    servings: '4'
+    heroImg:   'https://loremflickr.com/800/400/salmon,food/all?lock=1',
+    heroColor: null,
+    time: '28 min', rating: '4.9', difficulty: 'Medium',
+    source: 'Web', tags: ['High Protein', 'Dairy'], servings: '4'
   };
 
   var SAVED_RECIPES = [
-    { title: 'Avocado Toast\nwith Poached Egg', heroColor: '#4A3580', time: '12 min', source: null },
-    { title: 'Thai Green\nCurry', heroColor: '#5A4898', time: '35 min', source: 'Instagram' },
-    { title: 'Birria Tacos', heroColor: '#9070C0', time: '3 hr', source: 'TikTok' },
-    { title: 'Miso Glazed\nEggplant', heroColor: '#3A2860', time: '22 min', source: 'Web' }
+    { title: 'Avocado Toast\nwith Poached Egg', heroImg: 'https://loremflickr.com/800/400/avocado,toast/all?lock=2',    heroColor: '#4A3580', time: '12 min', source: null },
+    { title: 'Thai Green\nCurry',               heroImg: 'https://loremflickr.com/800/400/curry,thai/all?lock=3',        heroColor: '#5A4898', time: '35 min', source: 'Instagram' },
+    { title: 'Birria Tacos',                    heroImg: 'https://loremflickr.com/800/400/tacos,mexican/all?lock=4',     heroColor: '#9070C0', time: '3 hr',   source: 'TikTok' },
+    { title: 'Miso Glazed\nEggplant',           heroImg: 'https://loremflickr.com/800/400/eggplant,food/all?lock=5',    heroColor: '#3A2860', time: '22 min', source: 'Web' }
   ];
 
   var SOCIAL_SAVES = [
-    { title: "Baked Feta Pasta", platform: 'TikTok', heroColor: '#A888CC', time: '30 min', saves: '2.1M' },
-    { title: "Dubai Chocolate\nBrownie", platform: 'Instagram', heroColor: '#261850', time: '45 min', saves: '890K' },
-    { title: "Viral Smash\nBurgers", platform: 'TikTok', heroColor: '#8060B0', time: '20 min', saves: '3.4M' }
+    { title: 'Baked Feta Pasta',       heroImg: 'https://loremflickr.com/800/400/pasta,italian/all?lock=6',    heroColor: '#A888CC', platform: 'TikTok',    time: '30 min', saves: '2.1M' },
+    { title: 'Dubai Chocolate\nBrownie', heroImg: 'https://loremflickr.com/800/400/brownie,chocolate/all?lock=7', heroColor: '#261850', platform: 'Instagram', time: '45 min', saves: '890K' },
+    { title: 'Viral Smash\nBurgers',   heroImg: 'https://loremflickr.com/800/400/burger,food/all?lock=8',      heroColor: '#8060B0', platform: 'TikTok',    time: '20 min', saves: '3.4M' }
   ];
 
   var BROWSE_CATEGORIES = [
@@ -149,23 +146,23 @@
   ];
 
   var TRENDING = [
-    { title: 'Cucumber Salad', heroColor: '#5A4898', time: '10 min', rating: '4.8' },
-    { title: 'Marry Me Chicken', heroColor: '#B898D8', time: '32 min', rating: '4.9' },
-    { title: 'Brown Butter\nRigatoni', heroColor: '#9070C0', time: '25 min', rating: '4.7' },
-    { title: 'Street Corn\nDip', heroColor: '#C0A8E0', time: '15 min', rating: '4.6' },
-    { title: 'Miso Ramen', heroColor: '#3A2860', time: '40 min', rating: '4.8' },
-    { title: 'Cardamom French\nToast', heroColor: '#A888CC', time: '18 min', rating: '4.5' }
+    { title: 'Cucumber Salad',       heroImg: 'https://loremflickr.com/800/400/salad,cucumber/all?lock=9',      heroColor: '#5A4898', time: '10 min', rating: '4.8' },
+    { title: 'Marry Me Chicken',     heroImg: 'https://loremflickr.com/800/400/chicken,creamy/all?lock=10',     heroColor: '#B898D8', time: '32 min', rating: '4.9' },
+    { title: 'Brown Butter\nRigatoni', heroImg: 'https://loremflickr.com/800/400/pasta,rigatoni/all?lock=11',  heroColor: '#9070C0', time: '25 min', rating: '4.7' },
+    { title: 'Street Corn\nDip',     heroImg: 'https://loremflickr.com/800/400/corn,dip/all?lock=12',           heroColor: '#C0A8E0', time: '15 min', rating: '4.6' },
+    { title: 'Miso Ramen',           heroImg: 'https://loremflickr.com/800/400/ramen,noodles/all?lock=13',      heroColor: '#3A2860', time: '40 min', rating: '4.8' },
+    { title: 'Cardamom French\nToast', heroImg: 'https://loremflickr.com/800/400/frenchtoast,breakfast/all?lock=14', heroColor: '#A888CC', time: '18 min', rating: '4.5' }
   ];
 
   var LIBRARY_RECIPES = [
-    { title: 'Creamy Tuscan Salmon', heroColor: '#B898D8', time: '28 min', rating: '4.9', tags: ['Saved'] },
-    { title: 'Avocado Toast', heroColor: '#4A3580', time: '12 min', rating: '4.7', tags: ['Quick'] },
-    { title: 'Birria Tacos', heroColor: '#9070C0', time: '3 hr', rating: '4.8', tags: ['TikTok'] },
-    { title: 'Thai Green Curry', heroColor: '#5A4898', time: '35 min', rating: '4.6', tags: ['Vegetarian'] },
-    { title: 'Miso Glazed Eggplant', heroColor: '#3A2860', time: '22 min', rating: '4.5', tags: ['Vegan'] },
-    { title: 'Dubai Chocolate Brownies', heroColor: '#261850', time: '45 min', rating: '4.9', tags: ['Instagram'] },
-    { title: 'Marry Me Chicken', heroColor: '#A888CC', time: '32 min', rating: '4.9', tags: [] },
-    { title: 'Homemade Sourdough', heroColor: '#8060B0', time: '4 hr', rating: '4.6', tags: ['Baking'] }
+    { title: 'Creamy Tuscan Salmon',    heroImg: 'https://loremflickr.com/800/400/salmon,food/all?lock=1',          heroColor: '#B898D8', time: '28 min', rating: '4.9', tags: ['Saved'] },
+    { title: 'Avocado Toast',           heroImg: 'https://loremflickr.com/800/400/avocado,toast/all?lock=2',        heroColor: '#4A3580', time: '12 min', rating: '4.7', tags: ['Quick'] },
+    { title: 'Birria Tacos',            heroImg: 'https://loremflickr.com/800/400/tacos,mexican/all?lock=4',        heroColor: '#9070C0', time: '3 hr',   rating: '4.8', tags: ['TikTok'] },
+    { title: 'Thai Green Curry',        heroImg: 'https://loremflickr.com/800/400/curry,thai/all?lock=3',           heroColor: '#5A4898', time: '35 min', rating: '4.6', tags: ['Vegetarian'] },
+    { title: 'Miso Glazed Eggplant',    heroImg: 'https://loremflickr.com/800/400/eggplant,food/all?lock=5',       heroColor: '#3A2860', time: '22 min', rating: '4.5', tags: ['Vegan'] },
+    { title: 'Dubai Chocolate Brownies', heroImg: 'https://loremflickr.com/800/400/brownie,chocolate/all?lock=7',  heroColor: '#261850', time: '45 min', rating: '4.9', tags: ['Instagram'] },
+    { title: 'Marry Me Chicken',        heroImg: 'https://loremflickr.com/800/400/chicken,creamy/all?lock=10',     heroColor: '#A888CC', time: '32 min', rating: '4.9', tags: [] },
+    { title: 'Homemade Sourdough',      heroImg: 'https://loremflickr.com/800/400/sourdough,bread/all?lock=15',    heroColor: '#8060B0', time: '4 hr',   rating: '4.6', tags: ['Baking'] }
   ];
 
   /* ══════════════════════════════════════════════════════════
@@ -191,20 +188,15 @@
   function featuredCard(th, recipe) {
     var grad = 'linear-gradient(160deg, ' + th.hero + ' 0%, ' + th.hero2 + ' 100%)';
     if (th._name === 'dark') grad = 'linear-gradient(160deg, ' + th.hero + ' 0%, ' + th.hero3 + ' 100%)';
+    var bg = recipe.heroImg ? 'url(\'' + recipe.heroImg + '\') center/cover no-repeat' : grad;
 
     return '<div onclick="otGo(\'recipe\')" style="margin:0 ' + S.xl + ' ' + S.section + ';' +
       'border-radius:' + R.xl + ';overflow:hidden;cursor:pointer;' +
       'box-shadow:0 12px 32px rgba(0,0,0,0.18);position:relative;height:200px;' +
-      'background:' + grad + '">' +
+      'background:' + bg + '">' +
 
-      /* Decorative food illustration area */
-      '<div style="position:absolute;right:-10px;top:-10px;width:180px;height:220px;' +
-        'opacity:' + (th._name === 'dark' ? '0.12' : '0.15') + '">' +
-        '<svg viewBox="0 0 100 100" fill="white"><circle cx="50" cy="50" r="40"/>' +
-        '<circle cx="30" cy="40" r="12" fill="rgba(255,255,255,0.5)"/>' +
-        '<circle cx="65" cy="35" r="8" fill="rgba(255,255,255,0.3)"/>' +
-        '<circle cx="55" cy="62" r="15" fill="rgba(255,255,255,0.4)"/></svg>' +
-      '</div>' +
+      /* Dark scrim for text legibility over photo */
+      '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.1) 60%)"></div>' +
 
       /* Content */
       '<div style="position:absolute;inset:0;display:flex;flex-direction:column;' +
@@ -250,10 +242,12 @@
   /* Horizontal-scroll recipe card (small, for "Your Recipes" row) */
   function smallRecipeCard(th, recipe, goFn) {
     var emojiMap = { TikTok: '▶', Instagram: '◈', Web: '⊕' };
+    var bg = recipe.heroImg ? 'url(\'' + recipe.heroImg + '\') center/cover no-repeat,' + recipe.heroColor : recipe.heroColor;
     return '<div onclick="' + (goFn || "otGo('recipe')") + '" style="flex-shrink:0;width:130px;cursor:pointer">' +
       /* Image area */
-      '<div style="width:130px;height:110px;border-radius:' + R.lg + ';background:' + recipe.heroColor + ';' +
+      '<div style="width:130px;height:110px;border-radius:' + R.lg + ';background:' + bg + ';' +
         'margin-bottom:8px;position:relative;overflow:hidden;' +
+        'border:1.5px solid ' + th.primary + '50;' +
         'box-shadow:0 4px 14px rgba(0,0,0,0.12)">' +
         /* Gradient overlay */
         '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.35) 0%,transparent 60%)"></div>' +
@@ -277,9 +271,12 @@
       ? '<svg width="11" height="13" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.79 1.54V6.78a4.85 4.85 0 0 1-1.02-.09z"/></svg>'
       : '<svg width="12" height="12" viewBox="0 0 24 24" fill="white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="white" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="white" stroke-width="2"/></svg>';
 
+    var bg = recipe.heroImg ? 'url(\'' + recipe.heroImg + '\') center/cover no-repeat,' + recipe.heroColor : recipe.heroColor;
     return '<div onclick="otGo(\'recipe\')" style="flex-shrink:0;width:150px;cursor:pointer">' +
-      '<div style="width:150px;height:130px;border-radius:' + R.lg + ';background:' + recipe.heroColor + ';' +
-        'margin-bottom:8px;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.12)">' +
+      '<div style="width:150px;height:130px;border-radius:' + R.lg + ';background:' + bg + ';' +
+        'margin-bottom:8px;position:relative;overflow:hidden;' +
+        'border:1.5px solid ' + th.primary + '50;' +
+        'box-shadow:0 4px 14px rgba(0,0,0,0.12)">' +
         '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.4) 0%,transparent 55%)"></div>' +
         /* Platform badge */
         '<div style="position:absolute;top:8px;left:8px;background:' + platformColor + ';' +
@@ -313,9 +310,12 @@
 
   /* Trending 2-col card */
   function trendingCard(th, recipe) {
+    var bg = recipe.heroImg ? 'url(\'' + recipe.heroImg + '\') center/cover no-repeat,' + recipe.heroColor : recipe.heroColor;
     return '<div onclick="otGo(\'recipe\')" style="cursor:pointer">' +
-      '<div style="border-radius:' + R.lg + ';background:' + recipe.heroColor + ';height:110px;' +
-        'margin-bottom:8px;position:relative;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,0.1)">' +
+      '<div style="border-radius:' + R.lg + ';background:' + bg + ';height:110px;' +
+        'margin-bottom:8px;position:relative;overflow:hidden;' +
+        'border:1.5px solid ' + th.primary + '50;' +
+        'box-shadow:0 3px 10px rgba(0,0,0,0.1)">' +
         '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.3) 0%,transparent 60%)"></div>' +
         '<div style="position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,0.45);' +
           'border-radius:' + R.pill + ';padding:2px 7px;font-size:9px;color:white;' +
@@ -329,9 +329,12 @@
 
   /* Library 2-col card */
   function libraryCard(th, recipe) {
+    var bg = recipe.heroImg ? 'url(\'' + recipe.heroImg + '\') center/cover no-repeat,' + recipe.heroColor : recipe.heroColor;
     return '<div onclick="otGo(\'recipe\')" style="cursor:pointer">' +
-      '<div style="border-radius:' + R.lg + ';background:' + recipe.heroColor + ';height:120px;' +
-        'margin-bottom:8px;position:relative;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,0.1)">' +
+      '<div style="border-radius:' + R.lg + ';background:' + bg + ';height:120px;' +
+        'margin-bottom:8px;position:relative;overflow:hidden;' +
+        'border:1.5px solid ' + th.primary + '50;' +
+        'box-shadow:0 3px 12px rgba(0,0,0,0.1)">' +
         '<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.35) 0%,transparent 60%)"></div>' +
         /* Rating */
         '<div style="position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,0.45);' +
@@ -530,8 +533,8 @@
   /* ── 3. SEARCH RESULTS ──────────────────────────────────── */
   function sSearchResults(th) {
     var ALL_RESULTS = TRENDING.concat([
-      { title: 'Shakshuka', heroColor: '#9070C0', time: '25 min', rating: '4.7' },
-      { title: 'Pad Thai', heroColor: '#4A3580', time: '20 min', rating: '4.8' }
+      { title: 'Shakshuka', heroImg: 'https://loremflickr.com/800/400/shakshuka,eggs/all?lock=16', heroColor: '#9070C0', time: '25 min', rating: '4.7' },
+      { title: 'Pad Thai',   heroImg: 'https://loremflickr.com/800/400/padthai,noodles/all?lock=17', heroColor: '#4A3580', time: '20 min', rating: '4.8' }
     ]);
     var activeFilter = otState.searchFilter || 'All';
     var filters = ['All', 'Quick', 'Vegetarian', 'Vegan', 'Gluten-Free', 'High Protein'];

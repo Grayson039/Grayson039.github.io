@@ -59,7 +59,8 @@
     // Overlay / scrim
     overlay:   'rgba(30,26,46,0.55)',
     scrim:     'rgba(0,0,0,0.28)',
-    teal:      '#6B4FA8'   // deep purple — active nav indicator
+    teal:      '#6B4FA8',  // deep purple — active nav indicator
+    accent:    '#F6C45C'   // honey gold — ratings, badges, highlight moments
   };
 
   var D = {
@@ -83,7 +84,8 @@
     error:     '#D46A5A',
     overlay:   'rgba(0,0,0,0.72)',
     scrim:     'rgba(0,0,0,0.52)',
-    teal:      '#A685D4'   // medium lavender — active nav indicator (dark mode)
+    teal:      '#A685D4',  // medium lavender — active nav indicator (dark mode)
+    accent:    '#F6C45C'   // honey gold — same warm accent on dark bg
   };
 
 
@@ -488,8 +490,8 @@
   c.mascotWhisker = function (size, pose) {
     var sz  = size || 80;
     var p   = (pose === undefined) ? 0 : pose;
-    var src = ['../whisker-wave.webp','../whisker-cook.webp','../whisker-jump.webp',
-               '../whisker-pour.webp','../whisker-cool.webp'][p] || '../whisker-wave.webp';
+    var src = ['../whisker-wave.png','../whisker-cook.png','../whisker-jump.png',
+               '../whisker-pour.png','../whisker-cool.png'][p] || '../whisker-wave.png';
     return '<img src="'+ src +'" width="'+ sz +'" style="display:inline-block;flex-shrink:0;height:auto;vertical-align:bottom">';
   };
 

@@ -49,9 +49,9 @@
     chipTx:    '#7A6090',   // lavender chip text
     input:     '#FFFFFF',   // input field background
     // Hero placeholder colors (shown when no photo is available)
-    hero:      '#D4784A',   // warm rust-orange — featured card gradient start
-    hero2:     '#E8A840',   // golden amber — featured card gradient end
-    hero3:     '#C06038',   // deep terracotta — tertiary card placeholder
+    hero:      '#C3B1E1',   // lavender — featured card placeholder
+    hero2:     '#DDD0EF',   // light lavender — secondary card placeholder
+    hero3:     '#C8BCDE',   // soft lavender-gray — tertiary card placeholder
     // Semantic colors
     success:   '#5A8A52',
     warning:   '#C4884A',
@@ -75,9 +75,9 @@
     chip:      '#2E2040',   // deep purple chip
     chipTx:    '#C3B1E1',   // lavender chip text
     input:     '#251A2E',   // dark plum input
-    hero:      '#5A3018',   // dark toasty rust — featured card placeholder
-    hero2:     '#4A3010',   // dark amber-brown — secondary card placeholder
-    hero3:     '#501C10',   // deep dark rust — tertiary card placeholder
+    hero:      '#3D2E50',   // deep purple — featured card placeholder
+    hero2:     '#2E2550',   // deeper purple — secondary card placeholder
+    hero3:     '#352D58',   // mid-depth purple — tertiary card placeholder
     success:   '#7AB86A',
     warning:   '#D4A870',
     error:     '#D46A5A',
@@ -480,30 +480,27 @@
   };
 
   /**
-   * Whisker — Ladle raccoon chef mascot.
-   * Sprite sheet: whisker.png — 5 poses (0=wave, 1=cook, 2=jump, 3=pour, 4=cool)
-   * laid out horizontally, transparent background.
+   * Whisker — Kitchen Bandits raccoon chef mascot.
+   * 5 individual WebP files: whisker-wave/cook/jump/pour/cool.webp
    * @param {number} size  width in px
-   * @param {number} pose  0–4 (default 0 = waving)
+   * @param {number} pose  0=wave 1=cook 2=jump 3=pour 4=cool (default 0)
    */
   c.mascotWhisker = function (size, pose) {
-    var sz   = size || 80;
-    var p    = (pose === undefined) ? 0 : pose;
-    var pctX = ['0%','25%','50%','75%','100%'][p] || '0%';
-    var h    = Math.round(sz * 1.55);
-    return (
-      '<div style="' +
-        'width:'+ sz +'px;' +
-        'height:'+ h +'px;' +
-        'background-image:url(\'../whisker.png\');' +
-        'background-size:500% auto;' +
-        'background-position:'+ pctX +' 2%;' +
-        'background-repeat:no-repeat;' +
-        'overflow:hidden;' +
-        'flex-shrink:0;' +
-        'display:inline-block;' +
-      '"></div>'
-    );
+    var sz  = size || 80;
+    var p   = (pose === undefined) ? 0 : pose;
+    var src = ['../whisker-wave.webp','../whisker-cook.webp','../whisker-jump.webp',
+               '../whisker-pour.webp','../whisker-cool.webp'][p] || '../whisker-wave.webp';
+    return '<img src="'+ src +'" width="'+ sz +'" style="display:inline-block;flex-shrink:0;height:auto;vertical-align:bottom">';
+  };
+
+  /**
+   * Kitchen Bandits app icon — K + raccoon on purple rounded square.
+   * @param {number} size  width & height in px (icon is square)
+   */
+  c.appIcon = function (size) {
+    var sz = size || 60;
+    var br = Math.round(sz * 0.2);
+    return '<img src="../kb-icon.png" width="'+ sz +'" height="'+ sz +'" style="border-radius:'+ br +'px;display:inline-block;flex-shrink:0;object-fit:cover">';
   };
 
   /** Dietary conflict warning banner */

@@ -621,6 +621,46 @@ body {
 
     <div class="cs-divider"></div>
 
+    <!-- TECHNICAL CHALLENGES -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Technical Challenges</div>
+      <h2>Real Problems, Real Trade-offs</h2>
+      <p class="cs-body">Building on a $0 infrastructure budget means confronting the constraints honestly. These were the non-trivial problems worth documenting.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Render Free Tier Cold Starts</h5>
+            <p>Render's free tier spins down after 15 minutes of inactivity. First request after spin-down takes 20–40 seconds. The app handles this with a visible loading state rather than a broken experience &mdash; a deliberate UX decision to be honest with the user instead of hiding latency behind a spinner that times out.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Scraper Fragility vs. API Reliability</h5>
+            <p>Every scraper is a bet against a site redesign. Wikipedia's structure is stable &mdash; it's human-maintained and semantically marked up. Tapology and Sherdog change layouts occasionally. The scraper architecture uses CSS selectors with fallback patterns rather than brittle positional selectors, reducing breakage frequency without over-engineering.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Cross-Origin in a Single-File PWA</h5>
+            <p>The frontend is static HTML on GitHub Pages. The backend is on a different domain. CORS headers on the Flask API + flask-cors solve this, but required understanding how browsers enforce same-origin policy for PWA fetch requests &mdash; not a problem that shows up in localhost development.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Boxing Cards Degrade Gracefully</h5>
+            <p>Tapology exposes MMA cards per-bout but boxing events don't have the same structured data. Rather than show a broken card or nothing, boxing events surface the main event fighters as tappable profile cards with a search bar. The app tells the user what it knows, not what it doesn't.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
     <!-- WHERE IT STANDS -->
     <div class="cs-section">
       <div class="cs-eyebrow">Build Status</div>
@@ -670,6 +710,38 @@ body {
       <div class="status-badge">
         <div class="status-dot"></div>
         <div class="status-text">Live PWA · Installable on iOS + Android</div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- WHAT THIS DEMONSTRATES -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">For Hiring Managers</div>
+      <h2>What Cutman Demonstrates</h2>
+      <p class="cs-body">Cutman is a solo end-to-end build — no team, no boilerplate, no tutorial. Everything from scraper architecture to PWA manifest to production deploy was designed and shipped by one person. That's the point.</p>
+
+      <div class="cs-cards">
+        <div class="cs-card">
+          <div class="cs-card-tag">Engineering</div>
+          <h4>Full-stack from scratch</h4>
+          <p>Python backend, REST API, multi-source scrapers, CORS configuration, PWA service worker, and production deploy — all built without a framework or starter template.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag">Engineering</div>
+          <h4>Real constraints, real decisions</h4>
+          <p>$0 infrastructure budget forced real engineering trade-offs: scraper resilience, cold start UX, graceful degradation for missing data. Not a greenfield sandbox.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag gold">Design</div>
+          <h4>Fan-first information hierarchy</h4>
+          <p>Every layout decision prioritized how fans actually consume combat sports — not how promoters want to present them. The research drove the design, not aesthetic preference.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag green">Product</div>
+          <h4>Shipped and maintained</h4>
+          <p>Live at a real domain, installable as a PWA, and actively updated. Not a mockup. Not a Figma file. A product you can open right now.</p>
+        </div>
       </div>
     </div>
 

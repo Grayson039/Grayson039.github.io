@@ -113,25 +113,31 @@
      SAMPLE DATA
   ══════════════════════════════════════════════════════════ */
 
+  /* Pexels CDN — free to embed, no API key needed in browser */
+  var PX = 'https://images.pexels.com/photos/';
+  var PX_Q = '/pexels-photo-';
+  var PX_S = '.jpeg?auto=compress&cs=tinysrgb&w=800&h=500&fit=crop';
+  function px(id) { return PX + id + PX_Q + id + PX_S; }
+
   var FEATURED = {
     title: 'Creamy Tuscan Salmon',
-    heroImg:   'https://loremflickr.com/800/400/salmon,food/all?lock=1',
+    heroImg:   px(7627415),   // salmon steak on spinach with rich cream sauce
     heroColor: null,
     time: '28 min', rating: '4.9', difficulty: 'Medium',
     source: 'Web', tags: ['High Protein', 'Dairy'], servings: '4'
   };
 
   var SAVED_RECIPES = [
-    { title: 'Avocado Toast\nwith Poached Egg', heroImg: 'https://loremflickr.com/800/400/avocado,toast/all?lock=2',    heroColor: '#4A3580', time: '12 min', source: null },
-    { title: 'Thai Green\nCurry',               heroImg: 'https://loremflickr.com/800/400/curry,thai/all?lock=3',        heroColor: '#5A4898', time: '35 min', source: 'Instagram' },
-    { title: 'Birria Tacos',                    heroImg: 'https://loremflickr.com/800/400/tacos,mexican/all?lock=4',     heroColor: '#9070C0', time: '3 hr',   source: 'TikTok' },
-    { title: 'Miso Glazed\nEggplant',           heroImg: 'https://loremflickr.com/800/400/eggplant,food/all?lock=5',    heroColor: '#3A2860', time: '22 min', source: 'Web' }
+    { title: 'Avocado Toast\nwith Poached Egg', heroImg: px(4062617),  heroColor: '#4A3580', time: '12 min', source: null },       // toast with avocado & poached egg
+    { title: 'Thai Green\nCurry',               heroImg: px(9397205),  heroColor: '#5A4898', time: '35 min', source: 'Instagram' }, // rich broth chicken bowl
+    { title: 'Birria Tacos',                    heroImg: px(28959271), heroColor: '#9070C0', time: '3 hr',   source: 'TikTok' },    // Mexican tacos platter
+    { title: 'Miso Glazed\nEggplant',           heroImg: px(1707917),  heroColor: '#3A2860', time: '22 min', source: 'Web' }        // baked eggplant dish
   ];
 
   var SOCIAL_SAVES = [
-    { title: 'Baked Feta Pasta',       heroImg: 'https://loremflickr.com/800/400/pasta,italian/all?lock=6',    heroColor: '#A888CC', platform: 'TikTok',    time: '30 min', saves: '2.1M' },
-    { title: 'Dubai Chocolate\nBrownie', heroImg: 'https://loremflickr.com/800/400/brownie,chocolate/all?lock=7', heroColor: '#261850', platform: 'Instagram', time: '45 min', saves: '890K' },
-    { title: 'Viral Smash\nBurgers',   heroImg: 'https://loremflickr.com/800/400/burger,food/all?lock=8',      heroColor: '#8060B0', platform: 'TikTok',    time: '20 min', saves: '3.4M' }
+    { title: 'Baked Feta Pasta',        heroImg: px(1438672),  heroColor: '#A888CC', platform: 'TikTok',    time: '30 min', saves: '2.1M' },  // pasta photography
+    { title: 'Dubai Chocolate\nBrownie', heroImg: px(2373520), heroColor: '#261850', platform: 'Instagram', time: '45 min', saves: '890K' },   // stacked chocolate brownies
+    { title: 'Viral Smash\nBurgers',    heroImg: px(1639565),  heroColor: '#8060B0', platform: 'TikTok',    time: '20 min', saves: '3.4M' }    // juicy burger on wood
   ];
 
   var BROWSE_CATEGORIES = [
@@ -146,23 +152,23 @@
   ];
 
   var TRENDING = [
-    { title: 'Cucumber Salad',       heroImg: 'https://loremflickr.com/800/400/salad,cucumber/all?lock=9',      heroColor: '#5A4898', time: '10 min', rating: '4.8' },
-    { title: 'Marry Me Chicken',     heroImg: 'https://loremflickr.com/800/400/chicken,creamy/all?lock=10',     heroColor: '#B898D8', time: '32 min', rating: '4.9' },
-    { title: 'Brown Butter\nRigatoni', heroImg: 'https://loremflickr.com/800/400/pasta,rigatoni/all?lock=11',  heroColor: '#9070C0', time: '25 min', rating: '4.7' },
-    { title: 'Street Corn\nDip',     heroImg: 'https://loremflickr.com/800/400/corn,dip/all?lock=12',           heroColor: '#C0A8E0', time: '15 min', rating: '4.6' },
-    { title: 'Miso Ramen',           heroImg: 'https://loremflickr.com/800/400/ramen,noodles/all?lock=13',      heroColor: '#3A2860', time: '40 min', rating: '4.8' },
-    { title: 'Cardamom French\nToast', heroImg: 'https://loremflickr.com/800/400/frenchtoast,breakfast/all?lock=14', heroColor: '#A888CC', time: '18 min', rating: '4.5' }
+    { title: 'Cucumber Salad',         heroImg: px(3622476),  heroColor: '#5A4898', time: '10 min', rating: '4.8' },  // chopsticks + cucumber salad
+    { title: 'Marry Me Chicken',       heroImg: px(12866988), heroColor: '#B898D8', time: '32 min', rating: '4.9' },  // pasta & meat in cream sauce
+    { title: 'Brown Butter\nRigatoni', heroImg: px(1395319),  heroColor: '#9070C0', time: '25 min', rating: '4.7' },  // pasta dish
+    { title: 'Street Corn\nDip',       heroImg: px(10735628), heroColor: '#C0A8E0', time: '15 min', rating: '4.6' },  // elote / street corn
+    { title: 'Miso Ramen',             heroImg: px(12984979), heroColor: '#3A2860', time: '40 min', rating: '4.8' },  // bowl of ramen
+    { title: 'Cardamom French\nToast', heroImg: px(4623075),  heroColor: '#A888CC', time: '18 min', rating: '4.5' }   // plate of french toast
   ];
 
   var LIBRARY_RECIPES = [
-    { title: 'Creamy Tuscan Salmon',    heroImg: 'https://loremflickr.com/800/400/salmon,food/all?lock=1',          heroColor: '#B898D8', time: '28 min', rating: '4.9', tags: ['Saved'] },
-    { title: 'Avocado Toast',           heroImg: 'https://loremflickr.com/800/400/avocado,toast/all?lock=2',        heroColor: '#4A3580', time: '12 min', rating: '4.7', tags: ['Quick'] },
-    { title: 'Birria Tacos',            heroImg: 'https://loremflickr.com/800/400/tacos,mexican/all?lock=4',        heroColor: '#9070C0', time: '3 hr',   rating: '4.8', tags: ['TikTok'] },
-    { title: 'Thai Green Curry',        heroImg: 'https://loremflickr.com/800/400/curry,thai/all?lock=3',           heroColor: '#5A4898', time: '35 min', rating: '4.6', tags: ['Vegetarian'] },
-    { title: 'Miso Glazed Eggplant',    heroImg: 'https://loremflickr.com/800/400/eggplant,food/all?lock=5',       heroColor: '#3A2860', time: '22 min', rating: '4.5', tags: ['Vegan'] },
-    { title: 'Dubai Chocolate Brownies', heroImg: 'https://loremflickr.com/800/400/brownie,chocolate/all?lock=7',  heroColor: '#261850', time: '45 min', rating: '4.9', tags: ['Instagram'] },
-    { title: 'Marry Me Chicken',        heroImg: 'https://loremflickr.com/800/400/chicken,creamy/all?lock=10',     heroColor: '#A888CC', time: '32 min', rating: '4.9', tags: [] },
-    { title: 'Homemade Sourdough',      heroImg: 'https://loremflickr.com/800/400/sourdough,bread/all?lock=15',    heroColor: '#8060B0', time: '4 hr',   rating: '4.6', tags: ['Baking'] }
+    { title: 'Creamy Tuscan Salmon',    heroImg: px(7627415),  heroColor: '#B898D8', time: '28 min', rating: '4.9', tags: ['Saved'] },
+    { title: 'Avocado Toast',           heroImg: px(4062617),  heroColor: '#4A3580', time: '12 min', rating: '4.7', tags: ['Quick'] },
+    { title: 'Birria Tacos',            heroImg: px(28959271), heroColor: '#9070C0', time: '3 hr',   rating: '4.8', tags: ['TikTok'] },
+    { title: 'Thai Green Curry',        heroImg: px(9397205),  heroColor: '#5A4898', time: '35 min', rating: '4.6', tags: ['Vegetarian'] },
+    { title: 'Miso Glazed Eggplant',    heroImg: px(1707917),  heroColor: '#3A2860', time: '22 min', rating: '4.5', tags: ['Vegan'] },
+    { title: 'Dubai Chocolate Brownies', heroImg: px(2373520), heroColor: '#261850', time: '45 min', rating: '4.9', tags: ['Instagram'] },
+    { title: 'Marry Me Chicken',        heroImg: px(12866988), heroColor: '#A888CC', time: '32 min', rating: '4.9', tags: [] },
+    { title: 'Homemade Sourdough',      heroImg: px(8190302),  heroColor: '#8060B0', time: '4 hr',   rating: '4.6', tags: ['Baking'] }
   ];
 
   /* ══════════════════════════════════════════════════════════
@@ -533,8 +539,8 @@
   /* ── 3. SEARCH RESULTS ──────────────────────────────────── */
   function sSearchResults(th) {
     var ALL_RESULTS = TRENDING.concat([
-      { title: 'Shakshuka', heroImg: 'https://loremflickr.com/800/400/shakshuka,eggs/all?lock=16', heroColor: '#9070C0', time: '25 min', rating: '4.7' },
-      { title: 'Pad Thai',   heroImg: 'https://loremflickr.com/800/400/padthai,noodles/all?lock=17', heroColor: '#4A3580', time: '20 min', rating: '4.8' }
+      { title: 'Shakshuka', heroImg: px(18535643), heroColor: '#9070C0', time: '25 min', rating: '4.7' },  // shakshouka dish on plate
+      { title: 'Pad Thai',   heroImg: px(10756648), heroColor: '#4A3580', time: '20 min', rating: '4.8' }   // close-up pad thai on plate
     ]);
     var activeFilter = otState.searchFilter || 'All';
     var filters = ['All', 'Quick', 'Vegetarian', 'Vegan', 'Gluten-Free', 'High Protein'];

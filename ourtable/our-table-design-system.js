@@ -49,9 +49,9 @@
     chipTx:    '#7A6090',   // lavender chip text
     input:     '#FFFFFF',   // input field background
     // Hero placeholder colors (shown when no photo is available)
-    hero:      '#C3B1E1',   // lavender — featured card placeholder
-    hero2:     '#DDD0EF',   // light lavender — secondary card placeholder
-    hero3:     '#C8BCDE',   // soft lavender-gray — tertiary card placeholder
+    hero:      '#D4784A',   // warm rust-orange — featured card gradient start
+    hero2:     '#E8A840',   // golden amber — featured card gradient end
+    hero3:     '#C06038',   // deep terracotta — tertiary card placeholder
     // Semantic colors
     success:   '#5A8A52',
     warning:   '#C4884A',
@@ -75,9 +75,9 @@
     chip:      '#2E2040',   // deep purple chip
     chipTx:    '#C3B1E1',   // lavender chip text
     input:     '#251A2E',   // dark plum input
-    hero:      '#3D2E50',   // deep purple featured placeholder
-    hero2:     '#2E2550',   // deeper purple — secondary card placeholder
-    hero3:     '#352D58',   // mid-depth purple — tertiary card placeholder
+    hero:      '#5A3018',   // dark toasty rust — featured card placeholder
+    hero2:     '#4A3010',   // dark amber-brown — secondary card placeholder
+    hero3:     '#501C10',   // deep dark rust — tertiary card placeholder
     success:   '#7AB86A',
     warning:   '#D4A870',
     error:     '#D46A5A',

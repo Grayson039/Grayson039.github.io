@@ -647,6 +647,76 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 @media(max-width:600px){.tos-footer{padding:6px 16px;}.exec-grid{grid-template-columns:repeat(2,1fr);}}
 
+/* ─── VISUAL POLISH ─── */
+
+/* Focus states — keyboard nav + accessibility */
+.cta-primary:focus-visible,.ob-next:focus-visible,.form-submit:focus-visible,.analyze-btn.ready:focus-visible,.sample-btn:focus-visible,.resub-btn:focus-visible,.ob-celebrate-cta:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;}
+.score-row2:focus-visible,.scat:focus-visible,.hm-cell:focus-visible,.bar-btn:focus-visible,.fixit-btn:focus-visible,.cat-head:focus-visible{outline:2px solid rgba(62,237,231,0.5);outline-offset:2px;border-radius:9px;}
+.form-input:focus-visible,.ed-ta:focus-visible{outline:none;}
+
+/* Active/pressed states */
+.cta-primary:active{transform:translateY(0) scale(0.98);}
+.analyze-btn.ready:active{transform:translateY(0) scale(0.98);}
+.ob-next:active,.form-submit:active,.ob-celebrate-cta:active{transform:scale(0.98);}
+.bar-btn:active{transform:scale(0.97);}
+
+/* Border-radius consistency */
+.top-stat{border-radius:16px;}
+
+/* Normalize transitions — .15s micro, .2s standard */
+.cta-primary,.ob-next,.form-submit,.analyze-btn,.sample-btn,.resub-btn,.bar-btn,.fixit-btn{transition:all .15s ease;}
+.cat-card,.score-row2,.scat,.hm-cell{transition:all .2s ease;}
+
+/* Upload zone — success state */
+.drop-zone.success{border-color:var(--cyan);background:rgba(62,237,231,0.05);box-shadow:0 0 28px rgba(62,237,231,0.1);}
+.drop-zone.success .drop-icon{background:rgba(62,237,231,0.12);border-color:rgba(62,237,231,0.3);}
+
+/* File row — staggered entrance */
+.file-row.show{animation:file-in .2s ease both;}
+@keyframes file-in{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+
+/* Analyze button — loading shimmer when processing */
+.analyze-btn.loading{opacity:0.6;pointer-events:none;background:var(--card2);color:var(--sub);position:relative;overflow:hidden;}
+.analyze-btn.loading::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(62,237,231,0.15) 50%,transparent 100%);animation:btn-shimmer 1.4s ease-in-out infinite;}
+@keyframes btn-shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+
+/* Processing bar — smoother easing */
+.proc-bar-fill{transition:width .4s cubic-bezier(0.25,0.46,0.45,0.94);}
+
+/* Report reveal — staggered fade-in */
+.rep-main > *{animation:section-in .4s ease both;}
+.stat-row{animation-delay:.05s;}
+.mid-grid{animation-delay:.1s;}
+.win-dna-row{animation-delay:.15s;}
+.cat-grid{animation-delay:.2s;}
+.bottom-grid{animation-delay:.25s;}
+@keyframes section-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* Score bar entrance animation */
+.sr-bar-fill{transition:width .7s cubic-bezier(0.25,0.46,0.45,0.94);}
+
+/* Error state — upload */
+#upload-error-msg{font-size:12px;color:var(--amber);margin-top:8px;text-align:center;min-height:18px;}
+
+/* Heatmap cells — cleaner hover */
+.hm-cell:hover{transform:scale(1.18);box-shadow:0 0 6px rgba(62,237,231,0.3);z-index:2;position:relative;}
+
+/* Score rows — active state ring */
+.score-row2.active{background:rgba(62,237,231,0.07);box-shadow:inset 0 0 0 1px rgba(62,237,231,0.12);}
+
+/* Sidebar category items — cleaner active */
+.scat.active{background:rgba(62,237,231,0.08);box-shadow:inset 0 0 0 1px rgba(62,237,231,0.15);}
+
+/* Cat card hover — lift */
+.cat-card:hover{border-color:rgba(255,255,255,0.14);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.4);}
+
+/* Processing phrase — fade between messages */
+.proc-phrase{transition:opacity .3s ease;}
+
+/* Upload error pulse */
+@keyframes err-pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+.drop-zone.error{border-color:rgba(232,146,58,0.5);animation:err-pulse .8s ease 2;}
+
 
 /* ─── FILM BURN SCORE ANIMATION ─── */
 .score-burn-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;}
@@ -2121,7 +2191,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
           </div>
           <div class="exec-stat">
             <div class="exec-stat-label">Format</div>
-            <div class="exec-stat-val">Feature · 94 pages</div>
+            <div class="exec-stat-val" id="exec-page-count">Feature · 94 pages</div>
           </div>
           <div class="exec-stat">
             <div class="exec-stat-label">Craft Score</div>
@@ -2186,13 +2256,13 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         <div class="top-stat">
           <div class="top-stat-label">Biggest Flag</div>
           <div class="top-stat-val" style="color:var(--amber);font-size:24px;margin-top:4px;">Pacing</div>
-          <div class="top-stat-sub">Score 68 · pp.34–51</div>
-          <div class="top-stat-badge badge-flag">⚠ 3 redundant scenes</div>
+          <div class="top-stat-sub" id="pacing-flag-sub">Score 68 · pp.34–51</div>
+          <div class="top-stat-badge badge-flag" id="pacing-flag-badge">⚠ 3 redundant scenes</div>
         </div>
         <div class="top-stat">
           <div class="top-stat-label">Script Stats</div>
-          <div class="top-stat-val" style="color:var(--text);font-size:24px;margin-top:4px;">94 pgs</div>
-          <div class="top-stat-sub">5 characters · 3 acts</div>
+          <div class="top-stat-val" id="stat-page-count" style="color:var(--text);font-size:24px;margin-top:4px;">94 pgs</div>
+          <div class="top-stat-sub" id="stat-page-sub">5 characters · 3 acts</div>
           <div class="top-stat-badge badge-info">Standard length</div>
         </div>
       </div>
@@ -2252,7 +2322,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         <div class="heatmap-card" style="position:relative;">
           <div class="card-header">
             <div class="card-title">Pacing Heatmap</div>
-            <div class="card-meta">Page by page · 94 pages</div>
+            <div class="card-meta" id="heatmap-page-meta">Page by page · 94 pages</div>
           </div>
           <div class="heatmap-grid" id="heatmap"></div>
           <div style="margin-top:10px;">
@@ -2261,7 +2331,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
               <span style="color:var(--amber)">⚠ Slow</span><span>Moderate</span><span style="color:var(--cyan)">Strong ✓</span>
             </div>
           </div>
-          <div style="display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:var(--amber);background:rgba(232,146,58,0.1);border:1px solid rgba(232,146,58,0.2);border-radius:4px;padding:3px 8px;margin-top:8px;">⚠ Flagged: pp.34–51 — momentum stalls here</div>
+          <div id="heatmap-flag" style="display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:var(--amber);background:rgba(232,146,58,0.1);border:1px solid rgba(232,146,58,0.2);border-radius:4px;padding:3px 8px;margin-top:8px;">⚠ Flagged: pp.34–51 — momentum stalls here</div>
           <div class="hm-tooltip" id="hm-tip"></div>
         </div>
       </div>
@@ -2662,6 +2732,27 @@ She grabs her jacket.</textarea>
 const SUPABASE_URL      = 'https://zzsjgaijrngxkaqakplm.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_yuptAX-fJGnyTuDgReScEg_bqg7qPEx';
 const EDGE_FN_URL       = SUPABASE_URL + '/functions/v1/grade-script';
+const supabaseClient    = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ─── SESSION PERSISTENCE — restore auth on every page load ───
+(async () => {
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session?.user) {
+      _currentUser = session.user;
+      userName = session.user.user_metadata?.full_name?.split(' ')[0]
+                 || session.user.email.split('@')[0];
+      // Already authenticated — skip auth screens
+      goTo('upload');
+    }
+  } catch (e) {
+    console.warn('SceneOne: session restore failed', e);
+  }
+})();
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  _currentUser = session?.user || null;
+});
 
 // pdf.js worker setup
 if (typeof pdfjsLib !== 'undefined') {
@@ -2698,11 +2789,10 @@ async function extractScriptText(file) {
 let _loaderDone = false;
 let _apiDone    = false;
 let _reportData = null;
-let _isSample   = false;
 
 function _onLoaderAnimDone() {
   _loaderDone = true;
-  if (_apiDone || _isSample) {
+  if (_apiDone) {
     _finalizeReport();
   } else {
     // Keep bar at 99% with a waiting message
@@ -2720,7 +2810,7 @@ function _onApiDone(data) {
 }
 
 function _finalizeReport() {
-  if (!_isSample && _reportData) populateReport(_reportData);
+  if (_reportData) populateReport(_reportData);
   setTimeout(() => {
     goTo('report');
     if (isFirstTime) {
@@ -2737,6 +2827,31 @@ function _finalizeReport() {
 // ─── POPULATE REPORT FROM REAL DATA ───
 function populateReport(d) {
   if (!d) return;
+
+  // Store real scores for burn animations
+  if (d.scores) window._lastScores = d.scores;
+
+  // Page count (calculated from script text length before API call)
+  const pg = window._scriptPageCount || '—';
+  const pgEl = document.getElementById('stat-page-count');
+  const pgSub = document.getElementById('stat-page-sub');
+  const pgExec = document.getElementById('exec-page-count');
+  const pgHeat = document.getElementById('heatmap-page-meta');
+  if (pgEl) pgEl.textContent = pg + ' pgs';
+  if (pgSub) pgSub.textContent = pg + ' pages · ' + (d.character_count ? d.character_count + ' characters' : 'Feature');
+  if (pgExec) pgExec.textContent = 'Feature · ' + pg + ' pages';
+  if (pgHeat) pgHeat.textContent = 'Page by page · ' + pg + ' pages';
+
+  // Pacing flag — update from real category data
+  const pacingCat = d.categories?.pacing;
+  if (pacingCat) {
+    const flagSub  = document.getElementById('pacing-flag-sub');
+    const flagBadge = document.getElementById('pacing-flag-badge');
+    const hmFlag   = document.getElementById('heatmap-flag');
+    if (flagSub  && pacingCat.page_ref) flagSub.textContent  = 'Score ' + (d.scores?.pacing ?? '—') + ' · ' + pacingCat.page_ref;
+    if (flagBadge && pacingCat.flag)    flagBadge.textContent = '⚠ ' + pacingCat.flag.slice(0, 40);
+    if (hmFlag   && pacingCat.page_ref) hmFlag.textContent   = '⚠ Flagged: ' + pacingCat.page_ref + ' — momentum stalls here';
+  }
 
   // Overall score
   document.querySelectorAll('.sidebar-score-big').forEach(el => el.textContent = d.overall_score);
@@ -2875,6 +2990,15 @@ function goTo(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
   window.scrollTo(0,0);
+  // Reset analyze button when returning to upload
+  if (id === 'upload') {
+    const btn = document.getElementById('analyze-btn');
+    if (btn) {
+      btn.classList.remove('loading');
+      btn.textContent = _uploadedFile ? 'Analyze Script' : 'Analyze Script';
+      if (_uploadedFile) btn.classList.add('ready');
+    }
+  }
 }
 
 // ─── UPLOAD ───
@@ -3192,15 +3316,41 @@ const tourSteps = [
   { eye:'📋 Revision Plan', title:'Your top 3 highest-impact fixes.', body:"SceneOne ranks the fixes that will move your score the most. Not a list of everything — a prioritized action plan.", target:'.rev-card', pos:'above' }
 ];
 
-function startOnboarding() {
+async function startOnboarding() {
   const nameEl = document.getElementById('ob-name');
   const emailEl = document.getElementById('ob-email');
-  userName = nameEl?.value?.trim().split(' ')[0] || '';
-  if (!emailEl?.value?.includes('@')) {
+  const passEl = document.getElementById('ob-password');
+  const btn = document.getElementById('signup-submit');
+  const name = nameEl?.value?.trim() || '';
+  const email = emailEl?.value?.trim() || '';
+  const password = passEl?.value || '';
+
+  if (!email.includes('@')) {
     emailEl.style.borderColor = 'rgba(232,146,58,0.6)';
     emailEl.focus();
     return;
   }
+
+  btn.textContent = 'Creating account…';
+  btn.disabled = true;
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: name } }
+  });
+
+  if (error) {
+    btn.textContent = 'Create Account & Continue →';
+    btn.disabled = false;
+    emailEl.style.borderColor = 'rgba(232,146,58,0.6)';
+    emailEl.parentElement.insertAdjacentHTML('afterend',
+      `<div style="color:#E8923A;font-size:12px;margin-top:4px;">${error.message}</div>`);
+    return;
+  }
+
+  userName = name.split(' ')[0] || email.split('@')[0];
+  _currentUser = data.user;
   isFirstTime = true;
   goTo('onboard');
   updateObDots(0);
@@ -3453,12 +3603,30 @@ function switchAuthTab(tab) {
   }
 }
 
-function handleLogin() {
-  const email = document.getElementById('login-email')?.value;
-  const pass = document.getElementById('login-password')?.value;
+async function handleLogin() {
+  const emailEl = document.getElementById('login-email');
+  const passEl = document.getElementById('login-password');
+  const btn = document.getElementById('login-submit');
+  const email = emailEl?.value?.trim() || '';
+  const pass = passEl?.value || '';
   if (!email || !pass) return;
-  // Demo: any login goes to upload with returning user state
-  userName = email.split('@')[0];
+
+  btn.textContent = 'Signing in…';
+  btn.disabled = true;
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+
+  if (error) {
+    btn.textContent = 'Sign In →';
+    btn.disabled = false;
+    passEl.style.borderColor = 'rgba(232,146,58,0.6)';
+    passEl.parentElement.insertAdjacentHTML('afterend',
+      `<div style="color:#E8923A;font-size:12px;margin-top:4px;">${error.message}</div>`);
+    return;
+  }
+
+  userName = data.user.user_metadata?.full_name?.split(' ')[0] || email.split('@')[0];
+  _currentUser = data.user;
   isFirstTime = false;
   goTo('upload');
   setTimeout(() => {
@@ -3514,19 +3682,25 @@ function acceptTos() {
 }
 
 // ─── FILM BURN SCORE ANIMATION ───
-const scoreDeltas = {
-  'ed-structure': { cat: 'cat-structure', old: 82, bump: 5 },
-  'ed-conflict':  { cat: 'cat-conflict',  old: 71, bump: 8 },
-  'ed-pacing':    { cat: 'cat-pacing',    old: 68, bump: 7 },
-};
-
-// Map CC button IDs to score data
-const ccScoreMap = {
-  'cc-structure': { catId: 'cat-structure', oldScore: 82, newScore: 87 },
-  'cc-conflict':  { catId: 'cat-conflict',  oldScore: 71, newScore: 79 },
-  'cc-pacing':    { catId: 'cat-pacing',    oldScore: 68, newScore: 75 },
-  'cc-visual':    { catId: 'cat-visual',    oldScore: 80, newScore: 84 },
-};
+function _getScoreDeltas() {
+  const s = window._lastScores || {};
+  return {
+    'ed-structure': { cat: 'cat-structure', old: s.structure || 75, bump: 5 },
+    'ed-conflict':  { cat: 'cat-conflict',  old: s.conflict  || 70, bump: 8 },
+    'ed-pacing':    { cat: 'cat-pacing',    old: s.pacing    || 65, bump: 7 },
+  };
+}
+function _getCcScoreMap() {
+  const s = window._lastScores || {};
+  return {
+    'cc-structure': { catId: 'cat-structure', oldScore: s.structure || 75, newScore: (s.structure || 75) + 5 },
+    'cc-conflict':  { catId: 'cat-conflict',  oldScore: s.conflict  || 70, newScore: (s.conflict  || 70) + 8 },
+    'cc-pacing':    { catId: 'cat-pacing',    oldScore: s.pacing    || 65, newScore: (s.pacing    || 65) + 7 },
+    'cc-visual':    { catId: 'cat-visual',    oldScore: s.visual    || 78, newScore: (s.visual    || 78) + 4 },
+  };
+}
+const scoreDeltas = new Proxy({}, { get: (_, k) => _getScoreDeltas()[k] });
+const ccScoreMap   = new Proxy({}, { get: (_, k) => _getCcScoreMap()[k]  });
 
 function markCreativeChoice(ccId) {
   const btn = document.getElementById(ccId);
@@ -3870,9 +4044,22 @@ function requestScriptAccess(btn) {
 // ─── TITLE + CO-WRITERS ───
 let cowriterCount = 0;
 
+function removeFile() {
+  _uploadedFile = null;
+  document.getElementById('file-row').classList.remove('show');
+  document.getElementById('analyze-btn').classList.remove('ready');
+  const err = document.getElementById('upload-error-msg');
+  if (err) err.style.display = 'none';
+  document.getElementById('file-input').value = '';
+  const meta = document.getElementById('script-meta-section');
+  if (meta) meta.style.display = 'none';
+  const dz = document.querySelector('.drop-zone');
+  if (dz) dz.classList.remove('success', 'error');
+}
+
 function showUploadError(msg) {
   // Go back to upload screen and show error
-  showScreen('upload');
+  goTo('upload');
   const zone = document.querySelector('.drop-zone');
   let err = document.getElementById('upload-error-msg');
   if (!err) {
@@ -3895,10 +4082,19 @@ function handleFile(i) {
     i.value = '';
     return;
   }
+  _uploadedFile = f;
   setFile(f);
 }
 
 function setFile(f) {
+  _uploadedFile = f;
+  // Drop-zone success flash
+  const dz = document.querySelector('.drop-zone');
+  if (dz) {
+    dz.classList.remove('error');
+    dz.classList.add('success');
+    setTimeout(() => dz.classList.remove('success'), 1200);
+  }
   document.getElementById('file-row').classList.add('show');
   document.getElementById('file-nm').textContent = f.name;
   const kb = f.size / 1024;
@@ -3954,13 +4150,6 @@ function checkAnalyzeReady() {
   if (btn) btn.classList.toggle('ready', !!(title && fileReady));
 }
 
-function removeFile() {
-  document.getElementById('file-row').classList.remove('show');
-  document.getElementById('analyze-btn').classList.remove('ready');
-  document.getElementById('file-input').value = '';
-  const meta = document.getElementById('script-meta-section');
-  if (meta) meta.style.display = 'none';
-}
 
 function addCowriter() {
   const list = document.getElementById('cowriter-list');
@@ -3989,11 +4178,194 @@ function removeCowriter(id) {
   if (addBtn && cowriterCount < 3) addBtn.style.display = 'flex';
 }
 
+// ─── SAMPLE SCREENPLAY TEXT — fed to real API so demo mode runs live analysis ───
+const SAMPLE_SCRIPT_TEXT = `THE LAST HOUR
+Written by Mara Voss
+
+FADE IN:
+
+EXT. DOWNTOWN PARKING STRUCTURE - NIGHT
+
+Rain hammers concrete. A white sedan idles on the fourth floor, engine running, lights off.
+
+INT. WHITE SEDAN - CONTINUOUS
+
+DETECTIVE CLAIRE NOVAK (38, sharp eyes, three days of bad sleep) stares at her phone. A text: "You have 60 minutes. Tick tock."
+
+She grips the steering wheel. Breathes. Then pulls her badge, checks the clip in her Glock, and gets out.
+
+EXT. PARKING STRUCTURE - CONTINUOUS
+
+Claire moves fast — heels clicking, each step deliberate. She knows this building. She arrested someone here seven years ago. She got it wrong.
+
+INT. STAIRWELL - CONTINUOUS
+
+She takes the stairs two at a time, hand on the rail, scanning. Halfway up, she stops.
+
+A BURNER PHONE sits on the third step. Taped to it: a photograph.
+
+Claire picks up the photo. Her daughter. Maya, 9, in her school uniform, outside Jefferson Elementary — taken TODAY.
+
+CLAIRE
+(barely a whisper)
+Oh God.
+
+The burner phone BUZZES. She answers.
+
+VOICE (V.O.)
+(distorted)
+Fifty-eight minutes, Detective. My client wants the file on the Delgado case. The one you buried.
+
+CLAIRE
+I don't know what you're talking about.
+
+VOICE (V.O.)
+Then Maya's going to have a very bad night.
+
+The line goes dead. Claire stands frozen for exactly one second — then she's moving again, faster now, taking the stairs three at a time.
+
+EXT. PARKING STRUCTURE - ROOFTOP - NIGHT
+
+She bursts onto the roof. Wind. Rain. And a clear view of the city — the courthouse, the precinct, and three blocks north, Jefferson Elementary.
+
+Claire dials. Ringing. Ringing.
+
+SCHOOL ADMINISTRATOR (V.O.)
+Jefferson after-hours, this is—
+
+CLAIRE
+This is Detective Novak. My daughter Maya is in after-school care. I need you to lock down the building. Right now. Do not let anyone in or out.
+
+SCHOOL ADMINISTRATOR (V.O.)
+I'm sorry, what? Is this—
+
+CLAIRE
+Do it. I'll explain in twenty minutes.
+
+She hangs up. Stares at the city. Somewhere out there, someone has eyes on her daughter. Someone who knows about Delgado.
+
+Someone who knows what she did.
+
+CLAIRE (CONT'D)
+(to herself)
+Fifty-seven minutes.
+
+She turns and walks back toward the stairwell — jaw set, something decided behind her eyes. She's not running anymore. She's hunting.
+
+SMASH CUT TO:
+
+INT. POLICE PRECINCT - EVIDENCE ROOM - NIGHT
+
+A FILE FOLDER sits in a metal cage, labeled: DELGADO, R. — CASE #7741 — CLOSED.
+
+Claire's hand reaches through the bars. Takes it.
+
+INT. PRECINCT - HALLWAY - CONTINUOUS
+
+She walks past her CAPTAIN'S office, head down. The Captain is on the phone, back turned. She doesn't stop.
+
+EXT. PRECINCT - PARKING LOT - NIGHT
+
+Claire gets in her car. Opens the folder. Photographs. Reports. And one thing that was never supposed to be in there: a handwritten note in her own writing.
+
+She reads it. Her expression doesn't change.
+
+She starts the car.
+
+CLAIRE
+(quiet, to no one)
+Fifty-three minutes.
+
+SMASH CUT TO TITLES: THE LAST HOUR
+
+FADE OUT.
+
+ACT TWO
+
+INT. CITY HALL - RECORDS OFFICE - NIGHT
+
+Claire moves through empty corridors with the borrowed keycard of a clerk she owes a favor. The offices are dark. She finds the terminal she needs.
+
+Types. Waits. The screen fills with property records — shell companies, a warehouse on the east side, a name that keeps appearing: MERIDIAN HOLDINGS.
+
+Behind that name: COUNCILMAN VICTOR RESH (55, photographs show a man who smiles for cameras and means none of it).
+
+CLAIRE (V.O.)
+Delgado wasn't a drug dealer. He was a witness. And I was told to close the case before he could testify.
+
+She copies the files to a drive. The burner phone buzzes again.
+
+VOICE (V.O.)
+Wrong direction, Detective. My client doesn't want Meridian. He wants what Delgado gave you. The original recording.
+
+CLAIRE
+There is no recording.
+
+VOICE (V.O.)
+Forty-one minutes.
+
+Claire closes her eyes. Opens them.
+
+CLAIRE
+(measured)
+If anything happens to my daughter, I will burn everything. Every file. Every name. I'll go public with all of it.
+
+VOICE (V.O.)
+(a beat, then)
+You wouldn't. You'd go to prison.
+
+CLAIRE
+I'm already in prison.
+
+She disconnects. Sits in the dark office. Then, slowly, she opens her own phone and scrolls to a contact: DELGADO, R. — PERSONAL.
+
+She dials.
+
+It rings.
+
+And rings.
+
+And then — impossibly — someone picks up.
+
+DELGADO (V.O.)
+(quiet, wary)
+I wondered when you'd call.
+
+CLAIRE
+(stunned)
+You're alive.
+
+DELGADO (V.O.)
+Barely. And not for long, if the wrong people find out I called you back.
+
+CLAIRE
+I need the recording.
+
+DELGADO (V.O.)
+The recording doesn't exist anymore. But I do. And I remember everything.
+
+CLAIRE
+Then I need you. Right now.
+
+A long silence on the line.
+
+DELGADO (V.O.)
+There's a warehouse. East side, Meridian Holdings. Dock 7. Come alone.
+
+CLAIRE
+I have thirty-nine minutes.
+
+DELGADO (V.O.)
+That's enough time. If you drive fast.
+
+The line goes dead. Claire looks at the property records on the screen — the warehouse address is already highlighted.
+
+She drives fast.`;
+
 function useSample() {
   const title = 'THE LAST HOUR';
   document.getElementById('crawl-title').textContent = title;
-  document.getElementById('rep-title').textContent = title + ' — Demo Draft';
-  document.getElementById('win-text').textContent = "Your protagonist's external motivation is established with remarkable precision — by page 4, we know exactly what she wants and why the cost of failure is personal. That's faster than most produced thrillers.";
+  document.getElementById('rep-title').textContent = title + ' — Sample Draft';
   document.getElementById('file-row').classList.add('show');
   document.getElementById('file-nm').textContent = 'the-last-hour-draft1.pdf';
   document.getElementById('file-sz').textContent = 'Sample script · 94 pages';
@@ -4005,12 +4377,17 @@ function useSample() {
     if (titleInput) titleInput.value = title;
   }
 
+  // Create a real File blob so _runAnalysis() calls the live API
+  _uploadedFile = new File([SAMPLE_SCRIPT_TEXT], 'the-last-hour-draft1.txt', { type: 'text/plain' });
+
   document.getElementById('analyze-btn').classList.add('ready');
   setTimeout(() => checkTosBeforeAnalysis(), 600);
 }
 
 // ─── CLAPPER FIX — force equal random distribution ───
 let _lastLoader = -1;
+let _uploadedFile = null;
+let _currentUser = null;
 function getNextLoader() {
   let next;
   do { next = Math.floor(Math.random() * 3); } while (next === _lastLoader);
@@ -4019,11 +4396,19 @@ function getNextLoader() {
 }
 
 function startProcessing() {
+  if (!_uploadedFile) {
+    showUploadError('Please select a script file before analyzing.');
+    return;
+  }
+
   // Reset coordination flags
   _loaderDone = false;
   _apiDone    = false;
   _reportData = null;
-  _isSample   = false;
+
+  // Button loading state
+  const btn = document.getElementById('analyze-btn');
+  if (btn) { btn.classList.remove('ready'); btn.classList.add('loading'); btn.textContent = 'Reading script…'; }
 
   goTo('processing');
   const which = getNextLoader();
@@ -4037,22 +4422,19 @@ function startProcessing() {
 
 async function _runAnalysis() {
   try {
-    // Config check
     if (!SUPABASE_URL || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-      console.warn('SceneOne: Supabase not configured — showing demo report');
-      _isSample = true;
-      _onLoaderAnimDone();
+      goTo('upload');
+      showUploadError('SceneOne is not configured yet. Contact support.');
       return;
     }
 
-    const fileInput = document.getElementById('file-input');
     const titleInput = document.getElementById('script-title-input');
-    const file = fileInput?.files?.[0];
+    const file = _uploadedFile;
     const title = titleInput?.value?.trim() || 'Untitled Script';
 
     if (!file) {
-      // No real file (e.g. sample mode) — use demo data
-      _isSample = true;
+      goTo('upload');
+      showUploadError('Please select a script file before analyzing.');
       return;
     }
 
@@ -4064,25 +4446,30 @@ async function _runAnalysis() {
       return;
     }
 
+    // Estimate page count (~1500 chars per formatted screenplay page)
+    window._scriptPageCount = Math.max(1, Math.round(scriptText.trim().length / 1500));
+
     // Call Supabase Edge Function
-    const resp = await fetch(EDGE_FN_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-      body: JSON.stringify({ script_text: scriptText, title }),
+    const { data, error: fnError } = await supabaseClient.functions.invoke('grade-script', {
+      body: { script_text: scriptText, title, user_email: _currentUser?.email || null },
     });
 
-    if (!resp.ok) throw new Error('Edge function returned ' + resp.status);
-
-    const data = await resp.json();
-    if (data.error) throw new Error(data.error);
+    if (fnError) throw new Error(fnError.message || 'Edge function error');
+    if (data?.error) throw new Error(data.error);
 
     _onApiDone(data);
 
   } catch (err) {
     console.error('SceneOne analysis error:', err);
-    // Fall back to demo report gracefully
-    _isSample = true;
-    if (_loaderDone) _finalizeReport();
+    // Show error in the processing screen so user understands what happened
+    const ph = document.getElementById('proc-phrase');
+    const bar = document.getElementById('proc-bar');
+    if (ph) ph.textContent = 'Analysis failed: ' + (err?.message || 'Unknown error');
+    if (bar) bar.style.background = 'var(--amber, #f59e0b)';
+    setTimeout(() => {
+      goTo('upload');
+      showUploadError('Analysis failed: ' + (err?.message || 'Unknown error') + ' — check the browser console for details.');
+    }, 2500);
   }
 }
 

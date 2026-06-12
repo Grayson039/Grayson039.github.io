@@ -647,6 +647,55 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 @media(max-width:600px){.tos-footer{padding:6px 16px;}.exec-grid{grid-template-columns:repeat(2,1fr);}}
 
+@media print {
+  /* Hide everything except the report */
+  body > *:not(#screen-report) { display: none !important; }
+  #screen-report { display: block !important; }
+  .rep-bar, .rep-sidebar, .tos-footer, .ob-tooltip-overlay,
+  .ob-celebrate, .resub-card, .bar-btn, .fixit-btn,
+  .inline-ed, .re-flash, .contact-pref, .exec-panel { display: none !important; }
+
+  /* Full width — no sidebar */
+  .rep-body { display: block !important; }
+  .rep-main { padding: 0 !important; }
+
+  /* Print colors — light background */
+  body { background: #fff !important; color: #111 !important; }
+  .rep-main, .scores-card, .heatmap-card, .win-card,
+  .dna-card, .cat-card, .rev-card, .feed-card,
+  .top-stat, .stat-card { background: #fff !important; border-color: #ddd !important; box-shadow: none !important; }
+
+  /* Text colors */
+  .card-title, .top-stat-label, .section-title,
+  .stat-card-label, .win-eye, .dna-eye { color: #555 !important; }
+  .top-stat-val, .overall-score-num, .cat-score-val,
+  .win-text, .rev-card h3, .feed-card h3 { color: #111 !important; }
+  .top-stat-sub, .overall-score-interp, .note2 p,
+  .fix2 p, .ev-text, .rev-content-desc, .feed-item-desc { color: #444 !important; }
+
+  /* Keep accent colors readable */
+  .sr-bar-fill, .dna-bar-fill, .mini-bar-fill { opacity: 0.7; }
+
+  /* Page breaks */
+  .cat-grid { page-break-before: always; }
+  .cat-card, .rev-item { page-break-inside: avoid; }
+
+  /* Print header */
+  .rep-main::before {
+    content: 'SceneOne Coverage Report';
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+  }
+}
+
 /* ─── REQUESTS SCREEN ─── */
 .top-nav{position:sticky;top:0;z-index:100;background:rgba(20,20,22,0.98);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .nav-brand{font-family:'Playfair Display',serif;font-size:17px;font-weight:900;color:#fff;}
@@ -704,6 +753,24 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .req-empty-icon{font-size:40px;margin-bottom:16px;}
 .req-empty-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;}
 .req-empty-sub{font-size:13px;color:var(--sub);margin-bottom:24px;line-height:1.65;}
+
+/* ─── SCRIPT HISTORY ─── */
+.history-section{margin-top:28px;border-top:1px solid var(--border);padding-top:22px;}
+.history-eyebrow{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--sub);margin-bottom:14px;}
+.history-card{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.history-card:hover{border-color:rgba(62,237,231,0.25);background:rgba(62,237,231,0.03);transform:translateY(-1px);}
+.history-icon{width:36px;height:36px;border-radius:9px;background:rgba(62,237,231,0.07);border:1px solid rgba(62,237,231,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.history-icon svg{width:15px;height:15px;stroke:var(--cyan);}
+.history-info{flex:1;min-width:0;}
+.history-title{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.history-meta{font-size:10px;color:var(--sub);}
+.history-scores{display:flex;gap:8px;flex-shrink:0;align-items:center;}
+.history-score{text-align:center;}
+.history-score-val{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;line-height:1;}
+.history-score-lbl{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-top:1px;}
+.history-arrow{color:var(--sub);font-size:16px;flex-shrink:0;transition:color .2s;}
+.history-card:hover .history-arrow{color:var(--cyan);}
+.history-loading{font-size:11px;color:var(--sub);text-align:center;padding:16px 0;font-style:italic;}
 
 /* ─── VISUAL POLISH ─── */
 
@@ -1434,6 +1501,13 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Page-specific notes</div>
       <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Free to start</div>
     </div>
+
+    <!-- Script History — shown when logged in and history exists -->
+    <div class="history-section" id="history-section" style="display:none;">
+      <div class="history-eyebrow">Past Scripts</div>
+      <div id="history-list"><div class="history-loading">Loading your scripts…</div></div>
+    </div>
+
   </div>
 </div>
 
@@ -2187,9 +2261,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           New
         </button>
-        <button class="bar-btn accent" style="padding:5px 10px;font-size:10px;">
+        <button class="bar-btn accent" onclick="exportReport()" style="padding:5px 10px;font-size:10px;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Export
+          Export PDF
         </button>
       </div>
     </div>
@@ -2807,6 +2881,7 @@ const supabaseClient    = window.supabase.createClient(SUPABASE_URL, SUPABASE_AN
                  || session.user.email.split('@')[0];
       // Already authenticated — skip auth screens
       goTo('upload');
+      loadScriptHistory();
     }
   } catch (e) {
     console.warn('SceneOne: session restore failed', e);
@@ -3053,14 +3128,15 @@ function goTo(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
   window.scrollTo(0,0);
-  // Reset analyze button when returning to upload
+  // Reset analyze button + load history when returning to upload
   if (id === 'upload') {
     const btn = document.getElementById('analyze-btn');
     if (btn) {
       btn.classList.remove('loading');
-      btn.textContent = _uploadedFile ? 'Analyze Script' : 'Analyze Script';
+      btn.textContent = 'Analyze Script';
       if (_uploadedFile) btn.classList.add('ready');
     }
+    loadScriptHistory();
   }
 }
 
@@ -3607,6 +3683,121 @@ function setContactPref(type, btn) {
   } else {
     input.classList.remove('show');
   }
+}
+
+// ─── EXPORT PDF ───
+function exportReport() {
+  // Expand all collapsed category bodies so they print
+  document.querySelectorAll('.cat-body2').forEach(el => el.classList.add('open'));
+  document.querySelectorAll('.cat-head').forEach(el => el.classList.add('open'));
+
+  // Set document title to script name for the PDF filename
+  const scriptTitle = document.getElementById('rep-title')?.textContent || 'SceneOne Coverage Report';
+  const prevTitle = document.title;
+  document.title = scriptTitle;
+
+  window.print();
+
+  // Restore title after print dialog closes
+  setTimeout(() => { document.title = prevTitle; }, 1000);
+}
+
+// ─── SCRIPT HISTORY ───
+async function _saveSubmission(title, data) {
+  try {
+    await supabaseClient.from('submissions').insert({
+      title: title || 'Untitled Script',
+      user_email: _currentUser?.email || null,
+      result: data,
+      status: 'complete',
+    });
+  } catch (e) {
+    console.warn('SceneOne: submission save failed', e);
+  }
+}
+
+async function loadScriptHistory() {
+  if (!_currentUser?.email) return;
+  const section = document.getElementById('history-section');
+  const list = document.getElementById('history-list');
+  if (!section || !list) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('submissions')
+      .select('id, created_at, title, result')
+      .eq('user_email', _currentUser.email)
+      .eq('status', 'complete')
+      .order('created_at', { ascending: false })
+      .limit(8);
+
+    if (error || !data?.length) return;
+
+    section.style.display = 'block';
+    list.innerHTML = data.map(row => {
+      const r = row.result || {};
+      const overall = r.overall_score ?? '—';
+      const scores = r.scores || {};
+      const best = scores ? Object.entries(scores).sort((a,b) => b[1]-a[1])[0] : null;
+      const date = new Date(row.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+      const scoreColor = overall >= 75 ? 'var(--green)' : overall >= 60 ? 'var(--cyan)' : 'var(--amber)';
+      const bestLabel = best ? best[0].charAt(0).toUpperCase() + best[0].slice(1) : '';
+      const bestVal = best ? best[1] : '—';
+
+      return `<div class="history-card" onclick="loadHistoryReport('${row.id}')">
+        <div class="history-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <div class="history-info">
+          <div class="history-title">${row.title}</div>
+          <div class="history-meta">${date}${bestLabel ? ' &middot; Best: ' + bestLabel : ''}</div>
+        </div>
+        <div class="history-scores">
+          <div class="history-score">
+            <div class="history-score-val" style="color:${scoreColor}">${overall}</div>
+            <div class="history-score-lbl">Overall</div>
+          </div>
+          ${bestVal !== '—' ? `<div class="history-score">
+            <div class="history-score-val" style="color:var(--cyan)">${bestVal}</div>
+            <div class="history-score-lbl">${bestLabel}</div>
+          </div>` : ''}
+        </div>
+        <div class="history-arrow">›</div>
+      </div>`;
+    }).join('');
+
+  } catch (e) {
+    console.warn('SceneOne: history load failed', e);
+  }
+}
+
+// Cache of loaded history rows keyed by id
+const _historyCache = {};
+
+async function loadHistoryReport(id) {
+  // Check cache first, otherwise refetch
+  let result = _historyCache[id];
+  if (!result) {
+    const { data } = await supabaseClient
+      .from('submissions')
+      .select('title, result')
+      .eq('id', id)
+      .single();
+    if (!data?.result) return;
+    result = data.result;
+    _historyCache[id] = result;
+    // Update report title
+    const titleEl = document.getElementById('rep-title');
+    if (titleEl && data.title) titleEl.textContent = data.title.toUpperCase() + ' — Draft 1';
+    document.getElementById('crawl-title') && (document.getElementById('crawl-title').textContent = data.title.toUpperCase());
+  }
+  _reportData = result;
+  window._lastScores = result.scores || {};
+  window._scriptPageCount = null; // will show '—' since we don't have text
+  populateReport(result);
+  goTo('report');
 }
 
 // ─── READER REQUEST ───
@@ -4582,6 +4773,7 @@ async function _runAnalysis() {
     if (data?.error) throw new Error(data.error);
 
     _onApiDone(data);
+    _saveSubmission(title, data);
 
   } catch (err) {
     console.error('SceneOne analysis error:', err);

@@ -1,5 +1,5 @@
 /**
- * Our Table — Shared Design System
+ * Ladle — Shared Design System
  * ─────────────────────────────────────────────────────────────
  * Single source of truth for color tokens, typography, spacing,
  * and every reusable UI component used across all screen files.
@@ -37,51 +37,53 @@
 
   var L = {
     _name:     'light',
-    bg:        '#FAF7F0',   // page / screen background
-    card:      '#FFFFFF',   // card surfaces
-    primary:   '#1B3A5C',   // midnight navy — CTAs, active states
-    secondary: '#E8A84A',   // warm amber — accents, dietary tags
-    text:      '#2C2416',   // primary text
-    muted:     '#8A7060',   // secondary / placeholder text
-    border:    '#E8DDD5',   // dividers, card borders
-    chip:      '#E8EFF6',   // filter pill backgrounds
-    chipTx:    '#5A7090',   // filter pill text
+    bg:        '#F5F1EB',   // warm sand — page / screen background
+    card:      '#FFFFFF',   // white card surfaces
+    surface:   '#F0EBE2',   // slightly deeper sand — nested surfaces, input bg
+    primary:   '#C1613A',   // rust — CTAs, active nav, key actions
+    secondary: '#C3B1E1',   // lavender — accents, section eyebrows
+    text:      '#2A2118',   // deep warm brown — primary text
+    muted:     '#9A8A78',   // warm gray — secondary / placeholder text
+    border:    '#E8E0D4',   // warm light border
+    chip:      '#EDE7F6',   // lavender-tinted chip background
+    chipTx:    '#7A6090',   // lavender chip text
     input:     '#FFFFFF',   // input field background
     // Hero placeholder colors (shown when no photo is available)
-    hero:      '#3A5A8C',   // featured card — medium navy
-    hero2:     '#C89040',   // secondary card — deep amber
-    hero3:     '#2A4070',   // tertiary card — deeper navy
+    hero:      '#C3B1E1',   // lavender — featured card placeholder
+    hero2:     '#E8C4A8',   // warm peach — secondary card placeholder
+    hero3:     '#D4C4B4',   // warm taupe — tertiary card placeholder
     // Semantic colors
     success:   '#5A8A52',
     warning:   '#C4884A',
     error:     '#B04040',
     // Overlay / scrim
-    overlay:   'rgba(44,36,22,0.52)',
+    overlay:   'rgba(42,33,24,0.52)',
     scrim:     'rgba(0,0,0,0.28)',
-    teal:      '#1A8C7A'
+    teal:      '#C1613A'   // rust — used for active nav indicator
   };
 
   var D = {
     _name:     'dark',
-    bg:        '#1C1917',
-    card:      '#2E2A27',
-    primary:   '#4A8AB8',   // lighter navy for dark bg contrast
-    secondary: '#F0B84A',   // brighter amber for dark bg
-    text:      '#FEFAF6',
-    muted:     '#C8BAB2',
-    border:    'rgba(255,255,255,0.15)',
-    chip:      '#1E2A38',   // dark navy-tinted chip
-    chipTx:    '#90AACA',   // light blue chip text
-    input:     '#242120',
-    hero:      '#1A2A40',   // dark navy
-    hero2:     '#3A2C14',   // dark amber/brown
-    hero3:     '#152030',   // deeper dark navy
+    bg:        '#1E1525',   // deep plum
+    card:      '#2A1F33',   // slightly lighter plum card
+    surface:   '#221830',   // deep plum surface for nested areas
+    primary:   '#D4785A',   // rust lightened for dark bg
+    secondary: '#C3B1E1',   // same lavender — works on dark
+    text:      '#F5EDDE',   // warm cream
+    muted:     '#A090B0',   // muted lavender-gray
+    border:    'rgba(195,177,225,0.15)', // translucent lavender border
+    chip:      '#2E2040',   // deep purple chip
+    chipTx:    '#C3B1E1',   // lavender chip text
+    input:     '#251A2E',   // dark plum input
+    hero:      '#3D2E50',   // deep purple featured placeholder
+    hero2:     '#3A2820',   // deep rust/brown placeholder
+    hero3:     '#2E2840',   // mid plum placeholder
     success:   '#7AB86A',
     warning:   '#D4A870',
     error:     '#D46A5A',
-    overlay:   'rgba(0,0,0,0.62)',
-    scrim:     'rgba(0,0,0,0.46)',
-    teal:      '#30C0B0'
+    overlay:   'rgba(0,0,0,0.72)',
+    scrim:     'rgba(0,0,0,0.52)',
+    teal:      '#D4785A'   // rust — active nav indicator (dark mode)
   };
 
 
@@ -90,7 +92,7 @@
   ══════════════════════════════════════════════════════════ */
 
   var T = {
-    sans:  "-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif",
+    sans:  "'Nunito', -apple-system, BlinkMacSystemFont, sans-serif",
     serif: "'Playfair Display', Georgia, 'Times New Roman', serif",
     sz: {
       xxs:  '9px',   // decorative labels, badges

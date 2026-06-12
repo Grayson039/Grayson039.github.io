@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Table — Home, Search & Library</title>
+<title>Ladle — Home, Search & Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #EDE8E2;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #EAE4DB;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -188,8 +189,8 @@
 
   /* Featured hero card — full width, tall, gradient overlay */
   function featuredCard(th, recipe) {
-    var grad = 'linear-gradient(160deg, #1B3A5C 0%, #0F2A48 100%)';
-    if (th._name === 'dark') grad = 'linear-gradient(160deg, #1A2A40 0%, #0F1A28 100%)';
+    var grad = 'linear-gradient(160deg, ' + th.hero + ' 0%, ' + th.hero2 + ' 100%)';
+    if (th._name === 'dark') grad = 'linear-gradient(160deg, ' + th.hero + ' 0%, ' + th.hero3 + ' 100%)';
 
     return '<div onclick="otGo(\'recipe\')" style="margin:0 ' + S.xl + ' ' + S.section + ';' +
       'border-radius:' + R.xl + ';overflow:hidden;cursor:pointer;' +
@@ -353,7 +354,8 @@
   function sectionHeader(th, title, seeAllFn) {
     return '<div style="display:flex;justify-content:space-between;align-items:center;' +
       'padding:0 ' + S.xl + ';margin-bottom:10px">' +
-      '<div style="font-size:' + T.sz.md + ';font-weight:' + T.wt.bold + ';color:' + th.text + '">' + title + '</div>' +
+      '<div style="font-size:' + T.sz.md + ';font-weight:' + T.wt.bold + ';color:' + th.secondary + ';' +
+        'letter-spacing:0.01em">' + title + '</div>' +
       (seeAllFn
         ? '<div onclick="' + seeAllFn + '" style="font-size:12px;color:' + th.primary + ';' +
             'font-weight:' + T.wt.semi + ';cursor:pointer">See all</div>'
@@ -396,11 +398,12 @@
 
         /* Header */
         '<div style="display:flex;justify-content:space-between;align-items:center;' +
-          'padding:8px ' + S.xl + ' 14px">' +
+          'padding:' + S.lg + ' ' + S.xl + ' ' + S.lg + '">' +
           '<div>' +
-            '<div style="font-size:12px;color:' + th.muted + ';margin-bottom:3px">Good morning 👋</div>' +
+            '<div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;' +
+              'color:' + th.primary + ';margin-bottom:4px">Ladle</div>' +
             '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
-              'font-family:' + T.serif + '">What\'s cooking, Will?</div>' +
+              'line-height:1.2">What\'s cooking, Will?</div>' +
           '</div>' +
           notifBell(th) +
         '</div>' +
@@ -427,17 +430,17 @@
 
         /* What can I make? CTA banner */
         '<div onclick="otGo(\'fridge\')" style="margin:0 ' + S.xl + ' ' + S.xl + ';' +
-          'padding:16px 18px;border-radius:' + R.lg + ';' +
+          'padding:' + S.lg + ' 18px;border-radius:' + R.lg + ';' +
           'background:' + (th._name === 'dark' ? th.card : th.chip) + ';' +
-          'border:1.5px dashed ' + th.secondary + ';cursor:pointer;' +
+          'border:1.5px dashed ' + th.primary + ';cursor:pointer;' +
           'display:flex;align-items:center;justify-content:space-between">' +
           '<div>' +
             '<div style="font-size:13px;font-weight:' + T.wt.bold + ';color:' + th.text + ';margin-bottom:3px">' +
-              '❓ What Can I Make?' +
+              '🥘 What Can I Make?' +
             '</div>' +
             '<div style="font-size:11px;color:' + th.muted + '">Scan your fridge to find out</div>' +
           '</div>' +
-          '<div style="background:' + th.secondary + ';color:white;padding:8px 14px;' +
+          '<div style="background:' + th.primary + ';color:white;padding:8px 14px;' +
             'border-radius:' + R.pill + ';font-size:11px;font-weight:' + T.wt.bold + '">Scan →</div>' +
         '</div>' +
 

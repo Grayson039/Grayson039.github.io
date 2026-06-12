@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0A0A0A">
+<title>Cutman</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; background: #0A0A0A; font-family: 'Inter', -apple-system, sans-serif; }
+  #app { width: 100%; height: 100dvh; height: 100vh; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .scroll::-webkit-scrollbar { display: none; }
+  .hscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .hscroll::-webkit-scrollbar { display: none; }
+  input, button { font-family: inherit; }
+  input:focus { outline: none; }
+  @keyframes cmFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  [style*="cursor:pointer"]:active { opacity: 0.62 !important; transition: opacity 0.05s !important; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="cutman-design-system.js"></script>
+<script>
+(function () {
+  'use strict';
+  var T = CM.T, S = CM.S, R = CM.R, c = CM.c;
+
+  /* ─── API ──────────────────────────────────────────────────── */
+  var API = 'https://cutman-hyf5.onrender.com';
+
+  /* ─── SAFE AREA ─────────────────────────────────────────────── */
+  var safeTop    = 'env(safe-area-inset-top, 12px)';
+  var safeBottom = 'env(safe-area-inset-bottom, 0px)';
+
+  /* ─── NAV HEIGHT ────────────────────────────────────────────── */
+  var NAV_H = 64; // px, plus safeBottom
+
+  /* ─── DATA LOADERS ──────────────────────────────────────────── */
+  function loadEvents() {
+    if (cmState._eventsLoaded || cmState._eventsLoading) return;
+    cmState._eventsLoading = true;
+    fetch(API + '/api/events')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        cmState.eventsData = Array.isArray(data) ? data : [];
+        cmState._eventsLoaded = true;
+        cmState._eventsLoading = false;
+        if (cmState.cur === 'home' || cmState.cur === 'cards') cmRender();
+      })
+      .catch(function () {
+        cmState.eventsData = [];
+        cmState._eventsLoaded = true;
+        cmState._eventsLoading = false;
+        if (cmState.cur === 'home' || cmState.cur === 'cards') cmRender();
+      });
+  }
+
+  function loadNews() {
+    if (cmState._newsLoaded || cmState._newsLoading) return;
+    cmState._newsLoading = true;
+    fetch(API + '/api/news')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        cmState.newsData = Array.isArray(data) ? data : [];
+        cmState._newsLoaded = true;
+        cmState._newsLoading = false;
+        if (cmState.cur === 'home' || cmState.cur === 'news') cmRender();
+      })
+      .catch(function () {
+        cmState.newsData = [];
+        cmState._newsLoaded = true;
+        cmState._newsLoading = false;
+        if (cmState.cur === 'home' || cmState.cur === 'news') cmRender();
+      });
+  }
+
+  var _searchTimer;
+  window.cmSearch = function (val) {
+    cmState.searchQuery = val;
+    clearTimeout(_searchTimer);
+    if (!val.trim()) {
+      cmState.searchResults = null;
+      cmState.searchLoading = false;
+      cmRender();
+      return;
+    }
+    _searchTimer = setTimeout(function () {
+      cmState.searchLoading = true;
+      cmRender();
+      fetch(API + '/api/fighters/search?q=' + encodeURIComponent(val.trim()))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          cmState.searchResults = Array.isArray(data) ? data : [];
+          cmState.searchLoading = false;
+          cmRender();
+        })
+        .catch(function () {
+          cmState.searchResults = [];
+          cmState.searchLoading = false;
+          cmRender();
+        });
+    }, 380);
+  };
+
+  window.cmLoadFighter = function (slug) {
+    cmState.fighterSlug = slug;
+    cmState.fighterProfile = null;
+    cmState.fighterLoading = true;
+    cmState.fighterTab = 'record';
+    cmGo('fighter');
+    fetch(API + '/api/fighters/' + encodeURIComponent(slug))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (cmState.fighterSlug === slug) {
+          cmState.fighterProfile = data;
+          cmState.fighterLoading = false;
+          if (cmState.cur === 'fighter') cmRender();
+        }
+      })
+      .catch(function () {
+        if (cmState.fighterSlug === slug) {
+          cmState.fighterLoading = false;
+          if (cmState.cur === 'fighter') cmRender();
+        }
+      });
+  };
+
+  /* ─── SHARED COMPONENTS ─────────────────────────────────────── */
+
+  function header(th, title, rightHTML) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;' +
+      'padding-top:' + safeTop + ';padding-left:' + S.xl + ';padding-right:' + S.xl + ';' +
+      'padding-bottom:10px;flex-shrink:0;background:' + th.bg + '">' +
+      '<div style="font-size:22px;font-weight:900;color:' + th.text + ';letter-spacing:-0.03em">' + title + '</div>' +
+      (rightHTML || '') +
+    '</div>';
+  }
+
+  function themeToggle(th) {
+    var icon = cmState.dark
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    return '<div onclick="cmToggleTheme()" style="cursor:pointer;color:' + th.muted + ';' +
+      'width:32px;height:32px;border-radius:50%;border:1px solid ' + th.border + ';' +
+      'display:flex;align-items:center;justify-content:center;user-select:none;flex-shrink:0">' +
+      icon + '</div>';
+  }
+
+  function skeleton(th, w, h, radius) {
+    return '<div style="width:' + (w||'100%') + ';height:' + (h||'16px') + ';' +
+      'background:' + th.card2 + ';border-radius:' + (radius||R.sm) + ';flex-shrink:0"></div>';
+  }
+
+  function spinner(th) {
+    var slowHint = cmState._slowLoad
+      ? '<div style="margin-top:16px;font-size:11px;color:' + th.muted + ';text-align:center;line-height:1.6">Server is waking up…<br>This may take ~30s on first load</div>'
+      : '';
+    return '<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px;flex:1">' +
+      '<div style="width:28px;height:28px;border-radius:50%;' +
+        'border:2.5px solid ' + th.border + ';border-top-color:' + th.primary + ';' +
+        'animation:spin 0.7s linear infinite"></div>' +
+      slowHint +
+    '</div>';
+  }
+
+  function promoColor(promo) {
+    var map = { UFC: '#E8272A', BOXING: '#818CF8', PFL: '#4ADE80', ONE: '#D4A853', BELLATOR: '#C084FC', BKFC: '#F97316' };
+    return map[(promo||'').toUpperCase()] || '#9A9A9A';
+  }
+
+  function promoFromEvent(ev) {
+    return (ev.promotion || ev.promo || '').toUpperCase().split(/\s/)[0];
+  }
+
+  /* ─── EVENT HELPERS ──────────────────────────────────────────── */
+
+  function renderEventHero(th, ev) {
+    var promo = promoFromEvent(ev);
+    var col = promoColor(promo);
+    var mainFight = ev.main_event || ev.mainEvent || '';
+    var name = ev.name || '';
+    var date = ev.date || '';
+    var venue = ev.venue || '';
+    var net = ev.network || '';
+
+    return '<div onclick="cmGo(\'fightCard\')" style="margin:0 ' + S.xl + ' ' + S.section + ';border-radius:' + R.xl + ';' +
+      'background:linear-gradient(145deg,' + col + '22 0%,rgba(0,0,0,0.88) 100%);' +
+      'border:1px solid ' + col + '44;box-shadow:0 8px 32px ' + col + '22;' +
+      'position:relative;height:190px;overflow:hidden;cursor:pointer">' +
+
+      '<div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;' +
+        'background:' + col + '28;filter:blur(36px);pointer-events:none"></div>' +
+
+      '<div style="position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;justify-content:space-between">' +
+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+          c.promoBadge(promo || (ev.promotion || '').substring(0, 10)) +
+          '<div style="font-size:10px;color:rgba(255,255,255,0.55);font-weight:600">' + date + '</div>' +
+        '</div>' +
+
+        '<div>' +
+          (name ? '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:5px">' + name + '</div>' : '') +
+          (mainFight
+            ? '<div style="font-size:24px;font-weight:900;color:#FFF;line-height:1.1;letter-spacing:-0.02em;margin-bottom:8px">' + mainFight + '</div>'
+            : '<div style="font-size:20px;font-weight:900;color:#FFF;line-height:1.1;margin-bottom:8px">' + name + '</div>') +
+          '<div style="display:flex;align-items:center;justify-content:space-between">' +
+            (venue ? '<div style="display:flex;align-items:center;gap:4px">' +
+              '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+              '<span style="font-size:10px;color:rgba(255,255,255,0.5)">' + venue + '</span>' +
+            '</div>' : '<div></div>') +
+            (net ? '<span style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700">' + net + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+  }
+
+  function renderEventHeroSkeleton(th) {
+    return '<div style="margin:0 ' + S.xl + ' ' + S.section + ';border-radius:' + R.xl + ';' +
+      'background:' + th.card + ';height:190px;overflow:hidden;padding:18px;' +
+      'display:flex;flex-direction:column;justify-content:space-between">' +
+      '<div style="display:flex;gap:8px">' + skeleton(th,'60px','18px',R.sm) + '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px">' +
+        skeleton(th,'80px','10px',R.sm) +
+        skeleton(th,'70%','28px',R.md) +
+        skeleton(th,'50%','10px',R.sm) +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderEventCard(th, ev) {
+    var promo = promoFromEvent(ev);
+    var col = promoColor(promo);
+    var name = ev.name || ev.promotion || '';
+    var mainFight = ev.main_event || ev.mainEvent || '';
+    var date = (ev.date || '').replace(/\d{4}/, '').trim().replace(/,\s*$/, '');
+    var net = ev.network || '';
+
+    return '<div onclick="cmSetState(\'selectedEvent\',' + JSON.stringify(JSON.stringify(ev)) + ');cmGo(\'fightCard\')" ' +
+      'style="flex-shrink:0;width:160px;cursor:pointer">' +
+      '<div style="height:118px;border-radius:' + R.lg + ';background:linear-gradient(135deg,' + col + '22 0%,' + th.card + ' 100%);' +
+        'border:1px solid ' + th.border + ';margin-bottom:8px;position:relative;overflow:hidden;' +
+        'box-shadow:0 4px 16px rgba(0,0,0,0.3)">' +
+        '<div style="position:absolute;top:0;left:0;right:0;bottom:0;background:' + col + '14"></div>' +
+        '<div style="position:absolute;top:8px;left:8px">' + c.promoBadge(promo || name.substring(0,10)) + '</div>' +
+        '<div style="position:absolute;top:8px;right:8px;font-size:9px;color:rgba(255,255,255,0.55);font-weight:600">' + date + '</div>' +
+        '<div style="position:absolute;bottom:8px;left:8px;right:8px">' +
+          '<div style="font-size:12px;font-weight:800;color:#FFF;line-height:1.2">' + name + '</div>' +
+          (net ? '<div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:2px">' + net + '</div>' : '') +
+        '</div>' +
+      '</div>' +
+      (mainFight ? '<div style="font-size:11px;font-weight:600;color:' + th.sub + ';line-height:1.35">' + mainFight + '</div>' : '') +
+    '</div>';
+  }
+
+  function renderNewsItem(th, item, i) {
+    var source = item.source || item.feed || '';
+    var time   = item.age || item.time || '';
+    var title  = item.title || item.headline || '';
+    var url    = item.url || item.link || '';
+    var hot    = item.hot || i === 0;
+    return '<div ' + (url ? 'onclick="window.open(\'' + escAttr(url) + '\',\'_blank\')"' : '') +
+      ' style="display:flex;gap:10px;padding:11px 0;border-bottom:1px solid ' + th.border + ';cursor:pointer">' +
+      '<div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;width:70px">' +
+        (hot ? '<span style="font-size:8px;font-weight:700;color:' + th.primary + ';letter-spacing:0.06em">🔥 HOT</span>' : '') +
+        '<span style="font-size:9px;font-weight:700;color:' + th.muted + '">' + source + '</span>' +
+        (time ? '<span style="font-size:9px;color:' + th.muted + '">' + time + '</span>' : '') +
+      '</div>' +
+      '<div style="flex:1;font-size:12px;font-weight:' + (i < 2 ? '600' : '500') + ';color:' +
+        (i < 2 ? th.text : th.sub) + ';line-height:1.45;' + (i >= 3 ? 'opacity:0.7' : '') + '">' + title + '</div>' +
+    '</div>';
+  }
+
+  /* ─── SCREENS ────────────────────────────────────────────────── */
+
+  function sHome(th) {
+    loadEvents();
+    loadNews();
+
+    var filter  = cmState.homeFilter || 'All';
+    var chips   = ['All', 'UFC', 'Boxing', 'PFL', 'ONE', 'Bellator', 'BKFC'];
+    var events  = cmState.eventsData;
+    var news    = cmState.newsData;
+    var loading = !cmState._eventsLoaded || !cmState._newsLoaded;
+
+    var BOXING_PROMOS = ['GB','GBP','TR','MB','MR','QB','QBP','DBE','PBC','GOLDEN BOY',
+      'TOP RANK','MATCHROOM','QUEENSBERRY','PREMIER BOXING','DIBELLA','PROBELLUM','DAZN','BOXING'];
+    var filtered = events ? events.filter(function (ev) {
+      if (filter === 'All') return true;
+      var p = promoFromEvent(ev);
+      if (filter === 'Boxing') return BOXING_PROMOS.indexOf(p) >= 0;
+      return p === filter.toUpperCase() || p.indexOf(filter.toUpperCase()) >= 0;
+    }) : null;
+
+    var nextEv = filtered && filtered.length ? filtered[0] : null;
+
+    return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+      header(th, 'CUTMAN <span style="color:' + th.primary + '">🥊</span>', themeToggle(th)) +
+
+      '<div class="scroll" style="flex:1;padding-bottom:calc(' + NAV_H + 'px + ' + safeBottom + ')">' +
+
+        /* Hero */
+        (nextEv
+          ? renderEventHero(th, nextEv)
+          : loading
+            ? renderEventHeroSkeleton(th)
+            : '<div style="margin:0 ' + S.xl + ' ' + S.section + ';border-radius:' + R.xl + ';background:' + th.card + ';height:190px;display:flex;align-items:center;justify-content:center;color:' + th.muted + ';font-size:13px">No upcoming events</div>') +
+
+        /* Filter chips */
+        '<div class="hscroll" style="display:flex;gap:7px;padding:0 ' + S.xl + ';margin-bottom:' + S.section + '">' +
+          chips.map(function (ch) { return c.chip(th, ch, ch === filter, 'cmSetState(\'homeFilter\',\'' + ch + '\')'); }).join('') +
+        '</div>' +
+
+        /* This Week */
+        c.sectionHeader(th, 'This Week', 'See all', 'cmGo(\'cards\')') +
+        (filtered && filtered.length
+          ? '<div class="hscroll" style="display:flex;gap:10px;padding:0 ' + S.xl + ';margin-bottom:' + S.section + '">' +
+              filtered.slice(0, 8).map(function (ev) { return renderEventCard(th, ev); }).join('') +
+            '</div>'
+          : loading
+            ? '<div style="display:flex;gap:10px;padding:0 ' + S.xl + ';margin-bottom:' + S.section + ';overflow:hidden">' +
+                [1,2,3].map(function() { return '<div style="flex-shrink:0;width:160px;height:118px;background:' + th.card + ';border-radius:' + R.lg + '"></div>'; }).join('') +
+              '</div>'
+            : '<div style="padding:0 ' + S.xl + ' ' + S.section + ';color:' + th.muted + ';font-size:12px">No events found</div>') +
+
+        /* Latest News */
+        c.sectionHeader(th, 'Latest News', 'See all', 'cmGo(\'news\')') +
+        (news && news.length
+          ? '<div style="padding:0 ' + S.xl + '">' +
+              news.slice(0, 5).map(function (item, i) { return renderNewsItem(th, item, i); }).join('') +
+            '</div>'
+          : loading
+            ? '<div style="padding:0 ' + S.xl + ';display:flex;flex-direction:column;gap:14px">' +
+                [1,2,3].map(function() {
+                  return '<div style="display:flex;gap:10px">' +
+                    skeleton(th,'70px','36px',R.sm) +
+                    '<div style="flex:1;display:flex;flex-direction:column;gap:6px">' +
+                      skeleton(th,'100%','12px',R.sm) +
+                      skeleton(th,'80%','12px',R.sm) +
+                    '</div>' +
+                  '</div>';
+                }).join('') +
+              '</div>'
+            : '<div style="padding:0 ' + S.xl + ';color:' + th.muted + ';font-size:12px">No news available</div>') +
+
+        '<div style="height:24px"></div>' +
+      '</div>' +
+
+      c.navBar(th, 0) +
+    '</div>';
+  }
+
+  function sCards(th) {
+    loadEvents();
+    var events  = cmState.eventsData;
+    var loading = !cmState._eventsLoaded;
+
+    return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+      header(th, 'Fight Cards') +
+
+      '<div class="scroll" style="flex:1;padding-bottom:calc(' + NAV_H + 'px + ' + safeBottom + ')">' +
+
+        (loading
+          ? spinner(th)
+          : events && events.length
+            ? events.map(function (ev) {
+                var promo = promoFromEvent(ev);
+                var col = promoColor(promo);
+                var mainFight = ev.main_event || ev.mainEvent || '';
+                return '<div onclick="cmSetState(\'selectedEvent\',' + JSON.stringify(JSON.stringify(ev)) + ');cmGo(\'fightCard\')" ' +
+                  'style="padding:14px ' + S.xl + ';border-bottom:1px solid ' + th.border + ';cursor:pointer;display:flex;align-items:center;gap:14px">' +
+                  '<div style="width:44px;height:44px;border-radius:' + R.md + ';background:' + col + '22;border:1.5px solid ' + col + '55;' +
+                    'display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+                    '<span style="font-size:8px;font-weight:800;color:' + col + ';letter-spacing:0.03em">' + (promo || '?') + '</span>' +
+                  '</div>' +
+                  '<div style="flex:1;min-width:0">' +
+                    '<div style="font-size:14px;font-weight:800;color:' + th.text + ';line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (ev.name || ev.promotion || '') + '</div>' +
+                    (mainFight ? '<div style="font-size:11px;color:' + th.sub + ';margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + mainFight + '</div>' : '') +
+                    '<div style="font-size:10px;color:' + th.muted + ';margin-top:3px">' + (ev.date||'') + (ev.venue ? ' · ' + ev.venue : '') + '</div>' +
+                  '</div>' +
+                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + th.muted + '" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' +
+                '</div>';
+              }).join('')
+            : '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 32px;text-align:center">' +
+                '<div style="font-size:48px;margin-bottom:16px">📅</div>' +
+                '<div style="font-size:16px;font-weight:700;color:' + th.text + ';margin-bottom:8px">No Events Found</div>' +
+                '<div style="font-size:13px;color:' + th.muted + '">Check back soon for upcoming fights</div>' +
+              '</div>') +
+
+      '</div>' +
+      c.navBar(th, 1) +
+    '</div>';
+  }
+
+  /* Static UFC 315 fight card data (fallback) */
+  var STATIC_CARD = {
+    promo: 'UFC', name: 'UFC 315',
+    date: 'Saturday, May 31, 2026', time: 'Main Card 10pm ET · Prelims 8pm ET',
+    venue: 'Madison Square Garden', city: 'New York, NY',
+    network: 'ESPN+', ppvPrice: '$79.99',
+    main_card: [
+      { a:'Jon Jones', aRank:'Champion', aOdds:-350, b:'Stipe Miocic', bRank:'#1 Contender', bOdds:+280, weightClass:'Heavyweight', rounds:5, title:true, main:true },
+      { a:'Leon Edwards', aRank:'Champion', aOdds:-280, b:'Shavkat Rakhimov', bRank:'#3', bOdds:+225, weightClass:'Welterweight', rounds:5, title:true },
+      { a:'Alex Pereira', aRank:'#1', aOdds:-400, b:'Khalil Rountree Jr.', bRank:'#4', bOdds:+310, weightClass:'Light Heavyweight', rounds:3 },
+      { a:'Sean Strickland', aRank:'#2', aOdds:-150, b:'Paulo Costa', bRank:'#5', bOdds:+125, weightClass:'Middleweight', rounds:3 }
+    ],
+    prelims: [
+      { a:'Brian Ortega', aRank:'#3', aOdds:+135, b:'Yair Rodriguez', bRank:'#2', bOdds:-165, weightClass:'Featherweight', rounds:3 },
+      { a:'Mateusz Gamrot', aRank:'#6', aOdds:+165, b:'Arman Tsarukyan', bRank:'#4', bOdds:-200, weightClass:'Lightweight', rounds:3 }
+    ]
+  };
+
+  /* Helper: parse "Fighter A vs. Fighter B" → ['Fighter A', 'Fighter B'] */
+  function parseVs(str) {
+    if (!str) return [];
+    var parts = str.split(/\s+vs\.?\s+/i);
+    return parts.map(function(p) { return p.trim(); }).filter(Boolean);
+  }
+
+  /* Navigate to fighters tab and trigger a search */
+  window.cmSearchFighter = function(name) {
+    cmState.searchQuery = name;
+    cmState.searchResults = null;
+    cmGo('fighters');
+    setTimeout(function() {
+      var inp = document.getElementById('fighter-search');
+      if (inp) inp.value = name;
+      cmSearch(name);
+    }, 50);
+  };
+
+  function sFightCard(th) {
+    var raw = cmState.selectedEvent;
+    var ev = (typeof raw === 'string') ? tryParse(raw) : (raw || STATIC_CARD);
+    var showPrelims = cmState.showPrelims !== false;
+    var promo = promoFromEvent(ev);
+    var col = promoColor(promo);
+    var mainCard = ev.main_card || ev.mainCard || null;
+    var prelims  = ev.prelims || [];
+    var hasCard  = mainCard && mainCard.length > 0;
+    var mainFight = ev.main_event || ev.mainEvent || '';
+    var fighters = parseVs(mainFight);
+
+    var eventHeader =
+      '<div style="padding-top:' + safeTop + ';padding-left:' + S.xl + ';padding-right:' + S.xl + ';padding-bottom:10px;flex-shrink:0;background:' + th.bg + '">' +
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">' +
+          c.backBtn(th, '') +
+          '<div style="flex:1">' +
+            '<div style="font-size:18px;font-weight:900;color:' + th.text + ';letter-spacing:-0.02em">' + escHtml(ev.name || 'Fight Card') + '</div>' +
+            '<div style="font-size:10px;color:' + th.muted + ';margin-top:1px">' + escHtml(ev.date||'') + (ev.venue ? ' · ' + escHtml(ev.venue) : '') + '</div>' +
+          '</div>' +
+          c.promoBadge(promo || (ev.promotion||'').substring(0,10)) +
+        '</div>' +
+        (ev.network || ev.location
+          ? '<div style="font-size:11px;font-weight:600;color:' + th.sub + '">' +
+              (ev.network || '') + (ev.location ? ' · ' + ev.location : '') +
+            '</div>'
+          : '') +
+      '</div>';
+
+    if (hasCard) {
+      /* Full fight card (UFC-style) */
+      return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+        eventHeader +
+        '<div style="display:flex;justify-content:flex-end;padding:0 ' + S.xl + ' 8px;flex-shrink:0">' +
+          '<div onclick="cmToggleState(\'showPrelims\')" style="font-size:10px;font-weight:600;color:' + (showPrelims ? th.primary : th.muted) + ';cursor:pointer">Prelims ' + (showPrelims ? '▲' : '▼') + '</div>' +
+        '</div>' +
+        '<div class="scroll" style="flex:1;padding-bottom:calc(' + NAV_H + 'px + ' + safeBottom + ')">' +
+          '<div style="padding:8px 0 4px ' + S.xl + ';font-size:9px;font-weight:800;color:' + th.muted + ';letter-spacing:0.14em">MAIN CARD</div>' +
+          mainCard.map(function (f) { return c.fightRow(th, f); }).join('') +
+          (showPrelims && prelims.length
+            ? '<div style="padding:16px 0 4px ' + S.xl + ';font-size:9px;font-weight:800;color:' + th.muted + ';letter-spacing:0.14em">PRELIMS</div>' +
+              prelims.map(function (f) { return c.fightRow(th, f); }).join('')
+            : '') +
+          '<div style="height:24px"></div>' +
+        '</div>' +
+        c.navBar(th, 1) +
+      '</div>';
+    }
+
+    /* No detailed card — show main event fighters as tappable bio cards */
+    return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+      eventHeader +
+      '<div class="scroll" style="flex:1;padding-bottom:calc(' + NAV_H + 'px + ' + safeBottom + ')">' +
+
+        (fighters.length >= 2
+          ? '<div style="padding:16px ' + S.xl + ' 8px">' +
+              '<div style="font-size:9px;font-weight:800;color:' + th.muted + ';letter-spacing:0.14em;margin-bottom:14px">MAIN EVENT</div>' +
+
+              /* VS layout with fighter cards */
+              '<div style="display:flex;align-items:center;gap:10px">' +
+                fighters.slice(0, 2).map(function(name, i) {
+                  return '<div onclick="cmSearchFighter(\'' + escAttr(name) + '\')" ' +
+                    'style="flex:1;background:' + th.card + ';border:1px solid ' + th.border + ';border-radius:' + R.lg + ';' +
+                    'padding:16px 12px;cursor:pointer;text-align:' + (i === 0 ? 'left' : 'right') + '">' +
+                    '<div style="font-size:14px;font-weight:800;color:' + th.text + ';line-height:1.2;margin-bottom:6px">' + escHtml(name) + '</div>' +
+                    '<div style="font-size:10px;color:' + th.primary + ';font-weight:600">View Profile →</div>' +
+                  '</div>';
+                }).join(
+                  '<div style="font-size:11px;font-weight:800;color:' + th.muted + ';flex-shrink:0">VS</div>'
+                ) +
+              '</div>' +
+            '</div>'
+          : mainFight
+            ? '<div style="padding:16px ' + S.xl + '">' +
+                '<div style="font-size:9px;font-weight:800;color:' + th.muted + ';letter-spacing:0.14em;margin-bottom:10px">MAIN EVENT</div>' +
+                '<div style="font-size:18px;font-weight:800;color:' + th.text + '">' + escHtml(mainFight) + '</div>' +
+              '</div>'
+            : '') +
+
+        /* Fighter search for this event */
+        '<div style="padding:20px ' + S.xl + ' 8px">' +
+          '<div style="font-size:9px;font-weight:800;color:' + th.muted + ';letter-spacing:0.14em;margin-bottom:12px">SEARCH FIGHTERS ON THIS CARD</div>' +
+          '<div style="position:relative">' +
+            '<svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + th.muted + '" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>' +
+            '<input type="search" placeholder="Search any fighter…" ' +
+              'oninput="cmSearchFighter(this.value)" ' +
+              'style="width:100%;height:42px;background:' + th.card + ';border:1px solid ' + th.border + ';' +
+              'border-radius:' + R.pill + ';color:' + th.text + ';font-size:14px;padding:0 16px 0 38px;' +
+              '-webkit-appearance:none" />' +
+          '</div>' +
+          '<div style="font-size:11px;color:' + th.muted + ';margin-top:8px">Tap a fighter above or search any name to see their full bio and fight history</div>' +
+        '</div>' +
+
+        '<div style="height:24px"></div>' +
+      '</div>' +
+      c.navBar(th, 1) +
+    '</div>';
+  }
+
+  function sFighters(th) {
+    var q       = cmState.searchQuery || '';
+    var results = cmState.searchResults;
+    var loading = cmState.searchLoading;
+
+    return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+      header(th, 'Fighters') +
+
+      /* Search bar */
+      '<div style="padding:0 ' + S.xl + ' 12px;flex-shrink:0">' +
+        '<div style="position:relative">' +
+          '<svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + th.muted + '" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>' +
+          '<input id="fighter-search" type="search" placeholder="Search fighters…" value="' + escHtml(q) + '" ' +
+            'oninput="cmSearch(this.value)" ' +
+            'style="width:100%;height:42px;background:' + th.card + ';border:1px solid ' + th.border + ';' +
+            'border-radius:' + R.pill + ';color:' + th.text + ';font-size:14px;padding:0 40px 0 38px;' +
+            '-webkit-appearance:none;appearance:none" />' +
+          (q ? '<div onclick="cmSearch(\'\');document.getElementById(\'fighter-search\').value=\'\'" ' +
+            'style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:' + th.muted + ';font-size:16px;line-height:1">✕</div>' : '') +
+        '</div>' +
+      '</div>' +
+
+      /* Results */
+      '<div class="scroll" style="flex:1;padding-bottom:calc(' + NAV_H + 'px + ' + safeBottom + ')">' +
+
+        (loading
+          ? spinner(th)
+          : !results
+            ? '<div style="display:flex;flex-direction:column;align-items:center;padding:64px 32px;text-align:center">' +
+                '<div style="font-size:48px;margin-bottom:16px">🥊</div>' +
+                '<div style="font-size:15px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Search Fighters</div>' +
+                '<div style="font-size:13px;color:' + th.muted + ';line-height:1.6">Type a name to search<br>Sherdog\'s fighter database</div>' +
+              '</div>'
+            : results.length === 0
+              ? '<div style="display:flex;flex-direction:column;align-items:center;padding:64px 32px;text-align:center">' +
+                  '<div style="font-size:48px;margin-bottom:16px">🔍</div>' +
+                  '<div style="font-size:15px;font-weight:700;color:' + th.text + ';margin-bottom:6px">No results</div>' +
+                  '<div style="font-size:13px;color:' + th.muted + '">Try a different name</div>' +
+                '</div>'
+              : results.map(function (f) {
+                  return '<div onclick="cmLoadFighter(\'' + escAttr(f.slug) + '\')" ' +
+                    'style="padding:12px ' + S.xl + ';border-bottom:1px solid ' + th.border + ';cursor:pointer;display:flex;align-items:center;gap:12px">' +
+                    '<div style="width:44px;height:44px;border-radius:' + R.md + ';background:' + th.primary + '22;border:1.5px solid ' + th.primary + '44;display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+                      '<span style="font-size:16px;font-weight:800;color:' + th.primary + '">' + escHtml((f.name||'?').charAt(0).toUpperCase()) + '</span>' +
+                    '</div>' +
+                    '<div style="flex:1;min-width:0">' +
+                      '<div style="font-size:14px;font-weight:700;color:' + th.text + '">' + escHtml(f.name) + '</div>' +
+                      '<div style="font-size:11px;color:' + th.muted + ';margin-top:2px">' +
+                        (f.nickname ? escHtml(f.nickname) + ' · ' : '') +
+                        (f.weight ? escHtml(f.weight) : '') +
+                        (f.association ? ' · ' + escHtml(f.association) : '') +
+                      '</div>' +
+                    '</div>' +
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + th.muted + '" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' +
+                  '</div>';
+                }).join('')) +
+
+      '</div>' +
+      c.navBar(th, 2) +
+    '</div>';
+  }
+
+  function sFighter(th) {
+    var p       = cmState.fighterProfile;
+    var loading = cmState.fighterLoading;
+    var tab     = cmState.fighterTab || 'record';
+
+    if (loading) {
+      return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+        '<div style="padding-top:' + safeTop + ';padding-left:' + S.xl + ';padding-bottom:10px;flex-shrink:0">' + c.backBtn(th, 'Fighters') + '</div>' +
+        spinner(th) +
+        c.navBar(th, 2) +
+      '</div>';
+    }
+
+    if (!p) {
+      return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+        '<div style="padding-top:' + safeTop + ';padding-left:' + S.xl + ';padding-bottom:10px;flex-shrink:0">' + c.backBtn(th, 'Fighters') + '</div>' +
+        '<div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:32px;text-align:center">' +
+          '<div style="font-size:48px;margin-bottom:16px">⚠️</div>' +
+          '<div style="font-size:15px;font-weight:700;color:' + th.text + ';margin-bottom:6px">Could not load fighter</div>' +
+          '<div style="font-size:13px;color:' + th.muted + '">Try searching again</div>' +
+        '</div>' +
+        c.navBar(th, 2) +
+      '</div>';
+    }
+
+    var wins   = p.wins   || 0;
+    var losses = p.losses || 0;
+    var draws  = p.draws  || 0;
+    var record = wins + '–' + losses + (draws ? '–' + draws : '');
+    var koRate = wins > 0 ? Math.round((p.wins_by_ko  || 0) / wins * 100) : 0;
+    var subRate= wins > 0 ? Math.round((p.wins_by_sub || 0) / wins * 100) : 0;
+    var decRate= wins > 0 ? Math.round((p.wins_by_dec || 0) / wins * 100) : 0;
+
+    return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+
+      /* Header */
+      '<div style="background:linear-gradient(160deg,' + th.primary + '22 0%,' + th.bg + ' 70%);flex-shrink:0">' +
+        '<div style="padding-top:' + safeTop + ';padding-left:' + S.xl + ';padding-right:' + S.xl + ';padding-bottom:0">' +
+          c.backBtn(th, 'Fighters') +
+        '</div>' +
+        '<div style="padding:12px ' + S.xl + ' 16px;display:flex;gap:14px;align-items:flex-start">' +
+          /* Photo */
+          (p.photo
+            ? '<img src="' + escHtml(p.photo) + '" alt="' + escHtml(p.name) + '" ' +
+                'style="width:80px;height:80px;border-radius:' + R.lg + ';object-fit:cover;object-position:top;' +
+                'border:2px solid ' + th.border + ';flex-shrink:0" ' +
+                'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+              '<div style="display:none;width:80px;height:80px;border-radius:' + R.lg + ';background:' + th.card2 + ';' +
+                'align-items:center;justify-content:center;flex-shrink:0;font-size:26px;font-weight:900;color:' + th.primary + '">' + escHtml(getInitials(p.name)) + '</div>'
+            : '<div style="width:80px;height:80px;border-radius:' + R.lg + ';background:' + th.card2 + ';' +
+                'display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:26px;font-weight:900;color:' + th.primary + '">' + escHtml(getInitials(p.name)) + '</div>') +
+          '<div style="flex:1;min-width:0">' +
+            '<div style="font-size:24px;font-weight:900;color:' + th.text + ';letter-spacing:-0.02em;line-height:1.1">' + escHtml(p.name) + '</div>' +
+            (p.nickname ? '<div style="font-size:12px;color:' + th.muted + ';margin-top:3px;font-style:italic">"' + escHtml(p.nickname) + '"</div>' : '') +
+            '<div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">' +
+              '<div>' +
+                '<div style="font-size:22px;font-weight:900;color:' + th.text + '">' + record + '</div>' +
+                '<div style="font-size:9px;color:' + th.muted + ';letter-spacing:0.08em">RECORD</div>' +
+              '</div>' +
+              '<div style="width:1px;height:32px;background:' + th.border + '"></div>' +
+              (p.weight_class ? '<div style="font-size:11px;font-weight:700;color:' + th.sub + '">' + escHtml(p.weight_class) + '</div>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Tabs */
+      '<div style="display:flex;border-bottom:1px solid ' + th.border + ';flex-shrink:0;background:' + th.bg + '">' +
+        ['record','stats','bio'].map(function(t) {
+          var active = tab === t;
+          var label = t.charAt(0).toUpperCase() + t.slice(1);
+          return '<div onclick="cmSetState(\'fighterTab\',\'' + t + '\')" style="flex:1;padding:12px 0;text-align:center;font-size:12px;font-weight:' + (active?'700':'500') + ';color:' + (active?th.text:th.muted) + ';cursor:pointer;border-bottom:2px solid ' + (active?th.primary:'transparent') + ';margin-bottom:-1px">' + label + '</div>';
+        }).join('') +
+      '</div>' +
+
+      /* Tab content */
+      '<div class="scroll" style="flex:1;padding-bottom:calc(' + NAV_H + 'px + ' + safeBottom + ')">' +
+
+        (tab === 'record'
+          ? (p.fight_history && p.fight_history.length
+              ? p.fight_history.map(function (f) {
+                  return c.resultRow(th, {
+                    result:   f.result,
+                    opponent: f.opponent,
+                    method:   (f.method || '') + (f.round ? ' · R' + f.round : '') + (f.time ? ' ' + f.time : ''),
+                    event:    f.event || '',
+                    date:     f.date || ''
+                  });
+                }).join('')
+              : '<div style="padding:48px 32px;text-align:center;color:' + th.muted + ';font-size:13px">No fight history available</div>')
+
+          : tab === 'stats'
+            ? '<div style="padding:' + S.xl + '">' +
+
+                /* Win method bars */
+                '<div style="font-size:11px;font-weight:700;color:' + th.muted + ';letter-spacing:0.1em;margin-bottom:14px">WINS BY METHOD</div>' +
+                statBar(th, 'KO / TKO', p.wins_by_ko || 0, wins, th.primary) +
+                statBar(th, 'Submission', p.wins_by_sub || 0, wins, '#818CF8') +
+                statBar(th, 'Decision', p.wins_by_dec || 0, wins, th.gold) +
+
+                '<div style="margin-top:24px;font-size:11px;font-weight:700;color:' + th.muted + ';letter-spacing:0.1em;margin-bottom:14px">LOSSES BY METHOD</div>' +
+                statBar(th, 'KO / TKO', p.losses_by_ko || 0, losses || 1, th.loss) +
+                statBar(th, 'Submission', p.losses_by_sub || 0, losses || 1, '#F59E0B') +
+                statBar(th, 'Decision', p.losses_by_dec || 0, losses || 1, th.muted) +
+
+              '</div>'
+
+            /* Bio */
+            : '<div style="padding:' + S.xl + '">' +
+                bioRow(th, 'Age', p.age) +
+                bioRow(th, 'Date of Birth', p.dob) +
+                bioRow(th, 'Height', p.height) +
+                bioRow(th, 'Weight', p.weight) +
+                bioRow(th, 'Weight Class', p.weight_class) +
+                bioRow(th, 'Association', p.association) +
+                bioRow(th, 'Nationality', p.nationality) +
+                (p.url ? '<div style="margin-top:20px"><a href="' + escHtml(p.url) + '" target="_blank" ' +
+                  'style="font-size:12px;color:' + th.muted + ';text-decoration:none">View on Sherdog →</a></div>' : '') +
+              '</div>') +
+
+        '<div style="height:16px"></div>' +
+      '</div>' +
+
+      c.navBar(th, 2) +
+    '</div>';
+  }
+
+  function sNews(th) {
+    loadNews();
+    var news    = cmState.newsData;
+    var loading = !cmState._newsLoaded;
+
+    return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+      header(th, 'News') +
+
+      '<div class="scroll" style="flex:1;padding:0 ' + S.xl + ';padding-bottom:calc(' + NAV_H + 'px + ' + safeBottom + ')">' +
+
+        (loading
+          ? spinner(th)
+          : news && news.length
+            ? news.map(function (item, i) { return renderNewsItem(th, item, i); }).join('')
+            : '<div style="display:flex;flex-direction:column;align-items:center;padding:64px 0;text-align:center">' +
+                '<div style="font-size:48px;margin-bottom:16px">📰</div>' +
+                '<div style="font-size:15px;font-weight:700;color:' + th.text + ';margin-bottom:6px">No News Available</div>' +
+                '<div style="font-size:13px;color:' + th.muted + '">Check back later</div>' +
+              '</div>') +
+
+        '<div style="height:24px"></div>' +
+      '</div>' +
+
+      c.navBar(th, 3) +
+    '</div>';
+  }
+
+  function sMe(th) {
+    return '<div style="height:100%;display:flex;flex-direction:column;background:' + th.bg + ';font-family:' + T.sans + '">' +
+      header(th, 'Me') +
+
+      '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center">' +
+        '<div style="width:72px;height:72px;border-radius:50%;background:' + th.card + ';border:1.5px solid ' + th.border + ';display:flex;align-items:center;justify-content:center;margin-bottom:20px">' +
+          '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="' + th.muted + '" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>' +
+        '</div>' +
+        '<div style="font-size:18px;font-weight:800;color:' + th.text + ';margin-bottom:8px">Sign In</div>' +
+        '<div style="font-size:13px;color:' + th.muted + ';line-height:1.6;margin-bottom:32px">Favorite fighters, set alerts,<br>personalize your feed.</div>' +
+
+        /* Theme toggle */
+        '<div style="width:100%;max-width:280px;background:' + th.card + ';border-radius:' + R.lg + ';padding:16px;margin-bottom:12px;border:1px solid ' + th.border + '">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<span style="font-size:13px;font-weight:600;color:' + th.sub + '">Dark Mode</span>' +
+            '<div onclick="cmToggleTheme()" style="width:44px;height:26px;border-radius:' + R.pill + ';background:' + (cmState.dark ? th.primary : th.chip) + ';cursor:pointer;position:relative;transition:background 0.2s">' +
+              '<div style="position:absolute;top:3px;left:' + (cmState.dark ? '21px' : '3px') + ';width:20px;height:20px;border-radius:50%;background:#FFF;transition:left 0.2s"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Refresh data */
+        '<div onclick="cmState._eventsLoaded=false;cmState._eventsLoading=false;cmState._newsLoaded=false;cmState._newsLoading=false;cmGo(\'home\')" ' +
+          'style="width:100%;max-width:280px;background:' + th.card + ';border-radius:' + R.lg + ';padding:16px;border:1px solid ' + th.border + ';cursor:pointer">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<span style="font-size:13px;font-weight:600;color:' + th.sub + '">Refresh All Data</span>' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + th.muted + '" stroke-width="2" stroke-linecap="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>' +
+          '</div>' +
+        '</div>' +
+
+      '</div>' +
+
+      c.navBar(th, 4) +
+    '</div>';
+  }
+
+  /* ─── MICRO HELPERS ──────────────────────────────────────────── */
+
+  function statBar(th, label, val, total, color) {
+    var pct = total > 0 ? Math.round(val / total * 100) : 0;
+    return '<div style="margin-bottom:12px">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:5px">' +
+        '<span style="font-size:12px;font-weight:600;color:' + th.sub + '">' + label + '</span>' +
+        '<span style="font-size:12px;font-weight:700;color:' + th.text + '">' + val + ' <span style="font-weight:400;color:' + th.muted + ';font-size:10px">(' + pct + '%)</span></span>' +
+      '</div>' +
+      '<div style="height:6px;background:' + th.card2 + ';border-radius:' + R.pill + ';overflow:hidden">' +
+        '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:' + R.pill + ';transition:width 0.4s ease"></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function bioRow(th, label, val) {
+    if (!val) return '';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid ' + th.border + '">' +
+      '<span style="font-size:13px;color:' + th.muted + '">' + label + '</span>' +
+      '<span style="font-size:13px;font-weight:600;color:' + th.text + '">' + escHtml(String(val)) + '</span>' +
+    '</div>';
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escAttr(s) {
+    return String(s).replace(/'/g,"\\'");
+  }
+  function tryParse(s) {
+    try { return JSON.parse(s); } catch(e) { return null; }
+  }
+  function getInitials(name) {
+    var parts = (name || '').trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return parts[0] ? parts[0][0].toUpperCase() : '?';
+  }
+
+  /* ─── WIRE UP ────────────────────────────────────────────────── */
+  CM.nav(
+    { home: sHome, cards: sCards, fightCard: sFightCard, fighters: sFighters, fighter: sFighter, news: sNews, me: sMe },
+    'home',
+    'app',
+    { state: { homeFilter: 'All', searchQuery: '', fighterTab: 'record' } }
+  );
+
+  /* Screen fade transition */
+  var _origRender = window.cmRender;
+  window.cmRender = function() {
+    _origRender.apply(this, arguments);
+    var el = document.querySelector('#app > div');
+    if (el) { el.style.animation = 'none'; el.offsetHeight; el.style.animation = 'cmFadeIn 0.16s ease'; }
+  };
+
+  /* Cold-start slow-load hint after 6s */
+  setTimeout(function() {
+    if (cmState._eventsLoading || cmState._newsLoading) {
+      cmState._slowLoad = true;
+      window.cmRender();
+    }
+  }, 6000);
+
+  /* ─── CSS ANIMATION ──────────────────────────────────────────── */
+  var style = document.createElement('style');
+  style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+  document.head.appendChild(style);
+
+  /* ─── SEARCH INPUT FOCUS FIX ─────────────────────────────────── */
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'fighter-search') {
+      setTimeout(function() { e.target.focus(); }, 50);
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

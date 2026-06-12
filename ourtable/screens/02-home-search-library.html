@@ -405,7 +405,12 @@
             '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
               'line-height:1.2">What\'s cooking, Will?</div>' +
           '</div>' +
-          notifBell(th) +
+          /* Whisker with notification dot */
+          '<div style="position:relative;cursor:pointer">' +
+            c.mascotWhisker(38) +
+            '<div style="position:absolute;top:2px;right:2px;width:8px;height:8px;' +
+              'background:' + th.primary + ';border-radius:50%;border:2px solid ' + th.bg + '"></div>' +
+          '</div>' +
         '</div>' +
 
         /* Featured recipe card */
@@ -461,8 +466,10 @@
 
       /* Search header (sticky-style at top) */
       '<div style="padding:4px ' + S.xl + ' 12px;background:' + th.bg + ';z-index:5">' +
-        '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
-          'font-family:' + T.serif + ';margin-bottom:12px">Discover</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
+          '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + '">Discover</div>' +
+          c.mascotWhisker(36) +
+        '</div>' +
 
         /* Search bar */
         '<div style="display:flex;align-items:center;gap:10px;background:' + th.card + ';' +
@@ -588,7 +595,8 @@
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
           '<div style="font-size:22px;font-weight:' + T.wt.heavy + ';color:' + th.text + ';' +
             'font-family:' + T.serif + '">My Recipes</div>' +
-          '<div style="display:flex;gap:9px">' +
+          '<div style="display:flex;gap:9px;align-items:center">' +
+            c.mascotWhisker(32) +
             /* Search icon */
             '<div onclick="otGo(\'search\')" style="width:36px;height:36px;border-radius:' + R.sm + ';' +
               'background:' + th.chip + ';display:flex;align-items:center;justify-content:center;cursor:pointer">' +

@@ -67,7 +67,7 @@
     background: #C8B8A8; transition: all 0.2s;
   }
   #screen-dots .dot.on {
-    width: 22px; border-radius: 4px; background: #1B3A5C;
+    width: 22px; border-radius: 4px; background: #6B4FA8;
   }
   .theme-btn {
     background: rgba(0,0,0,0.07); border: 1.5px solid rgba(0,0,0,0.14);
@@ -125,21 +125,21 @@
   };
 
   var SAVED_RECIPES = [
-    { title: 'Avocado Toast\nwith Poached Egg', heroColor: '#2A5080', time: '12 min', source: null },
-    { title: 'Thai Green\nCurry', heroColor: '#3A6898', time: '35 min', source: 'Instagram' },
-    { title: 'Birria Tacos', heroColor: '#C89040', time: '3 hr', source: 'TikTok' },
-    { title: 'Miso Glazed\nEggplant', heroColor: '#1B3A5C', time: '22 min', source: 'Web' }
+    { title: 'Avocado Toast\nwith Poached Egg', heroColor: '#4A3580', time: '12 min', source: null },
+    { title: 'Thai Green\nCurry', heroColor: '#5A4898', time: '35 min', source: 'Instagram' },
+    { title: 'Birria Tacos', heroColor: '#9070C0', time: '3 hr', source: 'TikTok' },
+    { title: 'Miso Glazed\nEggplant', heroColor: '#3A2860', time: '22 min', source: 'Web' }
   ];
 
   var SOCIAL_SAVES = [
-    { title: "Baked Feta Pasta", platform: 'TikTok', heroColor: '#D4A848', time: '30 min', saves: '2.1M' },
-    { title: "Dubai Chocolate\nBrownie", platform: 'Instagram', heroColor: '#0F2240', time: '45 min', saves: '890K' },
-    { title: "Viral Smash\nBurgers", platform: 'TikTok', heroColor: '#B07830', time: '20 min', saves: '3.4M' }
+    { title: "Baked Feta Pasta", platform: 'TikTok', heroColor: '#A888CC', time: '30 min', saves: '2.1M' },
+    { title: "Dubai Chocolate\nBrownie", platform: 'Instagram', heroColor: '#261850', time: '45 min', saves: '890K' },
+    { title: "Viral Smash\nBurgers", platform: 'TikTok', heroColor: '#8060B0', time: '20 min', saves: '3.4M' }
   ];
 
   var BROWSE_CATEGORIES = [
     { emoji: '🍝', label: 'Italian',  color: '#E86040' },
-    { emoji: '🥢', label: 'Asian',    color: '#E8A040' },
+    { emoji: '🥢', label: 'Asian',    color: '#9070C0' },
     { emoji: '🌮', label: 'Mexican',  color: '#40A888' },
     { emoji: '🥗', label: 'Healthy',  color: '#50A850' },
     { emoji: '⚡', label: 'Quick',    color: '#7060C4' },
@@ -149,23 +149,23 @@
   ];
 
   var TRENDING = [
-    { title: 'Cucumber Salad', heroColor: '#3A6898', time: '10 min', rating: '4.8' },
-    { title: 'Marry Me Chicken', heroColor: '#E8A84A', time: '32 min', rating: '4.9' },
-    { title: 'Brown Butter\nRigatoni', heroColor: '#C89040', time: '25 min', rating: '4.7' },
-    { title: 'Street Corn\nDip', heroColor: '#F0B84A', time: '15 min', rating: '4.6' },
-    { title: 'Miso Ramen', heroColor: '#1B3A5C', time: '40 min', rating: '4.8' },
-    { title: 'Cardamom French\nToast', heroColor: '#D4A848', time: '18 min', rating: '4.5' }
+    { title: 'Cucumber Salad', heroColor: '#5A4898', time: '10 min', rating: '4.8' },
+    { title: 'Marry Me Chicken', heroColor: '#B898D8', time: '32 min', rating: '4.9' },
+    { title: 'Brown Butter\nRigatoni', heroColor: '#9070C0', time: '25 min', rating: '4.7' },
+    { title: 'Street Corn\nDip', heroColor: '#C0A8E0', time: '15 min', rating: '4.6' },
+    { title: 'Miso Ramen', heroColor: '#3A2860', time: '40 min', rating: '4.8' },
+    { title: 'Cardamom French\nToast', heroColor: '#A888CC', time: '18 min', rating: '4.5' }
   ];
 
   var LIBRARY_RECIPES = [
-    { title: 'Creamy Tuscan Salmon', heroColor: '#E8A84A', time: '28 min', rating: '4.9', tags: ['Saved'] },
-    { title: 'Avocado Toast', heroColor: '#2A5080', time: '12 min', rating: '4.7', tags: ['Quick'] },
-    { title: 'Birria Tacos', heroColor: '#C89040', time: '3 hr', rating: '4.8', tags: ['TikTok'] },
-    { title: 'Thai Green Curry', heroColor: '#3A6898', time: '35 min', rating: '4.6', tags: ['Vegetarian'] },
-    { title: 'Miso Glazed Eggplant', heroColor: '#1B3A5C', time: '22 min', rating: '4.5', tags: ['Vegan'] },
-    { title: 'Dubai Chocolate Brownies', heroColor: '#0F2240', time: '45 min', rating: '4.9', tags: ['Instagram'] },
-    { title: 'Marry Me Chicken', heroColor: '#D4A848', time: '32 min', rating: '4.9', tags: [] },
-    { title: 'Homemade Sourdough', heroColor: '#B07830', time: '4 hr', rating: '4.6', tags: ['Baking'] }
+    { title: 'Creamy Tuscan Salmon', heroColor: '#B898D8', time: '28 min', rating: '4.9', tags: ['Saved'] },
+    { title: 'Avocado Toast', heroColor: '#4A3580', time: '12 min', rating: '4.7', tags: ['Quick'] },
+    { title: 'Birria Tacos', heroColor: '#9070C0', time: '3 hr', rating: '4.8', tags: ['TikTok'] },
+    { title: 'Thai Green Curry', heroColor: '#5A4898', time: '35 min', rating: '4.6', tags: ['Vegetarian'] },
+    { title: 'Miso Glazed Eggplant', heroColor: '#3A2860', time: '22 min', rating: '4.5', tags: ['Vegan'] },
+    { title: 'Dubai Chocolate Brownies', heroColor: '#261850', time: '45 min', rating: '4.9', tags: ['Instagram'] },
+    { title: 'Marry Me Chicken', heroColor: '#A888CC', time: '32 min', rating: '4.9', tags: [] },
+    { title: 'Homemade Sourdough', heroColor: '#8060B0', time: '4 hr', rating: '4.6', tags: ['Baking'] }
   ];
 
   /* ══════════════════════════════════════════════════════════
@@ -520,8 +520,8 @@
   /* ── 3. SEARCH RESULTS ──────────────────────────────────── */
   function sSearchResults(th) {
     var ALL_RESULTS = TRENDING.concat([
-      { title: 'Shakshuka', heroColor: '#C89040', time: '25 min', rating: '4.7' },
-      { title: 'Pad Thai', heroColor: '#2A5080', time: '20 min', rating: '4.8' }
+      { title: 'Shakshuka', heroColor: '#9070C0', time: '25 min', rating: '4.7' },
+      { title: 'Pad Thai', heroColor: '#4A3580', time: '20 min', rating: '4.8' }
     ]);
     var activeFilter = otState.searchFilter || 'All';
     var filters = ['All', 'Quick', 'Vegetarian', 'Vegan', 'Gluten-Free', 'High Protein'];

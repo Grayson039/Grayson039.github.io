@@ -39,27 +39,27 @@
     _name:     'light',
     bg:        '#F5F1EB',   // warm sand — page / screen background
     card:      '#FFFFFF',   // white card surfaces
-    surface:   '#F0EBE2',   // slightly deeper sand — nested surfaces, input bg
-    primary:   '#C1613A',   // rust — CTAs, active nav, key actions
+    surface:   '#EEE9F5',   // lavender-tinted surface — nested areas, input bg
+    primary:   '#6B4FA8',   // deep purple — CTAs, active nav, key actions
     secondary: '#C3B1E1',   // lavender — accents, section eyebrows
-    text:      '#2A2118',   // deep warm brown — primary text
+    text:      '#1E1A2E',   // deep purple-black — primary text
     muted:     '#9A8A78',   // warm gray — secondary / placeholder text
-    border:    '#E8E0D4',   // warm light border
-    chip:      '#EDE7F6',   // lavender-tinted chip background
+    border:    '#E2DCF0',   // lavender-tinted border
+    chip:      '#EDE7F6',   // lavender chip background
     chipTx:    '#7A6090',   // lavender chip text
     input:     '#FFFFFF',   // input field background
     // Hero placeholder colors (shown when no photo is available)
     hero:      '#C3B1E1',   // lavender — featured card placeholder
-    hero2:     '#E8C4A8',   // warm peach — secondary card placeholder
-    hero3:     '#D4C4B4',   // warm taupe — tertiary card placeholder
+    hero2:     '#DDD0EF',   // light lavender — secondary card placeholder
+    hero3:     '#C8BCDE',   // soft lavender-gray — tertiary card placeholder
     // Semantic colors
     success:   '#5A8A52',
     warning:   '#C4884A',
     error:     '#B04040',
     // Overlay / scrim
-    overlay:   'rgba(42,33,24,0.52)',
+    overlay:   'rgba(30,26,46,0.55)',
     scrim:     'rgba(0,0,0,0.28)',
-    teal:      '#C1613A'   // rust — used for active nav indicator
+    teal:      '#6B4FA8'   // deep purple — active nav indicator
   };
 
   var D = {
@@ -67,23 +67,23 @@
     bg:        '#1E1525',   // deep plum
     card:      '#2A1F33',   // slightly lighter plum card
     surface:   '#221830',   // deep plum surface for nested areas
-    primary:   '#D4785A',   // rust lightened for dark bg
-    secondary: '#C3B1E1',   // same lavender — works on dark
-    text:      '#F5EDDE',   // warm cream
+    primary:   '#A685D4',   // medium lavender-purple — CTAs on dark bg
+    secondary: '#C3B1E1',   // same lavender — accents
+    text:      '#F0ECFA',   // soft lavender-white — primary text
     muted:     '#A090B0',   // muted lavender-gray
-    border:    'rgba(195,177,225,0.15)', // translucent lavender border
+    border:    'rgba(195,177,225,0.18)', // translucent lavender border
     chip:      '#2E2040',   // deep purple chip
     chipTx:    '#C3B1E1',   // lavender chip text
     input:     '#251A2E',   // dark plum input
     hero:      '#3D2E50',   // deep purple featured placeholder
-    hero2:     '#3A2820',   // deep rust/brown placeholder
-    hero3:     '#2E2840',   // mid plum placeholder
+    hero2:     '#2E2550',   // deeper purple — secondary card placeholder
+    hero3:     '#352D58',   // mid-depth purple — tertiary card placeholder
     success:   '#7AB86A',
     warning:   '#D4A870',
     error:     '#D46A5A',
     overlay:   'rgba(0,0,0,0.72)',
     scrim:     'rgba(0,0,0,0.52)',
-    teal:      '#D4785A'   // rust — active nav indicator (dark mode)
+    teal:      '#A685D4'   // medium lavender — active nav indicator (dark mode)
   };
 
 

@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Table — Add Recipe</title>
+<title>Kitchen Bandits — Add Recipe</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #EDE8E2;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #E8E2F2;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -53,7 +54,7 @@
     width: 7px; height: 7px; border-radius: 50%;
     background: #C8B8A8; transition: all 0.2s;
   }
-  #screen-dots .dot.on { width: 22px; border-radius: 4px; background: #1B3A5C; }
+  #screen-dots .dot.on { width: 22px; border-radius: 4px; background: #3A2860; }
   .theme-btn {
     background: rgba(0,0,0,0.07); border: 1.5px solid rgba(0,0,0,0.14);
     color: #2C2416; font-size: 12px; font-weight: 600;
@@ -106,7 +107,7 @@
     servings:   4,
     difficulty: 'Easy',
     tags:       ['Gluten-Free', 'High Protein'],
-    heroColor:  '#3A6898',
+    heroColor:  '#5A4898',
     ingredients: [
       'Chicken thighs, bone-in skin-on (4)',
       'Olive oil (3 tbsp)',
@@ -132,7 +133,7 @@
     handle:     'Yumna Jawad',
     followers:  '4.2M',
     videoTitle: 'The BEST Marry Me Chicken 😍',
-    heroColor:  '#D4A848',
+    heroColor:  '#9070C0',
     time:       '30 min',
     ingredients: [
       'Chicken breasts (4, pounded thin)',
@@ -263,8 +264,8 @@
             'letter-spacing:0.06em;margin-bottom:10px">RECENTLY IMPORTED</div>' +
           '<div style="display:flex;flex-direction:column;gap:8px">' +
             [
-              { title:'Baked Feta Pasta', src:'TikTok', color:'#D4A848', ago:'2 days ago' },
-              { title:'Birria Tacos',     src:'Web',    color:'#C89040', ago:'1 week ago' }
+              { title:'Baked Feta Pasta', src:'TikTok', color:'#9070C0', ago:'2 days ago' },
+              { title:'Birria Tacos',     src:'Web',    color:'#8060B0', ago:'1 week ago' }
             ].map(function (r) {
               return '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;'+
                 'background:'+th.card+';border:0.5px solid '+th.border+';border-radius:'+R.md+'">' +
@@ -607,7 +608,7 @@
             'Share from TikTok / Instagram' +
           '</div>' +
           '<div style="font-size:12px;color:'+th.muted+';line-height:1.6;margin-bottom:14px">' +
-            'Find a recipe video, tap Share, and choose <strong style="color:'+th.text+'">Our Table</strong> from the share sheet' +
+            'Find a recipe video, tap Share, and choose <strong style="color:'+th.text+'">Kitchen Bandits</strong> from the share sheet' +
           '</div>' +
           '<div style="display:flex;justify-content:center;gap:8px">' +
             ['TikTok', 'Instagram'].map(function (p) {
@@ -624,9 +625,9 @@
           'letter-spacing:0.06em;margin-bottom:10px">TRENDING SAVES THIS WEEK</div>' +
         '<div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px">' +
           [
-            { title:'Marry Me Chicken', color:'#E8A84A', platform:'TikTok',    saves:'1.8M' },
-            { title:'Cucumber Salad',   color:'#2A5080', platform:'TikTok',    saves:'2.4M' },
-            { title:'Feta Pasta',       color:'#D4A848', platform:'Instagram', saves:'890K' }
+            { title:'Marry Me Chicken', color:'#A888CC', platform:'TikTok',    saves:'1.8M' },
+            { title:'Cucumber Salad',   color:'#4A3580', platform:'TikTok',    saves:'2.4M' },
+            { title:'Feta Pasta',       color:'#9070C0', platform:'Instagram', saves:'890K' }
           ].map(function (v) {
             return '<div onclick="otGo(\'socialResult\')" style="flex-shrink:0;width:130px;cursor:pointer">' +
               '<div style="height:100px;border-radius:'+R.md+';background:'+v.color+';'+
@@ -1050,7 +1051,7 @@
           dotsEl.innerHTML = [0,1,2,3].map(function (i) {
             var groups = [[0],[1,2,3],[4,5],[6,7,8]];
             var active = groups[i].indexOf(idx) >= 0;
-            return '<div class="dot'+(active?' on':'')+'" style="'+(i===3&&idx===9?'background:#1B3A5C':'')+'"></div>';
+            return '<div class="dot'+(active?' on':'')+'" style="'+(i===3&&idx===9?'background:#3A2860':'')+'"></div>';
           }).join('');
         }
 

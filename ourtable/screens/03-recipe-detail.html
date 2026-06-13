@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Table — Recipe Detail & Cooking Mode</title>
+<title>Kitchen Bandits — Recipe Detail & Cooking Mode</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #EDE8E2;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #E8E2F2;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -58,7 +59,7 @@
     background: #C8B8A8; transition: all 0.2s;
   }
   #screen-dots .dot.on {
-    width: 22px; border-radius: 4px; background: #1B3A5C;
+    width: 22px; border-radius: 4px; background: #3A2860;
   }
   .theme-btn {
     background: rgba(0,0,0,0.07); border: 1.5px solid rgba(0,0,0,0.14);
@@ -165,9 +166,9 @@
   ];
 
   var RELATED = [
-    { title: 'Lemon Herb Salmon',   heroColor: '#3A6898', time: '22 min' },
-    { title: 'Creamy Pasta Bake',   heroColor: '#D4A848', time: '35 min' },
-    { title: 'Garlic Butter Shrimp',heroColor: '#C89040', time: '15 min' }
+    { title: 'Lemon Herb Salmon',   heroColor: '#5A4898', time: '22 min' },
+    { title: 'Creamy Pasta Bake',   heroColor: '#9070C0', time: '35 min' },
+    { title: 'Garlic Butter Shrimp',heroColor: '#8060B0', time: '15 min' }
   ];
 
   var SCREEN_NAMES = {
@@ -442,7 +443,7 @@
       '<div style="flex-shrink:0;height:220px;position:relative;overflow:hidden;' +
         'background:' + (th._name === 'dark'
           ? 'linear-gradient(150deg,#1A2A40 0%,#0F1A28 100%)'
-          : 'linear-gradient(150deg,#1B3A5C 0%,#0F2A48 60%,#0A1E38 100%)') + '">' +
+          : 'linear-gradient(150deg,#3A2860 0%,#0F2A48 60%,#0A1E38 100%)') + '">' +
 
         /* Decorative circles */
         '<div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;' +

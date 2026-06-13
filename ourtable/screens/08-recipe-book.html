@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Table — Family Recipe Book</title>
+<title>Kitchen Bandits — Family Recipe Book</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #EDE8E2; min-height: 100vh;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #E8E2F2; min-height: 100vh;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; padding: 40px 20px;
   }
@@ -22,7 +23,7 @@
   .hint { font-size:11px;color:#B0A090;margin-bottom:14px; }
   #screen-dots { display:flex;gap:7px;align-items:center;justify-content:center;margin-bottom:14px; }
   #screen-dots .dot { width:7px;height:7px;border-radius:50%;background:#C8B8A8;transition:all 0.2s; }
-  #screen-dots .dot.on { width:22px;border-radius:4px;background:#1B3A5C; }
+  #screen-dots .dot.on { width:22px;border-radius:4px;background:#3A2860; }
   .theme-btn { background:rgba(0,0,0,0.07);border:1.5px solid rgba(0,0,0,0.14);color:#2C2416;font-size:12px;font-weight:600;padding:8px 20px;border-radius:100px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px; }
 </style>
 </head>
@@ -69,63 +70,63 @@
       {
         title:    'Weeknight Favourites',
         emoji:    '🍝',
-        color:    '#D4A848',
+        color:    '#9070C0',
         count:    18,
         recipes: [
-          { title:'Creamy Tuscan Salmon',    author:'Will',  heroColor:'#D4A848', note:'The whole family loves this one!', rating:4.9, cooked:12 },
-          { title:'Pasta al Pomodoro',       author:'Will',  heroColor:'#C89040', note:'Simple, perfect, never fails.', rating:4.8, cooked:8 },
-          { title:'Dairy-Free Pasta Bake',   author:'Emma',  heroColor:'#3A6898', note:'Emma\'s dairy-free twist — just as good!', rating:4.7, cooked:5 }
+          { title:'Creamy Tuscan Salmon',    author:'Will',  heroColor:'#9070C0', note:'The whole family loves this one!', rating:4.9, cooked:12 },
+          { title:'Pasta al Pomodoro',       author:'Will',  heroColor:'#8060B0', note:'Simple, perfect, never fails.', rating:4.8, cooked:8 },
+          { title:'Dairy-Free Pasta Bake',   author:'Emma',  heroColor:'#5A4898', note:'Emma\'s dairy-free twist — just as good!', rating:4.7, cooked:5 }
         ]
       },
       {
         title:    'Emma\'s Kitchen',
         emoji:    '🥥',
-        color:    '#E8A84A',
+        color:    '#A888CC',
         count:    12,
         recipes: [
-          { title:'Coconut Curry',            author:'Emma',  heroColor:'#E8A84A', note:'Dairy-free and absolutely delicious.', rating:4.8, cooked:6 },
-          { title:'Oat Banana Pancakes',      author:'Emma',  heroColor:'#C89040', note:'Lily requests these every Sunday.', rating:4.9, cooked:14 }
+          { title:'Coconut Curry',            author:'Emma',  heroColor:'#A888CC', note:'Dairy-free and absolutely delicious.', rating:4.8, cooked:6 },
+          { title:'Oat Banana Pancakes',      author:'Emma',  heroColor:'#8060B0', note:'Lily requests these every Sunday.', rating:4.9, cooked:14 }
         ]
       },
       {
         title:    'Grandma\'s Classics',
         emoji:    '👵',
-        color:    '#C89040',
+        color:    '#8060B0',
         count:    9,
         recipes: [
-          { title:'Sunday Roast Chicken',     author:'Grandma', heroColor:'#C89040', note:'Passed down from 1962. Never change a thing.', rating:5.0, cooked:22 },
-          { title:'Apple & Cinnamon Crumble', author:'Grandma', heroColor:'#D4A848', note:'Use Bramley apples, always.', rating:4.9, cooked:15 }
+          { title:'Sunday Roast Chicken',     author:'Grandma', heroColor:'#8060B0', note:'Passed down from 1962. Never change a thing.', rating:5.0, cooked:22 },
+          { title:'Apple & Cinnamon Crumble', author:'Grandma', heroColor:'#9070C0', note:'Use Bramley apples, always.', rating:4.9, cooked:15 }
         ]
       },
       {
         title:    'Quick & Healthy',
         emoji:    '⚡',
-        color:    '#3A6898',
+        color:    '#5A4898',
         count:    14,
         recipes: [
-          { title:'Shakshuka',                author:'Will',  heroColor:'#C89040', note:'Under 25 minutes. Perfect brunch.', rating:4.7, cooked:7 },
-          { title:'Green Goddess Salad',      author:'Lily',  heroColor:'#3A6898', note:'Lily\'s first recipe — so proud!', rating:4.6, cooked:4 }
+          { title:'Shakshuka',                author:'Will',  heroColor:'#8060B0', note:'Under 25 minutes. Perfect brunch.', rating:4.7, cooked:7 },
+          { title:'Green Goddess Salad',      author:'Lily',  heroColor:'#5A4898', note:'Lily\'s first recipe — so proud!', rating:4.6, cooked:4 }
         ]
       },
       {
         title:    'Special Occasions',
         emoji:    '🎉',
-        color:    '#1B3A5C',
+        color:    '#3A2860',
         count:    7,
         recipes: [
-          { title:'Beef Wellington',          author:'Will',  heroColor:'#D4A848', note:'Save for Christmas dinner only.', rating:5.0, cooked:3 },
-          { title:'Chocolate Lava Cakes',     author:'Emma',  heroColor:'#0F2240', note:'Makes 4. Everyone gets their own.', rating:5.0, cooked:5 }
+          { title:'Beef Wellington',          author:'Will',  heroColor:'#9070C0', note:'Save for Christmas dinner only.', rating:5.0, cooked:3 },
+          { title:'Chocolate Lava Cakes',     author:'Emma',  heroColor:'#261850', note:'Makes 4. Everyone gets their own.', rating:5.0, cooked:5 }
         ]
       }
     ]
   };
 
   var PARTY_RECIPES = [
-    { title:'Bruschetta Trio',         serves:12, heroColor:'#D4A848', time:'20 min' },
-    { title:'Pasta Salad Bar',         serves:20, heroColor:'#C89040', time:'35 min' },
-    { title:'Slow-Cooker Chilli',      serves:15, heroColor:'#1B3A5C', time:'4 hr'   },
-    { title:'Sheet Pan Fajitas',       serves:12, heroColor:'#3A6898', time:'40 min' },
-    { title:'Chocolate Brownie Bites', serves:24, heroColor:'#0F2240', time:'45 min' }
+    { title:'Bruschetta Trio',         serves:12, heroColor:'#9070C0', time:'20 min' },
+    { title:'Pasta Salad Bar',         serves:20, heroColor:'#8060B0', time:'35 min' },
+    { title:'Slow-Cooker Chilli',      serves:15, heroColor:'#3A2860', time:'4 hr'   },
+    { title:'Sheet Pan Fajitas',       serves:12, heroColor:'#5A4898', time:'40 min' },
+    { title:'Chocolate Brownie Bites', serves:24, heroColor:'#261850', time:'45 min' }
   ];
 
   /* ══════════════════════════════════════════════════════════
@@ -139,7 +140,7 @@
   }
 
   function memberColor(name) {
-    var map = { Will:'#1B3A5C', Emma:'#E8A84A', Lily:'#3A6898', Grandma:'#C89040' };
+    var map = { Will:'#3A2860', Emma:'#A888CC', Lily:'#5A4898', Grandma:'#8060B0' };
     return map[name] || '#8A7060';
   }
 
@@ -161,7 +162,7 @@
           'position:relative;overflow:hidden;background:'+
           (th._name==='dark'
             ? 'linear-gradient(135deg,#2E1A18 0%,#1C1917 100%)'
-            : 'linear-gradient(135deg,#1B3A5C 0%,#0F2240 100%)')+';'+
+            : 'linear-gradient(135deg,#3A2860 0%,#261850 100%)')+';'+
           'box-shadow:0 16px 40px rgba(0,0,0,0.2)">' +
 
           /* Decorative texture lines */

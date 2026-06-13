@@ -88,6 +88,33 @@
     accent:    '#F6C45C'   // honey gold — same warm accent on dark bg
   };
 
+  var H = {
+    _name:     'harvest',
+    bg:        '#FAF6EE',   // warm cream
+    card:      '#FFFFFF',
+    surface:   '#F5EDE0',   // warm peach surface
+    primary:   '#C1613A',   // rust — CTAs, active nav
+    secondary: '#E8A870',   // amber — accents, section eyebrows
+    text:      '#2A1A0E',   // deep warm brown
+    muted:     '#8A7060',   // warm gray
+    border:    '#EAD8C8',   // warm border
+    chip:      '#F5E8D8',   // warm chip background
+    chipTx:    '#8A5838',   // warm chip text
+    input:     '#FFFFFF',
+    hero:      '#D4784A',   // rust featured card placeholder
+    hero2:     '#E8A840',   // amber card placeholder
+    hero3:     '#C06038',   // deep rust placeholder
+    success:   '#5A8A52',
+    warning:   '#C4884A',
+    error:     '#B04040',
+    overlay:   'rgba(42,26,14,0.55)',
+    scrim:     'rgba(0,0,0,0.28)',
+    teal:      '#C1613A',  // rust — active nav indicator
+    accent:    '#F6C45C'   // honey gold
+  };
+
+  var THEMES = { lavender: L, harvest: H, midnight: D };
+
 
   /* ══════════════════════════════════════════════════════════
      TYPOGRAPHY
@@ -571,12 +598,14 @@
   function nav(screenMap, startId, containerId, options) {
     var opts  = options || {};
     var elId  = containerId || 'phone-screen';
-    var state = { cur: startId || Object.keys(screenMap)[0], hist: [], dark: false };
+    var savedTheme = '';
+    try { savedTheme = localStorage.getItem('kb-theme') || ''; } catch(e) {}
+    var state = { cur: startId || Object.keys(screenMap)[0], hist: [], theme: savedTheme || 'lavender' };
     if (opts.state) {
       for (var k in opts.state) state[k] = opts.state[k];
     }
 
-    function theme() { return state.dark ? D : L; }
+    function theme() { return THEMES[state.theme] || L; }
 
     function render(anim) {
       var el = document.getElementById(elId);
@@ -601,9 +630,21 @@
       render(anim);
     }
 
+    function setTheme(name) {
+      if (!THEMES[name]) return;
+      state.theme = name;
+      try { localStorage.setItem('kb-theme', name); } catch(e) {}
+      render();
+    }
+
     window.otGo          = go;
     window.otBack        = function () { if (state.hist.length) { state.cur = state.hist.pop(); render('anim-back'); } };
-    window.otToggleTheme = function () { state.dark = !state.dark; render(); };
+    window.otSetTheme    = setTheme;
+    window.otToggleTheme = function () {
+      var keys = ['lavender', 'harvest', 'midnight'];
+      var idx  = keys.indexOf(state.theme);
+      setTheme(keys[(idx + 1) % keys.length]);
+    };
     window.otState       = state;
     window.otRender      = render;
     window.otTheme       = theme;
@@ -640,8 +681,10 @@
   ══════════════════════════════════════════════════════════ */
 
   global.OT = {
-    L: L,          // light theme
-    D: D,          // dark theme
+    L: L,          // light theme (Lavender)
+    D: D,          // dark theme (Midnight)
+    H: H,          // warm theme (Harvest)
+    THEMES: THEMES, // { lavender, harvest, midnight }
     T: T,          // typography
     S: S,          // spacing
     R: R,          // border radius

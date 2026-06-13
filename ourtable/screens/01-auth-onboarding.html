@@ -91,7 +91,7 @@
   <div id="screen-label">Welcome</div>
   <div class="hint">Tap elements inside the phone to navigate</div>
   <div id="screen-dots"></div>
-  <button class="theme-btn" id="theme-btn" onclick="otToggleTheme()">☾ Dark Mode</button>
+  <button class="theme-btn" id="theme-btn" onclick="otToggleTheme()">🌸 Lavender</button>
 </div>
 
 <script src="../our-table-design-system.js"></script>
@@ -101,13 +101,14 @@
 
   /* ── Constants ─────────────────────────────────────────── */
   var DIET_OPTS = ['None','Vegetarian','Vegan','Gluten-Free','Dairy-Free','Nut-Free','Halal','Kosher'];
-  var FLOW_SCREENS = ['welcome','signIn','createAccount','householdSetup'];
+  var FLOW_SCREENS = ['welcome','signIn','createAccount','householdSetup','themePicker'];
   var SCREEN_NAMES = {
     welcome:        'Welcome',
     signIn:         'Sign In',
     forgotPassword: 'Forgot Password',
     createAccount:  'Create Account',
     householdSetup: 'Your Household',
+    themePicker:    'Pick a Vibe',
     complete:       'All Done'
   };
 
@@ -278,7 +279,7 @@
 
       '<div style="padding:4px ' + S.xl + ' 0;display:flex;justify-content:space-between;align-items:center">' +
         c.backBtn(th) +
-        c.stepDots(th, 0, 2) +
+        c.stepDots(th, 0, 3) +
       '</div>' +
 
       '<div style="flex:1;padding:10px 28px 28px;overflow-y:auto;display:flex;flex-direction:column">' +
@@ -385,7 +386,7 @@
 
       '<div style="padding:4px ' + S.xl + ' 0;display:flex;justify-content:space-between;align-items:center">' +
         c.backBtn(th) +
-        c.stepDots(th, 1, 2) +
+        c.stepDots(th, 1, 3) +
       '</div>' +
 
       '<div style="flex:1;padding:10px 28px 28px;overflow-y:auto;display:flex;flex-direction:column">' +
@@ -417,7 +418,7 @@
           dietHtml +
         '</div>' +
 
-        c.btn(th, 'Get Cooking 🍳', "otGo('complete')", 'primary') +
+        c.btn(th, 'Continue →', "otGo('themePicker')", 'primary') +
 
       '</div>' +
 
@@ -425,7 +426,86 @@
     '</div>';
   }
 
-  /* ── 6. COMPLETE (handoff) ──────────────────────────────── */
+  /* ── 6. THEME PICKER ───────────────────────────────────── */
+  function sThemePicker(th, st) {
+    var curTheme = st.theme || 'lavender';
+
+    var THEMES_DATA = [
+      { id: 'lavender', name: 'Lavender', tagline: 'Calm & creative',
+        swatches: ['#6B4FA8', '#C3B1E1', '#F5F1EB'],
+        cardBg: '#FFFFFF', nameTx: '#1E1A2E', tagTx: '#9A8A78' },
+      { id: 'harvest',  name: 'Harvest',  tagline: 'Warm & rustic',
+        swatches: ['#C1613A', '#E8A870', '#FAF6EE'],
+        cardBg: '#FFFFFF', nameTx: '#2A1A0E', tagTx: '#8A7060' },
+      { id: 'midnight', name: 'Midnight', tagline: 'Dark & cozy',
+        swatches: ['#A685D4', '#3D2E50', '#1E1525'],
+        cardBg: '#2A1F33', nameTx: '#F0ECFA', tagTx: '#A090B0' }
+    ];
+
+    var cardsHtml = THEMES_DATA.map(function (t) {
+      var active = curTheme === t.id;
+      var swatchHtml = t.swatches.map(function (col) {
+        return '<div style="flex:1;background:' + col + '"></div>';
+      }).join('');
+
+      return '<div onclick="otSetTheme(\'' + t.id + '\')" style="' +
+        'flex:1;border-radius:' + R.md + ';overflow:hidden;cursor:pointer;' +
+        'border:2px solid ' + (active ? th.primary : th.border) + ';' +
+        'box-shadow:' + (active ? '0 4px 14px ' + th.primary + '44' : '0 2px 8px rgba(0,0,0,0.07)') + ';' +
+        'position:relative;transition:box-shadow 0.15s">' +
+
+        '<div style="height:52px;display:flex">' + swatchHtml + '</div>' +
+
+        '<div style="padding:8px 9px 10px;background:' + t.cardBg + '">' +
+          '<div style="font-size:11px;font-weight:700;color:' + t.nameTx + ';margin-bottom:2px;font-family:' + T.sans + '">' + t.name + '</div>' +
+          '<div style="font-size:9px;color:' + t.tagTx + ';font-family:' + T.sans + '">' + t.tagline + '</div>' +
+        '</div>' +
+
+        (active ?
+          '<div style="position:absolute;top:5px;right:5px;width:16px;height:16px;' +
+            'background:' + th.primary + ';border-radius:50%;' +
+            'display:flex;align-items:center;justify-content:center">' +
+            '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg>' +
+          '</div>' : '') +
+
+      '</div>';
+    }).join('');
+
+    return '<div style="height:100%;background:' + th.bg + ';display:flex;flex-direction:column;' +
+      'overflow:hidden;font-family:' + T.sans + '">' +
+
+      c.notch() + c.statusBar(th) +
+
+      '<div style="padding:4px ' + S.xl + ' 0;display:flex;justify-content:space-between;align-items:center">' +
+        c.backBtn(th) +
+        c.stepDots(th, 2, 3) +
+      '</div>' +
+
+      '<div style="flex:1;padding:10px 28px 28px;display:flex;flex-direction:column">' +
+
+        '<div style="font-size:26px;font-weight:800;color:' + th.text + ';font-family:' + T.serif + ';' +
+          'line-height:1.2;margin-bottom:6px">Pick your<br>kitchen vibe ✨</div>' +
+        '<div style="font-size:13px;color:' + th.muted + ';margin-bottom:24px">' +
+          'You can always change this later in Settings</div>' +
+
+        '<div style="display:flex;gap:10px;margin-bottom:20px">' + cardsHtml + '</div>' +
+
+        /* Live preview indicator */
+        '<div style="background:' + th.chip + ';border:0.5px solid ' + th.border + ';' +
+          'border-radius:' + R.md + ';padding:11px 14px;margin-bottom:28px;' +
+          'display:flex;align-items:center;gap:10px">' +
+          '<div style="width:9px;height:9px;border-radius:50%;background:' + th.primary + ';flex-shrink:0"></div>' +
+          '<span style="font-size:12px;color:' + th.muted + ';font-family:' + T.sans + '">Previewing <strong style="color:' + th.text + '">' +
+            (curTheme.charAt(0).toUpperCase() + curTheme.slice(1)) + '</strong> — this is what your app looks like</span>' +
+        '</div>' +
+
+        c.btn(th, "Looks good →", "otGo('complete')", 'primary') +
+
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 7. COMPLETE (handoff) ──────────────────────────────── */
   function sComplete(th, st) {
     var name = st.firstName || 'Will';
     var memberCount = st.members.length + 1;
@@ -483,6 +563,7 @@
       forgotPassword: sForgotPassword,
       createAccount:  sCreateAccount,
       householdSetup: sHouseholdSetup,
+      themePicker:    sThemePicker,
       complete:       sComplete
     },
     'welcome',
@@ -510,7 +591,12 @@
         }
 
         var tbtn = document.getElementById('theme-btn');
-        if (tbtn) tbtn.textContent = (st.dark ? '☀' : '☾') + ' ' + (st.dark ? 'Light' : 'Dark') + ' Mode';
+        if (tbtn) {
+          var themeIcons = { lavender: '🌸', harvest: '🌾', midnight: '🌙' };
+          var themeNames = { lavender: 'Lavender', harvest: 'Harvest', midnight: 'Midnight' };
+          var cur = st.theme || 'lavender';
+          tbtn.textContent = (themeIcons[cur] || '🎨') + ' ' + (themeNames[cur] || 'Theme');
+        }
       }
     }
   );

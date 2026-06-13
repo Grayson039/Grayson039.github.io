@@ -41,13 +41,17 @@ function rgb(h) {
 function solid(hex, a) {
   return [{ type:'SOLID', color: rgb(hex), opacity: a === undefined ? 1 : a }];
 }
+function rgbA(hex, a) {
+  var c = rgb(hex);
+  return {r:c.r, g:c.g, b:c.b, a: a === undefined ? 1 : a};
+}
 function topToBottomGrad(h1, h2) {
   return [{
     type: 'GRADIENT_LINEAR',
     gradientHandlePositions: [{x:0.5,y:0}, {x:0.5,y:1}, {x:1,y:0.5}],
     gradientStops: [
-      {position:0, color:{...rgb(h1), a:1}},
-      {position:1, color:{...rgb(h2), a:1}}
+      {position:0, color:rgbA(h1)},
+      {position:1, color:rgbA(h2)}
     ]
   }];
 }
@@ -56,8 +60,8 @@ function diagonalGrad(h1, h2) {
     type: 'GRADIENT_LINEAR',
     gradientHandlePositions: [{x:0.2,y:0}, {x:0.8,y:1}, {x:1,y:0}],
     gradientStops: [
-      {position:0, color:{...rgb(h1), a:1}},
-      {position:1, color:{...rgb(h2), a:1}}
+      {position:0, color:rgbA(h1)},
+      {position:1, color:rgbA(h2)}
     ]
   }];
 }
@@ -195,8 +199,8 @@ function addWhisker(par, x, y, sz, label) {
     type:'GRADIENT_LINEAR',
     gradientHandlePositions:[{x:0.5,y:0},{x:0.5,y:1},{x:1,y:0.5}],
     gradientStops:[
-      {position:0, color:{...rgb('#C3B1E1'), a:0.35}},
-      {position:1, color:{...rgb('#8060B0'), a:0.25}}
+      {position:0, color:rgbA('#C3B1E1', 0.35)},
+      {position:1, color:rgbA('#8060B0', 0.25)}
     ]
   }];
   g.strokes = solid(P.secondary, 0.4); g.strokeWeight = 2;

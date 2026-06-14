@@ -49,7 +49,7 @@ function rgbA(hex, a) {
 function topToBottomGrad(h1, h2) {
   return [{
     type: 'GRADIENT_LINEAR',
-    gradientHandlePositions: [{x:0.5,y:0}, {x:0.5,y:1}, {x:1,y:0.5}],
+    gradientTransform: [[0, 1, 0], [-1, 0, 1]],
     gradientStops: [
       {position:0, color:rgbA(h1)},
       {position:1, color:rgbA(h2)}
@@ -59,7 +59,7 @@ function topToBottomGrad(h1, h2) {
 function diagonalGrad(h1, h2) {
   return [{
     type: 'GRADIENT_LINEAR',
-    gradientHandlePositions: [{x:0.2,y:0}, {x:0.8,y:1}, {x:1,y:0}],
+    gradientTransform: [[0, 1, 0], [-1, 0, 1]],
     gradientStops: [
       {position:0, color:rgbA(h1)},
       {position:1, color:rgbA(h2)}
@@ -202,7 +202,7 @@ function addWhisker(par, x, y, sz, label) {
   g.cornerRadius = sz / 2;
   g.fills = [{
     type:'GRADIENT_LINEAR',
-    gradientHandlePositions:[{x:0.5,y:0},{x:0.5,y:1},{x:1,y:0.5}],
+    gradientTransform:[[0,1,0],[-1,0,1]],
     gradientStops:[
       {position:0, color:rgbA('#C3B1E1', 0.35)},
       {position:1, color:rgbA('#8060B0', 0.25)}
@@ -274,7 +274,7 @@ function addRecipeCard(par, x, y, w, h, title, time, color, tag, rating) {
   scrim.cornerRadius = 14;
   scrim.fills = [{
     type:'GRADIENT_LINEAR',
-    gradientHandlePositions:[{x:0.5,y:0},{x:0.5,y:1},{x:1,y:0.5}],
+    gradientTransform:[[0,1,0],[-1,0,1]],
     gradientStops:[
       {position:0, color:{r:0,g:0,b:0,a:0}},
       {position:1, color:{r:0,g:0,b:0,a:0.55}}
@@ -525,7 +525,7 @@ featScrim.resize(350, 100); featScrim.x = 20; featScrim.y = 206;
 featScrim.cornerRadius = 20;
 featScrim.fills = [{
   type:'GRADIENT_LINEAR',
-  gradientHandlePositions:[{x:0.5,y:0},{x:0.5,y:1},{x:1,y:0.5}],
+  gradientTransform:[[0,1,0],[-1,0,1]],
   gradientStops:[{position:0,color:{r:0,g:0,b:0,a:0}},{position:1,color:{r:0,g:0,b:0,a:0.6}}]
 }];
 

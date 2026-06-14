@@ -14,7 +14,8 @@ var THEMES = {
     chip:'#EDE7F6', chipTx:'#7A6090', accent:'#F6C45C',
     input:'#F0EBF6', surface:'#EDE7F6',
     featGrad1:'#4A3580', featGrad2:'#8060A8',
-    textOnPrimary:'#FFFFFF', white:'#FFFFFF'
+    textOnPrimary:'#FFFFFF', white:'#FFFFFF',
+    cards:['#4A3580','#5A4898','#8060A8','#A888CC','#261850','#6050A0','#B898D8','#9070C0','#3A2860']
   },
   dark: {
     name:'Dark',
@@ -23,7 +24,8 @@ var THEMES = {
     chip:'#2E2040', chipTx:'#C3B1E1', accent:'#F6C45C',
     input:'#251A2E', surface:'#221830',
     featGrad1:'#3D2870', featGrad2:'#6040A0',
-    textOnPrimary:'#FFFFFF', white:'#FFFFFF'
+    textOnPrimary:'#FFFFFF', white:'#FFFFFF',
+    cards:['#2C2248','#382E58','#241C3C','#2E2650','#1E1838','#342C54','#281E44','#2A2240','#201A36']
   },
   navy: {
     name:'Navy',
@@ -32,7 +34,8 @@ var THEMES = {
     chip:'#1A2D42', chipTx:'#8BC4E8', accent:'#F6C45C',
     input:'#122030', surface:'#0F1E30',
     featGrad1:'#1A3A5C', featGrad2:'#0D2848',
-    textOnPrimary:'#0D1B2E', white:'#FFFFFF'
+    textOnPrimary:'#0D1B2E', white:'#FFFFFF',
+    cards:['#1A3A5C','#0D2848','#1E4060','#C09020','#2A4A6A','#143050','#B88010','#244060','#0A2040']
   },
   amber: {
     name:'Amber',
@@ -41,7 +44,8 @@ var THEMES = {
     chip:'#FFF0E0', chipTx:'#8A4820', accent:'#E8A84A',
     input:'#FFF0E0', surface:'#FFF4E8',
     featGrad1:'#8A2808', featGrad2:'#C05018',
-    textOnPrimary:'#FFFFFF', white:'#FFFFFF'
+    textOnPrimary:'#FFFFFF', white:'#FFFFFF',
+    cards:['#8A2808','#A03018','#C04828','#6A3010','#904020','#7A3820','#9A4828','#5A2810','#B86030']
   }
 };
 var TH = THEMES.light; // global current theme — swapped before each group
@@ -155,7 +159,7 @@ function addAppIcon(par, x, y, sz, imgHash) {
   g.cornerRadius=Math.round(sz*0.22); g.fills=solid(TH.primary);
   g.effects=dropShadow(4,14,0.22);
   if (imgHash) {
-    var pad=Math.round(sz*0.12);
+    var pad=Math.round(sz*0.08);
     var icon=figma.createRectangle(); g.appendChild(icon);
     icon.resize(sz-pad*2,sz-pad*2); icon.x=pad; icon.y=pad;
     icon.fills=[{type:'IMAGE',scaleMode:'FIT',imageHash:imgHash}];
@@ -381,24 +385,43 @@ var totalFrames=37, builtCount=0;
 
 function buildAuthWelcome(x, y, kbH, wkH) {
   var f=mkFrame('Auth Welcome — '+TH.name, x, y);
-  f.fills=solid(TH.bg);
-  addEllipse(f,-80,-100,380,320,TH.secondary,0.1);
-  addEllipse(f,260,560,200,200,TH.primary,0.07);
-  addEllipse(f,-60,480,180,180,TH.secondary,0.06);
+  // Gradient background — matches onboarding slide quality
+  var gradTop = TH.name==='Light' ? '#E8DEFF'
+              : TH.name==='Dark'  ? '#2A1840'
+              : TH.name==='Navy'  ? '#143050'
+              :                     '#FFE0B8';
+  f.fills=topToBottomGrad(gradTop, TH.bg);
+  // Atmospheric blobs
+  addEllipse(f,-110,-90,420,360,TH.primary,0.07);
+  addEllipse(f,270,580,250,250,TH.secondary,0.06);
   addStatusBar(f);
-  var iconSz=72;
-  addAppIcon(f, Math.round((W-iconSz)/2), 68, iconSz, kbH);
+  // Larger, cleaner app icon (90px, 8% inner padding)
+  var iconSz=90;
+  addAppIcon(f, Math.round((W-iconSz)/2), 50, iconSz, kbH);
   addText(f,'Kitchen Bandits',28,154,34,'Extra Bold',TH.primary,{w:334,align:'CENTER'});
   addText(f,'Outsmart picky eaters.\nFeed your crew.',28,202,15,'Regular',TH.muted,{w:334,align:'CENTER',lh:24});
-  addWhisker(f, Math.round((W-180)/2), 258, 180, 'Whisker', wkH);
+  // Cloud platform — white ellipses behind Whisker cover transparent PNG edges
+  var cldCx=Math.round((W-210)/2);
+  var cld1=figma.createEllipse(); f.appendChild(cld1);
+  cld1.resize(210,120); cld1.x=cldCx; cld1.y=326;
+  cld1.fills=solid('#FFFFFF',0.9); cld1.effects=dropShadow(6,24,0.1);
+  var cld2=figma.createEllipse(); f.appendChild(cld2);
+  cld2.resize(110,88); cld2.x=cldCx-16; cld2.y=306;
+  cld2.fills=solid('#FFFFFF',0.9);
+  var cld3=figma.createEllipse(); f.appendChild(cld3);
+  cld3.resize(96,82); cld3.x=cldCx+120; cld3.y=302;
+  cld3.fills=solid('#FFFFFF',0.9);
+  // Whisker sits on the cloud (cloud fills transparent PNG bg so no checkerboard)
+  addWhisker(f, Math.round((W-180)/2), 210, 200, 'Whisker', wkH);
+  // Feature pills
   var pills=['Import recipes','Scan fridge','Family meals'];
   var pillX=22;
   pills.forEach(function(pl) {
     var pw=pl.length*6.5+28;
     var pg=figma.createFrame(); f.appendChild(pg);
-    pg.resize(pw,32); pg.x=pillX; pg.y=462;
-    pg.cornerRadius=100; pg.fills=solid(TH.chip);
-    pg.strokes=solid(TH.secondary,0.5); pg.strokeWeight=1;
+    pg.resize(pw,32); pg.x=pillX; pg.y=456;
+    pg.cornerRadius=100; pg.fills=solid(TH.card,0.88);
+    pg.strokes=solid(TH.primary,0.35); pg.strokeWeight=1;
     var pt=figma.createText(); pg.appendChild(pt);
     pt.fontName={family:'Inter',style:'Medium'}; pt.fontSize=11;
     pt.fills=solid(TH.chipTx); pt.x=14; pt.y=9; pt.characters=pl;
@@ -503,16 +526,16 @@ function buildHome(x, y, kbH) {
   addSectionHeader(f,'Your Recipes',20,370,200);
   addText(f,'See all',316,372,12,'Semi Bold',TH.primary);
   var recs=[
-    {title:'Avocado Toast',time:'12 min',color:'#4A3580'},
-    {title:'Thai Green Curry',time:'35 min',color:'#5A4898'},
-    {title:'Birria Tacos',time:'3 hr',color:'#8060A8'}
+    {title:'Avocado Toast',time:'12 min',color:TH.cards[0]},
+    {title:'Thai Green Curry',time:'35 min',color:TH.cards[1]},
+    {title:'Birria Tacos',time:'3 hr',color:TH.cards[2]}
   ];
   recs.forEach(function(r,i){addRecipeCard(f,20+i*120,394,110,100,r.title,r.time,r.color,null,null);});
   addSectionHeader(f,'Trending on Social',20,520,220);
   var sRecs=[
-    {title:'Baked Feta Pasta',time:'30 min',color:'#A888CC',tag:'TikTok'},
-    {title:'Dubai Chocolate',time:'45 min',color:'#261850',tag:'Instagram'},
-    {title:'Viral Smash Burgers',time:'20 min',color:'#6050A0',tag:'TikTok'}
+    {title:'Baked Feta Pasta',time:'30 min',color:TH.cards[3],tag:'TikTok'},
+    {title:'Dubai Chocolate',time:'45 min',color:TH.cards[4],tag:'Instagram'},
+    {title:'Viral Smash Burgers',time:'20 min',color:TH.cards[5],tag:'TikTok'}
   ];
   sRecs.forEach(function(r,i){addRecipeCard(f,20+i*120,542,110,110,r.title,r.time,r.color,r.tag,null);});
   var banBg=figma.createRectangle(); f.appendChild(banBg);
@@ -576,10 +599,10 @@ function buildSearch(x, y) {
   qy+=2*(catH+catGap)+16;
   addSectionHeader(f,'Trending This Week',20,qy,280); qy+=32;
   var tRecs=[
-    {title:'Cucumber Salad',time:'10 min',color:'#5A4898'},
-    {title:'Marry Me Chicken',time:'32 min',color:'#B898D8'},
-    {title:'Brown Butter Rigatoni',time:'25 min',color:'#9070C0'},
-    {title:'Street Corn Dip',time:'15 min',color:'#C0A8E0'}
+    {title:'Cucumber Salad',time:'10 min',color:TH.cards[0]},
+    {title:'Marry Me Chicken',time:'32 min',color:TH.cards[1]},
+    {title:'Brown Butter Rigatoni',time:'25 min',color:TH.cards[2]},
+    {title:'Street Corn Dip',time:'15 min',color:TH.cards[3]}
   ];
   tRecs.forEach(function(r,i){
     addRecipeCard(f,20+(i%2)*175,qy+Math.floor(i/2)*138,165,100,r.title,r.time,r.color,null,null);
@@ -595,14 +618,14 @@ function buildLibrary(x, y) {
   addText(f,'14 saved',292,64,12,'Regular',TH.muted);
   addFilterChips(f,['All','Quick','Vegan','Baking','TikTok'],0,20,90);
   var libRecs=[
-    {title:'Creamy Tuscan Salmon',time:'28 min',rating:'4.9',tag:'Saved',color:'#B898D8'},
-    {title:'Avocado Toast',time:'12 min',rating:'4.7',tag:'Quick',color:'#4A3580'},
-    {title:'Birria Tacos',time:'3 hr',rating:'4.8',tag:'TikTok',color:'#9070C0'},
-    {title:'Thai Green Curry',time:'35 min',rating:'4.6',tag:'Vegetarian',color:'#5A4898'},
-    {title:'Miso Glazed Eggplant',time:'22 min',rating:'4.5',tag:'Vegan',color:'#3A2860'},
-    {title:'Dubai Chocolate',time:'45 min',rating:'4.9',tag:'Instagram',color:'#261850'},
-    {title:'Marry Me Chicken',time:'32 min',rating:'4.9',tag:'',color:'#A888CC'},
-    {title:'Homemade Sourdough',time:'4 hr',rating:'4.6',tag:'Baking',color:'#8060B0'}
+    {title:'Creamy Tuscan Salmon',time:'28 min',rating:'4.9',tag:'Saved',color:TH.cards[0]},
+    {title:'Avocado Toast',time:'12 min',rating:'4.7',tag:'Quick',color:TH.cards[1]},
+    {title:'Birria Tacos',time:'3 hr',rating:'4.8',tag:'TikTok',color:TH.cards[2]},
+    {title:'Thai Green Curry',time:'35 min',rating:'4.6',tag:'Vegetarian',color:TH.cards[3]},
+    {title:'Miso Glazed Eggplant',time:'22 min',rating:'4.5',tag:'Vegan',color:TH.cards[4]},
+    {title:'Dubai Chocolate',time:'45 min',rating:'4.9',tag:'Instagram',color:TH.cards[5]},
+    {title:'Marry Me Chicken',time:'32 min',rating:'4.9',tag:'',color:TH.cards[6]},
+    {title:'Homemade Sourdough',time:'4 hr',rating:'4.6',tag:'Baking',color:TH.cards[7]}
   ];
   libRecs.forEach(function(r,i){
     addRecipeCard(f,20+(i%2)*175,128+Math.floor(i/2)*158,165,120,r.title,r.time,r.color,r.tag||null,r.rating);
@@ -633,8 +656,9 @@ function buildRecipeDetail(x, y) {
   saveBg.resize(36,36); saveBg.x=W-52; saveBg.y=52; saveBg.cornerRadius=100;
   saveBg.fills=solid('#000000',0.3);
   var saveT=figma.createText(); saveBg.appendChild(saveT);
-  saveT.fontName={family:'Inter',style:'Regular'}; saveT.fontSize=18;
-  saveT.fills=solid('#FFFFFF'); saveT.characters='♥'; saveT.x=8; saveT.y=9;
+  saveT.fontName={family:'Inter',style:'Bold'}; saveT.fontSize=9;
+  saveT.textAlignHorizontal='CENTER'; saveT.textAutoResize='HEIGHT'; saveT.resize(36,10);
+  saveT.fills=solid('#FFFFFF'); saveT.characters='Save'; saveT.x=0; saveT.y=13;
   // Rating on hero
   var ratBg=figma.createFrame(); f.appendChild(ratBg);
   ratBg.resize(72,24); ratBg.x=20; ratBg.y=244; ratBg.cornerRadius=100;

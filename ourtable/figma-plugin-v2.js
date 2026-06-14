@@ -372,7 +372,7 @@ for (var fi = 0; fi < fontStyles.length; fi++) {
 // ─── LOAD ILLUSTRATIONS FROM GITHUB ──────────────────────────────────────────
 figma.notify('Fetching illustrations from GitHub…');
 var BASE = 'https://raw.githubusercontent.com/grayson039/grayson039.github.io/claude/ladle-design-tokens/ourtable/';
-var IMG_NAMES = ['ob-1.png','ob-2.png','ob-3.png','ob-4.png','ob-5.png','whisker-welcome.png','whisker-confident.png','kb-icon.png'];
+var IMG_NAMES = ['ob-1.png','ob-2.png','ob-3.png','ob-4.png','ob-5.png','whisker-welcome.png.png','whisker-confident.png.png','kb-icon.png'];
 var IMGS = {};
 for (var ii = 0; ii < IMG_NAMES.length; ii++) {
   try {
@@ -514,7 +514,7 @@ addText(aw, 'Outsmart picky eaters.\nFeed your crew.', 28, 200, 15, 'Regular', P
 
 // Whisker — real image if loaded, otherwise circle placeholder
 var kbHash      = IMGS['kb-icon.png']          ? IMGS['kb-icon.png'].hash          : null;
-var welcomeHash = IMGS['whisker-welcome.png']  ? IMGS['whisker-welcome.png'].hash  : null;
+var welcomeHash = IMGS['whisker-welcome.png.png']  ? IMGS['whisker-welcome.png.png'].hash  : null;
 addWhisker(aw, Math.round((W - 180) / 2), 258, 180, 'Whisker', welcomeHash);
 
 var pills = ['📱 Import recipes', '❄️ Scan fridge', '👨‍👩‍👧 Family meals'];
@@ -578,7 +578,7 @@ addEllipse(oc, -20, -40, 140, 140, P.secondary, 0.08);
 addStatusBar(oc, false);
 
 // Whisker confident pose (arms crossed, on cloud) — Onboarding Complete
-var confidentHash = IMGS['whisker-confident.png'] ? IMGS['whisker-confident.png'].hash : null;
+var confidentHash = IMGS['whisker-confident.png.png'] ? IMGS['whisker-confident.png.png'].hash : null;
 addWhisker(oc, Math.round((W - 190) / 2), 80, 190, 'Whisker', confidentHash);
 
 addText(oc, "You're all set, Will!", 28, 292, 28, 'Extra Bold', P.text, {w:334, align:'CENTER', lh:36});

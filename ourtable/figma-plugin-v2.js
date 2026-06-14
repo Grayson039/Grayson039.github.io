@@ -162,13 +162,16 @@ function addStatusBar(par, dark) {
   var col = dark ? P.dtext : P.text;
   var t1 = figma.createText(); bar.appendChild(t1);
   t1.fontName = {family:'Inter', style:'Bold'}; t1.fontSize = 15;
-  t1.characters = '9:41'; t1.fills = solid(col);
+  t1.fills = solid(col);
+  t1.characters = '9:41';
   t1.x = 28; t1.y = 14;
   var t2 = figma.createText(); bar.appendChild(t2);
   t2.fontName = {family:'Inter', style:'Medium'}; t2.fontSize = 11;
-  t2.characters = 'LTE  100%'; t2.fills = solid(col, 0.65);
   t2.textAlignHorizontal = 'RIGHT'; t2.textAutoResize = 'HEIGHT';
-  t2.resize(120, 10); t2.x = 242; t2.y = 15;
+  t2.resize(120, 10);
+  t2.fills = solid(col, 0.65);
+  t2.characters = 'LTE  100%';
+  t2.x = 242; t2.y = 15;
 }
 
 function addAppIcon(par, x, y, sz) {
@@ -180,10 +183,12 @@ function addAppIcon(par, x, y, sz) {
   g.effects = dropShadow(4, 14, 0.25);
   var t = figma.createText(); g.appendChild(t);
   t.fontName = {family:'Inter', style:'Extra Bold'};
-  t.fontSize = Math.round(sz * 0.3); t.characters = 'KB';
-  t.fills = solid(P.white);
+  t.fontSize = Math.round(sz * 0.3);
   t.textAlignHorizontal = 'CENTER'; t.textAutoResize = 'HEIGHT';
-  t.resize(sz - 8, 10); t.x = 4; t.y = Math.round(sz*0.34);
+  t.resize(sz - 8, 10);
+  t.fills = solid(P.white);
+  t.characters = 'KB';
+  t.x = 4; t.y = Math.round(sz*0.34);
   return g;
 }
 
@@ -210,10 +215,12 @@ function addWhisker(par, x, y, sz, label, imgHash) {
   g.strokes = solid(P.secondary, 0.4); g.strokeWeight = 2;
   var t = figma.createText(); g.appendChild(t);
   t.fontName = {family:'Inter', style:'Semi Bold'};
-  t.fontSize = 11; t.characters = label || 'Whisker';
-  t.fills = solid(P.primary, 0.75);
+  t.fontSize = 11;
   t.textAlignHorizontal = 'CENTER'; t.textAutoResize = 'HEIGHT';
-  t.resize(sz - 16, 10); t.x = 8; t.y = Math.round(sz/2 - 8);
+  t.resize(sz - 16, 10);
+  t.fills = solid(P.primary, 0.75);
+  t.characters = label || 'Whisker';
+  t.x = 8; t.y = Math.round(sz/2 - 8);
   return g;
 }
 
@@ -241,16 +248,20 @@ function addNavBar(par, activeIdx, dark) {
     ic.fills = solid(i === activeIdx ? active : bdr, i === activeIdx ? 0.15 : 0.5);
     var iconTxt = figma.createText(); bar.appendChild(iconTxt);
     iconTxt.fontName = {family:'Inter', style:'Bold'};
-    iconTxt.fontSize = 9; iconTxt.characters = icons[i];
-    iconTxt.fills = solid(col);
+    iconTxt.fontSize = 9;
     iconTxt.textAlignHorizontal = 'CENTER'; iconTxt.textAutoResize = 'HEIGHT';
-    iconTxt.resize(22, 10); iconTxt.x = cx - 11; iconTxt.y = 15;
+    iconTxt.resize(22, 10);
+    iconTxt.fills = solid(col);
+    iconTxt.characters = icons[i];
+    iconTxt.x = cx - 11; iconTxt.y = 15;
     var lbl = figma.createText(); bar.appendChild(lbl);
     lbl.fontName = {family:'Inter', style: i === activeIdx ? 'Semi Bold' : 'Regular'};
-    lbl.fontSize = 10; lbl.characters = label;
-    lbl.fills = solid(col);
+    lbl.fontSize = 10;
     lbl.textAlignHorizontal = 'CENTER'; lbl.textAutoResize = 'HEIGHT';
-    lbl.resize(60, 10); lbl.x = cx - 30; lbl.y = 36;
+    lbl.resize(60, 10);
+    lbl.fills = solid(col);
+    lbl.characters = label;
+    lbl.x = cx - 30; lbl.y = 36;
   });
 }
 
@@ -300,9 +311,10 @@ function addRecipeCard(par, x, y, w, h, title, time, color, tag, rating) {
   }
   var titleTxt = figma.createText(); par.appendChild(titleTxt);
   titleTxt.fontName = {family:'Inter', style:'Semi Bold'};
-  titleTxt.fontSize = 11; titleTxt.characters = title;
-  titleTxt.fills = solid(P.text);
+  titleTxt.fontSize = 11;
   titleTxt.textAutoResize = 'HEIGHT'; titleTxt.resize(w, 10);
+  titleTxt.fills = solid(P.text);
+  titleTxt.characters = title;
   titleTxt.x = x; titleTxt.y = y + h + 6;
 }
 
@@ -618,8 +630,10 @@ featBadge.resize(132, 24); featBadge.x = 36; featBadge.y = 122;
 featBadge.cornerRadius = 100; featBadge.fills = solid(P.white, 0.2);
 var fbt = figma.createText(); featBadge.appendChild(fbt);
 fbt.fontName = {family:'Inter', style:'Bold'}; fbt.fontSize = 9;
-fbt.characters = 'FEATURED TODAY'; fbt.fills = solid(P.white);
-fbt.letterSpacing = {value:4, unit:'PERCENT'}; fbt.x = 12; fbt.y = 7;
+fbt.letterSpacing = {value:4, unit:'PERCENT'};
+fbt.fills = solid(P.white);
+fbt.characters = 'FEATURED TODAY';
+fbt.x = 12; fbt.y = 7;
 
 var ratBadge = figma.createFrame(); hd.appendChild(ratBadge);
 ratBadge.resize(44, 24); ratBadge.x = 326; ratBadge.y = 122;
@@ -730,9 +744,11 @@ cats.forEach(function(cat, ci) {
   cg.strokes = solid(cat.color, 0.4); cg.strokeWeight = 1;
   var clt = figma.createText(); cg.appendChild(clt);
   clt.fontName = {family:'Inter', style:'Semi Bold'}; clt.fontSize = 11;
-  clt.characters = cat.label; clt.fills = solid(P.text);
   clt.textAlignHorizontal = 'CENTER'; clt.textAutoResize = 'HEIGHT';
-  clt.resize(catW - 8, 10); clt.x = 4; clt.y = 44;
+  clt.resize(catW - 8, 10);
+  clt.fills = solid(P.text);
+  clt.characters = cat.label;
+  clt.x = 4; clt.y = 44;
 });
 qy += 2 * (catH + catGap) + 18;
 

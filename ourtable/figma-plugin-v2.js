@@ -145,7 +145,7 @@ function addInput(par, labelTxt, placeholder, x, y, w) {
   g.fills = solid('#F0EBF6');
   g.strokes = solid('#D8CEF0'); g.strokeWeight = 1.5; g.strokeAlign = 'INSIDE';
   var lbl = figma.createText(); g.appendChild(lbl);
-  lbl.fontName = {family:'Inter', style:'SemiBold'};
+  lbl.fontName = {family:'Inter', style:'Semi Bold'};
   lbl.fontSize = 10;
   lbl.letterSpacing = {value:4, unit:'PERCENT'};
   lbl.fills = solid('#9A8AB0');
@@ -186,7 +186,7 @@ function addAppIcon(par, x, y, sz) {
   g.fills = solid(P.primary);
   g.effects = dropShadow(4, 14, 0.25);
   var t = figma.createText(); g.appendChild(t);
-  t.fontName = {family:'Inter', style:'ExtraBold'};
+  t.fontName = {family:'Inter', style:'Extra Bold'};
   t.fontSize = Math.round(sz * 0.3); t.characters = 'KB';
   t.fills = solid(P.white);
   t.textAlignHorizontal = 'CENTER'; t.textAutoResize = 'HEIGHT';
@@ -210,7 +210,7 @@ function addWhisker(par, x, y, sz, label) {
   }];
   g.strokes = solid(P.secondary, 0.4); g.strokeWeight = 2;
   var t = figma.createText(); g.appendChild(t);
-  t.fontName = {family:'Inter', style:'SemiBold'};
+  t.fontName = {family:'Inter', style:'Semi Bold'};
   t.fontSize = 11; t.characters = label || 'Whisker';
   t.fills = solid(P.primary, 0.75);
   t.textAlignHorizontal = 'CENTER'; t.textAutoResize = 'HEIGHT';
@@ -253,7 +253,7 @@ function addNavBar(par, activeIdx, dark) {
     iconTxt.resize(22, 10); iconTxt.x = cx - 11; iconTxt.y = 15;
     // label
     var lbl = figma.createText(); bar.appendChild(lbl);
-    lbl.fontName = {family:'Inter', style: i === activeIdx ? 'SemiBold' : 'Regular'};
+    lbl.fontName = {family:'Inter', style: i === activeIdx ? 'Semi Bold' : 'Regular'};
     lbl.fontSize = 10; lbl.characters = label;
     lbl.fills = solid(col);
     lbl.textAlignHorizontal = 'CENTER'; lbl.textAutoResize = 'HEIGHT';
@@ -312,7 +312,7 @@ function addRecipeCard(par, x, y, w, h, title, time, color, tag, rating) {
   }
   // Title text below card
   var titleTxt = figma.createText(); par.appendChild(titleTxt);
-  titleTxt.fontName = {family:'Inter', style:'SemiBold'};
+  titleTxt.fontName = {family:'Inter', style:'Semi Bold'};
   titleTxt.fontSize = 11; titleTxt.characters = title;
   titleTxt.fills = solid(P.text);
   titleTxt.textAutoResize = 'HEIGHT'; titleTxt.resize(w, 10);
@@ -346,7 +346,7 @@ function addFilterChips(par, chips, activeIdx, x, y, dark) {
     g.cornerRadius = 100; g.fills = solid(bg);
     if (!isActive) { g.strokes = solid(bdr); g.strokeWeight = 1; g.strokeAlign = 'INSIDE'; }
     var t = figma.createText(); g.appendChild(t);
-    t.fontName = {family:'Inter', style: isActive ? 'SemiBold' : 'Regular'};
+    t.fontName = {family:'Inter', style: isActive ? 'Semi Bold' : 'Regular'};
     t.fontSize = 11; t.characters = chip;
     t.fills = solid(tx); t.x = 14; t.y = 8;
     cx += cw + 8;
@@ -355,7 +355,7 @@ function addFilterChips(par, chips, activeIdx, x, y, dark) {
 
 // ─── LOAD FONTS ───────────────────────────────────────────────────────────────
 figma.notify('Loading fonts…');
-var fontStyles = ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold'];
+var fontStyles = ['Regular', 'Medium', 'Semi Bold', 'Bold', 'Extra Bold'];
 for (var fi = 0; fi < fontStyles.length; fi++) {
   try {
     await figma.loadFontAsync({family: 'Inter', style: fontStyles[fi]});
@@ -398,7 +398,7 @@ var iconSz = 72;
 addAppIcon(aw, Math.round((W - iconSz) / 2), 100, iconSz);
 
 // Wordmark
-addText(aw, 'Kitchen Bandits', 28, 192, 32, 'ExtraBold', P.primary, {w:334, align:'CENTER'});
+addText(aw, 'Kitchen Bandits', 28, 192, 32, 'Extra Bold', P.primary, {w:334, align:'CENTER'});
 
 // Tagline
 addText(aw, 'Outsmart picky eaters. Feed your crew.', 28, 234, 14, 'Regular', P.muted, {w:334, align:'CENTER', lh:22});
@@ -435,15 +435,15 @@ var asi = mkFrame('Auth — Sign In', sx + (W + GAP));
 asi.fills = solid(P.bg);
 
 addStatusBar(asi, false);
-addText(asi, 'Back', 28, 56, 14, 'SemiBold', P.primary);
+addText(asi, 'Back', 28, 56, 14, 'Semi Bold', P.primary);
 
-addText(asi, 'Welcome back', 28, 92, 30, 'ExtraBold', P.text, {w:334, lh:36});
+addText(asi, 'Welcome back', 28, 92, 30, 'Extra Bold', P.text, {w:334, lh:36});
 addText(asi, 'Sign in to Kitchen Bandits', 28, 166, 13, 'Regular', P.muted, {w:334});
 
 addInput(asi, 'Email', 'your@email.com', 28, 198, 334);
 addInput(asi, 'Password', 'Enter your password', 28, 266, 334);
 
-addText(asi, 'Forgot password?', 28, 334, 12, 'SemiBold', P.primary, {w:334, align:'RIGHT'});
+addText(asi, 'Forgot password?', 28, 334, 12, 'Semi Bold', P.primary, {w:334, align:'RIGHT'});
 
 addButton(asi, 'Sign In', 28, 366, 334, P.primary, P.white);
 addDivider(asi, 428, false);
@@ -473,7 +473,7 @@ addText(oc, 'Done', Math.round((W-72)/2)+14, 158, 14, 'Bold', P.white);
 // Whisker mascot
 addWhisker(oc, Math.round((W - 130) / 2), 230, 130, 'Whisker (cook pose)');
 
-addText(oc, "You're all set, Will!", 28, 384, 28, 'ExtraBold', P.text, {w:334, align:'CENTER', lh:36});
+addText(oc, "You're all set, Will!", 28, 384, 28, 'Extra Bold', P.text, {w:334, align:'CENTER', lh:36});
 addText(oc, 'Your kitchen is ready. Every recipe, grocery run,\nand mealtime standoff — handled.', 28, 436, 14, 'Regular', P.muted, {w:334, align:'CENTER', lh:22});
 
 // Summary pills
@@ -482,7 +482,7 @@ pill1.resize(126, 34); pill1.x = 56; pill1.y = 504;
 pill1.cornerRadius = 100; pill1.fills = solid(P.white, 0.82);
 pill1.strokes = solid(P.secondary, 0.6); pill1.strokeWeight = 1;
 var p1t = figma.createText(); pill1.appendChild(p1t);
-p1t.fontName = {family:'Inter', style:'SemiBold'}; p1t.fontSize = 12;
+p1t.fontName = {family:'Inter', style:'Semi Bold'}; p1t.fontSize = 12;
 p1t.characters = '2 members'; p1t.fills = solid(P.text);
 p1t.x = 22; p1t.y = 9;
 
@@ -491,7 +491,7 @@ pill2.resize(154, 34); pill2.x = 198; pill2.y = 504;
 pill2.cornerRadius = 100; pill2.fills = solid(P.white, 0.82);
 pill2.strokes = solid(P.secondary, 0.6); pill2.strokeWeight = 1;
 var p2t = figma.createText(); pill2.appendChild(p2t);
-p2t.fontName = {family:'Inter', style:'SemiBold'}; p2t.fontSize = 12;
+p2t.fontName = {family:'Inter', style:'Semi Bold'}; p2t.fontSize = 12;
 p2t.characters = 'No restrictions'; p2t.fills = solid(P.text);
 p2t.x = 18; p2t.y = 9;
 
@@ -510,7 +510,7 @@ addStatusBar(hd, true);
 // Header
 addAppIcon(hd, 20, 56, 32);
 addText(hd, 'KITCHEN BANDITS', 60, 60, 10, 'Bold', P.dprimary, {ls:5});
-addText(hd, "What's cooking, Will?", 60, 74, 20, 'ExtraBold', P.dtext);
+addText(hd, "What's cooking, Will?", 60, 74, 20, 'Extra Bold', P.dtext);
 addEllipse(hd, 330, 56, 40, 40, P.dprimary, 0.35); // avatar
 
 // Featured card
@@ -545,7 +545,7 @@ rbt.fontName = {family:'Inter', style:'Bold'}; rbt.fontSize = 10;
 rbt.characters = '4.9'; rbt.fills = solid(P.accent);
 rbt.x = 10; rbt.y = 6;
 
-addText(hd, 'Creamy Tuscan Salmon', 36, 254, 21, 'ExtraBold', P.white, {w:300});
+addText(hd, 'Creamy Tuscan Salmon', 36, 254, 21, 'Extra Bold', P.white, {w:300});
 addText(hd, '28 min  .  4 servings  .  Medium', 36, 281, 11, 'Regular', P.white, {w:300});
 
 // Filter chips
@@ -553,7 +553,7 @@ addFilterChips(hd, ['All','Quick','Vegetarian','High Protein','Budget'], 0, 20, 
 
 // Your Recipes section
 addSectionHeader(hd, 'Your Recipes', 20, 366, 200, true);
-addText(hd, 'See all', 314, 368, 12, 'SemiBold', P.dprimary);
+addText(hd, 'See all', 314, 368, 12, 'Semi Bold', P.dprimary);
 
 var darkRecs = [
   {title:'Avocado Toast', time:'12 min', color:'#4A3580'},
@@ -603,7 +603,7 @@ searchScr.fills = solid(P.bg);
 
 addStatusBar(searchScr, false);
 
-addText(searchScr, 'Discover', 20, 56, 24, 'ExtraBold', P.text);
+addText(searchScr, 'Discover', 20, 56, 24, 'Extra Bold', P.text);
 
 // Search bar
 var sbBg = figma.createRectangle(); searchScr.appendChild(sbBg);
@@ -653,7 +653,7 @@ cats.forEach(function(cat, ci) {
   cg.fills = solid(cat.color, 0.15);
   cg.strokes = solid(cat.color, 0.4); cg.strokeWeight = 1;
   var clt = figma.createText(); cg.appendChild(clt);
-  clt.fontName = {family:'Inter', style:'SemiBold'}; clt.fontSize = 11;
+  clt.fontName = {family:'Inter', style:'Semi Bold'}; clt.fontSize = 11;
   clt.characters = cat.label; clt.fills = solid(P.text);
   clt.textAlignHorizontal = 'CENTER'; clt.textAutoResize = 'HEIGHT';
   clt.resize(catW - 8, 10); clt.x = 4; clt.y = 44;
@@ -687,7 +687,7 @@ libScr.fills = solid(P.bg);
 
 addStatusBar(libScr, false);
 
-addText(libScr, 'My Recipes', 20, 56, 24, 'ExtraBold', P.text);
+addText(libScr, 'My Recipes', 20, 56, 24, 'Extra Bold', P.text);
 addText(libScr, '14 saved', 298, 64, 12, 'Regular', P.muted);
 
 // Filter chips

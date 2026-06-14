@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>More Projects — Will Grayson, AI Product Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #075B5E;
+    --bg-mid:   #063d3f;
+    --bg-card:  #053638;
+    --orange:   #FF5B04;
+    --gold:     #FED16A;
+    --cream:    #FFE6E1;
+    --teal:     #075B5E;
+    --white:    #ffffff;
+    --border:   rgba(255,230,225,0.14);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: #075B5E;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.4;
+  }
+
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: fixed; pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: width .25s, height .25s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(255,91,4,0.45);
+    border-radius: 50%;
+    position: fixed; pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: width .35s, height .35s, border-color .25s;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 32px;
+    background: rgba(7,91,94,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 2px;
+    color: var(--cream);
+  }
+  .nav-logo span { color: var(--orange); }
+  .nav-links { list-style: none; display: flex; gap: 28px; }
+  .nav-links a {
+    color: rgba(255,230,225,0.6);
+    text-decoration: none; font-size: 13px; letter-spacing: 0.5px;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--cream); }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 120px 32px 80px;
+  }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: rgba(255,230,225,0.5);
+    text-decoration: none; font-size: 13px;
+    letter-spacing: 0.5px; margin-bottom: 48px;
+    transition: color .2s;
+    font-family: 'Space Mono', monospace;
+  }
+  .back-link:hover { color: var(--orange); }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(255,230,225,0.35);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 6vw, 72px);
+    line-height: 1;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+
+  .page-sub {
+    color: rgba(255,230,225,0.5);
+    font-size: 16px; line-height: 1.6;
+    max-width: 520px;
+    margin-bottom: 64px;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: background .2s, transform .2s, box-shadow .2s;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .project-card:hover {
+    background: #074345;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(255,91,4,0.10);
+  }
+  .project-card:hover .p-arrow { color: var(--orange); transform: translate(3px,-3px); }
+
+  .p-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    color: rgba(255,230,225,0.25);
+    margin-bottom: 16px;
+  }
+
+  .p-title {
+    font-size: 18px; font-weight: 500;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .p-desc {
+    font-size: 13px; line-height: 1.6;
+    color: rgba(255,230,225,0.5);
+    margin-bottom: 20px;
+  }
+
+  .p-footer {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .p-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .p-tag {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(255,230,225,0.5);
+    border: 1px solid rgba(255,230,225,0.14);
+    border-radius: 4px; padding: 3px 8px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .p-case-link {
+    font-size: 12px; font-weight: 500;
+    color: var(--orange);
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: opacity .2s;
+  }
+  .p-case-link:hover { opacity: 0.75; }
+
+  .p-arrow {
+    color: rgba(255,230,225,0.3);
+    transition: color .2s, transform .2s;
+    display: inline-block;
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; }
+    .page-wrap { padding: 100px 20px 60px; }
+    .project-grid { grid-template-columns: 1fr; }
+  }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .stagger-child { opacity:0; transform:translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .stagger-child.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">WG<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="index.html#approach">Approach</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+  <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
+
+  <div class="section-label">Additional Work</div>
+  <h1>More <span style="color:var(--gold)">Projects.</span></h1>
+  <p class="page-sub">Supporting work, experiments, and tools that didn't make the featured cut — but show range.</p>
+
+  <div class="project-grid reveal">
+
+    <div class="project-card stagger-child" onclick="window.location.href='ourtable/'" style="cursor:pointer;">
+      <div class="p-num">A / 7</div>
+      <div class="p-title">OurTable <span class="p-arrow">&#x2197;</span></div>
+      <p class="p-desc">Family kitchen platform. Save recipes, scan your fridge, AI meal suggestions, dietary conflict warnings across all household members. 45 screens, 4 versions.</p>
+      <div class="p-footer">
+        <div class="p-tags"><span class="p-tag">React Native</span><span class="p-tag">AI</span></div>
+        <a href="ourtable/" class="p-case-link" onclick="event.stopPropagation();">Case Study &#x2192;</a>
+      </div>
+    </div>
+
+    <div class="project-card stagger-child" onclick="window.location.href='triageai/'" style="cursor:pointer;">
+      <div class="p-num">B / 7</div>
+      <div class="p-title">TriageAI <span class="p-arrow">&#x2197;</span></div>
+      <p class="p-desc">AI-powered IT ticket triage tool. Auto-routes and prioritizes support tickets, built from real helpdesk experience knowing where bad software frustrates people.</p>
+      <div class="p-footer">
+        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag">Prototype</span></div>
+        <a href="triageai/" class="p-case-link" onclick="event.stopPropagation();">View Demo &#x2192;</a>
+      </div>
+    </div>
+
+    <div class="project-card stagger-child" onclick="window.location.href='iron-arc/'" style="cursor:pointer;">
+      <div class="p-num">C / 7</div>
+      <div class="p-title">Iron Arc <span class="p-arrow">&#x2197;</span></div>
+      <p class="p-desc">Brand identity and logo system for a strength-focused fitness concept. Logo exploration, visual language, color system.</p>
+      <div class="p-footer">
+        <div class="p-tags"><span class="p-tag">Branding</span><span class="p-tag">Identity</span></div>
+        <a href="iron-arc/" class="p-case-link" onclick="event.stopPropagation();">Case Study &#x2192;</a>
+      </div>
+    </div>
+
+    <div class="project-card stagger-child" style="cursor:pointer;">
+      <div class="p-num">D / 7</div>
+      <div class="p-title">Scrap&rsquo;d <span class="p-arrow">&#x2197;</span></div>
+      <p class="p-desc">Marketplace concept for scrap metal and salvage materials, connecting contractors with material sellers in a clean, trust-first interface.</p>
+      <div class="p-footer">
+        <div class="p-tags"><span class="p-tag">Marketplace</span><span class="p-tag">Concept</span></div>
+        <a href="https://grayson039.github.io/scrapd/" target="_blank" class="p-case-link" onclick="event.stopPropagation();">View Prototype &#x2192;</a>
+      </div>
+    </div>
+
+    <div class="project-card stagger-child" onclick="window.location.href='briefed.html'" style="cursor:pointer;">
+      <div class="p-num">E / 7</div>
+      <div class="p-title">Briefed <span class="p-arrow">&#x2197;</span></div>
+      <p class="p-desc">AI-powered design brief generator. Answer 5 questions, get a structured creative brief instantly. Built as a real working tool in an afternoon.</p>
+      <div class="p-footer">
+        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag">Live</span></div>
+        <a href="briefed.html" class="p-case-link" onclick="event.stopPropagation();">Open Tool &#x2192;</a>
+      </div>
+    </div>
+
+    <div class="project-card stagger-child" onclick="window.location.href='replyright.html'" style="cursor:pointer;">
+      <div class="p-num">F / 7</div>
+      <div class="p-title">ReplyRight <span class="p-arrow">&#x2197;</span></div>
+      <p class="p-desc">AI reply assistant for customer support. Paste a message, get a tone-matched, professional response. Built and shipped in a single session.</p>
+      <div class="p-footer">
+        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag">Live</span></div>
+        <a href="replyright.html" class="p-case-link" onclick="event.stopPropagation();">Open Tool &#x2192;</a>
+      </div>
+    </div>
+
+    <div class="project-card stagger-child" style="cursor:default; opacity:0.6;">
+      <div class="p-num">G / 7</div>
+      <div class="p-title">Kitchen Bandits</div>
+      <p class="p-desc">Coming soon. Concept for a group meal-planning and grocery-splitting app built around households that cook together but don't live together.</p>
+      <div class="p-footer">
+        <div class="p-tags"><span class="p-tag">Coming Soon</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+  (function animRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
+  document.querySelectorAll('a,.project-card,.btn,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ cursor.style.width='18px'; cursor.style.height='18px'; ring.style.width='52px'; ring.style.height='52px'; ring.style.borderColor='rgba(255,91,4,0.65)'; });
+    el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; ring.style.borderColor='rgba(255,91,4,0.45)'; });
+  });
+
+  // Reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.05 });
+  document.querySelectorAll('.reveal,.stagger-child').forEach(el => observer.observe(el));
+
+  // Stagger children
+  document.querySelectorAll('.project-grid').forEach(grid => {
+    const children = grid.querySelectorAll('.stagger-child');
+    children.forEach((child, i) => { child.style.transitionDelay = (i * 0.07) + 's'; });
+  });
+</script>
+</body>
+</html>

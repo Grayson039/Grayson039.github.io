@@ -641,6 +641,21 @@
   .reveal.visible { opacity:1; transform:translateY(0); }
   .stagger-child { opacity:0; transform:translateY(24px); transition: opacity .6s ease, transform .6s ease; }
   .stagger-child.visible { opacity:1; transform:translateY(0); }
+
+  .more-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    border-top: 1px solid var(--border);
+    color: rgba(255,230,225,0.4);
+    text-decoration: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    transition: color .3s, border-color .3s;
+    margin-top: 2px;
+  }
+  .more-link:hover { color: var(--orange); border-color: rgba(255,91,4,0.3); }
+  .more-link:hover .more-link-arrow { transform: translateX(4px); }
+  .more-link-arrow { transition: transform .3s; display: inline-block; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -932,23 +947,12 @@
       </div>
     </div>
 
-    <div class="project-card stagger-child" onclick="window.location.href='more-projects.html'" style="cursor:pointer;">
-      <div class="p-num" style="color:var(--gold);">+ MORE</div>
-      <div class="p-screenshot" style="background:#053638; border-color:rgba(254,209,106,0.2); display:flex; align-items:center; justify-content:center; height:220px; flex-direction:column; gap:16px;">
-        <div style="font-size:40px; opacity:0.4;">&#x25A2;</div>
-        <div style="font-size:12px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,230,225,0.4); font-family:'Space Mono',monospace;">More Work</div>
-      </div>
-      <div class="p-meta">
-        <div>
-          <div class="p-title">More Projects</div>
-          <p class="p-desc">Kitchen Bandits, Scrap&rsquo;d, Iron Arc, OurTable, TriageAI, Briefed, ReplyRight, and more.</p>
-        </div>
-        <div class="p-footer">
-          <div class="p-tags"><span class="p-tag">+7 Projects</span></div>
-          <a href="more-projects.html" class="p-case-link" onclick="event.stopPropagation();">View All &#x2192;</a>
-        </div>
-      </div>
-    </div>
+  </div>
+
+  <a href="more-projects.html" class="more-link stagger-child">
+    <span>More Projects &mdash; OurTable, TriageAI, Iron Arc, Scrap&rsquo;d, Briefed &amp; more</span>
+    <span class="more-link-arrow">&#x2192;</span>
+  </a>
 </section>
 
 <!-- APPROACH -->

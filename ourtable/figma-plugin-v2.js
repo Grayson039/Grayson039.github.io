@@ -174,21 +174,29 @@ function addStatusBar(par, dark) {
   t2.x = 242; t2.y = 15;
 }
 
-function addAppIcon(par, x, y, sz) {
+function addAppIcon(par, x, y, sz, imgHash) {
   sz = sz || 56;
   var g = figma.createFrame(); par.appendChild(g);
   g.name = 'App Icon'; g.resize(sz, sz); g.x = x; g.y = y;
   g.cornerRadius = Math.round(sz * 0.22);
   g.fills = solid(P.primary);
   g.effects = dropShadow(4, 14, 0.25);
-  var t = figma.createText(); g.appendChild(t);
-  t.fontName = {family:'Inter', style:'Extra Bold'};
-  t.fontSize = Math.round(sz * 0.3);
-  t.textAlignHorizontal = 'CENTER'; t.textAutoResize = 'HEIGHT';
-  t.resize(sz - 8, 10);
-  t.fills = solid(P.white);
-  t.characters = 'KB';
-  t.x = 4; t.y = Math.round(sz*0.34);
+  if (imgHash) {
+    var pad = Math.round(sz * 0.12);
+    var icon = figma.createRectangle(); g.appendChild(icon);
+    icon.resize(sz - pad*2, sz - pad*2);
+    icon.x = pad; icon.y = pad;
+    icon.fills = [{ type:'IMAGE', scaleMode:'FIT', imageHash: imgHash }];
+  } else {
+    var t = figma.createText(); g.appendChild(t);
+    t.fontName = {family:'Inter', style:'Extra Bold'};
+    t.fontSize = Math.round(sz * 0.3);
+    t.textAlignHorizontal = 'CENTER'; t.textAutoResize = 'HEIGHT';
+    t.resize(sz - 8, 10);
+    t.fills = solid(P.white);
+    t.characters = 'KB';
+    t.x = 4; t.y = Math.round(sz*0.34);
+  }
   return g;
 }
 
@@ -364,7 +372,7 @@ for (var fi = 0; fi < fontStyles.length; fi++) {
 // ─── LOAD ILLUSTRATIONS FROM GITHUB ──────────────────────────────────────────
 figma.notify('Fetching illustrations from GitHub…');
 var BASE = 'https://raw.githubusercontent.com/grayson039/grayson039.github.io/claude/ladle-design-tokens/ourtable/';
-var IMG_NAMES = ['ob-1.png','ob-2.png','ob-3.png','ob-4.png','ob-5.png','whisker-wave.png','whisker-cook.png'];
+var IMG_NAMES = ['ob-1.png','ob-2.png','ob-3.png','ob-4.png','ob-5.png','whisker-wave.png','whisker-cook.png','kb-icon.png'];
 var IMGS = {};
 for (var ii = 0; ii < IMG_NAMES.length; ii++) {
   try {
@@ -449,21 +457,21 @@ SLIDES.forEach(function(slide, i) {
     addWhisker(f, Math.round((W - 130) / 2), 230, 130, 'Slide ' + (i+1));
   }
 
-  // Bottom scrim — transparent to deep plum
+  // Bottom scrim — transparent to deep plum (shorter so character body is visible)
   var scrimRect = figma.createRectangle(); f.appendChild(scrimRect);
-  scrimRect.resize(W, 348); scrimRect.x = 0; scrimRect.y = H - 348;
+  scrimRect.resize(W, 254); scrimRect.x = 0; scrimRect.y = H - 254;
   scrimRect.fills = [{
     type: 'GRADIENT_LINEAR',
     gradientTransform: [[0, 1, 0], [-1, 0, 1]],
     gradientStops: [
       {position: 0,    color: {r:0.075, g:0.051, b:0.114, a:0}},
-      {position: 0.38, color: {r:0.075, g:0.051, b:0.114, a:0.62}},
+      {position: 0.25, color: {r:0.075, g:0.051, b:0.114, a:0.55}},
       {position: 1,    color: {r:0.075, g:0.051, b:0.114, a:0.94}}
     ]
   }];
 
   // Progress dots — 5 dots, active = white, inactive = white 35%
-  var dotsY = H - 286;
+  var dotsY = H - 244;
   var dotsStartX = Math.round((W - (5*8 + 4*6)) / 2); // 5 dots × 8px + 4 gaps × 6px = 64px total
   for (var di = 0; di < 5; di++) {
     var dot = figma.createEllipse(); f.appendChild(dot);
@@ -474,14 +482,14 @@ SLIDES.forEach(function(slide, i) {
   }
 
   // Headline
-  addText(f, slide.title, 28, H - 260, 26, 'Extra Bold', P.white, {w: 334, align:'CENTER', lh:34});
+  addText(f, slide.title, 28, H - 224, 26, 'Extra Bold', P.white, {w: 334, align:'CENTER', lh:34});
 
   // Subtext — white at 78% opacity
-  var subNode = addText(f, slide.sub, 28, H - 188, 14, 'Regular', P.white, {w:334, align:'CENTER', lh:22});
+  var subNode = addText(f, slide.sub, 28, H - 148, 14, 'Regular', P.white, {w:334, align:'CENTER', lh:22});
   subNode.fills = solid(P.white, 0.78);
 
   // CTA button — white background, primary-colored label
-  addButton(f, slide.cta, 28, H - 120, 334, P.white, P.primary);
+  addButton(f, slide.cta, 28, H - 92, 334, P.white, P.primary);
 });
 
 // ════════════════════════════════════════════════════════════════════════════════
@@ -499,13 +507,14 @@ addEllipse(aw, -60, 480, 180, 180, P.secondary, 0.07);
 addStatusBar(aw, false);
 
 var iconSz = 72;
-addAppIcon(aw, Math.round((W - iconSz) / 2), 68, iconSz);
+addAppIcon(aw, Math.round((W - iconSz) / 2), 68, iconSz, kbHash);
 
 addText(aw, 'Kitchen Bandits', 28, 154, 34, 'Extra Bold', P.primary, {w:334, align:'CENTER'});
 addText(aw, 'Outsmart picky eaters.\nFeed your crew.', 28, 200, 15, 'Regular', P.muted, {w:334, align:'CENTER', lh:24});
 
 // Whisker — real image if loaded, otherwise circle placeholder
-var waveHash = IMGS['whisker-wave.png'] ? IMGS['whisker-wave.png'].hash : null;
+var kbHash   = IMGS['kb-icon.png']       ? IMGS['kb-icon.png'].hash       : null;
+var waveHash = IMGS['whisker-wave.png']  ? IMGS['whisker-wave.png'].hash  : null;
 addWhisker(aw, Math.round((W - 180) / 2), 258, 180, 'Whisker', waveHash);
 
 var pills = ['📱 Import recipes', '❄️ Scan fridge', '👨‍👩‍👧 Family meals'];
@@ -605,7 +614,7 @@ hd.fills = solid(P.dbg);
 
 addStatusBar(hd, true);
 
-addAppIcon(hd, 20, 56, 32);
+addAppIcon(hd, 20, 56, 32, kbHash);
 addText(hd, 'KITCHEN BANDITS', 60, 60, 10, 'Bold', P.dprimary, {ls:5});
 addText(hd, "What's cooking, Will?", 60, 74, 20, 'Extra Bold', P.dtext);
 addEllipse(hd, 330, 56, 40, 40, P.dprimary, 0.35);

@@ -445,57 +445,64 @@ var SLIDES = [
 // ════════════════════════════════════════════════════════════════════════════════
 // ONBOARDING SLIDES 1–5
 // ════════════════════════════════════════════════════════════════════════════════
-SLIDES.forEach(function(slide, i) {
+for (var i = 0; i < SLIDES.length; i++) {
+  var slide = SLIDES[i];
   figma.notify('(' + (i+1) + '/11) Building Slide ' + (i+1) + '…');
-  var f = mkFrame('Onboarding — Slide ' + (i+1), sx + i * (W + GAP));
+  await new Promise(function(r) { setTimeout(r, 50); });
+  try {
+    var f = mkFrame('Onboarding — Slide ' + (i+1), sx + i * (W + GAP));
 
-  // Full-bleed illustration or gradient fallback
-  if (IMGS[slide.img]) {
-    f.fills = [{ type:'IMAGE', scaleMode:'FILL', imageHash: IMGS[slide.img].hash }];
-  } else {
-    f.fills = topToBottomGrad('#4A3080', '#C3B1E1');
-    addWhisker(f, Math.round((W - 130) / 2), 230, 130, 'Slide ' + (i+1));
+    // Full-bleed illustration or gradient fallback
+    if (IMGS[slide.img] && IMGS[slide.img].hash) {
+      f.fills = [{ type:'IMAGE', scaleMode:'FILL', imageHash: IMGS[slide.img].hash }];
+    } else {
+      f.fills = topToBottomGrad('#4A3080', '#C3B1E1');
+      addWhisker(f, Math.round((W - 130) / 2), 230, 130, 'Slide ' + (i+1));
+    }
+
+    // Bottom scrim — transparent to deep plum (shorter so character body is visible)
+    var scrimRect = figma.createRectangle(); f.appendChild(scrimRect);
+    scrimRect.resize(W, 254); scrimRect.x = 0; scrimRect.y = H - 254;
+    scrimRect.fills = [{
+      type: 'GRADIENT_LINEAR',
+      gradientTransform: [[0, 1, 0], [-1, 0, 1]],
+      gradientStops: [
+        {position: 0,    color: {r:0.075, g:0.051, b:0.114, a:0}},
+        {position: 0.25, color: {r:0.075, g:0.051, b:0.114, a:0.55}},
+        {position: 1,    color: {r:0.075, g:0.051, b:0.114, a:0.94}}
+      ]
+    }];
+
+    // Progress dots — 5 dots, active = white, inactive = white 35%
+    var dotsY = H - 244;
+    var dotsStartX = Math.round((W - (5*8 + 4*6)) / 2);
+    for (var di = 0; di < 5; di++) {
+      var dot = figma.createEllipse(); f.appendChild(dot);
+      dot.resize(8, 8);
+      dot.x = dotsStartX + di * 14;
+      dot.y = dotsY;
+      dot.fills = solid(P.white, di === i ? 1 : 0.35);
+    }
+
+    // Headline
+    addText(f, slide.title, 28, H - 224, 26, 'Extra Bold', P.white, {w: 334, align:'CENTER', lh:34});
+
+    // Subtext — white at 78% opacity
+    var subNode = addText(f, slide.sub, 28, H - 148, 14, 'Regular', P.white, {w:334, align:'CENTER', lh:22});
+    subNode.fills = solid(P.white, 0.78);
+
+    // CTA button — white background, primary-colored label
+    addButton(f, slide.cta, 28, H - 92, 334, P.white, P.primary);
+  } catch(slideErr) {
+    figma.notify('Slide ' + (i+1) + ' error: ' + (slideErr.message || slideErr), {timeout: 10000});
   }
-
-  // Bottom scrim — transparent to deep plum (shorter so character body is visible)
-  var scrimRect = figma.createRectangle(); f.appendChild(scrimRect);
-  scrimRect.resize(W, 254); scrimRect.x = 0; scrimRect.y = H - 254;
-  scrimRect.fills = [{
-    type: 'GRADIENT_LINEAR',
-    gradientTransform: [[0, 1, 0], [-1, 0, 1]],
-    gradientStops: [
-      {position: 0,    color: {r:0.075, g:0.051, b:0.114, a:0}},
-      {position: 0.25, color: {r:0.075, g:0.051, b:0.114, a:0.55}},
-      {position: 1,    color: {r:0.075, g:0.051, b:0.114, a:0.94}}
-    ]
-  }];
-
-  // Progress dots — 5 dots, active = white, inactive = white 35%
-  var dotsY = H - 244;
-  var dotsStartX = Math.round((W - (5*8 + 4*6)) / 2); // 5 dots × 8px + 4 gaps × 6px = 64px total
-  for (var di = 0; di < 5; di++) {
-    var dot = figma.createEllipse(); f.appendChild(dot);
-    dot.resize(8, 8);
-    dot.x = dotsStartX + di * 14;
-    dot.y = dotsY;
-    dot.fills = solid(P.white, di === i ? 1 : 0.35);
-  }
-
-  // Headline
-  addText(f, slide.title, 28, H - 224, 26, 'Extra Bold', P.white, {w: 334, align:'CENTER', lh:34});
-
-  // Subtext — white at 78% opacity
-  var subNode = addText(f, slide.sub, 28, H - 148, 14, 'Regular', P.white, {w:334, align:'CENTER', lh:22});
-  subNode.fills = solid(P.white, 0.78);
-
-  // CTA button — white background, primary-colored label
-  addButton(f, slide.cta, 28, H - 92, 334, P.white, P.primary);
-});
+}
 
 // ════════════════════════════════════════════════════════════════════════════════
 // 6. AUTH — WELCOME
 // ════════════════════════════════════════════════════════════════════════════════
 figma.notify('(6/11) Building Auth — Welcome…');
+await new Promise(function(r) { setTimeout(r, 50); });
 var awX = sx + 5 * (W + GAP);
 var aw = mkFrame('Auth — Welcome', awX);
 aw.fills = solid(P.bg);
@@ -506,6 +513,10 @@ addEllipse(aw, -60, 480, 180, 180, P.secondary, 0.07);
 
 addStatusBar(aw, false);
 
+// Resolve image hashes before use
+var kbHash      = IMGS['kb-icon.png']              ? IMGS['kb-icon.png'].hash              : null;
+var welcomeHash = IMGS['whisker-welcome.png.png']  ? IMGS['whisker-welcome.png.png'].hash  : null;
+
 var iconSz = 72;
 addAppIcon(aw, Math.round((W - iconSz) / 2), 68, iconSz, kbHash);
 
@@ -513,8 +524,6 @@ addText(aw, 'Kitchen Bandits', 28, 154, 34, 'Extra Bold', P.primary, {w:334, ali
 addText(aw, 'Outsmart picky eaters.\nFeed your crew.', 28, 200, 15, 'Regular', P.muted, {w:334, align:'CENTER', lh:24});
 
 // Whisker — real image if loaded, otherwise circle placeholder
-var kbHash      = IMGS['kb-icon.png']          ? IMGS['kb-icon.png'].hash          : null;
-var welcomeHash = IMGS['whisker-welcome.png.png']  ? IMGS['whisker-welcome.png.png'].hash  : null;
 addWhisker(aw, Math.round((W - 180) / 2), 258, 180, 'Whisker', welcomeHash);
 
 var pills = ['📱 Import recipes', '❄️ Scan fridge', '👨‍👩‍👧 Family meals'];
@@ -541,6 +550,7 @@ addText(aw, 'By continuing you agree to our Terms of Service', 28, H - 46, 11, '
 // 7. AUTH — SIGN IN
 // ════════════════════════════════════════════════════════════════════════════════
 figma.notify('(7/11) Building Auth — Sign In…');
+await new Promise(function(r) { setTimeout(r, 50); });
 var asi = mkFrame('Auth — Sign In', sx + 6 * (W + GAP));
 asi.fills = solid(P.bg);
 
@@ -568,6 +578,7 @@ addText(asi, 'No account? Sign up free', 28, 504, 13, 'Regular', P.muted, {w:334
 // 8. ONBOARDING — COMPLETE
 // ════════════════════════════════════════════════════════════════════════════════
 figma.notify('(8/11) Building Onboarding — Complete…');
+await new Promise(function(r) { setTimeout(r, 50); });
 var oc = mkFrame('Onboarding — Complete', sx + 7 * (W + GAP));
 oc.fills = topToBottomGrad('#EDE7F6', '#C8B8E0');
 
@@ -609,6 +620,7 @@ addButton(oc, '← Edit household',    28, 524, 334, P.primary, P.primary, true)
 // 9. HOME — DARK
 // ════════════════════════════════════════════════════════════════════════════════
 figma.notify('(9/11) Building Home — Dark…');
+await new Promise(function(r) { setTimeout(r, 50); });
 var hd = mkFrame('Home — Dark', sx + 8 * (W + GAP));
 hd.fills = solid(P.dbg);
 
@@ -701,6 +713,7 @@ addNavBar(hd, 0, true);
 // 10. SEARCH
 // ════════════════════════════════════════════════════════════════════════════════
 figma.notify('(10/11) Building Search…');
+await new Promise(function(r) { setTimeout(r, 50); });
 var searchScr = mkFrame('Search', sx + 9 * (W + GAP));
 searchScr.fills = solid(P.bg);
 
@@ -782,6 +795,7 @@ addNavBar(searchScr, 1, false);
 // 11. LIBRARY
 // ════════════════════════════════════════════════════════════════════════════════
 figma.notify('(11/11) Building Library…');
+await new Promise(function(r) { setTimeout(r, 50); });
 var libScr = mkFrame('Library', sx + 10 * (W + GAP));
 libScr.fills = solid(P.bg);
 

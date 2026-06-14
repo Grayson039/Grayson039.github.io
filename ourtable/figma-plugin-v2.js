@@ -4,6 +4,7 @@
 // Then in Figma Desktop: Plugins > Development > KB Add Screens
 
 (async function () {
+try { // ← top-level catch: any unhandled error shows in Figma's notification bar
 
 // ─── PALETTE (matches our-table-design-system.js tokens) ─────────────────────
 var P = {
@@ -93,13 +94,14 @@ function addText(par, str, x, y, sz, style, hex, opts) {
   par.appendChild(t);
   t.fontName = {family:'Inter', style:style||'Regular'};
   t.fontSize = sz || 14;
-  t.fills = solid(hex || P.text);
-  t.characters = str;
-  t.x = x; t.y = y;
-  if (opts && opts.w)     { t.textAutoResize = 'HEIGHT'; t.resize(opts.w, 10); }
+  // Set width/align/lineHeight BEFORE characters so Figma lays out correctly
+  if (opts && opts.w)     { t.textAutoResize = 'HEIGHT'; t.resize(opts.w, 40); }
   if (opts && opts.align) t.textAlignHorizontal = opts.align;
   if (opts && opts.lh)    t.lineHeight = {value: opts.lh, unit:'PIXELS'};
   if (opts && opts.ls)    t.letterSpacing = {value: opts.ls, unit:'PERCENT'};
+  t.fills = solid(hex || P.text);
+  t.characters = str;
+  t.x = x; t.y = y;
   return t;
 }
 function mkFrame(name, x, w, h) {
@@ -125,10 +127,11 @@ function addButton(par, label, x, y, w, bgHex, txHex, outlined) {
   }
   var t = figma.createText(); g.appendChild(t);
   t.fontName = {family:'Inter', style:'Bold'};
-  t.fontSize = 15; t.characters = label;
-  t.fills = solid(txHex || P.white);
+  t.fontSize = 15;
   t.textAlignHorizontal = 'CENTER';
-  t.textAutoResize = 'HEIGHT'; t.resize(w-32, 10);
+  t.textAutoResize = 'HEIGHT'; t.resize(w-32, 40);
+  t.fills = solid(txHex || P.white);
+  t.characters = label;
   t.x = 16; t.y = 17;
   return g;
 }
@@ -143,14 +146,16 @@ function addInput(par, labelTxt, placeholder, x, y, w) {
   g.strokes = solid('#D8CEF0'); g.strokeWeight = 1.5; g.strokeAlign = 'INSIDE';
   var lbl = figma.createText(); g.appendChild(lbl);
   lbl.fontName = {family:'Inter', style:'SemiBold'};
-  lbl.fontSize = 10; lbl.characters = labelTxt.toUpperCase();
-  lbl.fills = solid('#9A8AB0');
+  lbl.fontSize = 10;
   lbl.letterSpacing = {value:4, unit:'PERCENT'};
+  lbl.fills = solid('#9A8AB0');
+  lbl.characters = labelTxt.toUpperCase();
   lbl.x = 14; lbl.y = 10;
   var ph = figma.createText(); g.appendChild(ph);
   ph.fontName = {family:'Inter', style:'Regular'};
-  ph.fontSize = 13; ph.characters = placeholder;
+  ph.fontSize = 13;
   ph.fills = solid('#BEB8D0');
+  ph.characters = placeholder;
   ph.x = 14; ph.y = 30;
   return g;
 }
@@ -349,10 +354,17 @@ function addFilterChips(par, chips, activeIdx, x, y, dark) {
 }
 
 // ─── LOAD FONTS ───────────────────────────────────────────────────────────────
+figma.notify('Loading fonts…');
 var fontStyles = ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold'];
 for (var fi = 0; fi < fontStyles.length; fi++) {
-  await figma.loadFontAsync({family: 'Inter', style: fontStyles[fi]});
+  try {
+    await figma.loadFontAsync({family: 'Inter', style: fontStyles[fi]});
+  } catch (fontErr) {
+    figma.closePlugin('Font load failed — Inter ' + fontStyles[fi] + ': ' + fontErr.toString());
+    return;
+  }
 }
+figma.notify('Fonts ready. Cleaning up old frames…');
 
 // ─── CLEAN UP OLD FRAMES ──────────────────────────────────────────────────────
 var REPLACE = ['Auth — Welcome','Auth — Sign In','Onboarding — Complete',
@@ -372,6 +384,7 @@ var GAP = 60, W = 390, H = 844;
 // ════════════════════════════════════════════════════════════════════════════════
 // 1. AUTH — WELCOME
 // ════════════════════════════════════════════════════════════════════════════════
+figma.notify('(1/6) Building Auth — Welcome…');
 var aw = mkFrame('Auth — Welcome', sx);
 aw.fills = solid(P.bg);
 
@@ -417,6 +430,7 @@ addText(aw, 'By continuing you agree to our Terms of Service', 28, H - 48, 11, '
 // ════════════════════════════════════════════════════════════════════════════════
 // 2. AUTH — SIGN IN
 // ════════════════════════════════════════════════════════════════════════════════
+figma.notify('(2/6) Building Auth — Sign In…');
 var asi = mkFrame('Auth — Sign In', sx + (W + GAP));
 asi.fills = solid(P.bg);
 
@@ -439,6 +453,7 @@ addText(asi, 'No account? Sign up free', 28, 514, 13, 'Regular', P.muted, {w:334
 // ════════════════════════════════════════════════════════════════════════════════
 // 3. ONBOARDING — COMPLETE
 // ════════════════════════════════════════════════════════════════════════════════
+figma.notify('(3/6) Building Onboarding — Complete…');
 var oc = mkFrame('Onboarding — Complete', sx + (W + GAP) * 2);
 oc.fills = topToBottomGrad('#EDE7F6', '#C8B8E0');
 
@@ -486,6 +501,7 @@ addButton(oc, 'Edit household', 28, 616, 334, P.primary, P.primary, true);
 // ════════════════════════════════════════════════════════════════════════════════
 // 4. HOME — DARK
 // ════════════════════════════════════════════════════════════════════════════════
+figma.notify('(4/6) Building Home — Dark…');
 var hd = mkFrame('Home — Dark', sx + (W + GAP) * 3);
 hd.fills = solid(P.dbg);
 
@@ -581,6 +597,7 @@ addNavBar(hd, 0, true);
 // ════════════════════════════════════════════════════════════════════════════════
 // 5. SEARCH
 // ════════════════════════════════════════════════════════════════════════════════
+figma.notify('(5/6) Building Search…');
 var searchScr = mkFrame('Search', sx + (W + GAP) * 4);
 searchScr.fills = solid(P.bg);
 
@@ -664,6 +681,7 @@ addNavBar(searchScr, 1, false);
 // ════════════════════════════════════════════════════════════════════════════════
 // 6. LIBRARY
 // ════════════════════════════════════════════════════════════════════════════════
+figma.notify('(6/6) Building Library…');
 var libScr = mkFrame('Library', sx + (W + GAP) * 5);
 libScr.fills = solid(P.bg);
 
@@ -698,5 +716,12 @@ addNavBar(libScr, 2, false);
 // ─── FINISH ───────────────────────────────────────────────────────────────────
 figma.viewport.scrollAndZoomIntoView(figma.currentPage.children);
 figma.closePlugin('Done! 6 screens added/updated.');
+
+} catch (err) {
+  // Surface any unhandled error as a visible Figma notification
+  var msg = err && err.message ? err.message : String(err);
+  figma.notify('Plugin error: ' + msg, { timeout: 30000 });
+  figma.closePlugin('KB plugin crashed: ' + msg);
+}
 
 })();

@@ -128,12 +128,11 @@
   .hero-logo-wrap {
     margin-bottom: 32px;
     opacity: 0;
-    animation: fadeUp .9s ease .1s forwards;
+    animation: logoReveal 1.6s ease .1s forwards;
   }
   .hero-logo-wrap img {
     width: clamp(280px, 58vw, 720px);
     height: auto;
-    filter: brightness(0) invert(1);
     opacity: 0.95;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
@@ -658,6 +657,76 @@
   .more-link:hover { color: var(--cream); border-color: rgba(255,91,4,0.6); background: rgba(255,91,4,0.05); }
   .more-link:hover .more-link-arrow { transform: translateX(4px); }
   .more-link-arrow { transition: transform .3s; display: inline-block; font-size: 14px; }
+
+  /* ── ABOUT ── */
+  .about-section {
+    padding: 100px 48px;
+    background: var(--bg-mid);
+    border-top: 1px solid var(--border);
+  }
+  .about-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    .about-photo-wrap { max-width: 260px; }
+    .about-section { padding: 72px 24px; }
+  }
+  .about-photo-wrap {
+    position: relative;
+  }
+  .about-photo-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 12px -12px -12px 12px;
+    border: 1px solid rgba(255,91,4,0.3);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .about-photo {
+    width: 100%;
+    display: block;
+    border-radius: 4px;
+    filter: grayscale(20%);
+    object-fit: cover;
+    aspect-ratio: 3/4;
+    object-position: top;
+  }
+  .about-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 5vw, 72px);
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: 24px;
+    margin-top: 12px;
+  }
+  .about-headline span { color: var(--orange); }
+  .about-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(255,230,225,0.75);
+    margin-bottom: 16px;
+    max-width: 540px;
+  }
+  .about-links {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  /* ── HERO LOGO ANIMATION ── */
+  @keyframes logoReveal {
+    0%   { opacity: 0; transform: scale(0.96) translateY(10px); filter: brightness(0) invert(1) drop-shadow(0 0 0px rgba(255,91,4,0)); }
+    60%  { opacity: 1; transform: scale(1.01) translateY(0);    filter: brightness(0) invert(1) drop-shadow(0 0 24px rgba(255,91,4,0.35)); }
+    100% { opacity: 0.95; transform: scale(1) translateY(0);    filter: brightness(0) invert(1) drop-shadow(0 0 0px rgba(255,91,4,0)); }
+  }
+
 </style>
 </head>
 <body>
@@ -925,6 +994,27 @@
       <div class="a-num">03</div>
       <div class="a-title">Ship With AI</div>
       <p class="a-desc">I use Claude, ChatGPT, and the full AI stack as a development partner, directing, iterating, and building real products faster than traditional workflows ever allowed.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-inner reveal">
+    <div class="about-photo-wrap">
+      <img src="will-grayson.png" alt="Will Grayson" class="about-photo">
+    </div>
+    <div class="about-text">
+      <div class="section-label">About</div>
+      <h2 class="about-headline">The Designer<br><span>Behind the Work.</span></h2>
+      <p class="about-body">I work in IT support for a nationwide company. When something breaks at 2am, I&rsquo;m the first call. I&rsquo;ve watched real people get frustrated by bad software &mdash; frozen screens, unclear flows, systems that feel like they were built for the developer, not the user.</p>
+      <p class="about-body">That frustration is why I design. I&rsquo;m self-taught, AI-native, and building a portfolio that proves you don&rsquo;t need a CS degree or a design school pedigree to ship products people actually want to use.</p>
+      <p class="about-body">When I&rsquo;m not designing: combat sports, live music, and cooking for my wife.</p>
+      <div class="about-links">
+        <a href="mailto:will@willgrayson.com" class="btn btn-primary">Get In Touch</a>
+        <a href="https://linkedin.com/in/willgrayson" target="_blank" class="btn btn-secondary">LinkedIn</a>
+      </div>
     </div>
   </div>
 </section>

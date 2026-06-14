@@ -388,44 +388,47 @@ figma.notify('(1/6) Building Auth — Welcome…');
 var aw = mkFrame('Auth — Welcome', sx);
 aw.fills = solid(P.bg);
 
-// Ambient glow blob
-addEllipse(aw, 40, -90, 310, 260, P.secondary, 0.1);
+// Decorative background blobs
+addEllipse(aw, -80, -100, 380, 320, P.secondary, 0.12);
+addEllipse(aw, 260, 560, 200, 200, P.primary,   0.08);
+addEllipse(aw, -60, 480, 180, 180, P.secondary, 0.07);
 
 addStatusBar(aw, false);
 
 // App icon centered
 var iconSz = 72;
-addAppIcon(aw, Math.round((W - iconSz) / 2), 100, iconSz);
+addAppIcon(aw, Math.round((W - iconSz) / 2), 68, iconSz);
 
 // Wordmark
-addText(aw, 'Kitchen Bandits', 28, 192, 32, 'Extra Bold', P.primary, {w:334, align:'CENTER'});
+addText(aw, 'Kitchen Bandits', 28, 154, 34, 'Extra Bold', P.primary, {w:334, align:'CENTER'});
 
 // Tagline
-addText(aw, 'Outsmart picky eaters. Feed your crew.', 28, 234, 14, 'Regular', P.muted, {w:334, align:'CENTER', lh:22});
+addText(aw, 'Outsmart picky eaters.\nFeed your crew.', 28, 200, 15, 'Regular', P.muted, {w:334, align:'CENTER', lh:24});
 
-// Whisker placeholder
-addWhisker(aw, Math.round((W - 120) / 2), 272, 120, 'Whisker the Chef');
+// Whisker placeholder — large and centered
+addWhisker(aw, Math.round((W - 180) / 2), 258, 180, 'Whisker');
 
 // Feature pills
-var pills = ['Import recipes', 'Scan fridge', 'Family meals'];
-var pillX = 18;
+var pills = ['📱 Import recipes', '❄️ Scan fridge', '👨‍👩‍👧 Family meals'];
+var pillX = 14;
 pills.forEach(function(pl) {
-  var pw = pl.length * 6.5 + 28;
+  var pw = pl.length * 6 + 28;
   var pg = figma.createFrame(); aw.appendChild(pg);
-  pg.resize(pw, 30); pg.x = pillX; pg.y = 412;
+  pg.resize(pw, 32); pg.x = pillX; pg.y = 462;
   pg.cornerRadius = 100; pg.fills = solid(P.chip);
   pg.strokes = solid(P.secondary, 0.5); pg.strokeWeight = 1;
   var pt = figma.createText(); pg.appendChild(pt);
   pt.fontName = {family:'Inter', style:'Medium'};
-  pt.fontSize = 11; pt.characters = pl;
-  pt.fills = solid(P.chipTx); pt.x = 14; pt.y = 8;
+  pt.fontSize = 11;
+  pt.fills = solid(P.chipTx); pt.x = 14; pt.y = 9;
+  pt.characters = pl;
   pillX += pw + 8;
 });
 
 // Bottom CTAs
-addButton(aw, 'Get Started', 28, H - 164, 334, P.primary, P.white);
-addButton(aw, 'Sign In', 28, H - 104, 334, P.primary, P.primary, true);
-addText(aw, 'By continuing you agree to our Terms of Service', 28, H - 48, 11, 'Regular', P.muted, {w:334, align:'CENTER'});
+addButton(aw, 'Get Started', 28, H - 168, 334, P.primary, P.white);
+addButton(aw, 'Sign In', 28, H - 108, 334, P.primary, P.primary, true);
+addText(aw, 'By continuing you agree to our Terms of Service', 28, H - 46, 11, 'Regular', P.muted, {w:334, align:'CENTER'});
 
 // ════════════════════════════════════════════════════════════════════════════════
 // 2. AUTH — SIGN IN
@@ -434,21 +437,27 @@ figma.notify('(2/6) Building Auth — Sign In…');
 var asi = mkFrame('Auth — Sign In', sx + (W + GAP));
 asi.fills = solid(P.bg);
 
+// Soft lavender top band
+var asiBand = figma.createRectangle(); asi.appendChild(asiBand);
+asiBand.resize(W, 72); asiBand.x = 0; asiBand.y = 0;
+asiBand.fills = [{type:'GRADIENT_LINEAR', gradientTransform:[[0,1,0],[-1,0,1]], gradientStops:[{position:0,color:rgbA(P.secondary,0.22)},{position:1,color:rgbA(P.secondary,0)}]}];
+addEllipse(asi, W-100, -30, 160, 160, P.secondary, 0.1);
+
 addStatusBar(asi, false);
-addText(asi, 'Back', 28, 56, 14, 'Semi Bold', P.primary);
+addText(asi, '← Back', 28, 52, 13, 'Semi Bold', P.primary);
 
-addText(asi, 'Welcome back', 28, 92, 30, 'Extra Bold', P.text, {w:334, lh:36});
-addText(asi, 'Sign in to Kitchen Bandits', 28, 166, 13, 'Regular', P.muted, {w:334});
+addText(asi, 'Welcome back 👋', 28, 86, 28, 'Extra Bold', P.text, {w:334, lh:34});
+addText(asi, 'Sign in to Kitchen Bandits', 28, 154, 13, 'Regular', P.muted, {w:334});
 
-addInput(asi, 'Email', 'your@email.com', 28, 198, 334);
-addInput(asi, 'Password', 'Enter your password', 28, 266, 334);
+addInput(asi, 'Email', 'your@email.com', 28, 188, 334);
+addInput(asi, 'Password', 'Enter your password', 28, 256, 334);
 
-addText(asi, 'Forgot password?', 28, 334, 12, 'Semi Bold', P.primary, {w:334, align:'RIGHT'});
+addText(asi, 'Forgot password?', 28, 324, 12, 'Semi Bold', P.primary, {w:334, align:'RIGHT'});
 
-addButton(asi, 'Sign In', 28, 366, 334, P.primary, P.white);
-addDivider(asi, 428, false);
-addButton(asi, 'Continue with Apple', 28, 446, 334, P.border, P.text, true);
-addText(asi, 'No account? Sign up free', 28, 514, 13, 'Regular', P.muted, {w:334, align:'CENTER'});
+addButton(asi, 'Sign In', 28, 356, 334, P.primary, P.white);
+addDivider(asi, 418, false);
+addButton(asi, 'Continue with Apple', 28, 436, 334, P.border, P.text, true);
+addText(asi, 'No account? Sign up free', 28, 504, 13, 'Regular', P.muted, {w:334, align:'CENTER'});
 
 // ════════════════════════════════════════════════════════════════════════════════
 // 3. ONBOARDING — COMPLETE
@@ -457,46 +466,43 @@ figma.notify('(3/6) Building Onboarding — Complete…');
 var oc = mkFrame('Onboarding — Complete', sx + (W + GAP) * 2);
 oc.fills = topToBottomGrad('#EDE7F6', '#C8B8E0');
 
-addEllipse(oc, 250, -60, 200, 200, P.secondary, 0.14);
-addEllipse(oc, -40, 650, 160, 160, P.primary, 0.10);
+// Decorative blobs (match HTML prototype)
+addEllipse(oc, 260, -60, 200, 200, P.secondary, 0.14);
+addEllipse(oc, -40, 640, 170, 170, P.primary,   0.10);
+addEllipse(oc, -20, -40, 140, 140, P.secondary, 0.08);
 
 addStatusBar(oc, false);
 
-// Success circle
-var successCircle = figma.createEllipse(); oc.appendChild(successCircle);
-successCircle.resize(72, 72);
-successCircle.x = Math.round((W - 72) / 2); successCircle.y = 140;
-successCircle.fills = solid(P.primary);
-successCircle.effects = dropShadow(8, 24, 0.22);
-addText(oc, 'Done', Math.round((W-72)/2)+14, 158, 14, 'Bold', P.white);
+// Whisker mascot — large, centered, high up
+addWhisker(oc, Math.round((W - 190) / 2), 80, 190, 'Whisker (cook pose)');
 
-// Whisker mascot
-addWhisker(oc, Math.round((W - 130) / 2), 230, 130, 'Whisker (cook pose)');
+// Heading
+addText(oc, "You're all set, Will!", 28, 292, 28, 'Extra Bold', P.text, {w:334, align:'CENTER', lh:36});
 
-addText(oc, "You're all set, Will!", 28, 384, 28, 'Extra Bold', P.text, {w:334, align:'CENTER', lh:36});
-addText(oc, 'Your kitchen is ready. Every recipe, grocery run,\nand mealtime standoff — handled.', 28, 436, 14, 'Regular', P.muted, {w:334, align:'CENTER', lh:22});
+// Body copy
+addText(oc, 'Your kitchen is ready. Every recipe, grocery\nrun, and mealtime standoff — handled.', 28, 340, 14, 'Regular', P.muted, {w:334, align:'CENTER', lh:22});
 
-// Summary pills
+// Summary pills row
 var pill1 = figma.createFrame(); oc.appendChild(pill1);
-pill1.resize(126, 34); pill1.x = 56; pill1.y = 504;
+pill1.resize(140, 36); pill1.x = Math.round(W/2) - 148; pill1.y = 404;
 pill1.cornerRadius = 100; pill1.fills = solid(P.white, 0.82);
 pill1.strokes = solid(P.secondary, 0.6); pill1.strokeWeight = 1;
 var p1t = figma.createText(); pill1.appendChild(p1t);
 p1t.fontName = {family:'Inter', style:'Semi Bold'}; p1t.fontSize = 12;
-p1t.characters = '2 members'; p1t.fills = solid(P.text);
-p1t.x = 22; p1t.y = 9;
+p1t.fills = solid(P.text); p1t.x = 18; p1t.y = 10;
+p1t.characters = '👥  2 members';
 
 var pill2 = figma.createFrame(); oc.appendChild(pill2);
-pill2.resize(154, 34); pill2.x = 198; pill2.y = 504;
+pill2.resize(164, 36); pill2.x = Math.round(W/2) + 8; pill2.y = 404;
 pill2.cornerRadius = 100; pill2.fills = solid(P.white, 0.82);
 pill2.strokes = solid(P.secondary, 0.6); pill2.strokeWeight = 1;
 var p2t = figma.createText(); pill2.appendChild(p2t);
 p2t.fontName = {family:'Inter', style:'Semi Bold'}; p2t.fontSize = 12;
-p2t.characters = 'No restrictions'; p2t.fills = solid(P.text);
-p2t.x = 18; p2t.y = 9;
+p2t.fills = solid(P.text); p2t.x = 16; p2t.y = 10;
+p2t.characters = '🥗  No restrictions';
 
-addButton(oc, "Let's get cooking", 28, 554, 334, P.primary, P.white);
-addButton(oc, 'Edit household', 28, 616, 334, P.primary, P.primary, true);
+addButton(oc, "Let's get cooking →", 28, 464, 334, P.primary, P.white);
+addButton(oc, '← Edit household',    28, 524, 334, P.primary, P.primary, true);
 
 // ════════════════════════════════════════════════════════════════════════════════
 // 4. HOME — DARK

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>More Projects — Will Grayson, AI Product Designer</title>
+<title>More Projects &mdash; Will Grayson, AI Product Designer</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -37,6 +37,7 @@
     pointer-events: none; z-index: 1000; opacity: 0.4;
   }
 
+  /* ── CURSOR ── */
   .cursor {
     width: 10px; height: 10px;
     background: var(--orange);
@@ -48,155 +49,202 @@
   }
   .cursor-ring {
     width: 36px; height: 36px;
-    border: 1.5px solid rgba(255,91,4,0.45);
+    border: 1.5px solid var(--orange);
     border-radius: 50%;
     position: fixed; pointer-events: none;
     z-index: 9998;
     transform: translate(-50%,-50%);
-    transition: width .35s, height .35s, border-color .25s;
+    opacity: 0.45;
+    transition: width .25s, height .25s;
   }
+  @media (hover: none) { .cursor, .cursor-ring { display: none; } body { cursor: auto; } }
 
+  /* ── NAV ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 32px;
-    background: rgba(7,91,94,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    padding: 18px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 500;
+    background: linear-gradient(to bottom, rgba(4,46,48,0.97) 0%, transparent 100%);
   }
   .nav-logo {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; letter-spacing: 2px;
-    color: var(--cream);
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-decoration: none;
   }
   .nav-logo span { color: var(--orange); }
-  .nav-links { list-style: none; display: flex; gap: 28px; }
-  .nav-links a {
-    color: rgba(255,230,225,0.6);
-    text-decoration: none; font-size: 13px; letter-spacing: 0.5px;
-    transition: color .2s;
+  .nav-links {
+    display: flex; gap: 32px;
+    list-style: none;
   }
-  .nav-links a:hover { color: var(--cream); }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,230,225,0.7);
+    text-decoration: none;
+    transition: color .3s;
+  }
+  .nav-links a:hover { color: var(--orange); }
+  @media (max-width: 600px) { .nav-links { display: none; } nav { padding: 16px 24px; } }
 
+  /* ── PAGE ── */
   .page-wrap {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 120px 32px 80px;
+    padding: 140px 48px 100px;
   }
 
   .back-link {
     display: inline-flex; align-items: center; gap: 8px;
-    color: rgba(255,230,225,0.5);
-    text-decoration: none; font-size: 13px;
-    letter-spacing: 0.5px; margin-bottom: 48px;
-    transition: color .2s;
+    color: rgba(255,230,225,0.4);
+    text-decoration: none;
     font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 56px;
+    transition: color .3s;
   }
   .back-link:hover { color: var(--orange); }
 
   .section-label {
     font-family: 'Space Mono', monospace;
-    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
     color: rgba(255,230,225,0.35);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   h1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(42px, 6vw, 72px);
+    font-size: clamp(52px, 7vw, 96px);
     line-height: 1;
-    color: var(--cream);
-    margin-bottom: 16px;
+    color: var(--white);
+    margin-bottom: 20px;
   }
 
   .page-sub {
     color: rgba(255,230,225,0.5);
-    font-size: 16px; line-height: 1.6;
-    max-width: 520px;
-    margin-bottom: 64px;
+    font-size: 15px; line-height: 1.8;
+    max-width: 480px;
+    margin-bottom: 72px;
   }
 
-  .project-grid {
+  /* ── GRID ── */
+  .work-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: var(--border);
   }
+  @media (max-width: 768px) { .work-grid { grid-template-columns: 1fr; } }
 
+  /* ── PROJECT CARD (exact match to index.html) ── */
   .project-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    transition: background .2s, transform .2s, box-shadow .2s;
-    position: relative;
-    overflow: hidden;
+    padding: 44px 40px;
+    position: relative; overflow: hidden;
+    transition: background .35s, transform .35s, box-shadow .35s;
+    display: flex; flex-direction: column;
     cursor: pointer;
   }
-  .project-card:hover {
-    background: #074345;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 40px rgba(255,91,4,0.10);
+  .project-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,91,4,0.06), transparent);
+    opacity: 0; transition: opacity .35s;
   }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--orange);
+    opacity: 0;
+    transition: opacity .35s;
+  }
+  .project-card:hover { background: #074345; transform: translateY(-2px); box-shadow: 0 8px 40px rgba(255,91,4,0.10); }
+  .project-card:hover::before { opacity: 1; }
+  .project-card:hover::after { opacity: 1; }
   .project-card:hover .p-arrow { color: var(--orange); transform: translate(3px,-3px); }
 
   .p-num {
     font-family: 'Space Mono', monospace;
-    font-size: 10px; letter-spacing: 2px;
-    color: rgba(255,230,225,0.25);
-    margin-bottom: 16px;
+    font-size: 10px; color: rgba(255,230,225,0.3);
+    letter-spacing: 0.1em; margin-bottom: 20px;
   }
-
-  .p-title {
-    font-size: 18px; font-weight: 500;
-    color: var(--cream);
-    margin-bottom: 8px;
+  .p-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(30px, 3.5vw, 48px);
+    line-height: 1; margin-bottom: 8px;
+    color: var(--white);
   }
-
+  .p-type {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+  }
   .p-desc {
-    font-size: 13px; line-height: 1.6;
-    color: rgba(255,230,225,0.5);
-    margin-bottom: 20px;
+    font-size: 14px; line-height: 1.8;
+    color: rgba(255,230,225,0.8);
+    flex: 1;
   }
-
   .p-footer {
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; justify-content: space-between;
+    align-items: flex-end; margin-top: 28px;
+    gap: 12px; flex-wrap: wrap;
   }
-
   .p-tags { display: flex; gap: 6px; flex-wrap: wrap; }
   .p-tag {
-    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
-    color: rgba(255,230,225,0.5);
-    border: 1px solid rgba(255,230,225,0.14);
-    border-radius: 4px; padding: 3px 8px;
     font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    background: rgba(255,230,225,0.07);
+    color: rgba(255,230,225,0.7);
+    border-radius: 2px;
   }
-
-  .p-case-link {
-    font-size: 12px; font-weight: 500;
-    color: var(--orange);
-    text-decoration: none;
-    letter-spacing: 0.3px;
-    transition: opacity .2s;
-  }
-  .p-case-link:hover { opacity: 0.75; }
+  .p-tag.client  { background: rgba(254,209,106,0.12); color: var(--gold); }
+  .p-tag.proto   { background: rgba(255,91,4,0.1);     color: var(--orange); }
+  .p-tag.live    { background: rgba(100,200,100,0.1);  color: #8ecf8e; }
+  .p-tag.soon    { background: rgba(255,230,225,0.04); color: rgba(255,230,225,0.35); }
 
   .p-arrow {
-    color: rgba(255,230,225,0.3);
-    transition: color .2s, transform .2s;
+    font-size: 20px;
+    color: rgba(255,230,225,0.40);
+    transition: transform .3s, color .3s;
     display: inline-block;
   }
-
-  @media (max-width: 600px) {
-    nav { padding: 16px 20px; }
-    .page-wrap { padding: 100px 20px 60px; }
-    .project-grid { grid-template-columns: 1fr; }
+  .p-case-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,91,4,0.3);
+    padding-bottom: 1px;
+    transition: border-color .3s;
+    white-space: nowrap;
   }
+  .p-case-link:hover { border-color: var(--orange); }
 
+  /* dimmed "coming soon" card */
+  .project-card.soon { opacity: 0.5; cursor: default; }
+  .project-card.soon::after, .project-card.soon::before { display: none; }
+
+  /* ── REVEAL ── */
   .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
   .stagger-child { opacity:0; transform:translateY(24px); transition: opacity .6s ease, transform .6s ease; }
   .stagger-child.visible { opacity:1; transform:translateY(0); }
+
+  @media (max-width: 600px) {
+    .page-wrap { padding: 110px 24px 80px; }
+  }
 </style>
 </head>
 <body>
@@ -218,76 +266,83 @@
 
   <div class="section-label">Additional Work</div>
   <h1>More <span style="color:var(--gold)">Projects.</span></h1>
-  <p class="page-sub">Supporting work, experiments, and tools that didn't make the featured cut — but show range.</p>
+  <p class="page-sub">Supporting work, experiments, and tools that didn&rsquo;t make the featured cut &mdash; but show range.</p>
 
-  <div class="project-grid reveal">
+  <div class="work-grid reveal">
 
     <div class="project-card stagger-child" onclick="window.location.href='ourtable/'" style="cursor:pointer;">
       <div class="p-num">A / 7</div>
-      <div class="p-title">OurTable <span class="p-arrow">&#x2197;</span></div>
-      <p class="p-desc">Family kitchen platform. Save recipes, scan your fridge, AI meal suggestions, dietary conflict warnings across all household members. 45 screens, 4 versions.</p>
+      <div class="p-name">OurTable <span class="p-arrow">&#x2197;</span></div>
+      <div class="p-type">Family Kitchen Platform</div>
+      <p class="p-desc">Save recipes from anywhere, scan your fridge, get AI meal suggestions, and manage dietary needs across every household member. 45 screens. 4 versions. One real problem.</p>
       <div class="p-footer">
-        <div class="p-tags"><span class="p-tag">React Native</span><span class="p-tag">AI</span></div>
+        <div class="p-tags"><span class="p-tag">React Native</span><span class="p-tag proto">Prototype</span></div>
         <a href="ourtable/" class="p-case-link" onclick="event.stopPropagation();">Case Study &#x2192;</a>
       </div>
     </div>
 
     <div class="project-card stagger-child" onclick="window.location.href='triageai/'" style="cursor:pointer;">
       <div class="p-num">B / 7</div>
-      <div class="p-title">TriageAI <span class="p-arrow">&#x2197;</span></div>
-      <p class="p-desc">AI-powered IT ticket triage tool. Auto-routes and prioritizes support tickets, built from real helpdesk experience knowing where bad software frustrates people.</p>
+      <div class="p-name">TriageAI <span class="p-arrow">&#x2197;</span></div>
+      <div class="p-type">IT Ticket Intelligence</div>
+      <p class="p-desc">AI-powered support ticket triage. Auto-routes, prioritizes, and categorizes issues before a human touches them. Designed from real helpdesk experience.</p>
       <div class="p-footer">
-        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag">Prototype</span></div>
+        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag live">Live Demo</span></div>
         <a href="triageai/" class="p-case-link" onclick="event.stopPropagation();">View Demo &#x2192;</a>
       </div>
     </div>
 
     <div class="project-card stagger-child" onclick="window.location.href='iron-arc/'" style="cursor:pointer;">
       <div class="p-num">C / 7</div>
-      <div class="p-title">Iron Arc <span class="p-arrow">&#x2197;</span></div>
-      <p class="p-desc">Brand identity and logo system for a strength-focused fitness concept. Logo exploration, visual language, color system.</p>
+      <div class="p-name">Iron Arc <span class="p-arrow">&#x2197;</span></div>
+      <div class="p-type">Brand Identity</div>
+      <p class="p-desc">Logo system and visual language for a strength-focused fitness concept. Logo exploration, color system, and type hierarchy built from scratch.</p>
       <div class="p-footer">
         <div class="p-tags"><span class="p-tag">Branding</span><span class="p-tag">Identity</span></div>
         <a href="iron-arc/" class="p-case-link" onclick="event.stopPropagation();">Case Study &#x2192;</a>
       </div>
     </div>
 
-    <div class="project-card stagger-child" style="cursor:pointer;">
+    <div class="project-card stagger-child" onclick="window.location.href='https://grayson039.github.io/scrapd/'" style="cursor:pointer;">
       <div class="p-num">D / 7</div>
-      <div class="p-title">Scrap&rsquo;d <span class="p-arrow">&#x2197;</span></div>
-      <p class="p-desc">Marketplace concept for scrap metal and salvage materials, connecting contractors with material sellers in a clean, trust-first interface.</p>
+      <div class="p-name">Scrap&rsquo;d <span class="p-arrow">&#x2197;</span></div>
+      <div class="p-type">Marketplace Concept</div>
+      <p class="p-desc">A trust-first marketplace for scrap metal and salvage materials. Connects contractors with local sellers in a clean, low-friction interface.</p>
       <div class="p-footer">
-        <div class="p-tags"><span class="p-tag">Marketplace</span><span class="p-tag">Concept</span></div>
+        <div class="p-tags"><span class="p-tag">Marketplace</span><span class="p-tag proto">Concept</span></div>
         <a href="https://grayson039.github.io/scrapd/" target="_blank" class="p-case-link" onclick="event.stopPropagation();">View Prototype &#x2192;</a>
       </div>
     </div>
 
     <div class="project-card stagger-child" onclick="window.location.href='briefed.html'" style="cursor:pointer;">
       <div class="p-num">E / 7</div>
-      <div class="p-title">Briefed <span class="p-arrow">&#x2197;</span></div>
-      <p class="p-desc">AI-powered design brief generator. Answer 5 questions, get a structured creative brief instantly. Built as a real working tool in an afternoon.</p>
+      <div class="p-name">Briefed <span class="p-arrow">&#x2197;</span></div>
+      <div class="p-type">AI Tool &mdash; Live</div>
+      <p class="p-desc">Answer 5 questions, get a structured creative brief instantly. Built as a real working tool to solve the &ldquo;blank page&rdquo; problem at the start of any project.</p>
       <div class="p-footer">
-        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag">Live</span></div>
+        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag live">Live</span></div>
         <a href="briefed.html" class="p-case-link" onclick="event.stopPropagation();">Open Tool &#x2192;</a>
       </div>
     </div>
 
     <div class="project-card stagger-child" onclick="window.location.href='replyright.html'" style="cursor:pointer;">
       <div class="p-num">F / 7</div>
-      <div class="p-title">ReplyRight <span class="p-arrow">&#x2197;</span></div>
-      <p class="p-desc">AI reply assistant for customer support. Paste a message, get a tone-matched, professional response. Built and shipped in a single session.</p>
+      <div class="p-name">ReplyRight <span class="p-arrow">&#x2197;</span></div>
+      <div class="p-type">AI Tool &mdash; Live</div>
+      <p class="p-desc">Paste a customer message, get a tone-matched professional reply. Built for support teams who need to sound human without starting from scratch every time.</p>
       <div class="p-footer">
-        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag">Live</span></div>
+        <div class="p-tags"><span class="p-tag">AI Tool</span><span class="p-tag live">Live</span></div>
         <a href="replyright.html" class="p-case-link" onclick="event.stopPropagation();">Open Tool &#x2192;</a>
       </div>
     </div>
 
-    <div class="project-card stagger-child" style="cursor:default; opacity:0.6;">
+    <div class="project-card soon stagger-child">
       <div class="p-num">G / 7</div>
-      <div class="p-title">Kitchen Bandits</div>
-      <p class="p-desc">Coming soon. Concept for a group meal-planning and grocery-splitting app built around households that cook together but don't live together.</p>
+      <div class="p-name">Kitchen Bandits</div>
+      <div class="p-type">Coming Soon</div>
+      <p class="p-desc">Group meal-planning and grocery-splitting for households that cook together but don&rsquo;t live together. Concept in progress.</p>
       <div class="p-footer">
-        <div class="p-tags"><span class="p-tag">Coming Soon</span></div>
+        <div class="p-tags"><span class="p-tag soon">In Progress</span></div>
       </div>
     </div>
 
@@ -297,25 +352,39 @@
 <script>
   // Cursor
   const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
+  const ring   = document.getElementById('cursorRing');
   let mx=0, my=0, rx=0, ry=0;
-  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
-  (function animRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
-  document.querySelectorAll('a,.project-card,.btn,button').forEach(el=>{
-    el.addEventListener('mouseenter',()=>{ cursor.style.width='18px'; cursor.style.height='18px'; ring.style.width='52px'; ring.style.height='52px'; ring.style.borderColor='rgba(255,91,4,0.65)'; });
-    el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; ring.style.borderColor='rgba(255,91,4,0.45)'; });
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+  });
+  (function animRing(){
+    rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+    ring.style.left = rx+'px'; ring.style.top = ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('a,.project-card,.btn,button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width='18px'; cursor.style.height='18px';
+      ring.style.width='52px';  ring.style.height='52px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width='10px'; cursor.style.height='10px';
+      ring.style.width='36px';  ring.style.height='36px';
+    });
   });
 
-  // Reveal on scroll
-  const observer = new IntersectionObserver((entries) => {
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.05 });
-  document.querySelectorAll('.reveal,.stagger-child').forEach(el => observer.observe(el));
+  document.querySelectorAll('.reveal, .stagger-child').forEach(el => observer.observe(el));
 
-  // Stagger children
-  document.querySelectorAll('.project-grid').forEach(grid => {
-    const children = grid.querySelectorAll('.stagger-child');
-    children.forEach((child, i) => { child.style.transitionDelay = (i * 0.07) + 's'; });
+  // Stagger delays
+  document.querySelectorAll('.work-grid').forEach(grid => {
+    grid.querySelectorAll('.stagger-child').forEach((child, i) => {
+      child.style.transitionDelay = (i * 0.07) + 's';
+    });
   });
 </script>
 </body>

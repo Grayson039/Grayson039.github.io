@@ -644,16 +644,16 @@
 
   .more-link {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 40px;
-    border-top: 1px solid var(--border);
-    color: rgba(255,230,225,0.4);
+    padding: 24px 40px;
+    border-top: 1px solid rgba(255,91,4,0.35);
+    color: var(--orange);
     text-decoration: none;
     font-family: 'Space Mono', monospace;
-    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-    transition: color .3s, border-color .3s;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    transition: color .3s, border-color .3s, background .3s;
     margin-top: 2px;
   }
-  .more-link:hover { color: var(--orange); border-color: rgba(255,91,4,0.3); }
+  .more-link:hover { color: var(--cream); border-color: rgba(255,91,4,0.6); background: rgba(255,91,4,0.05); }
   .more-link:hover .more-link-arrow { transform: translateX(4px); }
   .more-link-arrow { transition: transform .3s; display: inline-block; font-size: 14px; }
 </style>

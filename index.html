@@ -146,9 +146,20 @@
     text-transform: uppercase;
     color: var(--orange);
     margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeUp .7s ease .3s forwards;
+    opacity: 1;
     display: flex; align-items: center; justify-content: center; gap: 14px;
+  }
+  .hero-eyebrow .drop-letter {
+    display: inline-block;
+    opacity: 0;
+  }
+  @keyframes letterDrop {
+    0%   { opacity: 0; transform: translateY(-80px) rotate(-5deg) scaleY(0.8); }
+    52%  { opacity: 1; transform: translateY(9px) rotate(1deg) scaleY(1.12); }
+    68%  { transform: translateY(-5px) rotate(0deg) scaleY(0.96); }
+    82%  { transform: translateY(3px) scaleY(1.04); }
+    92%  { transform: translateY(-1px) scaleY(0.99); }
+    100% { opacity: 1; transform: translateY(0) scaleY(1) rotate(0deg); }
   }
   .hero-eyebrow::before, .hero-eyebrow::after {
     content: '';
@@ -1702,6 +1713,34 @@
     el.addEventListener('mouseenter',()=>{ cursor.style.width='18px'; cursor.style.height='18px'; ring.style.width='52px'; ring.style.height='52px'; });
     el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
+
+  // Crash Bandicoot letter drop — fires after chomp lands (~1.4s)
+  (function() {
+    var eyebrow = document.querySelector('.hero-eyebrow');
+    if (!eyebrow) return;
+    var text = eyebrow.textContent.trim();
+    eyebrow.textContent = '';
+    var startDelay = 1450;
+    var perLetter = 72;
+    var idx = 0;
+    text.split('').forEach(function(char) {
+      var span = document.createElement('span');
+      if (char === ' ') {
+        span.innerHTML = '&nbsp;';
+        span.style.display = 'inline-block';
+      } else {
+        span.className = 'drop-letter';
+        span.textContent = char;
+        span.style.animationName = 'letterDrop';
+        span.style.animationDuration = '0.52s';
+        span.style.animationTimingFunction = 'ease-out';
+        span.style.animationFillMode = 'forwards';
+        span.style.animationDelay = (startDelay + idx * perLetter) + 'ms';
+        idx++;
+      }
+      eyebrow.appendChild(span);
+    });
+  })();
 
   // Burst glitch right after chomp, then settle into steady loop
   setTimeout(function() {

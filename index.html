@@ -828,6 +828,22 @@
     margin-bottom: 8px;
     position: relative;
   }
+  /* CRT scanline overlay */
+  .chomp-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.18) 2px,
+      rgba(0, 0, 0, 0.18) 3px
+    );
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 2px;
+  }
   .jaw-top-wrap {
     width: clamp(220px, 32vw, 380px);
     margin-bottom: -60%;

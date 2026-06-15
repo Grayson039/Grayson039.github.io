@@ -140,8 +140,8 @@
 
   .hero-eyebrow {
     font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
+    font-size: 14px;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--orange);
     margin-bottom: 20px;
@@ -393,34 +393,61 @@
 
   .approach-item {
     background: var(--bg-card);
-    padding: 48px 40px;
+    padding: 48px 40px 44px;
     position: relative;
     overflow: hidden;
     transition: background .35s;
   }
-  .approach-item::after {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--orange);
-    opacity: 0;
-    transition: opacity .35s;
-  }
   .approach-item:hover { background: #063e40; }
-  .approach-item:hover::after { opacity: 1; }
-  .a-num {
+
+  /* ghost number watermark */
+  .a-bignum {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 72px;
-    color: var(--gold);
-    line-height: 1; margin-bottom: 16px;
+    font-size: 160px;
+    line-height: 1;
+    color: rgba(255,91,4,0.07);
+    position: absolute;
+    top: -12px; right: 10px;
+    letter-spacing: -4px;
+    user-select: none;
+    pointer-events: none;
+    transition: color .35s;
   }
+  .approach-item:hover .a-bignum { color: rgba(255,91,4,0.13); }
+
+  /* icon box */
+  .a-icon {
+    width: 38px; height: 38px;
+    border: 1px solid rgba(255,91,4,0.35);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 22px;
+    transition: border-color .35s, background .35s;
+  }
+  .approach-item:hover .a-icon {
+    border-color: var(--orange);
+    background: rgba(255,91,4,0.08);
+  }
+  .a-icon i { font-size: 18px; color: var(--orange); }
+
   .a-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px; letter-spacing: 0.02em;
-    color: var(--orange); margin-bottom: 12px;
+    font-size: 28px; letter-spacing: 0.04em;
+    color: var(--white); margin-bottom: 12px; line-height: 1;
   }
-  .a-desc { font-size: 14px; line-height: 1.8; color: var(--cream); }
+  .a-desc { font-size: 13px; line-height: 1.8; color: rgba(255,230,225,0.65); font-weight: 300; }
+
+  /* orange underline slide-in */
+  .a-accent {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--orange);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .35s ease;
+  }
+  .approach-item:hover .a-accent { transform: scaleX(1); }
 
   /* ── CONTACT ── */
   .contact-section {
@@ -828,22 +855,6 @@
     margin-bottom: 8px;
     position: relative;
   }
-  /* CRT scanline overlay */
-  .chomp-wrap::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 2px,
-      rgba(0, 0, 0, 0.18) 2px,
-      rgba(0, 0, 0, 0.18) 3px
-    );
-    pointer-events: none;
-    z-index: 10;
-    border-radius: 2px;
-  }
   .jaw-top-wrap {
     width: clamp(220px, 32vw, 380px);
     margin-bottom: -60%;
@@ -1224,19 +1235,25 @@
   <div class="section-label">How I Work</div>
   <div class="approach-grid reveal">
     <div class="approach-item stagger-child">
-      <div class="a-num">01</div>
+      <div class="a-bignum">01</div>
+      <div class="a-icon"><i class="ti ti-bulb" aria-hidden="true"></i></div>
       <div class="a-title">Concept First</div>
       <p class="a-desc">Every product starts with a real problem. I identify pain points, map the experience, and define what success looks like before a single screen is designed.</p>
+      <div class="a-accent"></div>
     </div>
     <div class="approach-item stagger-child">
-      <div class="a-num">02</div>
+      <div class="a-bignum">02</div>
+      <div class="a-icon"><i class="ti ti-vector-triangle" aria-hidden="true"></i></div>
       <div class="a-title">Design With Intent</div>
-      <p class="a-desc">UI/UX decisions are deliberate. I think in flows, not just screens, prioritizing clarity, delight, and the moments that make users come back.</p>
+      <p class="a-desc">UI/UX decisions are deliberate. I think in flows, not just screens — prioritizing clarity, delight, and the moments that make users come back.</p>
+      <div class="a-accent"></div>
     </div>
     <div class="approach-item stagger-child">
-      <div class="a-num">03</div>
+      <div class="a-bignum">03</div>
+      <div class="a-icon"><i class="ti ti-cpu" aria-hidden="true"></i></div>
       <div class="a-title">Ship With AI</div>
-      <p class="a-desc">I use Claude, ChatGPT, and the full AI stack as a development partner, directing, iterating, and building real products faster than traditional workflows ever allowed.</p>
+      <p class="a-desc">I use Claude, ChatGPT, and the full AI stack as a development partner — directing, iterating, and building real products faster than traditional workflows ever allowed.</p>
+      <div class="a-accent"></div>
     </div>
   </div>
 </section>

@@ -57,7 +57,8 @@
     error:     '#B04040',
     // Overlay / scrim
     overlay:   'rgba(44,36,22,0.52)',
-    scrim:     'rgba(0,0,0,0.28)'
+    scrim:     'rgba(0,0,0,0.28)',
+    teal:      '#1A8C7A'
   };
 
   var D = {
@@ -79,7 +80,8 @@
     warning:   '#D4A870',
     error:     '#D46A5A',
     overlay:   'rgba(0,0,0,0.62)',
-    scrim:     'rgba(0,0,0,0.46)'
+    scrim:     'rgba(0,0,0,0.46)',
+    teal:      '#30C0B0'
   };
 
 
@@ -208,10 +210,13 @@
     for (var i = 0; i < items.length; i++) {
       var col = i === activeIdx ? theme.primary : theme.muted;
       html += '<div onclick="' + fn + '(\'' + items[i][1] + '\')" style="display:flex;flex-direction:column;' +
-        'align-items:center;gap:3px;font-size:9px;font-family:' + T.sans + ';color:' + col + ';cursor:pointer">' +
+        'align-items:center;gap:2px;font-size:9px;font-family:' + T.sans + ';color:' + col + ';cursor:pointer">' +
         '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="' + col + '" ' +
         'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="' + items[i][2] + '"/></svg>' +
-        '<span>' + items[i][0] + '</span></div>';
+        '<span>' + items[i][0] + '</span>' +
+        '<div style="height:3px;border-radius:2px;background:' + (theme.teal || theme.primary) + ';' +
+          'width:' + (i === activeIdx ? '16px' : '0') + '"></div>' +
+        '</div>';
     }
     return html + '</div>';
   };
@@ -470,6 +475,73 @@
       '<div style="font-size:' + T.sz.lg + ';font-weight:' + T.wt.bold + ';color:' + theme.text + ';margin-bottom:6px">' + title + '</div>' +
       (subtitle ? '<div style="font-size:' + T.sz.base + ';color:' + theme.muted + ';line-height:1.6">' + subtitle + '</div>' : '') +
     '</div>';
+  };
+
+  /**
+   * Whisker — OurTable raccoon chef mascot.
+   * @param {number} size  width in px (height ≈ size × 1.1)
+   */
+  c.mascotWhisker = function (size) {
+    var sz = size || 100;
+    var h  = Math.round(sz * 1.1);
+    return (
+      '<svg width="' + sz + '" height="' + h + '" viewBox="0 0 100 110" fill="none">' +
+      // Clouds (drawn first, behind everything)
+      '<ellipse cx="50" cy="106" rx="24" ry="5.5" fill="white" opacity="0.65"/>' +
+      '<ellipse cx="34" cy="104" rx="13" ry="5.5" fill="white" opacity="0.65"/>' +
+      '<ellipse cx="66" cy="104" rx="13" ry="5.5" fill="white" opacity="0.65"/>' +
+      // Arms (behind body)
+      '<path d="M30 74 Q18 72 14 64" stroke="#9B8EC4" stroke-width="7" stroke-linecap="round" fill="none"/>' +
+      '<path d="M70 74 Q82 72 86 64" stroke="#9B8EC4" stroke-width="7" stroke-linecap="round" fill="none"/>' +
+      // Ears (behind head)
+      '<circle cx="24" cy="44" r="9" fill="#9E9E9E"/>' +
+      '<circle cx="76" cy="44" r="9" fill="#9E9E9E"/>' +
+      '<circle cx="24" cy="44" r="5.5" fill="#D4ADAD"/>' +
+      '<circle cx="76" cy="44" r="5.5" fill="#D4ADAD"/>' +
+      // Head
+      '<ellipse cx="50" cy="54" rx="24" ry="20" fill="#C0C0C0"/>' +
+      // Raccoon mask patches
+      '<ellipse cx="40" cy="51" rx="9" ry="6.5" fill="#2A2A2A" opacity="0.82"/>' +
+      '<ellipse cx="60" cy="51" rx="9" ry="6.5" fill="#2A2A2A" opacity="0.82"/>' +
+      // Eyes — white base
+      '<circle cx="40" cy="51" r="4.5" fill="white"/>' +
+      '<circle cx="60" cy="51" r="4.5" fill="white"/>' +
+      // Pupils
+      '<circle cx="40.5" cy="51.5" r="2.8" fill="#111"/>' +
+      '<circle cx="60.5" cy="51.5" r="2.8" fill="#111"/>' +
+      // Eye shine
+      '<circle cx="42" cy="50" r="1.1" fill="white"/>' +
+      '<circle cx="62" cy="50" r="1.1" fill="white"/>' +
+      // Muzzle
+      '<ellipse cx="50" cy="60" rx="12" ry="7.5" fill="#D8D8D8"/>' +
+      // Nose
+      '<ellipse cx="50" cy="56.5" rx="3.2" ry="2.2" fill="#E08888"/>' +
+      // Whisker lines
+      '<line x1="30" y1="59.5" x2="41" y2="60" stroke="#A8A8A8" stroke-width="0.8" stroke-linecap="round"/>' +
+      '<line x1="30" y1="62.5" x2="41" y2="62.5" stroke="#A8A8A8" stroke-width="0.8" stroke-linecap="round"/>' +
+      '<line x1="59" y1="60" x2="70" y2="59.5" stroke="#A8A8A8" stroke-width="0.8" stroke-linecap="round"/>' +
+      '<line x1="59" y1="62.5" x2="70" y2="62.5" stroke="#A8A8A8" stroke-width="0.8" stroke-linecap="round"/>' +
+      // Body / lavender apron
+      '<path d="M32 72 C32 68 38 65 50 65 C62 65 68 68 68 72 L72 100 H28 Z" fill="#9B8EC4"/>' +
+      // Apron bib
+      '<rect x="43" y="65" width="14" height="18" rx="3" fill="#AEA4D6"/>' +
+      '<line x1="50" y1="67" x2="50" y2="83" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>' +
+      // Hat brim (above head)
+      '<rect x="25" y="28" width="50" height="7" rx="3" fill="white"/>' +
+      // Hat body
+      '<rect x="33" y="8" width="34" height="22" rx="3" fill="white"/>' +
+      // Hat crease lines
+      '<line x1="41" y1="10" x2="41" y2="28" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>' +
+      '<line x1="50" y1="10" x2="50" y2="28" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>' +
+      '<line x1="59" y1="10" x2="59" y2="28" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>' +
+      // Ladle sticks
+      '<line x1="14" y1="64" x2="10" y2="55" stroke="#C4A040" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<line x1="86" y1="64" x2="90" y2="55" stroke="#C4A040" stroke-width="2.5" stroke-linecap="round"/>' +
+      // Ladle bowls
+      '<ellipse cx="8" cy="52" rx="5" ry="4" fill="#C4A040"/>' +
+      '<ellipse cx="92" cy="52" rx="5" ry="4" fill="#C4A040"/>' +
+      '</svg>'
+    );
   };
 
   /** Dietary conflict warning banner */

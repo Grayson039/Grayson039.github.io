@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -32,7 +32,7 @@
     position: relative;
   }
 
-  /* ── TOPO SVG BACKGROUND ── */
+  /* â”€â”€ TOPO SVG BACKGROUND â”€â”€ */
   .topo-bg {
     position: fixed;
     inset: 0;
@@ -41,7 +41,7 @@
     opacity: 0.18;
   }
 
-  /* ── NOISE OVERLAY ── */
+  /* â”€â”€ NOISE OVERLAY â”€â”€ */
   body::after {
     content: '';
     position: fixed; inset: 0;
@@ -49,7 +49,7 @@
     pointer-events: none; z-index: 1000; opacity: 0.4;
   }
 
-  /* ── Cursor ── */
+  /* â”€â”€ Cursor â”€â”€ */
   .cursor {
     width: 10px; height: 10px;
     background: var(--orange);
@@ -71,7 +71,7 @@
   }
   @media (hover: none) { .cursor, .cursor-ring { display: none; } body { cursor: auto; } }
 
-  /* ── NAV ── */
+  /* â”€â”€ NAV â”€â”€ */
   nav {
     position: fixed; top: 0; left: 0; right: 0;
     padding: 18px 48px;
@@ -102,7 +102,7 @@
   .nav-links a:hover { color: var(--orange); }
   @media (max-width: 600px) { .nav-links { display: none; } nav { padding: 16px 24px; } }
 
-  /* ── HERO ── */
+  /* â”€â”€ HERO â”€â”€ */
   .hero {
     min-height: 100vh;
     padding: 0 48px 80px;
@@ -189,7 +189,7 @@
     animation: fadeUp .7s ease .6s forwards;
   }
 
-  /* ── VELOCITY CALLOUT ── */
+  /* â”€â”€ VELOCITY CALLOUT â”€â”€ */
   .velocity-bar {
     display: flex;
     align-items: center;
@@ -258,7 +258,7 @@
     .scroll-hint { display: none; }
   }
 
-  /* ── SECTIONS ── */
+  /* â”€â”€ SECTIONS â”€â”€ */
   section { padding: 100px 48px; border-bottom: 1px solid var(--border); position: relative; z-index: 1; }
   @media (max-width: 768px) { section { padding: 70px 24px; } }
 
@@ -277,7 +277,7 @@
     height: 1px; background: var(--border);
   }
 
-  /* ── WORK CARDS ── */
+  /* â”€â”€ WORK CARDS â”€â”€ */
   .work-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -395,7 +395,7 @@
   }
   .p-case-link:hover { border-color: var(--orange); }
 
-  /* ── APPROACH ── */
+  /* â”€â”€ APPROACH â”€â”€ */
   .approach-grid {
     display: grid;
     grid-template-columns: repeat(3,1fr);
@@ -461,7 +461,7 @@
   }
   .approach-item:hover .a-accent { transform: scaleX(1); }
 
-  /* ── CONTACT ── */
+  /* â”€â”€ CONTACT â”€â”€ */
   .contact-section {
     min-height: 55vh;
     display: flex; flex-direction: column;
@@ -524,7 +524,7 @@
     box-shadow: 4px 4px 0 rgba(255,230,225,0.1);
   }
 
-  /* ── FOOTER ── */
+  /* â”€â”€ FOOTER â”€â”€ */
   footer {
     padding: 28px 48px;
     border-top: 1px solid var(--border);
@@ -541,7 +541,7 @@
   .footer-orange { color: var(--orange); }
   @media (max-width: 600px) { footer { flex-direction: column; text-align: center; padding: 24px; } }
 
-  /* ── CASE STUDY OVERLAY ── */
+  /* â”€â”€ CASE STUDY OVERLAY â”€â”€ */
   .case-overlay {
     position: fixed; inset: 0;
     background: rgba(3,28,29,0.97);
@@ -666,7 +666,7 @@
   }
   .cs-link:hover { border-color: var(--orange); }
 
-  /* ── ANIMATIONS ── */
+  /* â”€â”€ ANIMATIONS â”€â”€ */
   @keyframes fadeUp {
     from { opacity:0; transform:translateY(28px); }
     to   { opacity:1; transform:translateY(0); }
@@ -697,7 +697,7 @@
   .more-link:hover .more-link-arrow { transform: translateX(4px); }
   .more-link-arrow { transition: transform .3s; display: inline-block; font-size: 14px; }
 
-  /* ── ABOUT ── */
+  /* â”€â”€ ABOUT â”€â”€ */
   .about-section {
     padding: 100px 48px;
     background: var(--bg-mid);
@@ -759,7 +759,7 @@
     flex-wrap: wrap;
   }
 
-  /* ── HERO LOGO ANIMATION ── */
+  /* â”€â”€ HERO LOGO ANIMATION â”€â”€ */
   @keyframes logoReveal {
     0%   { opacity: 0; transform: scale(0.96) translateY(10px); filter: brightness(0) invert(1) drop-shadow(0 0 0px rgba(255,91,4,0)); }
     60%  { opacity: 1; transform: scale(1.01) translateY(0);    filter: brightness(0) invert(1) drop-shadow(0 0 24px rgba(255,91,4,0.35)); }
@@ -768,7 +768,7 @@
 
 
   /* GLITCH */
-  /* hero-name removed — GRAYSON now in jaw image */
+  /* hero-name removed â€” GRAYSON now in jaw image */
   .hero-name::before,
   .hero-name::after {
     content: attr(data-text);
@@ -859,7 +859,7 @@
       .tl { fill: none; stroke: #FED16A; stroke-width: 0.7; }
       .tl2 { fill: none; stroke: #FF5B04; stroke-width: 0.5; }
     
-  /* ── CHOMP ANIMATION ── */
+  /* â”€â”€ CHOMP ANIMATION â”€â”€ */
   .chomp-wrap {
     display: flex;
     flex-direction: column;
@@ -884,7 +884,7 @@
     z-index: 1;
   }
   .jaw-bottom { width: 100%; display: block; }
-  /* ── shared channel setup (TV-style: pink left / cyan right) ── */
+  /* â”€â”€ shared channel setup (TV-style: pink left / cyan right) â”€â”€ */
   .jaw-top-wrap::before, .jaw-top-wrap::after,
   .jaw-bottom-wrap::before, .jaw-bottom-wrap::after {
     content: '';
@@ -903,12 +903,12 @@
   .jaw-bottom-wrap::before, .jaw-bottom-wrap::after {
     background-image: url('lower-body-final-removebg-preview.png');
   }
-  /* pink channel — fixed 2px right offset like reference ::before */
+  /* pink channel â€” fixed 2px right offset like reference ::before */
   .jaw-top-wrap::before, .jaw-bottom-wrap::before {
     filter: sepia(1) saturate(6) hue-rotate(285deg);
     left: 2px;
   }
-  /* cyan channel — fixed 2px left offset like reference ::after */
+  /* cyan channel â€” fixed 2px left offset like reference ::after */
   .jaw-top-wrap::after, .jaw-bottom-wrap::after {
     filter: sepia(1) saturate(6) hue-rotate(155deg);
     left: -2px;
@@ -922,7 +922,7 @@
     100% { transform: translateY(0); }
   }
 
-  /* ── BURST: rapid TV glitch right after chomp ── */
+  /* â”€â”€ BURST: rapid TV glitch right after chomp â”€â”€ */
   .jaw-top-wrap.glitch-burst,
   .jaw-bottom-wrap.glitch-burst { animation: tvSkewBurst 0.1s infinite; }
   .jaw-top-wrap.glitch-burst::before,
@@ -936,7 +936,7 @@
     animation: tvCyanBurst 0.08s infinite;
   }
 
-  /* ── STEADY: pink slow 5s / cyan fast 1s (matches reference) ── */
+  /* â”€â”€ STEADY: pink slow 5s / cyan fast 1s (matches reference) â”€â”€ */
   .jaw-top-wrap.glitching,
   .jaw-bottom-wrap.glitching { animation: tvSkew 1s infinite linear alternate-reverse; }
   .jaw-top-wrap.glitching::before,
@@ -1093,7 +1093,7 @@
       <div class="vel-label">Products in Dev</div>
     </div>
     <div class="vel-item">
-      <div class="vel-num">0→1</div>
+      <div class="vel-num">0â†’1</div>
       <div class="vel-label">Builder Mindset</div>
     </div>
     <div class="vel-item">
@@ -1135,7 +1135,7 @@
       </div>
       <div class="p-name">Scene<span style="color:#3EEDE7">One</span></div>
       <div class="p-type">AI Screenplay Coverage Tool</div>
-      <p class="p-desc">The $100 coverage fee gatekeeps writers by wealth. SceneOne gives every writer AI-powered script feedback graded against the Save the Cat framework — 5 craft dimensions, Fix-It Notes, pacing heatmap, Story DNA comps, and a two-sided Discovery Marketplace. Built for the writers Hollywood hasn't found yet.</p>
+      <p class="p-desc">The $100 coverage fee gatekeeps writers by wealth. SceneOne gives every writer AI-powered script feedback graded against the Save the Cat framework â€” 5 craft dimensions, Fix-It Notes, pacing heatmap, Story DNA comps, and a two-sided Discovery Marketplace. Built for the writers Hollywood hasn't found yet.</p>
       <div class="p-footer">
         <div class="p-tags">
           <span class="p-tag">AI Product</span>
@@ -1143,13 +1143,13 @@
           <span class="p-tag">Claude API</span>
         </div>
         <div class="p-actions">
-          <a href="https://sceneone.net/" class="p-case-link" onclick="event.stopPropagation();">Case Study →</a>
-          <a href="https://sceneone.net/landing.html" class="p-case-link" onclick="event.stopPropagation();">Try Prototype →</a>
+          <a href="https://sceneone.net/" class="p-case-link" onclick="event.stopPropagation();">Case Study â†’</a>
+          <a href="https://sceneone.net/landing.html" class="p-case-link" onclick="event.stopPropagation();">Try Prototype â†’</a>
         </div>
       </div>
     </div>
 
-    <div class="project-card stagger-child" onclick="window.location.href='cutman/index.html'" style="cursor:pointer;">
+    <div class="project-card stagger-child" onclick="window.location.href='cutman/cutmanindex.html'" style="cursor:pointer;">
       <div class="p-num">02 / 4</div>
       <div class="p-screenshot" style="background:#0A0A0A; border-color:rgba(232,39,42,0.2); position:relative; overflow:hidden; padding:0; display:flex; flex-direction:column; font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif; height:220px;">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px 8px;background:#0A0A0A;flex-shrink:0">
@@ -1159,7 +1159,7 @@
         <div style="margin:0 12px 7px;background:#141414;border-radius:8px;padding:10px;flex-shrink:0">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
             <div style="font-size:9px;font-weight:700;color:#E8272A;background:rgba(232,39,42,0.12);padding:2px 7px;border-radius:3px;letter-spacing:0.04em">UFC</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.35);font-weight:500">Sat · Jun 14 · T-Mobile Arena</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.35);font-weight:500">Sat Â· Jun 14 Â· T-Mobile Arena</div>
           </div>
           <div style="font-size:11px;font-weight:700;color:#fff;letter-spacing:-0.01em">UFC 317: Pantoja vs. Nurmagomedov</div>
         </div>
@@ -1190,7 +1190,7 @@
           <span class="p-tag">Real-Time Data</span>
         </div>
         <div class="p-actions">
-          <a href="cutman/index.html" class="p-case-link" onclick="event.stopPropagation();">Case Study →</a>
+          <a href="cutman/cutmanindex.html" class="p-case-link" onclick="event.stopPropagation();">Case Study â†’</a>
         </div>
       </div>
     </div>
@@ -1202,7 +1202,7 @@
       </div>
       <div class="p-name">Little Caesars <span style="color:#F47321">Redesign</span></div>
       <div class="p-type">Interactive Case Study</div>
-      <p class="p-desc">Little Caesars has the best value in fast food — but their app makes it feel like a chore. I redesigned the full ordering flow: Hot-N-Ready real-time availability, a smarter menu, and a checkout that actually trusts the user.</p>
+      <p class="p-desc">Little Caesars has the best value in fast food â€” but their app makes it feel like a chore. I redesigned the full ordering flow: Hot-N-Ready real-time availability, a smarter menu, and a checkout that actually trusts the user.</p>
       <div class="p-footer">
         <div class="p-tags">
           <span class="p-tag">UX Design</span>
@@ -1229,7 +1229,7 @@
           <span class="p-tag">Phase 3</span>
         </div>
         <div class="p-actions">
-          <a href="#" class="p-case-link" onclick="openCase('aftershow');return false;">Case Study →</a>
+          <a href="#" class="p-case-link" onclick="openCase('aftershow');return false;">Case Study â†’</a>
         </div>
       </div>
     </div>
@@ -1257,14 +1257,14 @@
       <div class="a-bignum">02</div>
       <div class="a-icon"><i class="ti ti-vector-triangle" aria-hidden="true"></i></div>
       <div class="a-title">Design With Intent</div>
-      <p class="a-desc">UI/UX decisions are deliberate. I think in flows, not just screens — prioritizing clarity, delight, and the moments that make users come back.</p>
+      <p class="a-desc">UI/UX decisions are deliberate. I think in flows, not just screens â€” prioritizing clarity, delight, and the moments that make users come back.</p>
       <div class="a-accent"></div>
     </div>
     <div class="approach-item stagger-child">
       <div class="a-bignum">03</div>
       <div class="a-icon"><i class="ti ti-cpu" aria-hidden="true"></i></div>
       <div class="a-title">Ship With AI</div>
-      <p class="a-desc">I use Claude, ChatGPT, and the full AI stack as a development partner — directing, iterating, and building real products faster than traditional workflows ever allowed.</p>
+      <p class="a-desc">I use Claude, ChatGPT, and the full AI stack as a development partner â€” directing, iterating, and building real products faster than traditional workflows ever allowed.</p>
       <div class="a-accent"></div>
     </div>
   </div>
@@ -1305,9 +1305,9 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>© 2026 <span class="footer-orange">Will Grayson</span></span>
+  <span>Â© 2026 <span class="footer-orange">Will Grayson</span></span>
   <span>AI Product Designer, Available for Opportunities</span>
-  <span>Built with Claude · Engineered as an AI Native</span>
+  <span>Built with Claude Â· Engineered as an AI Native</span>
 </footer>
 
 <!-- CASE STUDY OVERLAYS -->
@@ -1355,30 +1355,30 @@
 
 <div class="case-overlay" id="case-scrapd">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">âœ• &nbsp;Close</button>
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 09 / 10</div>
     <div class="cs-title">Scrap'd</div>
-    <div class="cs-subtitle">Purpose-Built Scrapbooking App · PRD Complete, Building</div>
+    <div class="cs-subtitle">Purpose-Built Scrapbooking App Â· PRD Complete, Building</div>
     <div class="cs-tags">
       <span class="cs-tag">UX Design</span><span class="cs-tag">React Native</span><span class="cs-tag">react-native-skia</span><span class="cs-tag">Freemium</span>
     </div>
     <a href="https://grayson039.github.io/scrapd/" target="_blank" class="cs-link">View Prototype &#x2192;</a>
     <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">Scrapbookers don't have a home. GoodNotes hits a 3-file wall immediately. Canva is a marketing tool — its layers are broken and its best templates are paywalled. Unfold exports to Instagram only, meaning a 100-page family scrapbook literally cannot be sent to grandma. Pic Collage forces watermarks on finished work and sits at a 3.9★ rating from a frustrated user base. Every competitor optimizes for the wrong output.</p>
+    <p class="cs-body">Scrapbookers don't have a home. GoodNotes hits a 3-file wall immediately. Canva is a marketing tool â€” its layers are broken and its best templates are paywalled. Unfold exports to Instagram only, meaning a 100-page family scrapbook literally cannot be sent to grandma. Pic Collage forces watermarks on finished work and sits at a 3.9â˜… rating from a frustrated user base. Every competitor optimizes for the wrong output.</p>
     <div class="cs-divider"></div>
     <div class="cs-section-head">The Core Insight</div>
-    <p class="cs-body">People aren't making scrapbooks to post on Instagram. They're making them to keep, share with family, and print. That realization — that every competitor is solving for social media virality instead of personal memory — is the product foundation everything else is built on.</p>
+    <p class="cs-body">People aren't making scrapbooks to post on Instagram. They're making them to keep, share with family, and print. That realization â€” that every competitor is solving for social media virality instead of personal memory â€” is the product foundation everything else is built on.</p>
 
     <div class="cs-section-head">Who It's Built For</div>
-    <p class="cs-body">Two personas drive every design decision. The Memory Keeper: women 25–45 making scrapbooks for weddings, milestones, travel, and holidays — currently duct-taping together GoodNotes and Canva and physical craft supplies, none of it feeling right. The Gift Maker: people building scrapbooks as gifts, who care deeply about the finished output looking polished and need to actually send it to someone.</p>
+    <p class="cs-body">Two personas drive every design decision. The Memory Keeper: women 25â€“45 making scrapbooks for weddings, milestones, travel, and holidays â€” currently duct-taping together GoodNotes and Canva and physical craft supplies, none of it feeling right. The Gift Maker: people building scrapbooks as gifts, who care deeply about the finished output looking polished and need to actually send it to someone.</p>
 
-    <div class="cs-section-head">Wireframe → Prototype Evolution</div>
-    <p class="cs-body">The design went through three distinct stages before the current prototype. The first pass focused purely on the canvas layer model — getting the stacking order right before any visual polish. The second pass established the emotional tone: warm craft textures, Playfair Display typography, the "paper feel" that separates Scrap'd from every generic grid editor. The third pass locked the onboarding flow — the decision to get users into creation in under 60 seconds, skippable everywhere, no account required.</p>
+    <div class="cs-section-head">Wireframe â†’ Prototype Evolution</div>
+    <p class="cs-body">The design went through three distinct stages before the current prototype. The first pass focused purely on the canvas layer model â€” getting the stacking order right before any visual polish. The second pass established the emotional tone: warm craft textures, Playfair Display typography, the "paper feel" that separates Scrap'd from every generic grid editor. The third pass locked the onboarding flow â€” the decision to get users into creation in under 60 seconds, skippable everywhere, no account required.</p>
 
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;">
       <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
-        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 01 · Wireframe</div>
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 01 Â· Wireframe</div>
         <div style="background:rgba(255,230,225,0.06);border-radius:8px;padding:12px;margin-bottom:10px;min-height:80px;">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;">
             <div style="height:28px;background:rgba(255,230,225,0.12);border-radius:3px;"></div>
@@ -1388,10 +1388,10 @@
           </div>
           <div style="height:8px;background:rgba(255,230,225,0.08);border-radius:3px;width:60%;"></div>
         </div>
-        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Layer model + canvas architecture. No visual polish — just proving the stacking system works.</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Layer model + canvas architecture. No visual polish â€” just proving the stacking system works.</div>
       </div>
       <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
-        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 02 · Visual Identity</div>
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 02 Â· Visual Identity</div>
         <div style="background:linear-gradient(135deg,#2D7A6A,#519E8A);border-radius:8px;padding:12px;margin-bottom:10px;min-height:80px;display:flex;flex-direction:column;justify-content:center;gap:6px;">
           <div style="font-family:Georgia,serif;font-size:18px;font-weight:900;color:white;letter-spacing:-0.5px;">Scrap<span style="color:#F5C842;">'</span>d</div>
           <div style="font-size:9px;color:rgba(255,255,255,0.6);font-style:italic;">Snap it. Scrap it. Share it.</div>
@@ -1403,11 +1403,11 @@
         <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Craft textures, Playfair Display, warm palette. Establishing the emotional tone.</div>
       </div>
       <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
-        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 03 · Prototype</div>
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 03 Â· Prototype</div>
         <div style="background:linear-gradient(135deg,#1F6B5A,#519E8A);border-radius:8px;padding:10px;margin-bottom:10px;min-height:80px;">
           <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">My Scrapbooks</div>
           <div style="background:rgba(255,255,255,0.15);border-radius:6px;padding:6px 8px;margin-bottom:4px;">
-            <div style="font-size:9px;color:white;font-weight:600;">Paris 2024 ✈</div>
+            <div style="font-size:9px;color:white;font-weight:600;">Paris 2024 âœˆ</div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
             <div style="height:18px;background:rgba(255,113,103,0.5);border-radius:3px;"></div>
@@ -1439,10 +1439,10 @@
     </div>
 
     <div class="cs-section-head">The Canvas Architecture</div>
-    <p class="cs-body">Every page is a 6-layer GPU-rendered canvas via react-native-skia. Layer 1: background paper. Layer 2: photos. Layer 3: stickers and washi tape. Layer 4: typed text and journaling. Layer 5: Apple Pencil or finger drawing with pressure sensitivity. Layer 6 (Tier 2): video and GIF. Nothing is destructive. Unlimited undo. 60fps target on iPhone 12 or newer — non-negotiable.</p>
+    <p class="cs-body">Every page is a 6-layer GPU-rendered canvas via react-native-skia. Layer 1: background paper. Layer 2: photos. Layer 3: stickers and washi tape. Layer 4: typed text and journaling. Layer 5: Apple Pencil or finger drawing with pressure sensitivity. Layer 6 (Tier 2): video and GIF. Nothing is destructive. Unlimited undo. 60fps target on iPhone 12 or newer â€” non-negotiable.</p>
 
     <div class="cs-grid-2">
-      <div class="cs-stat-box"><div class="cs-stat-num">4.5★</div><div class="cs-stat-label">Day-One App Store Target</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">4.5â˜…</div><div class="cs-stat-label">Day-One App Store Target</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">$250</div><div class="cs-stat-label">Total Day-1 Asset Budget</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">>10 min</div><div class="cs-stat-label">Target Session Length</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">12</div><div class="cs-stat-label">PRD Feature Specs Written</div></div>
@@ -1455,22 +1455,22 @@
 
 <div class="case-overlay" id="case-ourtable">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">âœ• &nbsp;Close</button>
   <div class="case-inner">
-    <div class="cs-eyebrow">Case Study, 05 / 10 · Personal Project</div>
+    <div class="cs-eyebrow">Case Study, 05 / 10 Â· Personal Project</div>
     <div class="cs-title">OurTable</div>
-    <div class="cs-subtitle">Family Kitchen Platform · v2.1.0 · Active Build</div>
+    <div class="cs-subtitle">Family Kitchen Platform Â· v2.1.0 Â· Active Build</div>
     <div class="cs-tags">
       <span class="cs-tag">UX Design</span><span class="cs-tag">React Native</span><span class="cs-tag">Expo</span><span class="cs-tag">AI Vision</span><span class="cs-tag">Platform Thinking</span><span class="cs-tag">Household System</span>
     </div>
 
     <a href="https://grayson039.github.io/ourtable/" target="_blank" class="cs-link">View Prototype &#x2192;</a>
     <div class="cs-section-head">The Origin</div>
-    <p class="cs-body">My wife had her gallbladder removed. Overnight our cooking had to change — certain fats and ingredients were suddenly off the table. Every recipe app we tried was built for a single person with no restrictions and unlimited pantry access. None of them understood that real households are complicated: multiple people, medical needs, dietary preferences, and a fridge full of things you bought three days ago and forgot about. So I started building the app I actually needed.</p>
+    <p class="cs-body">My wife had her gallbladder removed. Overnight our cooking had to change â€” certain fats and ingredients were suddenly off the table. Every recipe app we tried was built for a single person with no restrictions and unlimited pantry access. None of them understood that real households are complicated: multiple people, medical needs, dietary preferences, and a fridge full of things you bought three days ago and forgot about. So I started building the app I actually needed.</p>
     <div class="cs-divider"></div>
 
     <div class="cs-section-head">The Design Evolution</div>
-    <p class="cs-body">OurTable went through four distinct phases. V1 ran on-device — dark mode, real navigation, real data, proof the system worked. V1.5 explored light vs. dark formally in a design system mockup — light mode won because the app needed to feel like a kitchen, not a command center. V2 introduced the navy/cream/gold palette, full cooking mode, household architecture, and the Family Recipe Book. V2.1.0 — the current build — adds Party Mode, aisle-organized grocery lists, pricing tiers, and the full platform vision.</p>
+    <p class="cs-body">OurTable went through four distinct phases. V1 ran on-device â€” dark mode, real navigation, real data, proof the system worked. V1.5 explored light vs. dark formally in a design system mockup â€” light mode won because the app needed to feel like a kitchen, not a command center. V2 introduced the navy/cream/gold palette, full cooking mode, household architecture, and the Family Recipe Book. V2.1.0 â€” the current build â€” adds Party Mode, aisle-organized grocery lists, pricing tiers, and the full platform vision.</p>
 
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:20px 0;">
       <div style="background:rgba(255,230,225,0.06);border:1px solid rgba(255,230,225,0.12);border-radius:10px;padding:12px;text-align:center;">
@@ -1486,27 +1486,27 @@
         <div style="font-size:9px;color:rgba(255,230,225,0.5);line-height:1.4;">Navy/cream/gold. Household system. Recipe Book.</div>
       </div>
       <div style="background:rgba(81,158,138,0.12);border:1px solid rgba(81,158,138,0.3);border-radius:10px;padding:12px;text-align:center;">
-        <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(81,158,138,0.8);margin-bottom:6px;">V2.1 ←</div>
+        <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(81,158,138,0.8);margin-bottom:6px;">V2.1 â†</div>
         <div style="font-size:9px;color:rgba(255,230,225,0.5);line-height:1.4;">Party Mode. Aisle lists. Pricing. 45 screens.</div>
       </div>
     </div>
 
     <div class="cs-section-head">The Household Intelligence Layer</div>
-    <p class="cs-body">"Who's at your table?" — during onboarding you add household members and set dietary preferences per person: Dairy-Free, Gluten-Free, Vegetarian, Halal, Kosher, and more. Every recipe surfaces conflict warnings per member. The household gets its own stats dashboard: shared recipes, meals cooked, lists created, food waste saved. My wife's gallbladder recovery isn't an edge case — it's the product thesis.</p>
+    <p class="cs-body">"Who's at your table?" â€” during onboarding you add household members and set dietary preferences per person: Dairy-Free, Gluten-Free, Vegetarian, Halal, Kosher, and more. Every recipe surfaces conflict warnings per member. The household gets its own stats dashboard: shared recipes, meals cooked, lists created, food waste saved. My wife's gallbladder recovery isn't an edge case â€” it's the product thesis.</p>
 
     <div class="cs-section-head">The Family Recipe Book</div>
-    <p class="cs-body">The platform's emotional core. "The Wilson Family Recipes — collected with love since 2024." Every household gets a shared recipe book organized into chapters: Weeknight Favourites, Emma's Kitchen, Grandma's Classics, Quick & Healthy, Special Occasions. Members can each contribute recipes to shared chapters. 60 shared recipes, each with personal notes, cook count, and star ratings. This is the feature that turns a utility into something people feel attached to.</p>
+    <p class="cs-body">The platform's emotional core. "The Wilson Family Recipes â€” collected with love since 2024." Every household gets a shared recipe book organized into chapters: Weeknight Favourites, Emma's Kitchen, Grandma's Classics, Quick & Healthy, Special Occasions. Members can each contribute recipes to shared chapters. 60 shared recipes, each with personal notes, cook count, and star ratings. This is the feature that turns a utility into something people feel attached to.</p>
 
-    <div class="cs-section-head">Party Mode — The Surprise Feature</div>
-    <p class="cs-body">Set your guest count and every recipe scales automatically. Hosting 12 people? Every ingredient quantity recalculates in real time. One tap generates a scaled grocery list for the entire meal. No other recipe app has this. It emerged from real household need — and it's the feature that consistently surprises people when they see it.</p>
+    <div class="cs-section-head">Party Mode â€” The Surprise Feature</div>
+    <p class="cs-body">Set your guest count and every recipe scales automatically. Hosting 12 people? Every ingredient quantity recalculates in real time. One tap generates a scaled grocery list for the entire meal. No other recipe app has this. It emerged from real household need â€” and it's the feature that consistently surprises people when they see it.</p>
 
     <div class="cs-section-head">The Fridge Intelligence Layer</div>
-    <p class="cs-body">Scan your fridge — AI detects and catalogs ingredients across Fridge, Pantry, and Freezer tabs. "What Can I Make?" ranks recipes by match percentage: 95% means cook now, 85% means add one item. Expiring items get prioritized automatically. Food Waste Mode shows exactly how much money you've saved cooking what you have. The grocery list organizes by aisle — Produce, Meat & Fish, Dairy — not a flat list. Add an entire recipe's ingredients with one tap.</p>
+    <p class="cs-body">Scan your fridge â€” AI detects and catalogs ingredients across Fridge, Pantry, and Freezer tabs. "What Can I Make?" ranks recipes by match percentage: 95% means cook now, 85% means add one item. Expiring items get prioritized automatically. Food Waste Mode shows exactly how much money you've saved cooking what you have. The grocery list organizes by aisle â€” Produce, Meat & Fish, Dairy â€” not a flat list. Add an entire recipe's ingredients with one tap.</p>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;">
       <div style="background:rgba(255,230,225,0.05);border-left:2px solid #FF5B04;padding:12px 14px;border-radius:0 8px 8px 0;">
         <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">Party Mode scaling</div>
-        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">Set guest count → every ingredient auto-scales → scaled grocery list generated. Nobody does this.</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.4;">Set guest count â†’ every ingredient auto-scales â†’ scaled grocery list generated. Nobody does this.</div>
       </div>
       <div style="background:rgba(255,230,225,0.05);border-left:2px solid #FED16A;padding:12px 14px;border-radius:0 8px 8px 0;">
         <div style="font-size:12px;font-weight:600;color:rgba(255,230,225,0.9);margin-bottom:4px;">$4.60/serving</div>
@@ -1531,7 +1531,7 @@
     <p class="cs-body">Three tiers designed from first principles. Free: up to 30 recipes, basic grocery list, fridge scanner 5x/month, 1 member. Plus at $9.99 one-time: unlimited saves, URL and social import, unlimited fridge scanning, cooking mode, cost tracker, Family Recipe Book. Household at $19.99/year: everything in Plus, up to 6 members, shared grocery lists, dietary conflict warnings, household stats, and web access at recipebook.ourtable.app. No ads. No subscriptions on the core tier. Yours forever.</p>
 
     <div class="cs-section-head">The Platform Vision</div>
-    <p class="cs-body">The next layer is a weekly and monthly meal planning calendar powered by your own saved recipe database — the more recipes you add, the smarter your suggestions become. A personal data flywheel that makes the platform more valuable the longer you use it. A senior developer reviewed the architecture and joined as a collaborator. The foundation is built to scale there.</p>
+    <p class="cs-body">The next layer is a weekly and monthly meal planning calendar powered by your own saved recipe database â€” the more recipes you add, the smarter your suggestions become. A personal data flywheel that makes the platform more valuable the longer you use it. A senior developer reviewed the architecture and joined as a collaborator. The foundation is built to scale there.</p>
 
     <div class="cs-grid-2">
       <div class="cs-stat-box"><div class="cs-stat-num">45</div><div class="cs-stat-label">Screens Designed in v2</div></div>
@@ -1615,11 +1615,11 @@
 
 <div class="case-overlay" id="case-briefed">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">âœ• &nbsp;Close</button>
   <div class="case-inner">
-    <div class="cs-eyebrow">AI Tool, 07 / 10 · Live Demo</div>
+    <div class="cs-eyebrow">AI Tool, 07 / 10 Â· Live Demo</div>
     <div class="cs-title">Briefed</div>
-    <div class="cs-subtitle">AI News Summarizer · 15 Words or Less · Claude-Powered</div>
+    <div class="cs-subtitle">AI News Summarizer Â· 15 Words or Less Â· Claude-Powered</div>
     <div class="cs-tags">
       <span class="cs-tag">Claude API</span><span class="cs-tag">AI Product</span><span class="cs-tag">News</span><span class="cs-tag">Live Tool</span>
     </div>
@@ -1628,9 +1628,9 @@
     <p class="cs-body">News articles bury the actual point. Headlines lie or sensationalize. TL;DR summaries give you five bullet points when you needed one sentence. Nobody has time to read 800 words to find the thing that actually matters.</p>
     <div class="cs-divider"></div>
     <div class="cs-section-head">What It Does</div>
-    <p class="cs-body">Paste any article, long email, press release, or wall of text. Briefed calls the Claude API and returns the essential truth of what you just read — in exactly 15 words or less. Not a rewrite of the headline. Not a bulleted summary. The one core claim the whole piece is really about.</p>
+    <p class="cs-body">Paste any article, long email, press release, or wall of text. Briefed calls the Claude API and returns the essential truth of what you just read â€” in exactly 15 words or less. Not a rewrite of the headline. Not a bulleted summary. The one core claim the whole piece is really about.</p>
     <div class="cs-section-head">Design Decisions</div>
-    <p class="cs-body">The 15-word constraint is the product. It forces precision in a way that "summarize this" never does. Playfair Display gives it editorial credibility — it should feel like a sharp editor, not a chatbot. The dark UI with yellow-green signal color (`#e8ff47`) creates a signal-vs-noise visual language that reinforces the core idea.</p>
+    <p class="cs-body">The 15-word constraint is the product. It forces precision in a way that "summarize this" never does. Playfair Display gives it editorial credibility â€” it should feel like a sharp editor, not a chatbot. The dark UI with yellow-green signal color (`#e8ff47`) creates a signal-vs-noise visual language that reinforces the core idea.</p>
     <div class="cs-section-head">How the AI Was Designed</div>
     <p class="cs-body">The 15-word constraint didn&rsquo;t come from intuition &mdash; it came from failure. Early prompts returned summaries that were technically accurate but 40&ndash;60 words long. They weren&rsquo;t wrong, they were just useless for the use case. Tightening the constraint surfaced a new failure mode: the model started truncating instead of distilling, cutting off context rather than identifying the core claim. The final prompt architecture separates those two jobs &mdash; first identify the single most important claim, then express it in 15 words or fewer. The constraint is the product. The prompt engineering is what makes it work.</p>
     <div class="cs-grid-2">
@@ -1644,28 +1644,28 @@
 
 <div class="case-overlay" id="case-replyright">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">âœ• &nbsp;Close</button>
   <div class="case-inner">
-    <div class="cs-eyebrow">AI Tool, 08 / 10 · Live Demo</div>
+    <div class="cs-eyebrow">AI Tool, 08 / 10 Â· Live Demo</div>
     <div class="cs-title">ReplyRight</div>
-    <div class="cs-subtitle">AI Text Rewriter · 3 Tone Modes · Claude-Powered</div>
+    <div class="cs-subtitle">AI Text Rewriter Â· 3 Tone Modes Â· Claude-Powered</div>
     <div class="cs-tags">
       <span class="cs-tag">Claude API</span><span class="cs-tag">AI Product</span><span class="cs-tag">Communication</span><span class="cs-tag">Live Tool</span>
     </div>
     <a href="replyright.html" target="_blank" class="cs-link">Open ReplyRight &#x2192;</a>
     <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">You sent the wrong tone and now the whole conversation is off. Or you didn't send anything at all because you couldn't figure out how to say it. Texts, emails, Slack messages — the register matters as much as the words, and most people don't have a second set of eyes on demand.</p>
+    <p class="cs-body">You sent the wrong tone and now the whole conversation is off. Or you didn't send anything at all because you couldn't figure out how to say it. Texts, emails, Slack messages â€” the register matters as much as the words, and most people don't have a second set of eyes on demand.</p>
     <div class="cs-divider"></div>
     <div class="cs-section-head">What It Does</div>
-    <p class="cs-body">Paste any message — a frustrated text, a passive-aggressive email, something you typed in a heated moment — and ReplyRight returns three rewrites simultaneously: Calm (de-escalates, neutral), Warm (relational, empathetic), and Assertive (direct, no softening). Same point, three different registers. Pick the one that fits.</p>
+    <p class="cs-body">Paste any message â€” a frustrated text, a passive-aggressive email, something you typed in a heated moment â€” and ReplyRight returns three rewrites simultaneously: Calm (de-escalates, neutral), Warm (relational, empathetic), and Assertive (direct, no softening). Same point, three different registers. Pick the one that fits.</p>
     <div class="cs-section-head">Design Decisions</div>
-    <p class="cs-body">Three results served at once instead of asking you to pick a tone first — comparison is the whole value. Color-coded left borders (blue / amber / red) let you scan the register before you read the words. Light UI so the tool disappears into the workflow rather than demanding attention. The app icon and branding stay minimal because this is a utility, not a statement.</p>
+    <p class="cs-body">Three results served at once instead of asking you to pick a tone first â€” comparison is the whole value. Color-coded left borders (blue / amber / red) let you scan the register before you read the words. Light UI so the tool disappears into the workflow rather than demanding attention. The app icon and branding stay minimal because this is a utility, not a statement.</p>
     <div class="cs-section-head">How the AI Was Designed</div>
     <p class="cs-body">The hardest prompt engineering problem in ReplyRight wasn&rsquo;t generating three tones &mdash; it was preventing the model from being sycophantic in Warm mode and aggressive in Assertive mode. Early outputs had Warm rewriting the user&rsquo;s point entirely to avoid conflict, and Assertive dropping all empathy in ways that would escalate rather than resolve. The fix was explicit constraints per tone: Warm preserves the core message and adds relational acknowledgment; Assertive keeps the point but removes apology language only. Same message, calibrated register &mdash; not a different message per tone.</p>
     <div class="cs-grid-2">
-      <div class="cs-stat-box"><div class="cs-stat-num">3</div><div class="cs-stat-label">Tone Modes (Calm · Warm · Assertive)</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">3</div><div class="cs-stat-label">Tone Modes (Calm Â· Warm Â· Assertive)</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">1</div><div class="cs-stat-label">API Call, 3 Results</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">∞</div><div class="cs-stat-label">Use Cases (Texts, Email, Slack)</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">âˆž</div><div class="cs-stat-label">Use Cases (Texts, Email, Slack)</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">0</div><div class="cs-stat-label">Tone Selections Before You See Results</div></div>
     </div>
   </div>
@@ -1688,7 +1688,7 @@
     el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  // Crash Bandicoot letter drop — fires after chomp lands (~1.4s)
+  // Crash Bandicoot letter drop â€” fires after chomp lands (~1.4s)
   (function() {
     var eyebrow = document.querySelector('.hero-eyebrow');
     if (!eyebrow) return;

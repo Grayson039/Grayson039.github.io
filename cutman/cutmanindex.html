@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cutman — Combat Sports Dashboard · Case Study</title>
+<meta name="description" content="Cutman: A combat sports dashboard that consolidates UFC, Boxing, PFL, and ONE Championship into one clean interface.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #E8272A;
+  --gold: #D4A853;
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --border: #222;
+  --text: #F2F2F2;
+  --muted: #888;
+  --green: #22C55E;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── BACK NAV ── */
+.back-nav {
+  position: fixed; top: 20px; left: 24px; z-index: 999;
+}
+.back-nav a {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(5,54,56,0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,138,61,0.25);
+  color: #fff; text-decoration: none;
+  padding: 10px 16px; border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+.back-nav a:hover { background: rgba(5,54,56,0.98); border-color: rgba(255,138,61,0.6); }
+.back-nav a svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── LIVE BANNER ── */
+.live-banner {
+  background: rgba(34,197,94,0.08);
+  border-bottom: 1px solid rgba(34,197,94,0.2);
+  padding: 10px 24px;
+  text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.live-text { font-size: 12px; font-weight: 600; color: var(--green); }
+.live-link {
+  font-size: 12px; font-weight: 700; color: var(--green);
+  text-decoration: none; border-bottom: 1px solid rgba(34,197,94,0.4);
+  transition: border-color 0.2s;
+}
+.live-link:hover { border-color: var(--green); }
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 72px 40px 48px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, #0f0000 0%, var(--bg) 100%);
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 8vw, 96px);
+  letter-spacing: 2px; line-height: 1;
+  color: #fff; margin-bottom: 16px;
+}
+.hero h1 span { color: var(--red); }
+.hero-sub {
+  color: var(--muted); font-size: 16px; line-height: 1.6;
+  max-width: 560px; margin: 0 auto 32px;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 32px;
+}
+.hero-meta-item .label {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+}
+.hero-meta-item .value { font-size: 14px; font-weight: 600; color: #ccc; }
+.hero-meta-item .value.live { color: var(--green); }
+
+/* ── CTA BUTTON ── */
+.cta-wrap {
+  margin-top: 28px;
+  display: flex; justify-content: center;
+}
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--red); color: #fff;
+  text-decoration: none; font-size: 13px; font-weight: 700;
+  padding: 12px 24px; border-radius: 100px;
+  transition: background 0.2s, transform 0.15s;
+}
+.cta-btn:hover { background: #c8191c; transform: translateY(-1px); }
+.cta-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 40px;
+  align-items: start;
+}
+
+/* ── STICKY PHONE COLUMN ── */
+.phone-col {
+  position: sticky;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Screen tabs */
+.screen-tabs {
+  display: flex; gap: 6px;
+}
+.screen-tab {
+  font-size: 11px; font-weight: 600; padding: 6px 14px;
+  border-radius: 100px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--muted);
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.screen-tab.active {
+  background: var(--red); border-color: var(--red); color: #fff;
+}
+
+/* Phone shell */
+.phone-outer {
+  position: relative;
+  filter: drop-shadow(0 32px 64px rgba(232,39,42,0.2));
+}
+.side-l {
+  position: absolute; left: -4px; top: 108px;
+  width: 4px; height: 32px; background: #1A1A1A;
+  border-radius: 4px 0 0 4px; box-shadow: 0 46px 0 #1A1A1A;
+}
+.side-r {
+  position: absolute; right: -4px; top: 130px;
+  width: 4px; height: 64px; background: #1A1A1A;
+  border-radius: 0 4px 4px 0;
+}
+.phone-body {
+  width: 300px; height: 620px;
+  background: #0D0D0D; border-radius: 54px; padding: 10px;
+  border: 1px solid #2A2A2A;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.5);
+}
+.phone-screen-wrap {
+  width: 100%; height: 100%;
+  border-radius: 44px; overflow: hidden; position: relative;
+}
+.phone-frame {
+  width: 100%; height: 100%;
+  border: none; border-radius: 44px;
+  display: block;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); font-size: 12px; font-weight: 600;
+  padding: 7px 18px; border-radius: 100px; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+}
+.theme-toggle:hover { border-color: #444; color: #ccc; }
+
+/* ── CASE STUDY COLUMN ── */
+.cs-col {
+  padding-left: 56px;
+  border-left: 1px solid var(--border);
+}
+
+.cs-section {
+  margin-bottom: 56px;
+}
+.cs-section:last-child { margin-bottom: 0; }
+
+.cs-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--red); margin-bottom: 12px;
+}
+.cs-section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px; letter-spacing: 1px;
+  color: #fff; margin-bottom: 12px; line-height: 1.1;
+}
+.cs-body {
+  font-size: 14px; line-height: 1.75; color: #bbb; margin-bottom: 16px;
+}
+.cs-body:last-child { margin-bottom: 0; }
+
+.cs-divider {
+  height: 1px; background: var(--border); margin: 32px 0;
+}
+
+/* Insight cards */
+.cs-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;
+}
+.cs-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px;
+}
+.cs-card-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--red);
+  background: rgba(232,39,42,0.1); border-radius: 4px;
+  padding: 2px 8px; display: inline-block; margin-bottom: 10px;
+}
+.cs-card-tag.gold { color: var(--gold); background: rgba(212,168,83,0.1); }
+.cs-card-tag.green { color: var(--green); background: rgba(34,197,94,0.1); }
+.cs-card h4 { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.cs-card p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* Quote block */
+.cs-quote {
+  border-left: 3px solid var(--red);
+  padding: 14px 20px;
+  background: rgba(232,39,42,0.04);
+  border-radius: 0 8px 8px 0;
+  margin: 20px 0;
+}
+.cs-quote p {
+  font-size: 14px; line-height: 1.65; color: #ccc; font-style: italic; margin-bottom: 6px;
+}
+.cs-quote cite {
+  font-size: 11px; font-weight: 600; color: var(--muted); font-style: normal;
+  letter-spacing: 0.05em;
+}
+
+/* Decision list */
+.cs-decisions {
+  display: flex; flex-direction: column; gap: 14px; margin-top: 20px;
+}
+.cs-decision {
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.cs-decision-arrow {
+  color: var(--red); font-size: 16px; flex-shrink: 0; margin-top: 1px;
+}
+.cs-decision-body h5 {
+  font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px;
+}
+.cs-decision-body p {
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+}
+
+/* Stats row */
+.cs-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px;
+}
+.cs-stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; text-align: center;
+}
+.cs-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px; color: var(--red); line-height: 1; margin-bottom: 4px;
+}
+.cs-stat-num.green { color: var(--green); }
+.cs-stat-label { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* Status badge */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 100px; padding: 8px 16px; margin-top: 16px;
+}
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+.status-text { font-size: 12px; font-weight: 600; color: var(--green); }
+
+/* Stack pills */
+.stack-pills {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+}
+.stack-pill {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 12px; border-radius: 100px;
+}
+.stack-pill.highlight {
+  color: var(--gold); border-color: rgba(212,168,83,0.3);
+  background: rgba(212,168,83,0.06);
+}
+
+/* Proof block */
+.proof-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; margin-top: 16px;
+  display: flex; gap: 14px; align-items: center;
+}
+.proof-icon { font-size: 28px; flex-shrink: 0; }
+.proof-text h5 { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.proof-text p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.proof-text a { color: var(--gold); text-decoration: none; }
+.proof-text a:hover { text-decoration: underline; }
+
+/* Deploy row */
+.deploy-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;
+}
+.deploy-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px;
+}
+.deploy-card .dc-label {
+  font-size: 9px; font-weight: 700; color: var(--muted);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px;
+}
+.deploy-card .dc-value {
+  font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px;
+}
+.deploy-card .dc-sub {
+  font-size: 11px; color: var(--muted);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .main {
+    grid-template-columns: 1fr;
+    padding: 32px 20px;
+  }
+  .phone-col { position: static; margin-bottom: 48px; }
+  .cs-col { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 40px; }
+  .hero { padding: 80px 20px 40px; }
+  .cs-stats { grid-template-columns: 1fr 1fr; }
+  .deploy-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="back-nav">
+  <a href="../">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<!-- LIVE BANNER -->
+<div class="live-banner">
+  <div class="live-dot"></div>
+  <span class="live-text">Live PWA —</span>
+  <a href="https://willgraysondesign.com/cutman/app.html" target="_blank" class="live-link">willgraysondesign.com/cutman/app.html ↗</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Case Study · Personal Project</div>
+  <h1>Cut<span>man</span></h1>
+  <p class="hero-sub">One app. Every promotion. All the fights. A combat sports dashboard that replaces five fragmented sources with one fan-first interface — designed and shipped as a live PWA.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="label">Role</div><div class="value">Design · Engineering</div></div>
+    <div class="hero-meta-item"><div class="label">Platform</div><div class="value">PWA · iOS · Android</div></div>
+    <div class="hero-meta-item"><div class="label">Stack</div><div class="value">Python · Flask · PWA</div></div>
+    <div class="hero-meta-item"><div class="label">Status</div><div class="value live">Live</div></div>
+  </div>
+  <div class="cta-wrap">
+    <a href="https://willgraysondesign.com/cutman/app.html" target="_blank" class="cta-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Open Live App
+    </a>
+  </div>
+  <div style="margin-top:24px">
+    <a href="prototype.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:100px;border:1.5px solid #E8272A;color:#E8272A;font-size:13px;font-weight:700;text-decoration:none;transition:background 0.15s,color 0.15s;font-family:inherit" onmouseover="this.style.background='#E8272A';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#E8272A'">
+      Try Full Prototype
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- MAIN TWO-COLUMN -->
+<div class="main">
+
+  <!-- STICKY PHONE -->
+  <div class="phone-col">
+    <div class="screen-tabs">
+      <button class="screen-tab active" id="tab-home" data-goto="home">Home</button>
+      <button class="screen-tab" id="tab-fightCard" data-goto="fightCard">Fight Card</button>
+      <button class="screen-tab" id="tab-fighter" data-goto="fighter">Fighter</button>
+    </div>
+
+    <div class="phone-outer">
+      <div class="side-l"></div>
+      <div class="side-r"></div>
+      <div class="phone-body">
+        <div id="phone-screen" style="width:100%;height:100%;border-radius:44px;overflow:hidden;position:relative;"></div>
+      </div>
+    </div>
+
+    <button class="theme-toggle">☾ Toggle Theme</button>
+  </div>
+
+  <!-- CASE STUDY -->
+  <div class="cs-col">
+
+    <!-- THE PROBLEM -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">The Problem</div>
+      <h2>Five Apps to Follow One Sport</h2>
+      <p class="cs-body">I follow all of it — UFC, boxing, BKFC, PFL, ONE Championship, Combate, RIZIN. And every single time I want to know when the next event is, where to watch, who's on the card, or what the odds are — I'm bouncing between five different apps. None of them cover all the promotions. None of them surface fighter news alongside the fight card.</p>
+      <p class="cs-body">There is no hub for combat sports fans that spans all disciplines. So I built one.</p>
+
+      <div class="cs-cards">
+        <div class="cs-card">
+          <div class="cs-card-tag">Pain Point</div>
+          <h4>No cross-promotion coverage</h4>
+          <p>UFC.com covers UFC only. ESPN buries fight cards in general sports noise. Boxing, BKFC, and ONE fans have no home at all.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag">Pain Point</div>
+          <h4>Fighter context is scattered</h4>
+          <p>Fighter bios, records, photos, and stats live across Wikipedia, Tapology, and Sherdog — none of it connected or presented for a fan.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- RESEARCH -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Research</div>
+      <h2>What Fight Fans Actually Do</h2>
+      <p class="cs-body">Before designing a single screen, I mapped how hardcore fight fans actually consume combat sports. The pattern was consistent: fans context-switch constantly. They start on Twitter/X to see who's talking about a fight, bounce to Google to find when it's on, open UFC.com for the card details, check ESPN for odds, and land on Reddit to find out what channel the prelims are on. Every fight week is five apps minimum.</p>
+
+      <div class="cs-quote">
+        <p>"I have six apps on my phone just to keep up with fights. Tapology for cards, Sherdog for fighter records, ESPN for news, and I still end up Googling half of it."</p>
+        <cite>— Pattern from combat sports Reddit / forum research</cite>
+      </div>
+
+      <p class="cs-body">The second insight came from looking at what the existing apps optimized for. UFC.com is a promotional vehicle, not a fan tool. ESPN serves casual fans — it buries MMA inside a generalist sports feed. Tapology has the data but the interface is built for data, not for fans. Nobody built the product that thinks like a fan first.</p>
+
+      <div class="cs-cards">
+        <div class="cs-card">
+          <div class="cs-card-tag gold">Insight</div>
+          <h4>Fans don't need more sources</h4>
+          <p>Every piece of information already exists somewhere. The gap is aggregation and hierarchy — one place, surfaced for fans, not for promoters.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag gold">Insight</div>
+          <h4>Density ≠ usefulness</h4>
+          <p>Combat sports fans want everything. But cramming it all in kills usability. Every screen had to earn its information — progressive disclosure, not data dumps.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- HOME SCREEN -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Screen 01 · Home</div>
+      <h2>The Next Fight, Above the Fold</h2>
+      <p class="cs-body">The home screen has one job: tell you what's coming up and what you need to know before you go deeper. The hero card always shows the next major event — promotion, fighters, date, venue, network, and PPV cost in one glance. Promotion filter chips let boxing fans hide UFC cards instantly. No tapping around to find out what's on.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Hero card takes 40% of the screen</h5>
+            <p>The next event is the most time-sensitive piece of information. It gets the most real estate. Everything else lives below it.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Promotion filter chips, not a dropdown</h5>
+            <p>Boxing fans shouldn't have to scroll through UFC cards. Filter chips let you narrow by promotion in one tap — UFC, Boxing, PFL, ONE, BKFC.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Color-coded promo badges</h5>
+            <p>UFC in red, Boxing in purple, PFL in green, ONE in gold, BKFC in orange. Promotion identity from a scan, not a read.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- FIGHT CARD SCREEN -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Screen 02 · Fight Card</div>
+      <h2>Every Fight, Ranked by Importance</h2>
+      <p class="cs-body">The fight card screen surfaces the full event card in a scannable list. Main card at top, prelims collapsible below. Each fight row shows fighters, rankings, and live betting odds inline. Boxing cards — which don't expose per-bout lineup data — show the main event fighters as tappable bio cards with a search bar to pull any fighter's full Sherdog profile.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Prelims are collapsible</h5>
+            <p>Casual fans care about the main card. Die-hards care about everything. Prelims collapse by default — one tap to open.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Boxing events degrade gracefully</h5>
+            <p>Tapology doesn't expose individual boxing bouts the way MMA cards are listed. Rather than show nothing, the main event fighters become tappable profile cards with a fighter search bar below.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- FIGHTER PROFILE -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Screen 03 · Fighter Profile</div>
+      <h2>Record, Stats, Bio — In That Order</h2>
+      <p class="cs-body">Fighter profiles are scraped live from Sherdog — full record, win method breakdown, fight history, physical stats, and photo. The tab order is intentional: fans want the record first. The win method breakdown (KO/TKO, SUB, DEC) lives on the hero card because a fighter's style is visible in those three numbers before you read a single fight.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Fighter photos from Sherdog</h5>
+            <p>Scraped via the itemprop="image" selector with graceful fallback. Real faces make fighter cards feel like a sports app, not a spreadsheet.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Win method on the hero, not in a tab</h5>
+            <p>KO/TKO, SUB, DEC — color coded red, gold, green. A fan shouldn't have to navigate to understand a fighter's style.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Full fight history in-app</h5>
+            <p>Every result, opponent, event, method, round, and time — scraped live, no stale database. Fans get what they'd find on Sherdog without leaving the app.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- THE BUILD -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Engineering</div>
+      <h2>Scrapers, Flask, and a $0 Deploy</h2>
+      <p class="cs-body">The backend is a Python/Flask API deployed on Render's free tier, scraping fight data from Wikipedia, Tapology, and Sherdog using BeautifulSoup. The frontend is a single-file PWA — vanilla JS, no framework, no build step — hosted on GitHub Pages via a custom domain. Total infrastructure cost: $0/month.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Wikipedia for UFC scheduled events</h5>
+            <p>The Wikipedia UFC events list is reliably structured and human-maintained. More stable than scraping UFC.com directly.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Tapology for cross-promotion fight cards</h5>
+            <p>Tapology covers MMA, boxing, kickboxing, and Muay Thai across dozens of promotions. The MAJOR_PROMOS whitelist filters to the events that matter.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Sherdog for fighter profiles</h5>
+            <p>Full records, fight history, physical stats, and photos — Sherdog is the canonical source for fighter data and the scraper handles their HTML reliably.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>RSS feeds for news</h5>
+            <p>9 sources — MMA Fighting, Sherdog, ESPN MMA, Tapology, Bloody Elbow, MMA Mania, ESPN Boxing, Bad Left Hook, The Ring. Merged and sorted by published date.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack-pills">
+        <span class="stack-pill highlight">Python 3</span>
+        <span class="stack-pill highlight">Flask</span>
+        <span class="stack-pill highlight">BeautifulSoup4</span>
+        <span class="stack-pill highlight">feedparser</span>
+        <span class="stack-pill">Render (free tier)</span>
+        <span class="stack-pill">GitHub Pages</span>
+        <span class="stack-pill">Vanilla JS PWA</span>
+        <span class="stack-pill">flask-cors</span>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- TECHNICAL CHALLENGES -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Technical Challenges</div>
+      <h2>Real Problems, Real Trade-offs</h2>
+      <p class="cs-body">Building on a $0 infrastructure budget means confronting the constraints honestly. These were the non-trivial problems worth documenting.</p>
+
+      <div class="cs-decisions">
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Render Free Tier Cold Starts</h5>
+            <p>Render's free tier spins down after 15 minutes of inactivity. First request after spin-down takes 20–40 seconds. The app handles this with a visible loading state rather than a broken experience &mdash; a deliberate UX decision to be honest with the user instead of hiding latency behind a spinner that times out.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Scraper Fragility vs. API Reliability</h5>
+            <p>Every scraper is a bet against a site redesign. Wikipedia's structure is stable &mdash; it's human-maintained and semantically marked up. Tapology and Sherdog change layouts occasionally. The scraper architecture uses CSS selectors with fallback patterns rather than brittle positional selectors, reducing breakage frequency without over-engineering.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Cross-Origin in a Single-File PWA</h5>
+            <p>The frontend is static HTML on GitHub Pages. The backend is on a different domain. CORS headers on the Flask API + flask-cors solve this, but required understanding how browsers enforce same-origin policy for PWA fetch requests &mdash; not a problem that shows up in localhost development.</p>
+          </div>
+        </div>
+        <div class="cs-decision">
+          <div class="cs-decision-arrow">→</div>
+          <div class="cs-decision-body">
+            <h5>Boxing Cards Degrade Gracefully</h5>
+            <p>Tapology exposes MMA cards per-bout but boxing events don't have the same structured data. Rather than show a broken card or nothing, boxing events surface the main event fighters as tappable profile cards with a search bar. The app tells the user what it knows, not what it doesn't.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- WHERE IT STANDS -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Build Status</div>
+      <h2>Designed, Built, and Live.</h2>
+      <p class="cs-body">Cutman is a fully deployed PWA — installable to your iOS home screen, served from GitHub Pages on a custom domain, with a live Python backend on Render. The entire product, from scraper to UI, was designed and built end-to-end as a solo project.</p>
+
+      <div class="proof-block">
+        <div class="proof-icon">🚀</div>
+        <div class="proof-text">
+          <h5>Live at willgraysondesign.com/cutman/app.html</h5>
+          <p>Open on iPhone, tap Share → Add to Home Screen. Installs as a standalone app. <a href="https://willgraysondesign.com/cutman/app.html" target="_blank">Try it now →</a></p>
+        </div>
+      </div>
+
+      <div class="deploy-row">
+        <div class="deploy-card">
+          <div class="dc-label">Frontend</div>
+          <div class="dc-value">GitHub Pages</div>
+          <div class="dc-sub">willgraysondesign.com/cutman/</div>
+        </div>
+        <div class="deploy-card">
+          <div class="dc-label">Backend</div>
+          <div class="dc-value">Render Free Tier</div>
+          <div class="dc-sub">cutman-hyf5.onrender.com</div>
+        </div>
+      </div>
+
+      <div class="cs-stats">
+        <div class="cs-stat">
+          <div class="cs-stat-num">7</div>
+          <div class="cs-stat-label">Screens Built</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-num">9</div>
+          <div class="cs-stat-label">News Sources</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-num">5+</div>
+          <div class="cs-stat-label">Apps Replaced</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-num green">$0</div>
+          <div class="cs-stat-label">Monthly Infrastructure</div>
+        </div>
+      </div>
+
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <div class="status-text">Live PWA · Installable on iOS + Android</div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- WHAT THIS DEMONSTRATES -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">For Hiring Managers</div>
+      <h2>What Cutman Demonstrates</h2>
+      <p class="cs-body">Cutman is a solo end-to-end build — no team, no boilerplate, no tutorial. Everything from scraper architecture to PWA manifest to production deploy was designed and shipped by one person. That's the point.</p>
+
+      <div class="cs-cards">
+        <div class="cs-card">
+          <div class="cs-card-tag">Engineering</div>
+          <h4>Full-stack from scratch</h4>
+          <p>Python backend, REST API, multi-source scrapers, CORS configuration, PWA service worker, and production deploy — all built without a framework or starter template.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag">Engineering</div>
+          <h4>Real constraints, real decisions</h4>
+          <p>$0 infrastructure budget forced real engineering trade-offs: scraper resilience, cold start UX, graceful degradation for missing data. Not a greenfield sandbox.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag gold">Design</div>
+          <h4>Fan-first information hierarchy</h4>
+          <p>Every layout decision prioritized how fans actually consume combat sports — not how promoters want to present them. The research drove the design, not aesthetic preference.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-card-tag green">Product</div>
+          <h4>Shipped and maintained</h4>
+          <p>Live at a real domain, installable as a PWA, and actively updated. Not a mockup. Not a Figma file. A product you can open right now.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var CM = (function () {
+  'use strict';
+  var D = {
+    _name: 'dark',
+    bg: '#0A0A0A', card: '#141414', card2: '#1C1C1C',
+    primary: '#E8272A', gold: '#D4A853',
+    text: '#F2F2F2', sub: '#CCCCCC', muted: '#9A9A9A',
+    border: '#242424', chip: '#1A1A1A', chipTx: '#999999',
+    overlay: 'rgba(0,0,0,0.8)', live: '#22C55E', win: '#22C55E', loss: '#E8272A', draw: '#F59E0B'
+  };
+  var L = {
+    _name: 'light',
+    bg: '#F4F4F4', card: '#FFFFFF', card2: '#F0F0F0',
+    primary: '#DC2626', gold: '#A67C00',
+    text: '#0F0F0F', sub: '#333333', muted: '#666666',
+    border: '#E5E5E5', chip: '#EEEEEE', chipTx: '#555555',
+    overlay: 'rgba(0,0,0,0.5)', live: '#16A34A', win: '#16A34A', loss: '#DC2626', draw: '#D97706'
+  };
+  var T = {
+    sans: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    sz: { '2xs': '8px', xs: '9px', sm: '10px', base: '11px', md: '13px', lg: '15px', xl: '18px', '2xl': '24px', '3xl': '32px' },
+    wt: { reg: '400', med: '500', semi: '600', bold: '700', heavy: '800', black: '900' }
+  };
+  var R = { sm: '6px', md: '10px', lg: '14px', xl: '18px', pill: '100px' };
+  var S = { xs: '8px', sm: '16px', md: '24px', lg: '32px', xl: '16px', section: '24px' };
+  var c = {};
+  c.statusBar = function (th) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px 4px;background:' + th.bg + ';font-size:12px;font-weight:600;color:' + th.text + ';font-family:' + T.sans + ';flex-shrink:0"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><svg width="16" height="12" viewBox="0 0 16 12" fill="' + th.text + '"><rect x="0" y="4" width="3" height="8" rx="1" opacity="0.3"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" opacity="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" opacity="0.7"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="' + th.text + '" stroke-opacity="0.35"/><rect x="22" y="3.5" width="2.5" height="5" rx="1" fill="' + th.text + '" opacity="0.35"/><rect x="2" y="2" width="15" height="8" rx="2" fill="' + th.primary + '"/></svg></div></div>';
+  };
+  c.notch = function () {
+    return '<div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:#0D0D0D;border-radius:0 0 22px 22px;z-index:10;pointer-events:none"></div>';
+  };
+  c.navBar = function (th, activeIdx) {
+    var items = [
+      ['Home',    'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
+      ['Cards',   'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
+      ['Fighters','M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
+      ['News',    'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6'],
+      ['Me',      'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z']
+    ];
+    var ids = ['home', 'fightCard', 'fighter', 'home', 'home'];
+    return '<div style="position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;padding:10px 0 18px;background:' + th.bg + ';border-top:1px solid ' + th.border + ';z-index:20">' +
+      items.map(function (item, i) {
+        var active = i === activeIdx;
+        return '<div data-goto="' + ids[i] + '" style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:' + (active ? th.text : th.muted) + ';min-width:44px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (active ? '2.2' : '1.7') + '" stroke-linecap="round" stroke-linejoin="round"><path d="' + item[1] + '"/></svg><span style="font-size:9px;font-weight:' + (active ? T.wt.semi : T.wt.med) + ';font-family:' + T.sans + '">' + item[0] + '</span></div>';
+      }).join('') + '</div>';
+  };
+  c.backBtn = function (th, label, goto) {
+    var attr = goto ? ('data-goto="' + goto + '"') : 'data-back="1"';
+    return '<div ' + attr + ' style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:' + th.text + ';font-size:13px;font-weight:' + T.wt.semi + ';font-family:' + T.sans + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>' + (label !== undefined ? label : '') + '</div>';
+  };
+  c.promoBadge = function (promo) {
+    var styles = { UFC:'background:#200000;border:1px solid #E8272A;color:#E8272A', BOXING:'background:#0A0A1E;border:1px solid #818CF8;color:#818CF8', PFL:'background:#001A08;border:1px solid #22C55E;color:#4ADE80', ONE:'background:#1A1400;border:1px solid #D4A853;color:#D4A853', BELLATOR:'background:#0C0018;border:1px solid #A855F7;color:#C084FC' };
+    return '<span style="font-size:9px;font-weight:800;letter-spacing:0.08em;padding:2px 8px;border-radius:4px;' + (styles[promo] || 'background:#111;border:1px solid #555;color:#999') + '">' + promo + '</span>';
+  };
+  c.liveBadge = function () {
+    return '<span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(34,197,94,0.12);border:1px solid #22C55E;color:#22C55E;display:inline-flex;align-items:center;gap:4px;flex-shrink:0"><span style="width:5px;height:5px;border-radius:50%;background:#22C55E"></span>LIVE</span>';
+  };
+  c.chip = function (th, label, active, setKey, setValue) {
+    var attr = (setKey && setValue !== undefined) ? ('data-setstate="' + setKey + '|' + setValue + '"') : '';
+    return '<div ' + attr + ' style="flex-shrink:0;padding:6px 14px;border-radius:' + R.pill + ';font-size:11px;font-family:' + T.sans + ';font-weight:' + (active ? T.wt.semi : T.wt.med) + ';cursor:pointer;background:' + (active ? th.primary : th.chip) + ';color:' + (active ? '#FFF' : th.chipTx) + ';border:1px solid ' + (active ? th.primary : th.border) + '">' + label + '</div>';
+  };
+  c.sectionHeader = function (th, title, action, goto) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:0 ' + S.xl + ';margin-bottom:10px"><div style="font-size:16px;font-weight:' + T.wt.bold + ';color:' + th.text + ';font-family:' + T.sans + '">' + title + '</div>' + (action ? '<div ' + (goto ? 'data-goto="' + goto + '"' : '') + ' style="font-size:11px;color:' + th.sub + ';font-weight:' + T.wt.med + ';cursor:pointer">' + action + '</div>' : '') + '</div>';
+  };
+  c.fightRow = function (th, fight) {
+    var isTitle = !!fight.title, isMain = !!fight.main, isTBD = !fight.b || fight.b === 'TBD', isCanceled = !!fight.canceled;
+    var aIsChamp = fight.aRank && fight.aRank.toLowerCase().indexOf('champion') >= 0;
+    var bIsChamp = !isTBD && fight.bRank && fight.bRank.toLowerCase().indexOf('champion') >= 0;
+    var sameGym = fight.aGym && fight.bGym && fight.aGym === fight.bGym;
+    var hasOdds = !isTBD && (fight.aOdds !== undefined && fight.bOdds !== undefined);
+    function oddsDisplay(odds) { if (odds === undefined) return null; return { formatted: odds > 0 ? '+' + odds : String(odds), color: odds < 0 ? th.muted : th.live }; }
+    var aO = oddsDisplay(fight.aOdds), bO = oddsDisplay(fight.bOdds);
+    return '<div data-goto="fighter" style="padding:12px ' + S.xl + ';border-bottom:1px solid ' + th.border + ';cursor:pointer;background:' + (isTitle ? (th._name === 'dark' ? 'rgba(212,168,83,0.06)' : 'rgba(212,168,83,0.07)') : 'transparent') + ';' + (isCanceled ? 'opacity:0.4;' : '') + '">' +
+      '<div style="display:flex;align-items:center;gap:7px;margin-bottom:7px">' + (isTitle ? '<span style="font-size:9px;color:' + th.gold + ';font-weight:700;letter-spacing:0.05em">🏆 ' + fight.weightClass.toUpperCase() + ' CHAMPIONSHIP</span>' : '<span style="font-size:9px;color:' + th.muted + ';font-weight:500;letter-spacing:0.07em;text-transform:uppercase">' + fight.weightClass + '</span>') + '<span style="font-size:9px;color:' + th.muted + ';font-weight:500">· ' + (fight.rounds || 3) + ' Rds</span>' + (sameGym ? '<span style="margin-left:auto;font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);color:#F59E0B;letter-spacing:0.04em">⚠ SAME GYM</span>' : '') + (isCanceled ? '<span style="margin-left:auto;font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(155,155,155,0.1);border:1px solid rgba(155,155,155,0.25);color:' + th.muted + ';letter-spacing:0.06em">CANCELED</span>' : '') + '</div>' +
+      '<div style="display:flex;align-items:center"><div style="flex:1"><div style="font-size:' + (isMain ? '15px' : '13px') + ';font-weight:' + T.wt.heavy + ';color:' + (aIsChamp ? th.gold : th.text) + ';line-height:1.2;font-family:' + T.sans + '">' + fight.a + '</div>' + (fight.aRank ? '<div style="font-size:9px;color:' + th.muted + ';font-weight:500;margin-top:2px">' + fight.aRank + '</div>' : '') + '</div>' +
+      '<div style="padding:0 12px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px"><div style="font-size:10px;font-weight:800;color:' + th.muted + ';letter-spacing:0.05em">VS</div>' + (hasOdds && aO && bO ? '<div style="background:rgba(255,255,255,0.04);border:1px solid ' + th.border + ';border-radius:100px;padding:2px 8px;display:flex;align-items:center;gap:4px;white-space:nowrap"><span style="font-size:9px;font-weight:700;color:' + aO.color + ';font-variant-numeric:tabular-nums">' + aO.formatted + '</span><span style="font-size:8px;color:rgba(255,255,255,0.2)">|</span><span style="font-size:9px;font-weight:700;color:' + bO.color + ';font-variant-numeric:tabular-nums">' + bO.formatted + '</span></div>' : '') + '</div>' +
+      '<div style="flex:1;text-align:right">' + (isTBD ? '<div style="font-size:' + (isMain ? '15px' : '13px') + ';font-weight:' + T.wt.heavy + ';color:' + th.muted + ';line-height:1.2;font-family:' + T.sans + ';font-style:italic">TBD</div>' : '<div style="font-size:' + (isMain ? '15px' : '13px') + ';font-weight:' + T.wt.heavy + ';color:' + (bIsChamp ? th.gold : th.text) + ';line-height:1.2;font-family:' + T.sans + '">' + fight.b + '</div>') + (!isTBD && fight.bRank ? '<div style="font-size:9px;color:' + th.muted + ';font-weight:500;margin-top:2px">' + fight.bRank + '</div>' : '') + '</div></div></div>';
+  };
+  c.resultRow = function (th, fight) {
+    var resultColor = fight.result === 'W' ? th.win : fight.result === 'L' ? th.loss : th.draw;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px ' + S.xl + ';border-bottom:1px solid ' + th.border + '"><div style="width:24px;height:24px;border-radius:6px;background:' + resultColor + '20;border:1.5px solid ' + resultColor + ';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:10px;font-weight:800;color:' + resultColor + '">' + fight.result + '</span></div><div style="flex:1"><div style="font-size:12px;font-weight:' + T.wt.bold + ';color:' + th.text + '">' + fight.opponent + '</div><div style="font-size:10px;color:' + th.muted + ';margin-top:1px">' + fight.method + ' · ' + fight.event + '</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:10px;color:' + th.muted + '">' + fight.date + '</div></div></div>';
+  };
+  function nav(screens, start, containerId, opts) {
+    var state = { cur: start, dark: true, history: [] };
+    if (opts && opts.state) { Object.keys(opts.state).forEach(function (k) { state[k] = opts.state[k]; }); }
+    function render() {
+      var th = state.dark ? D : L;
+      var el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = screens[state.cur] ? screens[state.cur](th, state) : '<div style="color:red;padding:20px">Screen not found: ' + state.cur + '</div>';
+      el.style.background = th.bg;
+      el.style.backgroundImage = 'none';
+      if (opts && opts.onRender) opts.onRender(state, th);
+    }
+    window.cmGo = function (id) { if (!screens[id]) return; state.history.push(state.cur); state.cur = id; render(); };
+    window.cmBack = function () { if (state.history.length) { state.cur = state.history.pop(); render(); } };
+    window.cmSetState = function (k, v) { state[k] = v; render(); };
+    window.cmToggleState = function (k) { state[k] = !state[k]; render(); };
+    window.cmToggleTheme = function () { state.dark = !state.dark; render(); };
+    window.cmState = state;
+    window.cmRender = render;
+    render();
+  }
+  return { D: D, L: L, T: T, R: R, S: S, c: c, nav: nav };
+})();
+</script>
+<script>
+(function () {
+  var T = CM.T, S = CM.S, R = CM.R, c = CM.c;
+
+  /* ── HOME DATA ── */
+  var NEXT_EVENT = {
+    promo:'UFC', name:'UFC 315', mainEvent:'Jones vs. Miocic',
+    subtitle:'Heavyweight Championship · 5 Rounds',
+    date:'Sat · May 31, 2026', venue:'Madison Square Garden',
+    network:'ESPN+', ppvPrice:'$79.99', daysAway:10
+  };
+  var THIS_WEEK = [
+    { promo:'UFC',    name:'UFC 315',            sub:'Jones vs. Miocic',         date:'May 31', net:'ESPN+ PPV',  img:'ufc%20315.jpg' },
+    { promo:'BOXING', name:'Canelo vs. Crawford', sub:'Super Middleweight Title',  date:'Jun 1',  net:'DAZN PPV',  color:'#06061E' },
+    { promo:'PFL',    name:'PFL Playoffs 1',      sub:'LW & Featherweight',        date:'Jun 3',  net:'ESPN2',     color:'#001A08' },
+    { promo:'ONE',    name:'ONE Fight Night 28',  sub:'Superlek vs. Nguyen',       date:'Jun 7',  net:'Prime',     color:'#1A1400' }
+  ];
+  var NEWS = [
+    { source:'ESPN MMA',     time:'2h',  headline:'Jon Jones posts MSG training footage — "I\'ve never been more ready for anything in my life"', hot:true },
+    { source:'MMA Fighting', time:'4h',  headline:'Canelo vs. Crawford undercard announced — four world title fights added to June 1 card' },
+    { source:'MMA Junkie',   time:'6h',  headline:'UFC releases updated P4P rankings ahead of UFC 315 — Ilia Topuria climbs to No. 1' },
+    { source:'The Athletic', time:'9h',  headline:'Exclusive: UFC in advanced talks with Ryan Garcia for MMA debut, Q4 2026 target date' }
+  ];
+
+  /* ── FIGHT CARD DATA ── */
+  var EVENT = {
+    promo:'UFC', name:'UFC 315',
+    date:'Saturday, May 31, 2026', time:'Main Card 10pm ET · Prelims 8pm ET',
+    venue:'Madison Square Garden', city:'New York, NY',
+    network:'ESPN+', ppvPrice:'$79.99'
+  };
+  var MAIN_CARD = [
+    { a:'Jon Jones',       aRank:'Champion', aGym:'Jackson-Wink MMA',  aOdds:-350, b:'Stipe Miocic',        bRank:'#1 Contender', bGym:'Strong Style MMA',    bOdds:+280, weightClass:'Heavyweight',      rounds:5, title:true, main:true },
+    { a:'Leon Edwards',    aRank:'Champion', aGym:'BCSA',              aOdds:-280, b:'Shavkat Rakhimov',    bRank:'#3 Contender', bGym:'Tiger Muay Thai',     bOdds:+225, weightClass:'Welterweight',     rounds:5, title:true },
+    { a:'Alex Pereira',    aRank:'#1',       aGym:'Glory MMA',         aOdds:-400, b:'Khalil Rountree Jr.', bRank:'#4',           bGym:'Xtreme Couture',      bOdds:+310, weightClass:'Light Heavyweight',rounds:3 },
+    { a:'Sean Strickland', aRank:'#2',       aGym:'Xtreme Couture',    aOdds:-150, b:'Paulo Costa',         bRank:'#5',           bGym:'Team Luta Livre',     bOdds:+125, weightClass:'Middleweight',     rounds:3 },
+    { a:'Val. Shevchenko', aRank:'#1',       aGym:'Tiger Muay Thai',   aOdds:+150, b:'Alexa Grasso',        bRank:'Champion',     bGym:'Science of Fighting', bOdds:-180, weightClass:"Women's Flyweight",rounds:3 }
+  ];
+  var PRELIMS = [
+    { a:'Merab Dvalishvili', aRank:'Champion',    aGym:'Tiger Muay Thai', aOdds:-220, b:'Henry Cejudo',    bRank:'Former Champ', bGym:'GAMMA',       bOdds:+180, weightClass:'Bantamweight',  rounds:5, title:true },
+    { a:'Brian Ortega',      aRank:'#3',          aGym:'Gracie Hermosa',  aOdds:+135, b:'Yair Rodriguez',  bRank:'#2',           bGym:'Entram Gym',  bOdds:-165, weightClass:'Featherweight', rounds:3 },
+    { a:'Mateusz Gamrot',    aRank:'#6',          aGym:'AKA Thailand',    aOdds:+165, b:'Arman Tsarukyan',  bRank:'#4',           bGym:'AKA Thailand',bOdds:-200, weightClass:'Lightweight',   rounds:3 }
+  ];
+
+  /* ── FIGHTER DATA ── */
+  var FIGHTER = {
+    name:'Jon Jones', nickname:'"Bones"', record:'28–1–0', nc:'1 NC',
+    weightClass:'Heavyweight', status:'UFC Heavyweight Champion',
+    nationality:'🇺🇸 American', gym:'Jackson-Wink MMA', stance:'Orthodox',
+    age:38, height:'6\'4"', weight:'248 lbs', reach:'84.5"',
+    wins:{ ko:10, sub:7, dec:11 }
+  };
+  var RECORD = [
+    { result:'W', opponent:'Stipe Miocic',        method:'TKO R2', event:'UFC 309', date:'Nov 2024' },
+    { result:'W', opponent:'Ciryl Gane',           method:'SUB R1', event:'UFC 285', date:'Mar 2023' },
+    { result:'W', opponent:'Dominick Reyes',       method:'DEC',    event:'UFC 247', date:'Feb 2020' },
+    { result:'W', opponent:'Thiago Santos',        method:'DEC',    event:'UFC 239', date:'Jul 2019' },
+    { result:'W', opponent:'Anthony Smith',        method:'TKO R5', event:'UFC 235', date:'Mar 2019' },
+    { result:'L', opponent:'Matt Hamill',          method:'DQ R1',  event:'UFC 121', date:'Dec 2009' }
+  ];
+  var UPCOMING = { opponent:'Stipe Miocic II', event:'UFC 315', date:'May 31, 2026', venue:'MSG', network:'ESPN+ PPV' };
+  var CORNER = {
+    headCoach:{ name:'Greg Jackson', role:'Head Coach · Gameplan', gym:'Jackson-Wink MMA' },
+    crew:[
+      { name:'Mike Winkeljohn', role:'Striking Coach' },
+      { name:'Brandon Gibson',  role:'Assistant Coach' },
+      { name:'Ryan Hall',       role:'Grappling Specialist' }
+    ],
+    connections:[
+      { name:'Carlos Condit',  weightClass:'Welterweight' },
+      { name:'Holly Holm',     weightClass:'W. Bantamweight' },
+      { name:'Max Holloway',   weightClass:'Featherweight' },
+      { name:'Donald Cerrone', weightClass:'Lightweight' }
+    ]
+  };
+
+  /* ── SCREENS ── */
+  function sHome(th) {
+    var filter = cmState.homeFilter || 'All';
+    var chips = ['All','UFC','Boxing','PFL','ONE','Bellator'];
+    return '<div style="height:100%;display:flex;flex-direction:column;position:relative;font-family:'+T.sans+'">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px '+S.xl+' 10px;flex-shrink:0">' +
+        '<div>' +
+          '<div style="font-size:18px;font-weight:800;color:'+th.text+';letter-spacing:-0.02em;line-height:1">CUTMAN <span style="color:'+th.primary+'">🥊</span></div>' +
+          '<div style="font-size:9px;font-weight:600;color:'+th.muted+';letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">All Combat Sports</div>' +
+        '</div>' +
+        '<div style="position:relative;cursor:pointer;padding:4px">' +
+          '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="'+th.muted+'" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>' +
+          '<div style="position:absolute;top:3px;right:3px;width:7px;height:7px;background:'+th.primary+';border-radius:50%;border:1.5px solid '+th.bg+'"></div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="flex:1;overflow-y:auto;padding-bottom:80px;scrollbar-width:none">' +
+        '<div data-goto="fightCard" style="margin:4px '+S.xl+' '+S.section+';border-radius:'+R.xl+';overflow:hidden;cursor:pointer;' +
+          'background-color:#1A0000;' +
+          'background-image:linear-gradient(145deg,rgba(40,0,0,0.8) 0%,rgba(10,0,0,0.65) 40%,rgba(0,0,0,0.88) 100%),url(stipe%20jones.webp);' +
+          'background-size:100% 100%,cover;background-position:center,center top;' +
+          'position:relative;height:196px;border:1px solid rgba(232,39,42,0.22);box-shadow:0 8px 32px rgba(232,39,42,0.15)">' +
+          '<div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(232,39,42,0.15);filter:blur(40px);pointer-events:none"></div>' +
+          '<div style="position:absolute;inset:0;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+              '<div style="display:flex;align-items:center;gap:8px">'+c.promoBadge(NEXT_EVENT.promo)+'<span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.5)">'+NEXT_EVENT.date+'</span></div>' +
+              '<div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.12);border-radius:'+R.pill+';padding:3px 10px;font-size:10px;color:rgba(255,255,255,0.65);font-weight:600">'+NEXT_EVENT.daysAway+'d away</div>' +
+            '</div>' +
+            '<div>' +
+              '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:4px">'+NEXT_EVENT.name+'</div>' +
+              '<div style="font-size:26px;font-weight:900;color:#FFF;line-height:1.05;letter-spacing:-0.02em;margin-bottom:3px">'+NEXT_EVENT.mainEvent+'</div>' +
+              '<div style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px">'+NEXT_EVENT.subtitle+'</div>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between">' +
+                '<div style="display:flex;align-items:center;gap:5px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span style="font-size:10px;color:rgba(255,255,255,0.5)">'+NEXT_EVENT.venue+'</span></div>' +
+                '<div style="display:flex;align-items:center;gap:5px"><span style="font-size:11px;color:rgba(255,255,255,0.9);font-weight:700">'+NEXT_EVENT.network+'</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">· PPV '+NEXT_EVENT.ppvPrice+'</span></div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;overflow-x:auto;padding:0 '+S.xl+';margin-bottom:20px;scrollbar-width:none">'+
+          chips.map(function(ch){ return c.chip(th,ch,ch===filter,'homeFilter',ch); }).join('')+
+        '</div>' +
+        c.sectionHeader(th,'This Week','See all','fightCard') +
+        '<div style="display:flex;gap:10px;overflow-x:auto;padding:0 '+S.xl+';margin-bottom:'+S.section+';scrollbar-width:none">'+
+          THIS_WEEK.map(function(ev){
+            return '<div data-goto="fightCard" style="flex-shrink:0;width:148px;cursor:pointer">' +
+              '<div style="height:110px;border-radius:'+R.lg+';'+
+                (ev.img ? 'background-color:#000;background-image:linear-gradient(to bottom,rgba(0,0,0,0.45) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.85) 100%),url('+ev.img+');background-size:100% 100%,cover;background-position:center,center;' : 'background:'+ev.color+';')+
+                'border:1px solid '+th.border+';margin-bottom:7px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.35)">' +
+                '<div style="position:absolute;top:8px;left:8px">'+c.promoBadge(ev.promo)+'</div>' +
+                '<div style="position:absolute;top:8px;right:8px;font-size:9px;color:rgba(255,255,255,0.5);font-weight:600">'+ev.date+'</div>' +
+                '<div style="position:absolute;bottom:8px;left:8px;right:8px">' +
+                  '<div style="font-size:11px;font-weight:800;color:#FFF;line-height:1.2">'+ev.name+'</div>' +
+                  '<div style="font-size:9px;color:rgba(255,255,255,0.45);margin-top:2px">'+ev.net+'</div>' +
+                '</div></div>' +
+              '<div style="font-size:11px;font-weight:500;color:'+th.sub+';line-height:1.35">'+ev.sub+'</div>' +
+            '</div>';
+          }).join('')+
+        '</div>' +
+        c.sectionHeader(th,'Latest News','See all','') +
+        '<div style="padding:0 '+S.xl+'">'+
+          NEWS.map(function(item,i){
+            return '<div style="display:flex;gap:12px;padding:11px 0;border-bottom:1px solid '+th.border+';align-items:flex-start">' +
+              '<div style="flex-shrink:0;padding-top:1px">' +
+                '<div style="display:flex;align-items:center;gap:5px;margin-bottom:2px">'+(item.hot?'<span style="font-size:8px;color:'+th.primary+'">🔥</span>':'')+'<span style="font-size:9px;font-weight:700;color:'+th.muted+'">'+item.source+'</span></div>' +
+                '<span style="font-size:9px;color:'+th.muted+';opacity:0.7">'+item.time+' ago</span>' +
+              '</div>' +
+              '<div style="flex:1;font-size:12px;font-weight:'+(i<2?'600':'500')+';color:'+(i<2?th.text:th.sub)+';line-height:1.45">'+item.headline+'</div>' +
+            '</div>';
+          }).join('')+
+        '</div>' +
+      '</div>' +
+      c.navBar(th,0)+
+    '</div>';
+  }
+
+  function sFightCard(th) {
+    var showPrelims = cmState.showPrelims !== false;
+    return '<div style="height:100%;display:flex;flex-direction:column;position:relative;font-family:'+T.sans+'">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px '+S.xl+' 8px;flex-shrink:0">'+
+        c.backBtn(th,'','home')+
+        '<div style="font-size:13px;font-weight:700;color:'+th.text+'">'+EVENT.name+'</div>'+
+        c.promoBadge(EVENT.promo)+
+      '</div>' +
+      '<div style="flex:1;overflow-y:auto;padding-bottom:80px;scrollbar-width:none">' +
+        '<div style="margin:0 '+S.xl+' 14px;border-radius:'+R.xl+';overflow:hidden;background-color:#1A0000;background-image:linear-gradient(145deg,rgba(40,0,0,0.78) 0%,rgba(10,0,0,0.62) 45%,rgba(0,0,0,0.92) 100%),url(stipe%20jones.webp);background-size:100% 100%,cover;background-position:center,center top;border:1px solid rgba(232,39,42,0.25);padding:16px">' +
+          '<div style="font-size:24px;font-weight:900;color:#FFF;letter-spacing:-0.02em;margin-bottom:4px">'+EVENT.name+'</div>' +
+          '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:12px">'+EVENT.date+'</div>' +
+          '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span style="font-size:11px;color:rgba(255,255,255,0.4)">'+EVENT.venue+' · '+EVENT.city+'</span></div>' +
+          '<div style="font-size:10px;color:rgba(255,255,255,0.35)">'+EVENT.time+'</div>' +
+        '</div>' +
+        '<div style="padding:10px '+S.xl+';margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid '+th.border+'">' +
+          '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:9px;font-weight:700;color:'+th.muted+';letter-spacing:0.1em;text-transform:uppercase">WATCH</span><span style="font-size:13px;font-weight:800;color:'+th.text+'">'+EVENT.network+'</span></div>' +
+          '<span style="font-size:12px;font-weight:600;color:'+th.sub+'">'+EVENT.ppvPrice+'</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:10px;padding:0 '+S.xl+';margin-bottom:4px"><div style="flex:1;height:1px;background:'+th.border+'"></div><span style="font-size:10px;font-weight:800;color:'+th.muted+';letter-spacing:0.14em">MAIN CARD</span><div style="flex:1;height:1px;background:'+th.border+'"></div></div>' +
+        MAIN_CARD.map(function(f){ return c.fightRow(th,f); }).join('') +
+        '<div data-togglestate="showPrelims" style="display:flex;align-items:center;gap:10px;padding:14px '+S.xl+';cursor:pointer">' +
+          '<div style="flex:1;height:1px;background:'+th.border+'"></div>' +
+          '<span style="font-size:10px;font-weight:800;color:'+th.muted+';letter-spacing:0.14em">PRELIMS</span>' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="'+th.muted+'" stroke-width="2.5" stroke-linecap="round"><path d="'+(showPrelims?'M18 15l-6-6-6 6':'M6 9l6 6 6-6')+'"/></svg>' +
+          '<div style="flex:1;height:1px;background:'+th.border+'"></div>' +
+        '</div>' +
+        (showPrelims ? PRELIMS.map(function(f){ return c.fightRow(th,f); }).join('') : '') +
+      '</div>' +
+      c.navBar(th,1)+
+    '</div>';
+  }
+
+  function sFighter(th) {
+    var activeTab = cmState.fighterTab || 'record';
+    return '<div style="height:100%;display:flex;flex-direction:column;position:relative;font-family:'+T.sans+'">' +
+      c.notch() + c.statusBar(th) +
+      '<div style="padding:4px '+S.xl+' 0">'+c.backBtn(th)+'</div>' +
+      '<div style="flex:1;overflow-y:auto;padding-bottom:10px;scrollbar-width:none">' +
+        '<div style="margin:8px '+S.xl+' 14px;border-radius:'+R.xl+';overflow:hidden;background-color:#1A0000;background-image:linear-gradient(160deg,rgba(30,0,0,0.6) 0%,rgba(5,0,0,0.72) 55%,rgba(0,0,0,0.96) 100%),url(jon.jpg);background-size:100% 100%,cover;background-position:center,center;border:1px solid rgba(232,39,42,0.25);position:relative;padding:20px">' +
+          '<div style="position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:rgba(232,39,42,0.15);filter:blur(35px);pointer-events:none"></div>' +
+          '<div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">'+c.promoBadge('UFC')+'<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase">'+FIGHTER.weightClass+'</span></div>' +
+          '<div style="font-size:32px;font-weight:900;color:#FFF;line-height:1;letter-spacing:-0.02em;margin-bottom:2px">'+FIGHTER.name+'</div>' +
+          '<div style="font-size:14px;color:rgba(255,255,255,0.45);font-style:italic;margin-bottom:12px">'+FIGHTER.nickname+'</div>' +
+          '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.4);border-radius:'+R.pill+';padding:4px 12px;margin-bottom:16px"><span style="font-size:12px">🏆</span><span style="font-size:10px;font-weight:700;color:#D4A853">'+FIGHTER.status+'</span></div>' +
+          '<div style="display:flex;gap:20px;margin-bottom:16px">' +
+            '<div><div style="font-size:28px;font-weight:900;color:#FFF;line-height:1">'+FIGHTER.record+'</div><div style="font-size:9px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.08em;margin-top:2px">RECORD</div></div>' +
+            '<div style="display:flex;gap:14px;align-items:flex-end">'+[['KO/TKO',FIGHTER.wins.ko,'#E8272A'],['SUB',FIGHTER.wins.sub,'#D4A853'],['DEC',FIGHTER.wins.dec,'#22C55E']].map(function(w){ return '<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:'+w[2]+'">'+w[1]+'</div><div style="font-size:8px;color:rgba(255,255,255,0.35);font-weight:600">'+w[0]+'</div></div>'; }).join('')+'</div>' +
+          '</div>' +
+          '<div style="display:flex;background:rgba(0,0,0,0.25);border-radius:'+R.md+';overflow:hidden">'+[['Age',FIGHTER.age],['Height',FIGHTER.height],['Weight',FIGHTER.weight],['Reach',FIGHTER.reach]].map(function(s,i){ return '<div style="flex:1;text-align:center;padding:9px 4px;'+(i>0?'border-left:1px solid rgba(255,255,255,0.08)':'')+'">' +'<div style="font-size:13px;font-weight:700;color:#FFF">'+s[1]+'</div><div style="font-size:8px;color:rgba(255,255,255,0.35);margin-top:2px;font-weight:600;letter-spacing:0.05em">'+s[0].toUpperCase()+'</div></div>'; }).join('')+'</div>' +
+        '</div>' +
+        '<div style="margin:0 '+S.xl+' 14px;border-radius:'+R.md+';padding:12px 14px;background:'+th.card+';border:1px solid '+th.border+'">' +
+          '<div style="font-size:9px;font-weight:700;color:'+th.muted+';letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">NEXT FIGHT</div>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between">' +
+            '<div><div style="font-size:14px;font-weight:800;color:'+th.text+'">vs. '+UPCOMING.opponent+'</div><div style="font-size:11px;color:'+th.muted+';margin-top:2px">'+UPCOMING.event+' · '+UPCOMING.date+'</div><div style="font-size:10px;color:'+th.muted+';margin-top:1px">'+UPCOMING.venue+' · '+UPCOMING.network+'</div></div>' +
+            '<div data-goto="fightCard" style="background:'+th.primary+';color:white;padding:7px 12px;border-radius:'+R.md+';font-size:10px;font-weight:700;cursor:pointer;flex-shrink:0">Card →</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;padding:0 '+S.xl+';gap:0;border-bottom:1px solid '+th.border+';position:sticky;top:0;z-index:10;background:'+th.bg+'">' +
+          [['record','Record'],['corner','Corner'],['bio','Bio']].map(function(tab){ var active=activeTab===tab[0]; return '<div data-setstate="fighterTab|'+tab[0]+'" style="flex:1;text-align:center;padding:10px 0;cursor:pointer;font-size:12px;font-weight:'+(active?'600':'500')+';color:'+(active?th.text:th.muted)+';border-bottom:2px solid '+(active?th.text:'transparent')+';margin-bottom:-1px">'+tab[1]+'</div>'; }).join('') +
+        '</div>' +
+        (activeTab==='record'
+          ? '<div>'+RECORD.map(function(f){ return CM.c.resultRow(th,f); }).join('')+'</div>'
+          : activeTab==='corner'
+          ? '<div style="padding:14px '+S.xl+'">' +
+              '<div style="font-size:9px;font-weight:700;color:'+th.muted+';letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px">In The Corner</div>' +
+              '<div style="background:'+th.card+';border:1px solid '+th.border+';border-radius:'+R.lg+';padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">' +
+                '<div style="width:36px;height:36px;border-radius:50%;background:rgba(232,39,42,0.15);border:1.5px solid '+th.primary+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="'+th.primary+'" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>' +
+                '<div><div style="font-size:13px;font-weight:700;color:'+th.text+'">'+CORNER.headCoach.name+'</div><div style="font-size:10px;color:'+th.primary+';font-weight:600;margin-top:1px">'+CORNER.headCoach.role+'</div><div style="font-size:10px;color:'+th.muted+';margin-top:1px">'+CORNER.headCoach.gym+'</div></div>' +
+              '</div>' +
+              CORNER.crew.map(function(p){ return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid '+th.border+'"><span style="font-size:12px;font-weight:600;color:'+th.text+'">'+p.name+'</span><span style="font-size:10px;color:'+th.muted+'">'+p.role+'</span></div>'; }).join('') +
+              '<div style="font-size:9px;font-weight:700;color:'+th.muted+';letter-spacing:0.12em;text-transform:uppercase;margin-top:18px;margin-bottom:10px">Corner Connections</div>' +
+              '<div style="font-size:10px;color:'+th.muted+';margin-bottom:12px">Other fighters at '+CORNER.headCoach.gym+'</div>' +
+              '<div style="display:flex;flex-wrap:wrap;gap:8px">'+CORNER.connections.map(function(f){ return '<div style="padding:6px 12px;border-radius:'+R.pill+';background:'+th.card+';border:1px solid '+th.border+'"><div style="font-size:11px;font-weight:700;color:'+th.text+'">'+f.name+'</div><div style="font-size:9px;color:'+th.muted+';margin-top:1px">'+f.weightClass+'</div></div>'; }).join('')+'</div>' +
+            '</div>'
+          : '<div style="padding:16px '+S.xl+'">'+[['Nickname',FIGHTER.nickname],['Nationality',FIGHTER.nationality],['Gym',FIGHTER.gym],['Stance',FIGHTER.stance],['Weight Class',FIGHTER.weightClass]].map(function(row){ return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid '+th.border+'"><span style="font-size:12px;color:'+th.muted+'">'+row[0]+'</span><span style="font-size:12px;font-weight:600;color:'+th.text+'">'+row[1]+'</span></div>'; }).join('')+'</div>'
+        ) +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── WIRE UP ── */
+  CM.nav(
+    { home:sHome, fightCard:sFightCard, fighter:sFighter },
+    'home',
+    'phone-screen',
+    {
+      state:{ homeFilter:'All', showPrelims:true, fighterTab:'record' },
+      onRender: function(state) {
+        var tabMap = { home:'tab-home', fightCard:'tab-fightCard', fighter:'tab-fighter' };
+        document.querySelectorAll('.screen-tab').forEach(function(t){ t.classList.remove('active'); });
+        var el = document.getElementById(tabMap[state.cur]);
+        if (el) el.classList.add('active');
+      }
+    }
+  );
+
+  /* ── EVENT DELEGATION ── */
+  /* Top screen tabs */
+  document.querySelectorAll('.screen-tab[data-goto]').forEach(function(btn) {
+    btn.addEventListener('click', function() { window.cmGo(btn.getAttribute('data-goto')); });
+  });
+
+  /* Phone screen — capture all clicks via delegation so sandbox CSP can't block inline handlers */
+  document.getElementById('phone-screen').addEventListener('click', function(e) {
+    var el = e.target;
+    while (el && el !== this) {
+      var goto = el.getAttribute('data-goto');
+      if (goto) { window.cmGo(goto); return; }
+      if (el.hasAttribute('data-back')) { window.cmBack(); return; }
+      var ss = el.getAttribute('data-setstate');
+      if (ss) { var p = ss.split('|'); window.cmSetState(p[0], p[1]); return; }
+      var ts = el.getAttribute('data-togglestate');
+      if (ts) { window.cmToggleState(ts); return; }
+      el = el.parentElement;
+    }
+  });
+
+  /* Theme toggle */
+  var themeBtn = document.querySelector('.theme-toggle');
+  if (themeBtn) themeBtn.addEventListener('click', function() { window.cmToggleTheme(); });
+
+})();
+</script>
+</body>
+</html>

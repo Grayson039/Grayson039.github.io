@@ -1149,7 +1149,7 @@
       </div>
     </div>
 
-    <div class="project-card stagger-child" onclick="openCase('cutman')" style="cursor:pointer;">
+    <div class="project-card stagger-child" onclick="window.location.href='cutman/'" style="cursor:pointer;">
       <div class="p-num">02 / 4</div>
       <div class="p-screenshot" style="background:#0A0A0A; border-color:rgba(232,39,42,0.2); position:relative; overflow:hidden; padding:0; display:flex; flex-direction:column; font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif; height:220px;">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px 8px;background:#0A0A0A;flex-shrink:0">
@@ -1190,7 +1190,7 @@
           <span class="p-tag">Real-Time Data</span>
         </div>
         <div class="p-actions">
-          <a href="#" class="p-case-link" onclick="openCase('cutman');return false;">Case Study →</a>
+          <a href="cutman/" class="p-case-link" onclick="event.stopPropagation();">Case Study →</a>
         </div>
       </div>
     </div>
@@ -1352,32 +1352,6 @@
   </div>
 </div>
 
-<div class="case-overlay" id="case-cutman">
-  <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
-  <div class="case-inner">
-    <div class="cs-eyebrow">Case Study · Personal Project</div>
-    <div class="cs-title">Cutman</div>
-    <div class="cs-subtitle">Combat Sports Dashboard · Live PWA · $0 Infrastructure</div>
-    <div class="cs-tags">
-      <span class="cs-tag">UX Design</span><span class="cs-tag">Python / Flask</span><span class="cs-tag">PWA</span><span class="cs-tag">Web Scraping</span><span class="cs-tag">BeautifulSoup</span>
-    </div>
-    <a href="https://willgraysondesign.com/cutman/app.html" target="_blank" class="cs-link">Open Live App &#x2192;</a>
-    <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">Combat sports fans have no single source of truth. Following UFC, boxing, BKFC, PFL, and ONE requires bouncing between five apps — none of them cover all the promotions, none surface fighter news and stats alongside the fight card. There's no hub for combat sports fans. So I built one.</p>
-    <div class="cs-divider"></div>
-     <div class="cs-section-head">The Build</div>
-     <p class="cs-body">Cutman is a fully deployed Progressive Web App — installable to your iOS home screen, live at willgraysondesign.com/cutman. Python/Flask backend on Render scrapes Wikipedia, Tapology, and Sherdog for fight cards, fighter profiles (with photos), and fight history. Nine RSS feeds supply live MMA and boxing news. Total infrastructure: $0/month.</p>
-     <div class="cs-grid-2">
-       <div class="cs-stat-box"><div class="cs-stat-num">7</div><div class="cs-stat-label">Screens Built</div></div>
-       <div class="cs-stat-box"><div class="cs-stat-num">$0</div><div class="cs-stat-label">Monthly Infrastructure</div></div>
-     </div>
-     <div class="cs-section-head">The Polish Pass</div>
-     <p class="cs-body">After the core build shipped, a dedicated polish pass elevated the PWA to feel native. Screen-to-screen fade transitions (translateY + opacity, 180ms) replaced hard cuts. Every tappable element got active press feedback at 62% opacity with a 50ms snap — the iOS standard. Theme toggle icons moved from text to SVG sun/moon marks. News items became fully tappable with proper hit targets. Fighter initials avatars generate from the fighter's name when no photo exists, so the app looks finished even when data is thin. A cold-start hint sets expectation on first load instead of a silent spinner.</p>
-     <div class="cs-section-head">Where It Stands</div>
-     <p class="cs-body">Live, installable, and polished. Open on iPhone, add to home screen — it feels like a product, not a prototype. Covers UFC, boxing, BKFC, PFL, ONE, RIZIN, and more.</p>
-  </div>
-</div>
 
 <div class="case-overlay" id="case-scrapd">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>

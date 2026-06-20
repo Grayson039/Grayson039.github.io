@@ -101,6 +101,11 @@
   }
   .nav-links a:hover { color: var(--orange); }
   @media (max-width: 600px) { .nav-links { display: none; } nav { padding: 16px 24px; } }
+  @media (max-width: 600px) {
+    .hero { padding: 0 20px 80px; }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.14em; gap: 8px; }
+    .hero-eyebrow::before, .hero-eyebrow::after { width: 16px; }
+  }
 
   /* â”€â”€ HERO â”€â”€ */
   .hero {
@@ -1093,7 +1098,7 @@
       <div class="vel-label">Products in Dev</div>
     </div>
     <div class="vel-item">
-      <div class="vel-num">0â†’1</div>
+      <div class="vel-num">0&rarr;1</div>
       <div class="vel-label">Builder Mindset</div>
     </div>
     <div class="vel-item">

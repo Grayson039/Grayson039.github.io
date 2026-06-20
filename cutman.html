@@ -950,34 +950,40 @@ var CM = (function () {
         '</div>' +
       '</div>' +
       '<div style="flex:1;overflow-y:auto;padding-bottom:80px;scrollbar-width:none">' +
-        '<div data-goto="fightCard" style="margin:4px '+S.xl+' '+S.section+';border-radius:'+R.xl+';overflow:hidden;cursor:pointer;' +
-          'background-color:#1A0000;' +
-          'background-image:linear-gradient(145deg,rgba(40,0,0,0.8) 0%,rgba(10,0,0,0.65) 40%,rgba(0,0,0,0.88) 100%),url(cutman/stipe%20jones.webp);' +
-          'background-size:100% 100%,cover;background-position:center,center top;' +
-          'position:relative;height:196px;border:1px solid rgba(232,39,42,0.22);box-shadow:0 8px 32px rgba(232,39,42,0.15)">' +
-          '<div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(232,39,42,0.15);filter:blur(40px);pointer-events:none"></div>' +
-          '<div style="position:absolute;inset:0;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between">' +
-            '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
-              '<div style="display:flex;align-items:center;gap:8px">'+c.promoBadge(NEXT_EVENT.promo)+'<span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.5)">'+NEXT_EVENT.date+'</span></div>' +
-              '<div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.12);border-radius:'+R.pill+';padding:3px 10px;font-size:10px;color:rgba(255,255,255,0.65);font-weight:600">'+NEXT_EVENT.daysAway+'d away</div>' +
-            '</div>' +
-            '<div>' +
-              '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:4px">'+NEXT_EVENT.name+'</div>' +
-              '<div style="font-size:26px;font-weight:900;color:#FFF;line-height:1.05;letter-spacing:-0.02em;margin-bottom:3px">'+NEXT_EVENT.mainEvent+'</div>' +
-              '<div style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px">'+NEXT_EVENT.subtitle+'</div>' +
-              '<div style="display:flex;align-items:center;justify-content:space-between">' +
-                '<div style="display:flex;align-items:center;gap:5px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span style="font-size:10px;color:rgba(255,255,255,0.5)">'+NEXT_EVENT.venue+'</span></div>' +
-                '<div style="display:flex;align-items:center;gap:5px"><span style="font-size:11px;color:rgba(255,255,255,0.9);font-weight:700">'+NEXT_EVENT.network+'</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">· PPV '+NEXT_EVENT.ppvPrice+'</span></div>' +
+        (function(){
+          var liveImg = window._ufcHeroImg || null;
+          var liveName = window._ufcHeroName || NEXT_EVENT.name;
+          var liveMain = window._ufcHeroMain || NEXT_EVENT.mainEvent;
+          var liveDate = window._ufcHeroDate || NEXT_EVENT.date;
+          var liveDays = (window._ufcHeroDays !== undefined) ? window._ufcHeroDays : NEXT_EVENT.daysAway;
+          var liveVenue = window._ufcHeroVenue || NEXT_EVENT.venue;
+          var heroBg = liveImg
+            ? 'background-color:#1A0000;background-image:linear-gradient(145deg,rgba(40,0,0,0.7) 0%,rgba(10,0,0,0.5) 40%,rgba(0,0,0,0.88) 100%),url('+liveImg+');background-size:100% 100%,cover;background-position:center,center;'
+            : 'background-color:#1A0000;background-image:linear-gradient(145deg,rgba(40,0,0,0.8) 0%,rgba(10,0,0,0.65) 40%,rgba(0,0,0,0.88) 100%),url(cutman/stipe%20jones.webp);background-size:100% 100%,cover;background-position:center,center top;';
+          return '<div data-goto="fightCard" style="margin:4px '+S.xl+' '+S.section+';border-radius:'+R.xl+';overflow:hidden;cursor:pointer;'+heroBg+'position:relative;height:196px;border:1px solid rgba(232,39,42,0.22);box-shadow:0 8px 32px rgba(232,39,42,0.15)">' +
+            '<div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(232,39,42,0.15);filter:blur(40px);pointer-events:none"></div>' +
+            '<div style="position:absolute;inset:0;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between">' +
+              '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+                '<div style="display:flex;align-items:center;gap:8px">'+c.promoBadge('UFC')+'<span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.5)">'+liveDate+'</span></div>' +
+                '<div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.12);border-radius:'+R.pill+';padding:3px 10px;font-size:10px;color:rgba(255,255,255,0.65);font-weight:600">'+liveDays+'d away</div>' +
+              '</div>' +
+              '<div>' +
+                '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:4px">'+liveName+'</div>' +
+                '<div style="font-size:26px;font-weight:900;color:#FFF;line-height:1.05;letter-spacing:-0.02em;margin-bottom:3px">'+liveMain+'</div>' +
+                '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">' +
+                  (liveVenue ? '<div style="display:flex;align-items:center;gap:5px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span style="font-size:10px;color:rgba(255,255,255,0.5)">'+liveVenue+'</span></div>' : '<div></div>') +
+                  '<div style="font-size:11px;color:rgba(255,255,255,0.9);font-weight:700">'+NEXT_EVENT.network+'</div>' +
+                '</div>' +
               '</div>' +
             '</div>' +
-          '</div>' +
-        '</div>' +
+          '</div>';
+        })() +
         '<div style="display:flex;gap:6px;overflow-x:auto;padding:0 '+S.xl+';margin-bottom:20px;scrollbar-width:none">'+
           chips.map(function(ch){ return c.chip(th,ch,ch===filter,'homeFilter',ch); }).join('')+
         '</div>' +
         c.sectionHeader(th,'This Week','See all','fightCard') +
         '<div style="display:flex;gap:10px;overflow-x:auto;padding:0 '+S.xl+';margin-bottom:'+S.section+';scrollbar-width:none">'+
-          THIS_WEEK.map(function(ev){
+          (window._ufcThisWeek ? window._ufcThisWeek.concat(THIS_WEEK.filter(function(e){ return e.promo !== 'UFC'; })) : THIS_WEEK).map(function(ev){
             return '<div data-goto="fightCard" style="flex-shrink:0;width:148px;cursor:pointer">' +
               '<div style="height:110px;border-radius:'+R.lg+';'+
                 (ev.img ? 'background-color:#000;background-image:linear-gradient(to bottom,rgba(0,0,0,0.45) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.85) 100%),url('+ev.img+');background-size:100% 100%,cover;background-position:center,center;' : 'background:'+ev.color+';')+
@@ -1131,6 +1137,70 @@ var CM = (function () {
   /* Theme toggle */
   var themeBtn = document.querySelector('.theme-toggle');
   if (themeBtn) themeBtn.addEventListener('click', function() { window.cmToggleTheme(); });
+
+  /* ── LIVE UFC EVENT FETCH ── */
+  (function fetchLiveUFCEvents() {
+    var SPORTSDB_URL = 'https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4443';
+    fetch(SPORTSDB_URL)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var events = (data && data.events) || [];
+        if (!events.length) return;
+
+        function fmtDate(d) {
+          var parts = d ? d.split('-') : [];
+          if (parts.length < 3) return d || '';
+          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          var dt = new Date(+parts[0], +parts[1]-1, +parts[2]);
+          var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+          return days[dt.getDay()] + ' · ' + months[dt.getMonth()] + ' ' + dt.getDate();
+        }
+        function daysUntil(d) {
+          if (!d) return '';
+          var today = new Date(); today.setHours(0,0,0,0);
+          var target = new Date(d);
+          return Math.max(0, Math.round((target - today) / 86400000));
+        }
+        function mainEvent(str) {
+          var m = str.match(/(?:UFC\s+[\w\d]+\s+)(.*)/i);
+          return m ? m[1].replace(/ vs /i, ' vs. ') : str;
+        }
+        function shortDate(d) {
+          var parts = d ? d.split('-') : [];
+          if (parts.length < 3) return '';
+          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          return months[+parts[1]-1] + ' ' + (+parts[2]);
+        }
+
+        var hero = events[0];
+        if (hero) {
+          var heroImg = hero.strPoster || hero.strThumb || null;
+          var heroMain = mainEvent(hero.strEvent || '');
+          window._ufcHeroImg = heroImg;
+          window._ufcHeroName = hero.strEvent || 'UFC';
+          window._ufcHeroMain = heroMain;
+          window._ufcHeroDate = fmtDate(hero.dateEvent);
+          window._ufcHeroDays = daysUntil(hero.dateEvent);
+          window._ufcHeroVenue = hero.strVenue || '';
+        }
+
+        var thisWeekUFC = events.slice(0, 3).map(function(ev) {
+          return {
+            promo: 'UFC',
+            name: ev.strEvent || 'UFC Event',
+            sub: mainEvent(ev.strEvent || ''),
+            date: shortDate(ev.dateEvent),
+            net: 'ESPN+',
+            img: ev.strPoster || ev.strThumb || null,
+            color: '#200000'
+          };
+        });
+        window._ufcThisWeek = thisWeekUFC;
+
+        if (window.cmRender) window.cmRender();
+      })
+      .catch(function() { /* silently fall back to static data */ });
+  })();
 
 })();
 </script>

@@ -869,10 +869,10 @@ var CM = (function () {
     network:'ESPN+', ppvPrice:'$79.99', daysAway:10
   };
   var THIS_WEEK = [
-    { promo:'UFC',    name:'UFC 315',            sub:'Jones vs. Miocic',         date:'May 31', net:'ESPN+ PPV',  img:'ufc%20315.jpg' },
-    { promo:'BOXING', name:'Canelo vs. Crawford', sub:'Super Middleweight Title',  date:'Jun 1',  net:'DAZN PPV',  color:'#06061E' },
+    { promo:'UFC',    name:'UFC 315',            sub:'Jones vs. Miocic',         date:'May 31', net:'ESPN+ PPV',  img:'https://upload.wikimedia.org/wikipedia/en/thumb/c/c6/UFC_315_poster.jpeg/400px-UFC_315_poster.jpeg' },
+    { promo:'BOXING', name:'Canelo vs. Crawford', sub:'Super Middleweight Title',  date:'Jun 1',  net:'Netflix PPV', img:'https://upload.wikimedia.org/wikipedia/en/thumb/b/b5/Canelo_Alvarez_vs_Terence_Crawford_fight_poster.jpg/400px-Canelo_Alvarez_vs_Terence_Crawford_fight_poster.jpg' },
     { promo:'PFL',    name:'PFL Playoffs 1',      sub:'LW & Featherweight',        date:'Jun 3',  net:'ESPN2',     color:'#001A08' },
-    { promo:'ONE',    name:'ONE Fight Night 28',  sub:'Superlek vs. Nguyen',       date:'Jun 7',  net:'Prime',     color:'#1A1400' }
+    { promo:'ONE',    name:'ONE Fight Night 28',  sub:'Superlek vs. Nguyen',       date:'Jun 7',  net:'Prime',     img:'https://upload.wikimedia.org/wikipedia/en/thumb/1/16/ONE_Fight_Night_28.jpg/400px-ONE_Fight_Night_28.jpg' }
   ];
   var NEWS = [
     { source:'ESPN MMA',     time:'2h',  headline:'Jon Jones posts MSG training footage — "I\'ve never been more ready for anything in my life"', hot:true },
@@ -952,7 +952,7 @@ var CM = (function () {
       '<div style="flex:1;overflow-y:auto;padding-bottom:80px;scrollbar-width:none">' +
         '<div data-goto="fightCard" style="margin:4px '+S.xl+' '+S.section+';border-radius:'+R.xl+';overflow:hidden;cursor:pointer;' +
           'background-color:#1A0000;' +
-          'background-image:linear-gradient(145deg,rgba(40,0,0,0.8) 0%,rgba(10,0,0,0.65) 40%,rgba(0,0,0,0.88) 100%),url(stipe%20jones.webp);' +
+          'background-image:linear-gradient(145deg,rgba(40,0,0,0.8) 0%,rgba(10,0,0,0.65) 40%,rgba(0,0,0,0.88) 100%),url(cutman/stipe%20jones.webp);' +
           'background-size:100% 100%,cover;background-position:center,center top;' +
           'position:relative;height:196px;border:1px solid rgba(232,39,42,0.22);box-shadow:0 8px 32px rgba(232,39,42,0.15)">' +
           '<div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(232,39,42,0.15);filter:blur(40px);pointer-events:none"></div>' +
@@ -1019,7 +1019,7 @@ var CM = (function () {
         c.promoBadge(EVENT.promo)+
       '</div>' +
       '<div style="flex:1;overflow-y:auto;padding-bottom:80px;scrollbar-width:none">' +
-        '<div style="margin:0 '+S.xl+' 14px;border-radius:'+R.xl+';overflow:hidden;background-color:#1A0000;background-image:linear-gradient(145deg,rgba(40,0,0,0.78) 0%,rgba(10,0,0,0.62) 45%,rgba(0,0,0,0.92) 100%),url(stipe%20jones.webp);background-size:100% 100%,cover;background-position:center,center top;border:1px solid rgba(232,39,42,0.25);padding:16px">' +
+        '<div style="margin:0 '+S.xl+' 14px;border-radius:'+R.xl+';overflow:hidden;background-color:#1A0000;background-image:linear-gradient(145deg,rgba(40,0,0,0.78) 0%,rgba(10,0,0,0.62) 45%,rgba(0,0,0,0.92) 100%),url(cutman/stipe%20jones.webp);background-size:100% 100%,cover;background-position:center,center top;border:1px solid rgba(232,39,42,0.25);padding:16px">' +
           '<div style="font-size:24px;font-weight:900;color:#FFF;letter-spacing:-0.02em;margin-bottom:4px">'+EVENT.name+'</div>' +
           '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:12px">'+EVENT.date+'</div>' +
           '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span style="font-size:11px;color:rgba(255,255,255,0.4)">'+EVENT.venue+' · '+EVENT.city+'</span></div>' +
@@ -1049,7 +1049,7 @@ var CM = (function () {
       c.notch() + c.statusBar(th) +
       '<div style="padding:4px '+S.xl+' 0">'+c.backBtn(th)+'</div>' +
       '<div style="flex:1;overflow-y:auto;padding-bottom:10px;scrollbar-width:none">' +
-        '<div style="margin:8px '+S.xl+' 14px;border-radius:'+R.xl+';overflow:hidden;background-color:#1A0000;background-image:linear-gradient(160deg,rgba(30,0,0,0.6) 0%,rgba(5,0,0,0.72) 55%,rgba(0,0,0,0.96) 100%),url(jon.jpg);background-size:100% 100%,cover;background-position:center,center;border:1px solid rgba(232,39,42,0.25);position:relative;padding:20px">' +
+        '<div style="margin:8px '+S.xl+' 14px;border-radius:'+R.xl+';overflow:hidden;background-color:#1A0000;background-image:linear-gradient(160deg,rgba(30,0,0,0.6) 0%,rgba(5,0,0,0.72) 55%,rgba(0,0,0,0.96) 100%),url(cutman/jon.jpg);background-size:100% 100%,cover;background-position:center,center;border:1px solid rgba(232,39,42,0.25);position:relative;padding:20px">' +
           '<div style="position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:rgba(232,39,42,0.15);filter:blur(35px);pointer-events:none"></div>' +
           '<div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">'+c.promoBadge('UFC')+'<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase">'+FIGHTER.weightClass+'</span></div>' +
           '<div style="font-size:32px;font-weight:900;color:#FFF;line-height:1;letter-spacing:-0.02em;margin-bottom:2px">'+FIGHTER.name+'</div>' +

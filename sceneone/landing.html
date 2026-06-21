@@ -188,6 +188,38 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .l-pricing-link{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:none;border:none;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;letter-spacing:0.02em;white-space:nowrap;transition:color .15s;}
 .l-pricing-link:hover{color:var(--cyan);}
 
+/* ── DUAL PATH SPLIT ── */
+.l-path-split{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;justify-content:center;}
+.l-path-btn{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:18px 22px;border-radius:16px;border:1px solid var(--border2);background:var(--card);cursor:pointer;transition:all .2s;text-align:left;min-width:200px;max-width:240px;}
+.l-path-btn:hover{border-color:rgba(62,237,231,0.35);background:rgba(62,237,231,0.04);transform:translateY(-2px);}
+.l-path-btn.gold:hover{border-color:rgba(201,168,76,0.35);background:rgba(201,168,76,0.04);}
+.l-path-eyebrow{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);}
+.l-path-label{font-size:15px;font-weight:800;color:#fff;}
+.l-path-desc{font-size:11px;color:var(--sub);line-height:1.5;}
+
+/* ── EXEC SIGNUP SCREEN ── */
+#screen-exec-signup{justify-content:center;align-items:center;padding:60px 40px;
+  background:radial-gradient(ellipse 65% 50% at 50% 35%,rgba(201,168,76,0.10) 0%,transparent 65%),var(--bg);}
+.exec-signup-wrap{width:100%;max-width:480px;}
+.exec-back{display:inline-flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;font-weight:600;background:none;border:none;cursor:pointer;padding:0;margin-bottom:28px;transition:color .2s;}
+.exec-back:hover{color:var(--text);}
+.exec-eyebrow{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.exec-signup-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:#fff;margin-bottom:6px;line-height:1.1;}
+.exec-signup-sub{font-size:13px;color:var(--sub);margin-bottom:28px;line-height:1.7;}
+.exec-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;box-shadow:var(--shadow);}
+.exec-submit{width:100%;padding:13px;border-radius:10px;border:none;background:var(--gold);color:#0F0F0F;font-weight:800;font-size:14px;cursor:pointer;transition:all .2s;margin-top:4px;}
+.exec-submit:hover{background:var(--gold-l);}
+.exec-role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.exec-role-btn{padding:10px 12px;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;}
+.exec-role-btn.active{border-color:rgba(201,168,76,0.5);background:rgba(201,168,76,0.08);color:var(--gold);}
+.exec-tagline{font-family:'Playfair Display',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.35);text-align:center;margin-top:20px;}
+@media(max-width:600px){
+  #screen-exec-signup{padding:48px 20px;}
+  .l-path-split{flex-direction:column;align-items:stretch;}
+  .l-path-btn{max-width:100%;}
+  .exec-role-grid{grid-template-columns:1fr;}
+}
+
 /* ── PRICING SCREEN ── */
 #screen-pricing{align-items:flex-start;justify-content:flex-start;padding:48px 40px 80px;overflow-y:auto;}
 .pricing-wrap{width:100%;max-width:960px;margin:0 auto;}
@@ -1448,15 +1480,17 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   <div class="l-tagline">Democratizing Hollywood, one script at a time.</div>
   <div class="l-sub">The $100 script feedback fee (what Hollywood charges to read and grade your script) has kept talented writers out of Hollywood for decades. SceneOne ends that. Free, evidence-based feedback for every writer — graded against the same framework Hollywood uses.</div>
 
-  <div>
-    <button class="cta-primary" onclick="goTo('upload')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Upload Your Script
+  <div class="l-path-split">
+    <button class="l-path-btn" onclick="goTo('welcome')">
+      <div class="l-path-eyebrow">For Writers</div>
+      <div class="l-path-label">Grade My Script →</div>
+      <div class="l-path-desc">Free structural feedback. No gatekeeping.</div>
     </button>
-    <a href="index.html" onerror="this.href='#'" class="cta-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><polyline points="15 18 9 12 15 6"/></svg>
-      Case Study
-    </a>
+    <button class="l-path-btn gold" onclick="goTo('exec-signup')">
+      <div class="l-path-eyebrow">For Industry</div>
+      <div class="l-path-label">Read Scripts →</div>
+      <div class="l-path-desc">Pre-graded scripts. Filter by score and genre.</div>
+    </button>
   </div>
 
   <div class="l-pills">
@@ -1539,6 +1573,72 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
     <div class="pricing-footer">
       Discovery Dashboard is free on all plans — always. &nbsp;·&nbsp; Cancel anytime. &nbsp;·&nbsp; No credit card to start.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ SCREEN 1c: EXEC SIGNUP ══════════════════════ -->
+<div class="screen" id="screen-exec-signup">
+  <div class="exec-signup-wrap">
+    <button class="exec-back" onclick="goTo('landing')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+
+    <div class="exec-eyebrow">Industry Access</div>
+    <div class="exec-signup-title">Your next project<br>is already written.</div>
+    <div class="exec-signup-sub">Pre-graded scripts, filtered by score and genre. No agents. No gatekeeping. Access the Discovery Dashboard and request reads directly from writers.</div>
+
+    <div class="exec-card">
+      <div class="auth-title">Create your industry account</div>
+      <div class="auth-sub" style="margin-bottom:20px;">We verify credentials before granting access to scripts.</div>
+
+      <div class="form-field">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="exec-name" type="text" placeholder="Jordan Meyers" autocomplete="name">
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Company</label>
+        <input class="form-input" id="exec-company" type="text" placeholder="A24, Blumhouse, Netflix…">
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Your Role</label>
+        <div class="exec-role-grid" id="exec-role-grid">
+          <button class="exec-role-btn" onclick="selectExecRole(this,'Director')">Director</button>
+          <button class="exec-role-btn" onclick="selectExecRole(this,'Producer')">Producer</button>
+          <button class="exec-role-btn" onclick="selectExecRole(this,'Development Executive')">Dev Executive</button>
+          <button class="exec-role-btn" onclick="selectExecRole(this,'Casting Director')">Casting Director</button>
+          <button class="exec-role-btn" onclick="selectExecRole(this,'Manager/Agent')">Manager / Agent</button>
+          <button class="exec-role-btn" onclick="selectExecRole(this,'Other')">Other</button>
+        </div>
+        <input class="form-input" id="exec-role-input" type="hidden" value="">
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">IMDb or LinkedIn URL <span style="color:var(--sub);font-weight:400;text-transform:none;letter-spacing:0">(optional but speeds up verification)</span></label>
+        <input class="form-input" id="exec-imdb" type="url" placeholder="https://imdb.com/name/…">
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="exec-email" type="email" placeholder="you@studio.com" autocomplete="email">
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="exec-password" type="password" placeholder="8+ characters" autocomplete="new-password">
+      </div>
+
+      <button class="exec-submit" id="exec-submit-btn" onclick="handleExecSignup()">Request Industry Access →</button>
+      <div style="font-size:10px;color:var(--sub);text-align:center;margin-top:12px;line-height:1.55;">We review credentials within 24 hours. You'll receive an email when approved.</div>
+    </div>
+
+    <div class="exec-tagline">"Your next project is already written."</div>
+
+    <div style="text-align:center;margin-top:16px;">
+      <button onclick="goTo('welcome')" style="background:none;border:none;color:var(--sub);font-size:12px;cursor:pointer;">I'm a writer — take me to the upload →</button>
     </div>
   </div>
 </div>
@@ -3728,14 +3828,102 @@ function skipTour() {
 
 // Wire landing CTA to welcome screen — safe version
 window.addEventListener('load',()=>{
-  const cta=document.querySelector('#screen-landing .cta-primary');
-  if(cta) cta.setAttribute('onclick','goTo(\'welcome\')');
   // Make absolutely sure tooltip overlay never shows on load
   const overlay=document.getElementById('ob-tooltip-overlay');
   if(overlay){ overlay.style.display='none'; overlay.classList.remove('active'); }
   const celebrate=document.getElementById('ob-celebrate');
   if(celebrate){ celebrate.style.display='none'; celebrate.classList.remove('show'); }
 });
+
+// ─── EXEC SIGNUP ───
+let _selectedExecRole = '';
+
+function selectExecRole(btn, role) {
+  document.querySelectorAll('.exec-role-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _selectedExecRole = role;
+  document.getElementById('exec-role-input').value = role;
+}
+
+async function handleExecSignup() {
+  const name     = document.getElementById('exec-name')?.value.trim();
+  const company  = document.getElementById('exec-company')?.value.trim();
+  const imdb     = document.getElementById('exec-imdb')?.value.trim();
+  const email    = document.getElementById('exec-email')?.value.trim();
+  const password = document.getElementById('exec-password')?.value;
+  const btn      = document.getElementById('exec-submit-btn');
+
+  if (!name || !company || !email || !password || !_selectedExecRole) {
+    btn.textContent = 'Please fill in all required fields';
+    btn.style.background = 'rgba(232,146,58,0.8)';
+    setTimeout(() => {
+      btn.textContent = 'Request Industry Access →';
+      btn.style.background = '';
+    }, 2500);
+    return;
+  }
+
+  btn.textContent = 'Creating account…';
+  btn.disabled = true;
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: name,
+        role: 'exec',
+        company,
+        exec_title: _selectedExecRole,
+        imdb_url: imdb || null,
+      }
+    }
+  });
+
+  if (error) {
+    btn.textContent = error.message;
+    btn.style.background = 'rgba(232,146,58,0.8)';
+    btn.disabled = false;
+    setTimeout(() => {
+      btn.textContent = 'Request Industry Access →';
+      btn.style.background = '';
+    }, 3000);
+    return;
+  }
+
+  // If no session (email confirm enabled), try sign-in
+  if (!data.session) {
+    const { data: loginData } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (loginData?.session) {
+      _currentUser = loginData.user;
+      await _createExecProfile({ id: loginData.user.id, name, company, title: _selectedExecRole, imdb });
+    }
+  } else {
+    _currentUser = data.user;
+    await _createExecProfile({ id: data.user.id, name, company, title: _selectedExecRole, imdb });
+  }
+
+  // Show confirmation state
+  btn.textContent = '✓ Request received — we'll email you within 24 hours';
+  btn.style.background = 'rgba(76,175,125,0.85)';
+  btn.disabled = true;
+}
+
+async function _createExecProfile({ id, name, company, title, imdb }) {
+  try {
+    await supabaseClient.from('profiles').upsert({
+      id,
+      role: 'exec',
+      display_name: name,
+      company,
+      title,
+      imdb_url: imdb || null,
+      verified: false,
+    }, { onConflict: 'id' });
+  } catch (e) {
+    console.warn('SceneOne: exec profile create failed', e);
+  }
+}
 
 // Show celebration after first real report
 const _origRunProgressBar = runProgressBar;

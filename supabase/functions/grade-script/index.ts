@@ -112,6 +112,13 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  // ── Health check / keep-warm ping ────────────────────────────────────────
+  if (req.method === "GET") {
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+  }
+
   try {
     // ── Auth check ──────────────────────────────────────────────────────────
     const authHeader = req.headers.get("Authorization");

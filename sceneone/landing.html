@@ -2881,6 +2881,13 @@ const SUPABASE_ANON_KEY = 'sb_publishable_yuptAX-fJGnyTuDgReScEg_bqg7qPEx';
 const EDGE_FN_URL       = SUPABASE_URL + '/functions/v1/grade-script';
 const supabaseClient    = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ─── KEEP-WARM PING — prevent edge function cold starts ───
+(function keepWarm() {
+  const ping = () => fetch(EDGE_FN_URL, { method: 'GET' }).catch(() => {});
+  ping();
+  setInterval(ping, 4 * 60 * 1000);
+})();
+
 // ─── SESSION PERSISTENCE — restore auth on every page load ───
 (async () => {
   try {

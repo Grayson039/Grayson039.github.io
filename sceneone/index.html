@@ -150,6 +150,18 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   .tech-grid{grid-template-columns:repeat(2,1fr);}
   .nav-links{display:none;}
 }
+/* ── Scroll-triggered reveals ─────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-d1{transition-delay:.07s;}
+.reveal-d2{transition-delay:.14s;}
+.reveal-d3{transition-delay:.21s;}
+.reveal-d4{transition-delay:.28s;}
+.reveal-d5{transition-delay:.35s;}
+.reveal-d6{transition-delay:.42s;}
+.reveal-d7{transition-delay:.49s;}
+.reveal-d8{transition-delay:.56s;}
+.reveal-d9{transition-delay:.63s;}
 </style>
 </head>
 <body>
@@ -162,10 +174,10 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
     <a class="nav-link" href="#features">Features</a>
     <a class="nav-link" href="#marketplace">Marketplace</a>
     <a class="nav-link" href="#decisions">Decisions</a>
+    <a class="nav-link" href="#legal">Legal</a>
     <a class="nav-link" href="#roadmap">Roadmap</a>
-    <a class="nav-link" href="#shipped" style="color:var(--green);">What Shipped</a>
   </div>
-  <a class="nav-cta" href="https://sceneone.net" target="_blank">Try It Live &rarr;</a>
+  <a class="nav-cta" href="landing.html" target="_blank">Try the Prototype &rarr;</a>
 </nav>
 
 <!-- HERO -->
@@ -175,18 +187,15 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   <div class="hero-mission">&ldquo;Democratizing Hollywood, one script at a time.&rdquo;</div>
   <p class="hero-sub">An AI-powered screenplay feedback tool that gives every writer the same studio-grade coverage Hollywood charges $100 for &mdash; free, in minutes, graded against the same framework the industry uses.</p>
   <div class="hero-ctas">
-    <a class="btn-primary" href="https://sceneone.net" target="_blank">Try It Live &rarr;</a>
+    <a class="btn-primary" href="landing.html" target="_blank">Try the Prototype &rarr;</a>
     <a class="btn-secondary" href="#problem">Read the Case Study &darr;</a>
   </div>
-  <div style="margin-top:16px;display:flex;justify-content:center;">
-    <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.3);border-radius:100px;padding:5px 14px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 6px var(--green);"></span>Live at sceneone.net</span>
-  </div>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-val">9</div><div class="hero-stat-lbl">Screens Built</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">3</div><div class="hero-stat-lbl">Cinematic Loaders</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">5</div><div class="hero-stat-lbl">Craft Dimensions</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">2</div><div class="hero-stat-lbl">Sided Marketplace</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">$0</div><div class="hero-stat-lbl">To Start</div></div>
+    <div class="hero-stat"><div class="hero-stat-val" data-val="7">7</div><div class="hero-stat-lbl">Screens Built</div></div>
+    <div class="hero-stat"><div class="hero-stat-val" data-val="3">3</div><div class="hero-stat-lbl">Cinematic Loaders</div></div>
+    <div class="hero-stat"><div class="hero-stat-val" data-val="5">5</div><div class="hero-stat-lbl">Craft Dimensions</div></div>
+    <div class="hero-stat"><div class="hero-stat-val" data-val="2">2</div><div class="hero-stat-lbl">Sided Marketplace</div></div>
+    <div class="hero-stat"><div class="hero-stat-val" data-val="0" data-prefix="$">$0</div><div class="hero-stat-lbl">To Start</div></div>
   </div>
 </div>
 
@@ -216,7 +225,7 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
     <div class="ps-card">
       <div class="ps-card-label solution">The Solution</div>
       <div class="ps-card-title">The same feedback. Free. In minutes.</div>
-      <div class="ps-card-body">SceneOne gives every writer structured, evidence-based script feedback graded against proportional structural analysis &mdash; act proportions, value reversal, and cause-effect scene logic. The same craft framework working professionals use. Specific. Grounded. Fix It right inside the app.</div>
+      <div class="ps-card-body">SceneOne gives every writer structured, evidence-based script feedback graded against Save the Cat &mdash; the same methodology Hollywood development executives have used for 20+ years. Page-specific. No jargon. Fix It right inside the app.</div>
     </div>
   </div>
 </section>
@@ -229,8 +238,8 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   <div class="feature-grid">
     <div class="feature-card">
       <div class="feature-icon fi-cyan">&#128203;</div>
-      <h3>Proportional Structural Analysis</h3>
-      <p>Five craft dimensions graded with explicit rubric anchors: structure (act proportions), conflict (escalation), dialogue (subtext), pacing (value reversal), visual (cinematic economy). Each score is evidence-based &mdash; real scenes, real quotes, real page numbers.</p>
+      <h3>Save the Cat Framework</h3>
+      <p>Every script graded against Blake Snyder&rsquo;s methodology &mdash; the blueprint that Whiplash, Get Out, and The Dark Knight all follow. Not making up rules. Checking yours against the industry&rsquo;s.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon fi-green">&#10022;</div>
@@ -271,21 +280,6 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
       <div class="feature-icon fi-amber">&#9201;</div>
       <h3>Script Title Parsing</h3>
       <p>SceneOne detects your script title from the first page on upload and confirms it with you before analysis starts. Always editable &mdash; your title, your control. No assumptions.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon fi-green">&#128196;</div>
-      <h3>Script History</h3>
-      <p>Every completed analysis is saved to your account automatically. The upload screen shows your last 8 scripts &mdash; one click reloads the full report. Your revision arc is visible over time.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon fi-cyan">&#128438;</div>
-      <h3>Export PDF</h3>
-      <p>Export your full coverage report as a clean, print-ready PDF with one click. All category cards expand before print, SceneOne branding added as header. Your notes, portable forever.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon fi-amber">&#128203;</div>
-      <h3>Requests Review Screen</h3>
-      <p>When listed on the Discovery Dashboard, incoming reader requests arrive in a dedicated screen. Approve or decline with full context &mdash; name, company, email. Approved access auto-expires in 14 days.</p>
     </div>
   </div>
 </section>
@@ -386,7 +380,7 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
 <!-- SCREENS -->
 <section id="screens">
   <div class="section-eyebrow">The Screens</div>
-  <div class="section-title">9 screens. One cohesive system.</div>
+  <div class="section-title">7 screens. One cohesive system.</div>
   <div class="screens-grid">
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Welcome / Sign Up</div><div class="screen-card-tag">Screen 0</div></div><div class="screen-card-body"><p>Create Account and Sign In tabs. Password strength meter with 4 live requirements. Form validation &mdash; button stays grey until all fields are valid. Age confirmation (18+) and content policy summary.</p></div></div>
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Onboarding</div><div class="screen-card-tag">Screen 0b</div></div><div class="screen-card-body"><p>6-step walkthrough: Save the Cat grading framework, plain English feedback, Creative Choice (you have the final word), Fix It inline editor, Logline + Story DNA pitch tools, and processing time honesty.</p></div></div>
@@ -395,8 +389,7 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Discovery Dashboard</div><div class="screen-card-tag">Screen 5 &middot; Reader Only</div></div><div class="screen-card-body"><p>Verified readers only. Filter sidebar &mdash; score threshold, genre, Story DNA comps, format. Script cards with logline, DNA tags, mini score bars. Request Access triggers reader TOS &rarr; Happy Hunting.</p></div></div>
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Writer Profile</div><div class="screen-card-tag">Screen 6</div></div><div class="screen-card-body"><p>Avatar, member stats, script listing cards with status chips (Live / Private / Under Review / Approved / Expired), activity feed, pending request approvals with Approve/Decline inline.</p></div></div>
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Exec Profile</div><div class="screen-card-tag">Screen 7</div></div><div class="screen-card-body"><p>Flux-inspired. Left sidebar nav with notification badges. Donut ring charts &mdash; scripts reviewed, active access, pending requests, avg score. Requested scripts list with status chips. Full activity feed.</p></div></div>
-    <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Exec Mode (Report)</div><div class="screen-card-tag">Toggle View</div></div><div class="screen-card-body"><p>9-stat development assessment grid: Genre, Budget Tier, Format, Craft Score, Primary Strength, Primary Flag, Named Characters, Comp Titles, Structure Beat. Recommendation card. Browse Discovery Dashboard button.</p></div></div>
-    <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Requests Review</div><div class="screen-card-tag">Screen 8 &middot; Live</div></div><div class="screen-card-body"><p>Pending reader requests with name, company, and contact info. Approve triggers a 14-day access window with expiry date shown inline. Decline fades the card. When all requests are handled, the screen transitions to an empty state with policy summary.</p></div></div>
+    <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Exec Mode (Report)</div><div class="screen-card-tag">Toggle View</div></div><div class="screen-card-body"><p>9-stat development assessment grid: Genre, Budget Tier, Format, Craft Score, Primary Strength, Primary Flag, Named Characters, Comp Titles, Save the Cat Beat. Recommendation card. Browse Discovery Dashboard button.</p></div></div>
   </div>
 </section>
 
@@ -471,11 +464,11 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   <div class="phase-list">
     <div class="phase-item">
       <div class="phase-num done">1</div>
-      <div><div class="phase-title">Coverage Tool &mdash; <span style="color:var(--green)">Shipped Live at sceneone.net</span></div><div class="phase-body">Real Claude API grading end-to-end. 9 screens. Proportional structural analysis with value reversal rubric. Fix It inline editor. Creative Choice. Pacing heatmap. Logline + Story DNA. 3 cinematic loading experiences. Script History. Export PDF. Requests Review screen. Supabase auth + submissions table. Cloudflare Pages deploy.</div></div>
+      <div><div class="phase-title">Coverage Tool &mdash; Built</div><div class="phase-body">AI script feedback graded against Save the Cat. 7 screens. Fix It inline editor. Creative Choice. Pacing heatmap. Logline + Story DNA. 3 cinematic loading experiences. Two-sided marketplace prototype. Legal architecture. Co-writer credits.</div></div>
     </div>
     <div class="phase-item">
       <div class="phase-num" style="color:var(--gold)">2</div>
-      <div><div class="phase-title">Live Discovery Dashboard &mdash; <span style="color:var(--gold)">In Progress</span></div><div class="phase-body">Requests Review screen built. Reader verification system, co-writer email notifications via Resend, IP timestamp certificates, Stripe payments, and full exec profile next.</div></div>
+      <div><div class="phase-title">Live Discovery Dashboard &mdash; Next</div><div class="phase-body">Real Supabase database. Claude API integration. Reader verification system. Co-writer email notifications via Resend. IP timestamp certificates. Stripe payments. sceneone.app domain.</div></div>
     </div>
     <div class="phase-item">
       <div class="phase-num planned">3</div>
@@ -489,13 +482,13 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   <div class="section-eyebrow">Tech Stack</div>
   <div class="section-title">Production-ready architecture from day one.</div>
   <div class="tech-grid">
-    <div class="tech-card"><div class="tech-name">Single-File HTML/CSS/JS</div><div class="tech-role">Frontend</div></div>
-    <div class="tech-card"><div class="tech-name">Supabase Edge Functions</div><div class="tech-role">Backend (Deno)</div></div>
-    <div class="tech-card"><div class="tech-name">Supabase</div><div class="tech-role">DB + Auth</div></div>
-    <div class="tech-card"><div class="tech-name">Claude Sonnet 4.6</div><div class="tech-role">AI Analysis</div></div>
-    <div class="tech-card"><div class="tech-name">pdf.js</div><div class="tech-role">PDF Text Extraction</div></div>
-    <div class="tech-card"><div class="tech-name">Cloudflare Pages</div><div class="tech-role">Hosting + CDN</div></div>
-    <div class="tech-card"><div class="tech-name">Resend</div><div class="tech-role">Email (Planned)</div></div>
+    <div class="tech-card"><div class="tech-name">React + Tailwind</div><div class="tech-role">Frontend</div></div>
+    <div class="tech-card"><div class="tech-name">Node.js + Express</div><div class="tech-role">Backend</div></div>
+    <div class="tech-card"><div class="tech-name">Supabase</div><div class="tech-role">DB + Auth + Storage</div></div>
+    <div class="tech-card"><div class="tech-name">Claude API</div><div class="tech-role">AI Analysis</div></div>
+    <div class="tech-card"><div class="tech-name">Resend</div><div class="tech-role">Email Notifications</div></div>
+    <div class="tech-card"><div class="tech-name">Stripe</div><div class="tech-role">Payments</div></div>
+    <div class="tech-card"><div class="tech-name">Vercel + Railway</div><div class="tech-role">Hosting</div></div>
     <div class="tech-card"><div class="tech-name">~$1.65/script</div><div class="tech-role">API Cost</div></div>
   </div>
 </section>
@@ -539,69 +532,12 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   </div>
 </section>
 
-<!-- WHAT SHIPPED -->
-<section id="shipped">
-  <div class="section-eyebrow">June 11, 2026</div>
-  <div class="section-title">What shipped today.</div>
-  <p class="section-sub">SceneOne went from prototype to production-grade in a single session. Here&rsquo;s the full changelog.</p>
-  <div class="decision-list">
-    <div class="decision-card">
-      <div class="decision-num">Bug Fix</div>
-      <div class="decision-title">Root Bug: File Never Stored on Drag-Drop</div>
-      <div class="decision-body"><code style="font-family:'Courier Prime',monospace;font-size:11px;color:var(--cyan);">_uploadedFile = f</code> was missing from <code style="font-family:'Courier Prime',monospace;font-size:11px;color:var(--cyan);">setFile()</code>. Every drag-drop analysis silently used a null file, fell through to demo data, and showed hardcoded scores. One line. Months of confusion explained. Fixed.</div>
-      <span class="decision-badge badge-highest">Critical Fix</span>
-    </div>
-    <div class="decision-card">
-      <div class="decision-num">Bug Fix</div>
-      <div class="decision-title">Duplicate removeFile() — Null File, Enabled Button</div>
-      <div class="decision-body">A second <code style="font-family:'Courier Prime',monospace;font-size:11px;color:var(--cyan);">removeFile()</code> definition didn&rsquo;t null the uploaded file. Users could remove a file and still click Analyze — which would hit the null-file early return and silently show demo data. Merged into one correct function.</div>
-      <span class="decision-badge badge-high">High Priority</span>
-    </div>
-    <div class="decision-card">
-      <div class="decision-num">Visual Polish</div>
-      <div class="decision-title">Micro-interactions + Focus States Across All CTAs</div>
-      <div class="decision-body">Drop zone success flash (cyan glow, 1.2s). Analyze button loading shimmer while reading script. Report sections stagger-fade in on load. Focus rings on all interactive elements. Active press states on buttons. The product feels finished now.</div>
-      <span class="decision-badge badge-high">High Priority</span>
-    </div>
-    <div class="decision-card">
-      <div class="decision-num">Prompt Tuning</div>
-      <div class="decision-title">Grading Rubric Rebuilt Around Value Reversal</div>
-      <div class="decision-body">The AI grading prompt was rewritten with explicit scoring anchors (90&ndash;100 exceptional, 75&ndash;89 strong, 60&ndash;74 competent), five dimension criteria with penalize lists, and scene-level pacing analysis built around value reversal &mdash; whether the scene ends in a different emotional state than it began. Scores now reflect actual craft, not averages.</div>
-      <span class="decision-badge badge-high">High Priority</span>
-    </div>
-    <div class="decision-card">
-      <div class="decision-num">New Screen</div>
-      <div class="decision-title">Requests Review — Discovery Dashboard Writer Side</div>
-      <div class="decision-body">Writers who list on the Discovery Dashboard now have a dedicated screen for incoming reader requests. Cards show name, company, and contact. Approve triggers a 14-day access window with expiry shown inline. Decline fades the card. All-handled state transitions to an empty state. Full state machine, no dead ends.</div>
-      <span class="decision-badge badge-high">New Feature</span>
-    </div>
-    <div class="decision-card">
-      <div class="decision-num">New Feature</div>
-      <div class="decision-title">Script History — Saved Analyses, Reloadable</div>
-      <div class="decision-body">Every completed analysis saves to Supabase automatically. The upload screen shows the last 8 scripts with overall score, best dimension, and date. One click reloads the full report &mdash; no re-uploading. Writers can track improvement across drafts.</div>
-      <span class="decision-badge badge-high">New Feature</span>
-    </div>
-    <div class="decision-card">
-      <div class="decision-num">New Feature</div>
-      <div class="decision-title">Export PDF — Full Coverage Report as Print-Ready PDF</div>
-      <div class="decision-body">The Export button now works. All category cards auto-expand before print. Clean print stylesheet hides UI chrome, adds SceneOne header, enforces page breaks between sections. The report is portable and shareable without the app.</div>
-      <span class="decision-badge badge-high">New Feature</span>
-    </div>
-    <div class="decision-card">
-      <div class="decision-num">Architecture</div>
-      <div class="decision-title">scoreDeltas and ccScoreMap Now Read Real API Data</div>
-      <div class="decision-body">The Creative Choice and Fix It animations were hardcoded to fake scores (82, 71, 68) from a demo era that no longer exists. Both maps are now ES6 Proxy objects that read from <code style="font-family:'Courier Prime',monospace;font-size:11px;color:var(--cyan);">window._lastScores</code> at animation time &mdash; populated by the real API result every time.</div>
-      <span class="decision-badge badge-high">Architecture</span>
-    </div>
-  </div>
-</section>
-
 <!-- FOOTER -->
 <div class="cs-footer">
   <div class="cs-footer-brand">Scene<span>One</span></div>
   <div class="cs-footer-sub">&ldquo;Democratizing Hollywood, one script at a time.&rdquo;</div>
   <div class="cs-footer-links">
-    <a class="cs-footer-link" href="https://sceneone.net" target="_blank">Try It Live at sceneone.net &rarr;</a>
+    <a class="cs-footer-link" href="landing.html" target="_blank">Try the Prototype &rarr;</a>
     <a class="cs-footer-link" href="https://willgraysondesign.com">Portfolio</a>
     <a class="cs-footer-link" href="#">Terms of Service</a>
     <a class="cs-footer-link" href="#">Privacy Policy</a>
@@ -611,5 +547,72 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   <div style="margin-top:16px;font-size:10px;color:rgba(255,255,255,0.15);">AI craft analysis only &middot; Not a guarantee of industry acceptance &middot; &copy; 2026 Will Grayson / SceneOne</div>
 </div>
 
+<script>
+(function(){
+  // ── Auto-apply reveal classes to targeted elements ──────────────
+  const STAGGER_SELECTORS = [
+    '.ps-card','.feature-card','.screen-card','.legal-card',
+    '.tech-card','.funding-card','.loader-card','.cinematic-card','.mkt-side'
+  ];
+  const SEQUENTIAL_SELECTORS = ['.decision-card','.phase-item'];
+  const BLOCK_SELECTORS = [
+    '.section-eyebrow','.section-title','.section-sub',
+    '.mission-block','.mission-quote','.legal-disclaimer'
+  ];
+
+  BLOCK_SELECTORS.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>el.classList.add('reveal'));
+  });
+  STAGGER_SELECTORS.forEach(sel=>{
+    document.querySelectorAll(sel).forEach((el,i)=>{
+      el.classList.add('reveal','reveal-d'+(Math.min(i%3+1,9)));
+    });
+  });
+  SEQUENTIAL_SELECTORS.forEach(sel=>{
+    document.querySelectorAll(sel).forEach((el,i)=>{
+      el.classList.add('reveal','reveal-d'+(Math.min(i+1,9)));
+    });
+  });
+
+  // ── IntersectionObserver ────────────────────────────────────────
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  // ── Stat count-up ───────────────────────────────────────────────
+  function countUp(el,target,duration,prefix){
+    if(target===0){el.textContent=prefix+'0';return;}
+    const start=performance.now();
+    (function tick(now){
+      const p=Math.min((now-start)/duration,1);
+      const eased=1-Math.pow(1-p,3);
+      el.textContent=prefix+Math.round(eased*target);
+      if(p<1)requestAnimationFrame(tick);
+    })(start);
+  }
+
+  const statObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const el=e.target;
+        countUp(el,parseInt(el.dataset.val),1100,el.dataset.prefix||'');
+        statObs.unobserve(el);
+      }
+    });
+  },{threshold:0.5});
+
+  document.querySelectorAll('.hero-stat-val[data-val]').forEach(el=>{
+    el.textContent=(el.dataset.prefix||'')+'0';
+    statObs.observe(el);
+  });
+})();
+</script>
 </body>
 </html>

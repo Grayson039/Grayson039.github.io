@@ -198,7 +198,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 .upload-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;}
 .upload-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:#fff;margin-bottom:6px;line-height:1.1;}
-.upload-desc{font-size:13px;color:var(--sub);margin-bottom:28px;line-height:1.7;}
+.upload-desc{font-size:13px;color:var(--sub);margin-bottom:20px;line-height:1.7;}
+.script-type-toggle{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:3px;gap:3px;margin-bottom:8px;}
+.stt-btn{flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--sub);background:transparent;letter-spacing:0.02em;}
+.stt-btn.active{background:var(--card2);color:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.4);}
+.stt-hint{font-size:11px;color:var(--sub);margin-bottom:20px;}
 
 .drop-zone{background:var(--card);border:2px dashed rgba(62,237,231,0.22);border-radius:18px;padding:48px 28px;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-bottom:14px;}
 .drop-zone:hover,.drop-zone.over{border-color:var(--cyan-glow);background:rgba(62,237,231,0.04);box-shadow:0 0 36px rgba(62,237,231,0.07);}
@@ -1444,6 +1448,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="upload-eyebrow">Upload Your Script</div>
     <div class="upload-title">Ready when you are.</div>
     <div class="upload-desc">Drop your script below. We accept PDF, FDX, and Fountain files. Analysis takes 2–4 minutes — good feedback takes time. Even ours.</div>
+
+    <div class="script-type-toggle" id="script-type-toggle">
+      <button class="stt-btn active" id="stt-feature" onclick="setScriptType('feature')">Feature</button>
+      <button class="stt-btn" id="stt-short" onclick="setScriptType('short')">Short Film</button>
+    </div>
+    <div class="stt-hint" id="stt-hint">Feature length (~80–120 pages)</div>
 
     <div class="drop-zone" id="drop-zone">
       <input type="file" id="file-input" accept=".pdf" onchange="handleFile(this)">
@@ -4702,6 +4712,16 @@ function useSample() {
 // ─── CLAPPER FIX — force equal random distribution ───
 let _lastLoader = -1;
 let _uploadedFile = null;
+let _scriptType = 'feature';
+
+function setScriptType(type) {
+  _scriptType = type;
+  document.getElementById('stt-feature').classList.toggle('active', type === 'feature');
+  document.getElementById('stt-short').classList.toggle('active', type === 'short');
+  document.getElementById('stt-hint').textContent = type === 'short'
+    ? 'Short film (~5–40 pages) — graded on compressed structure'
+    : 'Feature length (~80–120 pages)';
+}
 let _currentUser = null;
 function getNextLoader() {
   let next;
@@ -4766,7 +4786,7 @@ async function _runAnalysis() {
 
     // Call Supabase Edge Function
     const { data, error: fnError } = await supabaseClient.functions.invoke('grade-script', {
-      body: { script_text: scriptText, title, user_email: _currentUser?.email || null },
+      body: { script_text: scriptText, title, user_email: _currentUser?.email || null, script_type: _scriptType },
     });
 
     if (fnError) throw new Error(fnError.message || 'Edge function error');

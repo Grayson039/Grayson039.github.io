@@ -5,11 +5,18 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM_PROMPT = `You are SceneOne's analysis engine. You evaluate screenplays using proportional structural analysis based on Save the Cat methodology. You assess five dimensions: Structure (Act Proportion, key beats at right page percentages), Conflict (The Engine — clear opposing force), Escalation (rising stakes through Act 2), The Pivot (midpoint shift), and The Payoff (climax/resolution).
+const SYSTEM_PROMPT = `You are SceneOne's analysis engine. You evaluate screenplays using proportional structural analysis. For features, you apply Save the Cat methodology (Act 1 ~25%, Act 2 ~50%, Act 3 ~25%, midpoint at 50%). For short films, you apply compressed structure analysis — shorts operate on tighter proportions, often with a single escalating conflict and a fast pivot; do NOT penalize a short for lacking a traditional midpoint or full three-act sprawl. Assess five dimensions: Structure, Conflict, Dialogue, Pacing, and Visual Storytelling.
 
 Always return ONLY valid JSON with no markdown, no commentary, no code fences. Return the JSON object directly.`;
 
-const USER_PROMPT = (title: string, scriptText: string) => `Analyze this screenplay titled "${title}".
+const FEATURE_STRUCTURE_NOTE = `This is a FEATURE-LENGTH screenplay (typically 80–120 pages). Apply full Save the Cat structure: Act 1 break ~p.25, midpoint ~p.50, Act 2 break ~p.75, climax ~p.85-95. Grade structure against these proportional expectations.`;
+
+const SHORT_STRUCTURE_NOTE = `This is a SHORT FILM (typically 5–40 pages). Do NOT apply feature-length structure benchmarks. Instead evaluate: (1) Does the inciting incident land in the first 15–20% of pages? (2) Is there a clear single escalating conflict? (3) Does the ending feel earned given the compressed format? Short films often have one act break, not three — grade accordingly. Pacing scores should reflect the actual page count with one value per ~3 pages.`;
+
+const USER_PROMPT = (title: string, scriptText: string, scriptType: string) => `Analyze this screenplay titled "${title}".
+
+SCRIPT TYPE: ${scriptType === 'short' ? 'Short Film' : 'Feature'}
+${scriptType === 'short' ? SHORT_STRUCTURE_NOTE : FEATURE_STRUCTURE_NOTE}
 
 SCREENPLAY TEXT:
 ${scriptText.slice(0, 60000)}
@@ -32,7 +39,7 @@ Return a JSON object with EXACTLY this structure (all fields required):
     {"film": "<film title>", "pct": <integer>},
     {"film": "<film title>", "pct": <integer>}
   ],
-  "pacing_scores": [<array of integers 0-100, one per ~10 pages, approximately 10 values for a 100-page script>],
+  "pacing_scores": [<${scriptType === 'short' ? 'array of integers 0-100, one per ~3 pages — typically 5–12 values for a short film' : 'array of integers 0-100, one per ~10 pages, approximately 10 values for a 100-page script'}>],
   "categories": {
     "structure": {
       "strength": "<what structure does well, ~35 words>",
@@ -103,7 +110,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { script_text, title } = await req.json();
+    const { script_text, title, script_type = 'feature' } = await req.json();
 
     if (!script_text || script_text.trim().length < 100) {
       return new Response(
@@ -120,7 +127,7 @@ Deno.serve(async (req) => {
       model: "claude-sonnet-4-6",
       max_tokens: 4096,
       system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: USER_PROMPT(title || "Untitled Script", script_text) }],
+      messages: [{ role: "user", content: USER_PROMPT(title || "Untitled Script", script_text, script_type) }],
     });
 
     const rawText = message.content[0].type === "text" ? message.content[0].text : "";

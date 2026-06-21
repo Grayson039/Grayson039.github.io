@@ -1575,7 +1575,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
           <li><span class="pf-check">✓</span>Score delta between drafts</li>
           <li><span class="pf-check" style="color:var(--sub)">–</span><span style="color:var(--sub)">Storyboard Breakdown</span></li>
         </ul>
-        <button class="pricing-cta pricing-cta-primary" onclick="window.open('https://buy.stripe.com/14AfZh5vW4mKh1ueqm00000','_blank')">Get Writer →</button>
+        <button class="pricing-cta pricing-cta-primary" onclick="openStripeCheckout('https://buy.stripe.com/14AfZh5vW4mKh1ueqm00000')">Get Writer →</button>
       </div>
 
       <!-- PRO -->
@@ -1591,7 +1591,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
           <li><span class="pf-check pf-soon">◎</span>Storyboard Breakdown <span class="pf-soon-tag">Soon</span></li>
           <li><span class="pf-check pf-soon">◎</span>AI scene reconstruction <span class="pf-soon-tag">Soon</span></li>
         </ul>
-        <button class="pricing-cta pricing-cta-ghost" onclick="window.open('https://buy.stripe.com/3cIeVd5vW6uS4eIfuq00001','_blank')">Get Pro →</button>
+        <button class="pricing-cta pricing-cta-ghost" onclick="openStripeCheckout('https://buy.stripe.com/3cIeVd5vW6uS4eIfuq00001')">Get Pro →</button>
       </div>
 
     </div>
@@ -1806,10 +1806,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         Title detected from your script — confirm or edit above
       </div>
 
-      <!-- Co-writers -->
+      <!-- Co-writers — Pro plan only -->
+      <div id="cowriter-section" style="display:none;">
       <div class="upload-section-label" style="margin-top:14px;">
         Co-writers
-        <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--sub);margin-left:6px;">Optional</span>
+        <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--sub);margin-left:6px;">Optional · Pro plan</span>
       </div>
       <div class="cowriter-list" id="cowriter-list">
         <!-- Added dynamically -->
@@ -1819,6 +1820,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         Add a co-writer
       </button>
       <div class="cowriter-note">Co-writers will receive email notifications when the script is uploaded, listed on the Discovery Dashboard, and when readers request access. Their name appears on your script's listing.</div>
+      </div>
     </div>
 
     <button class="analyze-btn" id="analyze-btn" onclick="checkTosBeforeAnalysis()">Analyze My Script →</button>
@@ -3120,6 +3122,7 @@ const supabaseClient = (() => {
       _currentUser = session.user;
       userName = session.user.user_metadata?.full_name?.split(' ')[0]
                  || session.user.email.split('@')[0];
+      _loadUserPlan();
       // Already authenticated — skip auth screens
       goTo('upload');
       loadScriptHistory();
@@ -3739,6 +3742,7 @@ async function startOnboarding() {
     const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (!signInError && signInData.session) {
       _currentUser = signInData.user;
+      _loadUserPlan();
     } else {
       // Confirmation email required — tell the user
       btn.textContent = 'Create Account & Continue →';
@@ -3749,6 +3753,7 @@ async function startOnboarding() {
     }
   } else {
     _currentUser = data.user;
+    _loadUserPlan();
   }
 
   userName = name.split(' ')[0] || email.split('@')[0];
@@ -4529,6 +4534,7 @@ async function handleLogin() {
 
   userName = data.user.user_metadata?.full_name?.split(' ')[0] || email.split('@')[0];
   _currentUser = data.user;
+  _loadUserPlan();
   isFirstTime = false;
   goTo('upload');
   setTimeout(() => {
@@ -5368,7 +5374,48 @@ function setScriptType(type) {
 }
 let _currentUser = null;
 let _currentSubId = null;
+let _userPlan = 'free';
 let _dashSort = 'score';
+
+async function _loadUserPlan() {
+  if (!_currentUser || !supabaseClient) return;
+  try {
+    const { data } = await supabaseClient.from('profiles').select('plan').eq('id', _currentUser.id).single();
+    _userPlan = data?.plan ?? 'free';
+    _applyPlanGating();
+  } catch(e) {}
+}
+
+function _applyPlanGating() {
+  const cowriterSection = document.getElementById('cowriter-section');
+  if (cowriterSection) {
+    cowriterSection.style.display = (_userPlan === 'pro' || _userPlan === 'pro_unlimited') ? '' : 'none';
+  }
+}
+
+function openStripeCheckout(url) {
+  const email = _currentUser?.email;
+  const dest = email ? url + '?prefilled_email=' + encodeURIComponent(email) : url;
+  window.open(dest, '_blank');
+}
+
+function showUpgradeModal(plan) {
+  const m = document.getElementById('upgrade-modal');
+  if (!m) return;
+  const isWriter = plan === 'writer';
+  document.getElementById('upgrade-modal-heading').textContent = isWriter
+    ? "You've used all 5 analyses this month"
+    : "You've used your free analysis";
+  document.getElementById('upgrade-modal-sub').textContent = isWriter
+    ? 'Writer plan includes 5 script analyses per month. Upgrade to Pro for unlimited.'
+    : 'Free plan includes 1 script analysis per month. Upgrade when you\'re ready to revise more.';
+  m.style.display = 'flex';
+}
+
+function closeUpgradeModal() {
+  const m = document.getElementById('upgrade-modal');
+  if (m) m.style.display = 'none';
+}
 function getNextLoader() {
   let next;
   do { next = Math.floor(Math.random() * 3); } while (next === _lastLoader);
@@ -5439,6 +5486,12 @@ async function _runAnalysis() {
     });
 
     if (fnError) throw new Error(fnError.message || 'Edge function error');
+    if (data?.error === 'free_limit_reached' || data?.error === 'plan_limit_reached') {
+      _isAnalyzing = false;
+      goTo('upload');
+      showUpgradeModal(data.plan || 'free');
+      return;
+    }
     if (data?.error) throw new Error(data.error);
 
     _onApiDone(data);
@@ -5680,6 +5733,21 @@ async function _runAnalysis() {
   </div>
 </div>
 
+
+<!-- ══════════ UPGRADE MODAL ══════════ -->
+<div id="upgrade-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center;padding:20px;" role="dialog" aria-modal="true" aria-labelledby="upgrade-modal-heading">
+  <div style="background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:36px 28px;max-width:440px;width:100%;text-align:center;box-shadow:var(--shadow-lg);">
+    <div style="font-size:36px;margin-bottom:14px;" aria-hidden="true">🎬</div>
+    <div id="upgrade-modal-heading" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.25;">You've used your free analysis</div>
+    <div id="upgrade-modal-sub" style="font-size:13px;color:var(--sub);line-height:1.65;margin-bottom:28px;">Free plan includes 1 script analysis per month. Upgrade when you're ready to revise more.</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+      <button onclick="openStripeCheckout('https://buy.stripe.com/14AfZh5vW4mKh1ueqm00000')" style="padding:14px;border-radius:10px;border:none;background:var(--cyan);color:#0F0F0F;font-weight:800;font-size:14px;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#5ff5ef'" onmouseout="this.style.background='var(--cyan)'">Get Writer — $12/mo &nbsp;·&nbsp; 5 analyses</button>
+      <button onclick="openStripeCheckout('https://buy.stripe.com/3cIeVd5vW6uS4eIfuq00001')" style="padding:14px;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)'" onmouseout="this.style.borderColor='var(--border2)'">Get Pro — $29/mo &nbsp;·&nbsp; Unlimited analyses</button>
+      <button onclick="goTo('pricing'); closeUpgradeModal();" style="padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--sub);font-size:12px;cursor:pointer;">Compare all plans →</button>
+    </div>
+    <button onclick="closeUpgradeModal()" style="background:none;border:none;color:var(--sub);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Maybe later</button>
+  </div>
+</div>
 
 <!-- ══════════ TITLE CONFIRM MODAL ══════════ -->
 <div class="title-confirm-overlay" id="title-confirm-overlay">

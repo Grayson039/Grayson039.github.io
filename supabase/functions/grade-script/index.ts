@@ -6,7 +6,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const RATE_LIMIT_PER_HOUR = 5; // max grading requests per user per hour
+const MONTHLY_LIMITS: Record<string, number | null> = {
+  free:           1,
+  writer:         5,
+  pro:            null, // unlimited
+  pro_unlimited:  null, // unlimited
+};
 
 const SYSTEM_PROMPT = `You are SceneOne's analysis engine. You evaluate screenplays using proportional structural analysis. For features, you apply Save the Cat methodology (Act 1 ~25%, Act 2 ~50%, Act 3 ~25%, midpoint at 50%). For short films, you apply compressed structure analysis — shorts operate on tighter proportions, often with a single escalating conflict and a fast pivot; do NOT penalize a short for lacking a traditional midpoint or full three-act sprawl. Assess five dimensions: Structure, Conflict, Dialogue, Pacing, and Visual Storytelling.
 
@@ -143,19 +148,36 @@ Deno.serve(async (req) => {
       );
     }
 
-    // ── Rate limit: max 5 grading calls per user per hour ───────────────────
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    const { count } = await supabase
-      .from("submissions")
-      .select("*", { count: "exact", head: true })
-      .eq("user_email", user.email)
-      .gte("created_at", oneHourAgo);
+    // ── Plan enforcement: monthly analysis limits ────────────────────────────
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("plan")
+      .eq("id", user.id)
+      .single();
 
-    if ((count ?? 0) >= RATE_LIMIT_PER_HOUR) {
-      return new Response(
-        JSON.stringify({ error: "Rate limit reached. You can grade up to 5 scripts per hour." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const plan = profile?.plan ?? "free";
+    const monthlyLimit: number | null = plan in MONTHLY_LIMITS
+      ? MONTHLY_LIMITS[plan]
+      : 1; // unknown plan → apply free limit
+
+    if (monthlyLimit !== null) {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const { count } = await supabase
+        .from("submissions")
+        .select("*", { count: "exact", head: true })
+        .eq("user_email", user.email)
+        .gte("created_at", startOfMonth.toISOString());
+
+      if ((count ?? 0) >= monthlyLimit) {
+        const errorCode = plan === "free" ? "free_limit_reached" : "plan_limit_reached";
+        return new Response(
+          JSON.stringify({ error: errorCode, plan, limit: monthlyLimit }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // ── Input validation ─────────────────────────────────────────────────────

@@ -184,7 +184,40 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .l-pill{font-size:11px;font-weight:600;color:var(--sub);background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:100px;padding:5px 13px;}
 .l-pill.c{color:var(--cyan);border-color:rgba(62,237,231,0.2);background:rgba(62,237,231,0.04);}
 
-.l-mantra{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.14);white-space:nowrap;}
+.l-mantra{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.14);white-space:nowrap;}
+.l-pricing-link{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:none;border:none;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;letter-spacing:0.02em;white-space:nowrap;transition:color .15s;}
+.l-pricing-link:hover{color:var(--cyan);}
+
+/* ── PRICING SCREEN ── */
+#screen-pricing{align-items:flex-start;justify-content:flex-start;padding:48px 40px 80px;overflow-y:auto;}
+.pricing-wrap{width:100%;max-width:960px;margin:0 auto;}
+.pricing-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;}
+.pricing-title{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,42px);font-weight:900;color:#fff;line-height:1.15;margin-bottom:14px;}
+.pricing-sub{font-size:14px;color:var(--sub);line-height:1.7;max-width:520px;margin-bottom:48px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;}
+.pricing-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 24px;position:relative;display:flex;flex-direction:column;}
+.pricing-card-featured{border-color:rgba(62,237,231,0.3);background:linear-gradient(160deg,rgba(62,237,231,0.05) 0%,var(--card) 60%);}
+.pricing-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--cyan);background:rgba(62,237,231,0.12);border:1px solid rgba(62,237,231,0.2);border-radius:100px;padding:3px 10px;margin-bottom:16px;width:fit-content;}
+.pricing-tier{font-size:13px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--sub);margin-bottom:8px;}
+.pricing-price{font-family:'Playfair Display',serif;font-size:48px;font-weight:900;color:#fff;line-height:1;margin-bottom:6px;}
+.pricing-period{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;color:var(--sub);}
+.pricing-tagline{font-size:12px;color:var(--sub);margin-bottom:24px;line-height:1.5;}
+.pricing-features{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:10px;flex:1;}
+.pricing-features li{display:flex;align-items:baseline;gap:9px;font-size:13px;color:var(--text);line-height:1.4;}
+.pf-check{font-size:11px;color:var(--cyan);flex-shrink:0;width:14px;}
+.pf-soon{color:var(--sub) !important;}
+.pf-soon-tag{font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:4px;padding:1px 6px;margin-left:4px;}
+.pricing-cta{width:100%;padding:13px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
+.pricing-cta-primary{background:var(--cyan);color:#0A0A0C;}
+.pricing-cta-primary:hover{background:#6bf5f0;}
+.pricing-cta-ghost{background:transparent;color:var(--text);border:1px solid var(--border2);}
+.pricing-cta-ghost:hover{border-color:rgba(255,255,255,0.25);color:#fff;}
+.pricing-footer{text-align:center;font-size:11px;color:var(--sub);line-height:1.8;}
+@media(max-width:768px){
+  #screen-pricing{padding:40px 20px 80px;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .pricing-card-featured{order:-1;}
+}
 
 /* ─── SCREEN 2: UPLOAD ─── */
 #screen-upload{justify-content:center;align-items:center;
@@ -1436,6 +1469,78 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   </div>
 
   <div class="l-mantra">We grade craft. Not taste.</div>
+  <button class="l-pricing-link" onclick="goTo('pricing')">See pricing →</button>
+</div>
+
+<!-- ══════════════════════ SCREEN 1b: PRICING ══════════════════════ -->
+<div class="screen" id="screen-pricing">
+  <div class="pricing-wrap">
+    <button class="upload-back" onclick="goTo('landing')" style="margin-bottom:32px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+
+    <div class="pricing-eyebrow">Pricing</div>
+    <div class="pricing-title">Honest pricing.<br>No subscriptions until you need them.</div>
+    <div class="pricing-sub">Every writer gets one free analysis per month. Upgrade when you're writing more — downgrade whenever you want.</div>
+
+    <div class="pricing-grid">
+
+      <!-- FREE -->
+      <div class="pricing-card">
+        <div class="pricing-tier">Free</div>
+        <div class="pricing-price">$0<span class="pricing-period">/month</span></div>
+        <div class="pricing-tagline">Everything you need to start.</div>
+        <ul class="pricing-features">
+          <li><span class="pf-check">✓</span>1 script analysis per month</li>
+          <li><span class="pf-check">✓</span>All 5 craft dimensions scored</li>
+          <li><span class="pf-check">✓</span>Page-specific notes + Fix It</li>
+          <li><span class="pf-check">✓</span>Pacing heatmap</li>
+          <li><span class="pf-check">✓</span>Story DNA comps</li>
+          <li><span class="pf-check">✓</span>Discovery Dashboard listing</li>
+        </ul>
+        <button class="pricing-cta pricing-cta-ghost" onclick="goTo('upload')">Start for Free →</button>
+      </div>
+
+      <!-- WRITER -->
+      <div class="pricing-card pricing-card-featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-tier" style="color:var(--cyan)">Writer</div>
+        <div class="pricing-price">$12<span class="pricing-period">/month</span></div>
+        <div class="pricing-tagline">For writers actively in revision.</div>
+        <ul class="pricing-features">
+          <li><span class="pf-check">✓</span>5 script analyses per month</li>
+          <li><span class="pf-check">✓</span>Everything in Free</li>
+          <li><span class="pf-check">✓</span>Priority grading queue</li>
+          <li><span class="pf-check">✓</span>Revision history tracking</li>
+          <li><span class="pf-check">✓</span>Score delta between drafts</li>
+          <li><span class="pf-check" style="color:var(--sub)">–</span><span style="color:var(--sub)">Storyboard Breakdown</span></li>
+        </ul>
+        <button class="pricing-cta pricing-cta-primary" onclick="goTo('upload')">Get Writer →</button>
+      </div>
+
+      <!-- PRO -->
+      <div class="pricing-card">
+        <div class="pricing-tier" style="color:var(--gold)">Pro</div>
+        <div class="pricing-price">$29<span class="pricing-period">/month</span></div>
+        <div class="pricing-tagline">For serious writers and small teams.</div>
+        <ul class="pricing-features">
+          <li><span class="pf-check">✓</span>Unlimited analyses</li>
+          <li><span class="pf-check">✓</span>Everything in Writer</li>
+          <li><span class="pf-check">✓</span>Co-writer collaboration</li>
+          <li><span class="pf-check">✓</span>Reader request management</li>
+          <li><span class="pf-check pf-soon">◎</span>Storyboard Breakdown <span class="pf-soon-tag">Soon</span></li>
+          <li><span class="pf-check pf-soon">◎</span>AI scene reconstruction <span class="pf-soon-tag">Soon</span></li>
+        </ul>
+        <button class="pricing-cta pricing-cta-ghost" onclick="goTo('upload')">Get Pro →</button>
+      </div>
+
+    </div>
+
+    <div class="pricing-footer">
+      Discovery Dashboard is free on all plans — always. &nbsp;·&nbsp; Cancel anytime. &nbsp;·&nbsp; No credit card to start.
+    </div>
+  </div>
 </div>
 
 <!-- ══════════════════════ SCREEN 2: UPLOAD ══════════════════════ -->

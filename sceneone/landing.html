@@ -596,6 +596,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .rev-content-desc{font-size:11px;color:var(--sub);line-height:1.55;}
 .rev-impact{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-top:4px;}
 
+/* ── Accessibility ── */
+.skip-link{position:absolute;top:-52px;left:16px;z-index:9999;background:var(--cyan);color:#0F0F0F;padding:10px 18px;border-radius:0 0 10px 10px;font-size:13px;font-weight:800;text-decoration:none;transition:top .15s;white-space:nowrap;}
+.skip-link:focus{top:0;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
 /* Activity feed */
 .feed-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);}
 .feed-card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:3px;}
@@ -1293,9 +1298,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<div id="main-content" tabindex="-1" style="outline:none"></div>
 
 <!-- ══════════════════════ SCREEN 0: WELCOME / SIGN UP ══════════════════════ -->
-<div class="screen" id="screen-welcome">
+<div class="screen" id="screen-welcome" role="region" aria-label="Sign up or sign in">
   <div class="welcome-wrap">
     <div class="welcome-eyebrow">AI Screenplay Coverage</div>
     <div class="welcome-logo">Scene<span>One</span></div>
@@ -1312,16 +1319,16 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       <div class="auth-title">Create your free account</div>
       <div class="auth-sub">Save reports, track revisions, and measure your improvement over time.</div>
       <div class="form-field">
-        <label class="form-label">Your name</label>
-        <input class="form-input" type="text" placeholder="First name" id="ob-name" oninput="checkSignupReady()">
+        <label class="form-label" for="ob-name">Your name</label>
+        <input class="form-input" type="text" placeholder="First name" id="ob-name" oninput="checkSignupReady()" autocomplete="given-name">
       </div>
       <div class="form-field">
-        <label class="form-label">Email</label>
-        <input class="form-input" type="email" placeholder="you@email.com" id="ob-email" oninput="checkSignupReady()">
+        <label class="form-label" for="ob-email">Email</label>
+        <input class="form-input" type="email" placeholder="you@email.com" id="ob-email" oninput="checkSignupReady()" autocomplete="email">
       </div>
       <div class="form-field">
-        <label class="form-label">Password</label>
-        <input class="form-input" type="password" placeholder="At least 8 characters" id="ob-password" oninput="checkPasswordStrength(this.value);checkSignupReady()">
+        <label class="form-label" for="ob-password">Password</label>
+        <input class="form-input" type="password" placeholder="At least 8 characters" id="ob-password" oninput="checkPasswordStrength(this.value);checkSignupReady()" autocomplete="new-password" aria-describedby="pw-req">
         <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
         <div class="pw-strength-label" id="pw-label" style="color:var(--sub);">Enter a password</div>
         <div class="pw-req" id="pw-req">
@@ -1339,12 +1346,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       <div class="auth-title">Welcome back.</div>
       <div class="auth-sub">Sign in to access your reports and revision history.</div>
       <div class="form-field">
-        <label class="form-label">Email</label>
-        <input class="form-input" type="email" placeholder="you@email.com" id="login-email" oninput="checkLoginReady()">
+        <label class="form-label" for="login-email">Email</label>
+        <input class="form-input" type="email" placeholder="you@email.com" id="login-email" oninput="checkLoginReady()" autocomplete="email">
       </div>
       <div class="form-field">
-        <label class="form-label">Password</label>
-        <input class="form-input" type="password" placeholder="Your password" id="login-password" oninput="checkLoginReady()">
+        <label class="form-label" for="login-password">Password</label>
+        <input class="form-input" type="password" placeholder="Your password" id="login-password" oninput="checkLoginReady()" autocomplete="current-password">
       </div>
       <button class="form-submit" id="login-submit" onclick="handleLogin()" style="background:var(--card2);color:#fff;border:1px solid var(--border2);">Sign In →</button>
       <div style="text-align:center;margin-top:10px;">
@@ -1620,16 +1627,16 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         <div class="auth-sub" style="margin-bottom:20px;">We verify credentials before granting access to scripts.</div>
 
         <div class="form-field">
-          <label class="form-label">Full Name</label>
+          <label class="form-label" for="exec-name">Full Name</label>
           <input class="form-input" id="exec-name" type="text" placeholder="Jordan Meyers" autocomplete="name">
         </div>
         <div class="form-field">
-          <label class="form-label">Company</label>
-          <input class="form-input" id="exec-company" type="text" placeholder="A24, Blumhouse, Netflix…">
+          <label class="form-label" for="exec-company">Company</label>
+          <input class="form-input" id="exec-company" type="text" placeholder="A24, Blumhouse, Netflix…" autocomplete="organization">
         </div>
         <div class="form-field">
-          <label class="form-label">Your Role</label>
-          <div class="exec-role-grid" id="exec-role-grid">
+          <label class="form-label" id="exec-role-label">Your Role</label>
+          <div class="exec-role-grid" id="exec-role-grid" role="group" aria-labelledby="exec-role-label">
             <button class="exec-role-btn" onclick="selectExecRole(this,'Director')">Director</button>
             <button class="exec-role-btn" onclick="selectExecRole(this,'Producer')">Producer</button>
             <button class="exec-role-btn" onclick="selectExecRole(this,'Development Executive')">Dev Executive</button>
@@ -1639,15 +1646,15 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
           </div>
         </div>
         <div class="form-field">
-          <label class="form-label">IMDb or LinkedIn URL <span style="color:var(--sub);font-weight:400;text-transform:none;letter-spacing:0">(optional but speeds up verification)</span></label>
-          <input class="form-input" id="exec-imdb" type="url" placeholder="https://imdb.com/name/…">
+          <label class="form-label" for="exec-imdb">IMDb or LinkedIn URL <span style="color:var(--sub);font-weight:400;text-transform:none;letter-spacing:0">(optional but speeds up verification)</span></label>
+          <input class="form-input" id="exec-imdb" type="url" placeholder="https://imdb.com/name/…" autocomplete="url">
         </div>
         <div class="form-field">
-          <label class="form-label">Email</label>
+          <label class="form-label" for="exec-email">Email</label>
           <input class="form-input" id="exec-email" type="email" placeholder="you@studio.com" autocomplete="email">
         </div>
         <div class="form-field">
-          <label class="form-label">Password</label>
+          <label class="form-label" for="exec-password">Password</label>
           <input class="form-input" id="exec-password" type="password" placeholder="8+ characters" autocomplete="new-password">
         </div>
         <button class="exec-submit" id="exec-submit-btn" onclick="handleExecSignup()">Request Industry Access →</button>
@@ -1659,14 +1666,14 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         <div class="auth-title">Welcome back.</div>
         <div class="auth-sub" style="margin-bottom:20px;">Sign in to access your industry dashboard.</div>
         <div class="form-field">
-          <label class="form-label">Email</label>
+          <label class="form-label" for="exec-signin-email">Email</label>
           <input class="form-input" id="exec-signin-email" type="email" placeholder="you@studio.com" autocomplete="email">
         </div>
         <div class="form-field">
-          <label class="form-label">Password</label>
+          <label class="form-label" for="exec-signin-password">Password</label>
           <input class="form-input" id="exec-signin-password" type="password" placeholder="Password" autocomplete="current-password">
         </div>
-        <div id="exec-signin-error" style="font-size:11px;color:#e06c6c;margin-bottom:12px;display:none;"></div>
+        <div id="exec-signin-error" role="alert" style="font-size:11px;color:#e06c6c;margin-bottom:12px;display:none;"></div>
         <button class="exec-submit" id="exec-signin-btn" onclick="handleExecSignIn()">Sign In →</button>
       </div>
     </div>
@@ -1757,8 +1764,8 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 <!-- ══════════════════════ SCREEN 2: UPLOAD ══════════════════════ -->
 <div class="screen" id="screen-upload">
   <div class="upload-wrap">
-    <button class="upload-back" onclick="goTo('landing')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <button class="upload-back" onclick="goTo('landing')" aria-label="Back to home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
       Back
     </button>
     <div class="upload-eyebrow">Upload Your Script</div>
@@ -1771,10 +1778,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     </div>
     <div class="stt-hint" id="stt-hint">Feature length (~80–120 pages)</div>
 
-    <div class="drop-zone" id="drop-zone">
-      <input type="file" id="file-input" accept=".pdf" onchange="handleFile(this)">
-      <div class="drop-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    <div class="drop-zone" id="drop-zone" role="button" aria-label="Drop screenplay file here or click to browse">
+      <label for="file-input" class="sr-only">Upload screenplay file (PDF)</label>
+      <input type="file" id="file-input" accept=".pdf" onchange="handleFile(this)" aria-label="Upload screenplay PDF file">
+      <div class="drop-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
       </div>
       <div class="drop-main">Drop your script here</div>
       <div class="drop-sub">or click to browse</div>
@@ -1784,14 +1792,14 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="file-row" id="file-row">
       <div class="file-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
       <div><div class="file-nm" id="file-nm">—</div><div class="file-sz" id="file-sz">—</div></div>
-      <button class="file-x" onclick="removeFile()">×</button>
+      <button class="file-x" onclick="removeFile()" aria-label="Remove selected file">×</button>
     </div>
 
     <!-- Script Title -->
     <div id="script-meta-section" style="display:none;">
-      <div class="upload-section-label">Script Title</div>
+      <label class="upload-section-label" for="script-title-input">Script Title</label>
       <div class="title-input-wrap">
-        <input class="title-input" type="text" id="script-title-input" placeholder="Enter your script title" oninput="checkAnalyzeReady()">
+        <input class="title-input" type="text" id="script-title-input" placeholder="Enter your script title" oninput="checkAnalyzeReady()" autocomplete="off">
       </div>
       <div class="title-parsed-note" id="title-parsed-note" style="display:none;">
         <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1823,9 +1831,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="sample-hint">A demo script so you can experience the full product</div>
 
     <div class="trust-row">
-      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Craft, not taste</div>
-      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Page-specific notes</div>
-      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Free to start</div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Craft, not taste</div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Page-specific notes</div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Free to start</div>
     </div>
 
     <!-- Script History — shown when logged in and history exists -->
@@ -1949,8 +1957,8 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   <!-- Shared status bar -->
   <div class="proc-status">
     <div class="proc-lbl" id="proc-lbl">Analyzing</div>
-    <div class="proc-bar-bg"><div class="proc-bar-fill" id="proc-bar"></div></div>
-    <div class="proc-phrase" id="proc-phrase">Identifying characters...</div>
+    <div class="proc-bar-bg"><div class="proc-bar-fill" id="proc-bar" role="progressbar" aria-label="Analysis progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>
+    <div class="proc-phrase" id="proc-phrase" aria-live="polite" aria-atomic="true">Identifying characters...</div>
   </div>
 
 </div>
@@ -2015,12 +2023,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 <!-- ══════════════════════ SCREEN 5: DISCOVERY DASHBOARD ══════════════════════ -->
 <div class="screen" id="screen-dashboard">
-  <nav class="dash-nav">
+  <nav class="dash-nav" aria-label="Discovery dashboard">
     <div class="dash-brand">
       <div class="dash-brand-name">Scene<span>One</span></div>
       <div class="dash-badge">Verified Reader</div>
     </div>
-    <div style="font-size:10px;color:var(--sub);">Discovery Dashboard · Scripts ready to be read</div>
+    <div style="font-size:10px;color:var(--sub);" aria-hidden="true">Discovery Dashboard · Scripts ready to be read</div>
     <div class="dash-nav-right">
       <button class="dash-nav-btn" onclick="goTo('exec-profile')">My Dashboard</button>
       <button class="dash-nav-btn" onclick="goTo('report')">← Back to Report</button>
@@ -2070,7 +2078,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       <div class="feed-header">
         <div>
           <div class="feed-title">Discovery Dashboard</div>
-          <div class="feed-meta" id="feed-meta">Loading scripts…</div>
+          <div class="feed-meta" id="feed-meta" aria-live="polite" aria-atomic="true">Loading scripts…</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
           <button class="dash-filter-toggle" onclick="toggleDashFilters()">
@@ -5025,6 +5033,7 @@ function showUploadError(msg) {
   if (!err) {
     err = document.createElement('div');
     err.id = 'upload-error-msg';
+    err.setAttribute('role', 'alert');
     err.style.cssText = 'margin-top:14px;padding:12px 16px;background:rgba(232,146,58,0.1);border:1px solid rgba(232,146,58,0.35);border-radius:10px;color:#E8923A;font-size:13px;line-height:1.5;';
     zone.after(err);
   }
@@ -5457,10 +5466,10 @@ async function _runAnalysis() {
 </script>
 
 <!-- ══════════════════════ FIRST REPORT CELEBRATION ══════════════════════ -->
-<div class="ob-celebrate" id="ob-celebrate" style="display:none;">
+<div class="ob-celebrate" id="ob-celebrate" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="celebrate-heading">
   <div class="ob-celebrate-card">
-    <div class="ob-celebrate-icon">🎬</div>
-    <div class="ob-celebrate-title">Scene Set.<br>Your first report is ready.</div>
+    <div class="ob-celebrate-icon" aria-hidden="true">🎬</div>
+    <div class="ob-celebrate-title" id="celebrate-heading">Scene Set.<br>Your first report is ready.</div>
     <div class="ob-celebrate-sub">You just got the same feedback Hollywood charges $100 for. Here's what SceneOne found in your script.</div>
     <div class="ob-celebrate-stats">
       <div class="ob-cel-stat">
@@ -5509,11 +5518,11 @@ async function _runAnalysis() {
 </div>
 
 <!-- ══════════ FIRST-USE TOS ACKNOWLEDGEMENT MODAL ══════════ -->
-<div class="tos-modal-overlay" id="tos-modal">
+<div class="tos-modal-overlay" id="tos-modal" role="dialog" aria-modal="true" aria-labelledby="tos-modal-heading" aria-describedby="tos-modal-desc">
   <div class="tos-modal">
     <div class="tos-modal-eye">Before you see your report</div>
-    <div class="tos-modal-title">A few things you should know.</div>
-    <div class="tos-modal-body">SceneOne is an AI-powered craft analysis tool. Please read and acknowledge the following before accessing your script feedback report.</div>
+    <div class="tos-modal-title" id="tos-modal-heading">A few things you should know.</div>
+    <div class="tos-modal-body" id="tos-modal-desc">SceneOne is an AI-powered craft analysis tool. Please read and acknowledge the following before accessing your script feedback report.</div>
     <div class="tos-modal-scroll">
       <strong>What SceneOne is:</strong> An automated tool that evaluates screenplay craft against documented methodology. All analysis is AI-generated. No human reads your script.<br><br>
       <strong>What SceneOne is not:</strong> A guarantee of industry acceptance. A "Submission Ready" designation means your craft elements are strong — not that your script will be accepted, optioned, or produced by anyone.<br><br>
@@ -5536,11 +5545,11 @@ async function _runAnalysis() {
 </div>
 
 <!-- ══════════ FULL TOS VIEWER MODAL ══════════ -->
-<div class="tos-viewer-overlay" id="tos-viewer">
+<div class="tos-viewer-overlay" id="tos-viewer" role="dialog" aria-modal="true" aria-labelledby="tos-viewer-heading">
   <div class="tos-viewer">
     <div class="tos-viewer-header">
-      <div class="tos-viewer-title">SceneOne Legal Documents</div>
-      <button class="tos-viewer-close" onclick="closeTosViewer()">×</button>
+      <div class="tos-viewer-title" id="tos-viewer-heading">SceneOne Legal Documents</div>
+      <button class="tos-viewer-close" onclick="closeTosViewer()" aria-label="Close legal documents">×</button>
     </div>
     <div class="tos-viewer-tabs">
       <div class="tos-viewer-tab active" onclick="switchTosTab('terms',this)">Terms of Service</div>

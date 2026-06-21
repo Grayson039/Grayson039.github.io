@@ -1481,12 +1481,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   <div class="l-sub">The $100 script feedback fee (what Hollywood charges to read and grade your script) has kept talented writers out of Hollywood for decades. SceneOne ends that. Free, evidence-based feedback for every writer — graded against the same framework Hollywood uses.</div>
 
   <div class="l-path-split">
-    <button class="l-path-btn" onclick="goTo('welcome')">
+    <button class="l-path-btn" id="path-writer-btn">
       <div class="l-path-eyebrow">For Writers</div>
       <div class="l-path-label">Grade My Script →</div>
       <div class="l-path-desc">Free structural feedback. No gatekeeping.</div>
     </button>
-    <button class="l-path-btn gold" onclick="goTo('exec-signup')">
+    <button class="l-path-btn gold" id="path-exec-btn">
       <div class="l-path-eyebrow">For Industry</div>
       <div class="l-path-label">Read Scripts →</div>
       <div class="l-path-desc">Pre-graded scripts. Filter by score and genre.</div>
@@ -3826,9 +3826,13 @@ function skipTour() {
   if(ring) ring.style.cssText='width:0;height:0;';
 }
 
-// Wire landing CTA to welcome screen — safe version
+// Wire landing path buttons and cleanup overlays on load
 window.addEventListener('load',()=>{
-  // Make absolutely sure tooltip overlay never shows on load
+  const writerBtn = document.getElementById('path-writer-btn');
+  const execBtn   = document.getElementById('path-exec-btn');
+  if(writerBtn) writerBtn.addEventListener('click', () => goTo('welcome'));
+  if(execBtn)   execBtn.addEventListener('click',   () => goTo('exec-signup'));
+
   const overlay=document.getElementById('ob-tooltip-overlay');
   if(overlay){ overlay.style.display='none'; overlay.classList.remove('active'); }
   const celebrate=document.getElementById('ob-celebrate');

@@ -3774,6 +3774,10 @@ function dismissCelebrate() {
   const cel = document.getElementById('ob-celebrate');
   cel.classList.remove('show');
   cel.style.display = 'none';
+}
+
+function dismissCelebrateAndTour() {
+  dismissCelebrate();
   setTimeout(()=>launchTour(), 400);
 }
 
@@ -5164,7 +5168,7 @@ async function _runAnalysis() {
       </div>
     </div>
     <button class="ob-celebrate-cta" onclick="dismissCelebrate()">Read my script feedback report →</button>
-    <button class="ob-celebrate-secondary" onclick="dismissCelebrate()">Show me everything</button>
+    <button class="ob-celebrate-secondary" onclick="dismissCelebrateAndTour()" style="font-size:12px;color:var(--sub);border:1px solid var(--border);border-radius:8px;padding:8px 16px;margin-top:4px;">Take the tour first →</button>
   </div>
 </div>
 

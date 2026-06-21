@@ -3135,6 +3135,8 @@ async function extractScriptText(file) {
 let _loaderDone = false;
 let _apiDone    = false;
 let _reportData = null;
+let _isAnalyzing = false;
+let _analysisId = null;
 
 function _onLoaderAnimDone() {
   _loaderDone = true;
@@ -4193,15 +4195,16 @@ function exportReport() {
 }
 
 // ─── SCRIPT HISTORY ───
-async function _saveSubmission(title, data) {
+async function _saveSubmission(title, data, idempotencyId) {
   try {
-    const { data: rows } = await supabaseClient.from('submissions').insert({
+    const { data: rows } = await supabaseClient.from('submissions').upsert({
+      id: idempotencyId,
       title: title || 'Untitled Script',
       user_email: _currentUser?.email || null,
       result: data,
       status: 'complete',
       public_listing: false,
-    }).select('id');
+    }, { onConflict: 'id' }).select('id');
     if (rows?.[0]?.id) _currentSubId = rows[0].id;
   } catch (e) {
     console.warn('SceneOne: submission save failed', e);
@@ -5220,15 +5223,18 @@ function getNextLoader() {
 }
 
 function startProcessing() {
+  if (_isAnalyzing) return;
   if (!_uploadedFile) {
     showUploadError('Please select a script file before analyzing.');
     return;
   }
 
   // Reset coordination flags
-  _loaderDone = false;
-  _apiDone    = false;
-  _reportData = null;
+  _isAnalyzing = true;
+  _analysisId  = crypto.randomUUID();
+  _loaderDone  = false;
+  _apiDone     = false;
+  _reportData  = null;
 
   // Button loading state
   const btn = document.getElementById('analyze-btn');
@@ -5282,9 +5288,11 @@ async function _runAnalysis() {
     if (data?.error) throw new Error(data.error);
 
     _onApiDone(data);
-    _saveSubmission(title, data);
+    _saveSubmission(title, data, _analysisId);
+    _isAnalyzing = false;
 
   } catch (err) {
+    _isAnalyzing = false;
     console.error('SceneOne analysis error:', err);
     // Show error in the processing screen so user understands what happened
     const ph = document.getElementById('proc-phrase');

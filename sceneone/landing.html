@@ -1096,8 +1096,26 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 @media(max-width:768px){
   .dash-body{grid-template-columns:1fr;}
   .dash-filters{display:none;}
+  .dash-filters.mobile-open{display:block !important;position:fixed;inset:0;top:57px;z-index:200;overflow-y:auto;border-right:none;}
   .dash-feed{padding:16px;}
+  .dash-filter-toggle{display:flex !important;}
+  .filter-close-btn{display:flex !important;}
 }
+.dash-filter-toggle{display:none;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--card);color:var(--sub);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+.dash-filter-toggle.active{color:var(--cyan);border-color:rgba(62,237,231,0.3);}
+.filter-close-btn{display:none;width:100%;align-items:center;justify-content:center;padding:12px;border-radius:10px;border:none;background:var(--cyan);color:#0F0F0F;font-size:12px;font-weight:800;cursor:pointer;margin-top:12px;font-family:'Inter',sans-serif;}
+.dash-load-more-wrap{padding:8px 0 24px;}
+.dash-load-more{display:block;width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.dash-load-more:hover{color:var(--text);border-color:var(--border2);}
+.script-card-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.script-chip{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;}
+.script-chip-genre{color:var(--cyan);background:rgba(62,237,231,0.06);border:1px solid rgba(62,237,231,0.15);}
+.script-chip-format{color:var(--sub);background:rgba(255,255,255,0.03);border:1px solid var(--border);}
+.script-chip-pages{color:var(--sub);background:rgba(255,255,255,0.03);border:1px solid var(--border);}
+.dash-empty{padding:60px 40px;text-align:center;}
+.dash-empty-icon{font-size:36px;margin-bottom:14px;}
+.dash-empty-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;}
+.dash-empty-body{font-size:12px;color:var(--sub);line-height:1.7;}
 
 
 /* ─── PROFILE + EXEC DASHBOARD CSS ─── */
@@ -2011,39 +2029,40 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   </nav>
 
   <div class="dash-body">
-    <!-- Filters -->
+    <!-- Filters sidebar -->
     <aside class="dash-filters">
       <div class="filter-title">Filter Scripts</div>
 
       <div class="filter-group">
         <div class="filter-group-label">Minimum Score</div>
-        <input type="range" class="filter-range" min="50" max="95" value="70" oninput="document.getElementById('score-range-val').textContent=this.value">
-        <div class="filter-range-labels"><span>50</span><span id="score-range-val">70</span><span>95</span></div>
+        <input type="range" id="filter-min-score" class="filter-range" min="50" max="95" value="50" oninput="document.getElementById('score-range-val').textContent=this.value;applyDashFilters()">
+        <div class="filter-range-labels"><span>50</span><span id="score-range-val">50</span><span>95</span></div>
       </div>
 
       <div class="filter-group">
         <div class="filter-group-label">Genre</div>
-        <div class="filter-option"><input type="checkbox" checked><label>Thriller / Drama</label></div>
-        <div class="filter-option"><input type="checkbox" checked><label>Horror</label></div>
-        <div class="filter-option"><input type="checkbox" checked><label>Comedy</label></div>
-        <div class="filter-option"><input type="checkbox" checked><label>Sci-Fi</label></div>
-        <div class="filter-option"><input type="checkbox" checked><label>Action</label></div>
-        <div class="filter-option"><input type="checkbox" checked><label>Drama</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-genre-thriller-drama" checked onchange="applyDashFilters()"><label for="filter-genre-thriller-drama">Thriller / Drama</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-genre-horror" checked onchange="applyDashFilters()"><label for="filter-genre-horror">Horror</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-genre-comedy" checked onchange="applyDashFilters()"><label for="filter-genre-comedy">Comedy</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-genre-sci-fi" checked onchange="applyDashFilters()"><label for="filter-genre-sci-fi">Sci-Fi</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-genre-action" checked onchange="applyDashFilters()"><label for="filter-genre-action">Action</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-genre-drama" checked onchange="applyDashFilters()"><label for="filter-genre-drama">Drama</label></div>
       </div>
 
       <div class="filter-group">
         <div class="filter-group-label">Story DNA — Comp Title</div>
-        <input type="text" class="filter-search" placeholder="e.g. Whiplash, Get Out...">
+        <input type="text" id="filter-comp-search" class="filter-search" placeholder="e.g. Whiplash, Get Out…" oninput="applyDashFilters()">
       </div>
 
       <div class="filter-group">
         <div class="filter-group-label">Format</div>
-        <div class="filter-option"><input type="checkbox" checked><label>Feature Film</label></div>
-        <div class="filter-option"><input type="checkbox" checked><label>TV Pilot</label></div>
-        <div class="filter-option"><input type="checkbox"><label>Short Film</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-fmt-feature" checked onchange="applyDashFilters()"><label for="filter-fmt-feature">Feature Film</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-fmt-tv" checked onchange="applyDashFilters()"><label for="filter-fmt-tv">TV Pilot</label></div>
+        <div class="filter-option"><input type="checkbox" id="filter-fmt-short" checked onchange="applyDashFilters()"><label for="filter-fmt-short">Short Film</label></div>
       </div>
 
-      <button class="filter-clear">Clear All Filters</button>
+      <button class="filter-clear" onclick="clearDashFilters()">Clear All Filters</button>
+      <button class="filter-close-btn" onclick="closeDashFilters()">Done — Close Filters</button>
     </aside>
 
     <!-- Feed -->
@@ -2053,13 +2072,21 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
           <div class="feed-title">Discovery Dashboard</div>
           <div class="feed-meta" id="feed-meta">Loading scripts…</div>
         </div>
-        <div class="feed-sort">
-          <button class="active" id="sort-score" onclick="setDashSort('score')">Score</button>
-          <button id="sort-recent" onclick="setDashSort('recent')">Recent</button>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="dash-filter-toggle" onclick="toggleDashFilters()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+            Filters
+          </button>
+          <div class="feed-sort">
+            <button class="active" id="sort-score" onclick="setDashSort('score')">Score</button>
+            <button id="sort-recent" onclick="setDashSort('recent')">Recent</button>
+          </div>
         </div>
       </div>
       <div id="dash-feed-list"></div>
-      <!-- placeholder cards removed — loadDashboard() renders real data -->
+      <div class="dash-load-more-wrap">
+        <button id="dash-load-more" class="dash-load-more" style="display:none" onclick="loadDashboard(true)">Load more scripts →</button>
+      </div>
     </main>
   </div>
 </div>
@@ -3848,67 +3875,149 @@ function selectExecRole(btn, role) {
 }
 
 // ─── DISCOVERY DASHBOARD ───
+let _dashAllRows = [];
+let _dashOffset = 0;
+const _DASH_PAGE = 20;
+
 function setDashSort(s) {
   _dashSort = s;
   document.getElementById('sort-score')?.classList.toggle('active', s === 'score');
   document.getElementById('sort-recent')?.classList.toggle('active', s === 'recent');
-  loadDashboard();
+  applyDashFilters();
 }
 
-async function loadDashboard() {
+function _getDashFilters() {
+  const minScore = parseInt(document.getElementById('filter-min-score')?.value || '50');
+  const genreIds = ['thriller-drama','horror','comedy','sci-fi','action','drama'];
+  const genres = genreIds.filter(g => document.getElementById('filter-genre-' + g)?.checked);
+  const fmtFeature = document.getElementById('filter-fmt-feature')?.checked;
+  const fmtTv = document.getElementById('filter-fmt-tv')?.checked;
+  const fmtShort = document.getElementById('filter-fmt-short')?.checked;
+  const compSearch = (document.getElementById('filter-comp-search')?.value || '').toLowerCase().trim();
+  return { minScore, genres, fmtFeature, fmtTv, fmtShort, compSearch };
+}
+
+function applyDashFilters() {
+  const { minScore, genres, fmtFeature, fmtTv, fmtShort, compSearch } = _getDashFilters();
+  const allGenresOn = genres.length === 6;
+  const allFmtsOn = fmtFeature && fmtTv && fmtShort;
+
+  let rows = _dashAllRows.filter(row => {
+    const r = row.result || {};
+    const score = r.overall_score || 0;
+    if (score < minScore) return false;
+    // Genre: only filter if result has genre field and not all genres selected
+    if (!allGenresOn && r.genre) {
+      const rg = (r.genre || '').toLowerCase();
+      if (!genres.some(g => rg.includes(g.replace('-', ' ')))) return false;
+    }
+    // Format: only filter if result has format/script_type and not all selected
+    if (!allFmtsOn) {
+      const fmt = (r.format || r.script_type || '').toLowerCase();
+      if (fmt) {
+        const ok = (fmtFeature && (fmt.includes('feature') || fmt === 'feature')) ||
+                   (fmtTv && (fmt.includes('tv') || fmt.includes('pilot'))) ||
+                   (fmtShort && fmt.includes('short'));
+        if (!ok) return false;
+      }
+    }
+    // Comp title search against story_dna
+    if (compSearch) {
+      const dna = (r.story_dna || []).map(d => (d.film || '').toLowerCase()).join(' ');
+      if (!dna.includes(compSearch)) return false;
+    }
+    return true;
+  });
+
+  if (_dashSort === 'score') rows.sort((a,b) => (b.result?.overall_score||0) - (a.result?.overall_score||0));
+  else rows.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+  const meta = document.getElementById('feed-meta');
+  if (meta) meta.textContent = `${rows.length} script${rows.length !== 1 ? 's' : ''} · Sorted by ${_dashSort}`;
+  renderDashFeed(rows);
+}
+
+function renderDashFeed(rows) {
+  const feed = document.getElementById('dash-feed-list');
+  if (!feed) return;
+  if (!rows.length) {
+    feed.innerHTML = `<div class="dash-empty">
+      <div class="dash-empty-icon">🎬</div>
+      <div class="dash-empty-title">No scripts match your filters.</div>
+      <div class="dash-empty-body">Try lowering the score threshold or clearing genre filters.</div>
+    </div>`;
+    return;
+  }
+  feed.innerHTML = rows.map(row => {
+    const r = row.result || {};
+    const score = r.overall_score || '—';
+    const scoreColor = score >= 75 ? 'var(--green)' : score >= 60 ? 'var(--cyan)' : 'var(--amber)';
+    const logline = r.logline ? `<div class="script-card-logline">${r.logline}</div>` : '';
+    const dna = (r.story_dna || []).slice(0,3).map(d => `<div class="dna-tag">${d.film} ${d.pct}%</div>`).join('');
+    const topScores = Object.entries(r.scores || {}).sort((a,b) => b[1]-a[1]).slice(0,3);
+    const bars = topScores.map(([k,v]) =>
+      `<div class="mini-score">${k.charAt(0).toUpperCase()+k.slice(1)}</div><div class="mini-bar-strip"><div class="mini-bar-strip-fill fill-c" style="width:${v}%"></div></div>`
+    ).join('');
+    const listed = new Date(row.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+    const safeTitle = (row.title || '').replace(/'/g, "\\'");
+    const genreChip = r.genre ? `<span class="script-chip script-chip-genre">${r.genre}</span>` : '';
+    const fmtLabel = r.format || (r.script_type === 'tv' ? 'TV Pilot' : r.script_type === 'short' ? 'Short Film' : r.script_type === 'feature' ? 'Feature' : '');
+    const fmtChip = fmtLabel ? `<span class="script-chip script-chip-format">${fmtLabel}</span>` : '';
+    const pagesChip = r.page_count ? `<span class="script-chip script-chip-pages">${r.page_count}p</span>` : '';
+    const chips = (genreChip || fmtChip || pagesChip) ? `<div class="script-card-chips">${genreChip}${fmtChip}${pagesChip}</div>` : '';
+    return `<div class="script-card">
+      <div class="script-card-top">
+        <div>
+          <div class="script-card-title">${(row.title || 'UNTITLED').toUpperCase()}</div>
+          <div class="script-card-genre">SceneOne Verified · Listed ${listed}</div>
+        </div>
+        <div class="script-card-score" style="color:${scoreColor}">${score}</div>
+      </div>
+      ${chips}
+      ${logline}
+      <div class="script-card-dna">${dna}</div>
+      ${bars ? `<div class="script-card-score-bars">${bars}</div>` : ''}
+      <div class="script-card-footer">
+        <div class="script-card-stats"><div class="script-stat">SceneOne verified ✓</div></div>
+        <button class="request-access-btn" onclick="requestScriptAccess('${row.id}','${safeTitle}',this)">Request Access →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadDashboard(append = false) {
   const feed = document.getElementById('dash-feed-list');
   const meta = document.getElementById('feed-meta');
   if (!feed) return;
-  feed.innerHTML = '<div style="padding:48px;text-align:center;color:var(--sub);font-size:13px;">Loading scripts…</div>';
+  if (!append) {
+    _dashAllRows = [];
+    _dashOffset = 0;
+    feed.innerHTML = '<div style="padding:48px;text-align:center;color:var(--sub);font-size:13px;">Loading scripts…</div>';
+  }
   try {
-    let q = supabaseClient
+    const { data, error } = await supabaseClient
       .from('submissions')
       .select('id, title, created_at, result')
       .eq('status', 'complete')
       .eq('public_listing', true)
-      .limit(30);
-    if (_dashSort === 'recent') q = q.order('created_at', { ascending: false });
-    const { data, error } = await q;
+      .order('created_at', { ascending: false })
+      .range(_dashOffset, _dashOffset + _DASH_PAGE - 1);
     if (error) throw error;
-    if (!data?.length) {
+    const newRows = (data || []).filter(r => r.result?.overall_score);
+    _dashAllRows = append ? [..._dashAllRows, ...newRows] : newRows;
+    _dashOffset += _DASH_PAGE;
+    const loadMore = document.getElementById('dash-load-more');
+    if (loadMore) loadMore.style.display = newRows.length < _DASH_PAGE ? 'none' : 'block';
+    if (!_dashAllRows.length) {
       if (meta) meta.textContent = '0 scripts available';
-      feed.innerHTML = `<div style="padding:60px 40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:16px;">🎬</div>
-        <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;">No scripts listed yet.</div>
-        <div style="font-size:12px;color:var(--sub);line-height:1.7;">Writers opt in from their coverage report.<br>Check back soon — scripts are being graded every day.</div>
+      feed.innerHTML = `<div class="dash-empty">
+        <div class="dash-empty-icon">🎬</div>
+        <div class="dash-empty-title">No scripts listed yet.</div>
+        <div class="dash-empty-body">Writers opt in from their coverage report.<br>Check back soon — scripts are being graded every day.</div>
       </div>`;
       return;
     }
-    let rows = data.filter(r => r.result?.overall_score);
-    if (_dashSort === 'score') rows.sort((a,b) => (b.result.overall_score||0) - (a.result.overall_score||0));
-    if (meta) meta.textContent = `${rows.length} script${rows.length!==1?'s':''} available · Sorted by ${_dashSort}`;
-    feed.innerHTML = rows.map(row => {
-      const r = row.result || {};
-      const score = r.overall_score || '—';
-      const logline = r.logline ? `<div class="script-card-logline">${r.logline}</div>` : '';
-      const dna = (r.story_dna||[]).slice(0,3).map(d=>`<div class="dna-tag">${d.film} ${d.pct}%</div>`).join('');
-      const scores = r.scores || {};
-      const bars = Object.entries(scores).slice(0,3).map(([k,v])=>
-        `<div class="mini-score">${k.charAt(0).toUpperCase()+k.slice(1)}</div><div class="mini-bar-strip"><div class="mini-bar-strip-fill fill-c" style="width:${v}%"></div></div>`
-      ).join('');
-      const scoreColor = score>=75?'var(--green)':score>=60?'var(--cyan)':'var(--amber)';
-      const listed = new Date(row.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      const safeTitle = (row.title||'').replace(/'/g,"\\'");
-      return `<div class="script-card">
-        <div class="script-card-top">
-          <div><div class="script-card-title">${(row.title||'UNTITLED').toUpperCase()}</div>
-          <div class="script-card-genre">SceneOne Verified · Listed ${listed}</div></div>
-          <div class="script-card-score" style="color:${scoreColor}">${score}</div>
-        </div>
-        ${logline}
-        <div class="script-card-dna">${dna}</div>
-        <div class="script-card-score-bars">${bars}</div>
-        <div class="script-card-footer">
-          <div class="script-card-stats"><div class="script-stat">SceneOne verified ✓</div></div>
-          <button class="request-access-btn" onclick="requestScriptAccess('${row.id}','${safeTitle}')">Request Access →</button>
-        </div>
-      </div>`;
-    }).join('');
+    applyDashFilters();
   } catch(e) {
     console.warn('SceneOne: dashboard load failed', e);
     if (meta) meta.textContent = 'Could not load scripts';
@@ -3916,13 +4025,49 @@ async function loadDashboard() {
   }
 }
 
-async function requestScriptAccess(id, title) {
+function toggleDashFilters() {
+  const sidebar = document.querySelector('.dash-filters');
+  const btn = document.querySelector('.dash-filter-toggle');
+  sidebar?.classList.toggle('mobile-open');
+  btn?.classList.toggle('active', sidebar?.classList.contains('mobile-open'));
+}
+
+function closeDashFilters() {
+  document.querySelector('.dash-filters')?.classList.remove('mobile-open');
+  document.querySelector('.dash-filter-toggle')?.classList.remove('active');
+}
+
+function clearDashFilters() {
+  const scoreEl = document.getElementById('filter-min-score');
+  if (scoreEl) { scoreEl.value = 50; document.getElementById('score-range-val').textContent = '50'; }
+  ['thriller-drama','horror','comedy','sci-fi','action','drama'].forEach(g => {
+    const el = document.getElementById('filter-genre-' + g);
+    if (el) el.checked = true;
+  });
+  ['feature','tv','short'].forEach(f => {
+    const el = document.getElementById('filter-fmt-' + f);
+    if (el) el.checked = true;
+  });
+  const comp = document.getElementById('filter-comp-search');
+  if (comp) comp.value = '';
+  applyDashFilters();
+}
+
+async function requestScriptAccess(id, title, btn) {
   if (!_currentUser) { goTo('exec-signup'); return; }
   const { data: profile } = await supabaseClient.from('profiles').select('role,verified').eq('id',_currentUser.id).single();
   if (!profile || profile.role !== 'exec' || !profile.verified) { goTo('exec-signup'); return; }
-  // Log the request (Phase 3: notify writer via Resend)
-  const btn = event?.target;
-  if (btn) { btn.textContent = '✓ Requested'; btn.disabled = true; btn.style.background='rgba(76,175,125,0.2)'; btn.style.color='var(--green)'; btn.style.borderColor='rgba(76,175,125,0.3)'; }
+  if (btn) { btn.textContent = '✓ Requested'; btn.disabled = true; btn.classList.add('requested'); }
+  try {
+    await supabaseClient.from('script_requests').upsert({
+      exec_id: _currentUser.id,
+      submission_id: id,
+      title,
+      status: 'pending',
+    }, { onConflict: 'exec_id,submission_id' });
+  } catch(e) {
+    console.warn('SceneOne: request save failed (table may not exist yet)', e);
+  }
 }
 
 // ─── EXEC ONBOARDING ───

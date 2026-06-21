@@ -1590,56 +1590,149 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="exec-signup-sub">Pre-graded scripts, filtered by score and genre. No agents. No gatekeeping. Access the Discovery Dashboard and request reads directly from writers.</div>
 
     <div class="exec-card">
-      <div class="auth-title">Create your industry account</div>
-      <div class="auth-sub" style="margin-bottom:20px;">We verify credentials before granting access to scripts.</div>
-
-      <div class="form-field">
-        <label class="form-label">Full Name</label>
-        <input class="form-input" id="exec-name" type="text" placeholder="Jordan Meyers" autocomplete="name">
+      <!-- Tab toggle: Sign Up / Sign In -->
+      <div style="display:flex;gap:0;margin-bottom:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <button id="exec-tab-signup" onclick="switchExecTab('signup')" style="flex:1;padding:10px;font-size:12px;font-weight:700;background:var(--gold);color:#0F0F0F;border:none;cursor:pointer;transition:all .15s;">Create Account</button>
+        <button id="exec-tab-signin" onclick="switchExecTab('signin')" style="flex:1;padding:10px;font-size:12px;font-weight:700;background:transparent;color:var(--sub);border:none;cursor:pointer;transition:all .15s;">Sign In</button>
       </div>
 
-      <div class="form-field">
-        <label class="form-label">Company</label>
-        <input class="form-input" id="exec-company" type="text" placeholder="A24, Blumhouse, Netflix…">
-      </div>
+      <!-- SIGNUP PANEL -->
+      <div id="exec-panel-signup">
+        <div class="auth-title">Create your industry account</div>
+        <div class="auth-sub" style="margin-bottom:20px;">We verify credentials before granting access to scripts.</div>
 
-      <div class="form-field">
-        <label class="form-label">Your Role</label>
-        <div class="exec-role-grid" id="exec-role-grid">
-          <button class="exec-role-btn" onclick="selectExecRole(this,'Director')">Director</button>
-          <button class="exec-role-btn" onclick="selectExecRole(this,'Producer')">Producer</button>
-          <button class="exec-role-btn" onclick="selectExecRole(this,'Development Executive')">Dev Executive</button>
-          <button class="exec-role-btn" onclick="selectExecRole(this,'Casting Director')">Casting Director</button>
-          <button class="exec-role-btn" onclick="selectExecRole(this,'Manager/Agent')">Manager / Agent</button>
-          <button class="exec-role-btn" onclick="selectExecRole(this,'Other')">Other</button>
+        <div class="form-field">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" id="exec-name" type="text" placeholder="Jordan Meyers" autocomplete="name">
         </div>
-        <input class="form-input" id="exec-role-input" type="hidden" value="">
+        <div class="form-field">
+          <label class="form-label">Company</label>
+          <input class="form-input" id="exec-company" type="text" placeholder="A24, Blumhouse, Netflix…">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Your Role</label>
+          <div class="exec-role-grid" id="exec-role-grid">
+            <button class="exec-role-btn" onclick="selectExecRole(this,'Director')">Director</button>
+            <button class="exec-role-btn" onclick="selectExecRole(this,'Producer')">Producer</button>
+            <button class="exec-role-btn" onclick="selectExecRole(this,'Development Executive')">Dev Executive</button>
+            <button class="exec-role-btn" onclick="selectExecRole(this,'Casting Director')">Casting Director</button>
+            <button class="exec-role-btn" onclick="selectExecRole(this,'Manager/Agent')">Manager / Agent</button>
+            <button class="exec-role-btn" onclick="selectExecRole(this,'Other')">Other</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">IMDb or LinkedIn URL <span style="color:var(--sub);font-weight:400;text-transform:none;letter-spacing:0">(optional but speeds up verification)</span></label>
+          <input class="form-input" id="exec-imdb" type="url" placeholder="https://imdb.com/name/…">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="exec-email" type="email" placeholder="you@studio.com" autocomplete="email">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="exec-password" type="password" placeholder="8+ characters" autocomplete="new-password">
+        </div>
+        <button class="exec-submit" id="exec-submit-btn" onclick="handleExecSignup()">Request Industry Access →</button>
+        <div style="font-size:10px;color:var(--sub);text-align:center;margin-top:12px;line-height:1.55;">We review credentials within 24 hours. You\'ll receive an email when approved.</div>
       </div>
 
-      <div class="form-field">
-        <label class="form-label">IMDb or LinkedIn URL <span style="color:var(--sub);font-weight:400;text-transform:none;letter-spacing:0">(optional but speeds up verification)</span></label>
-        <input class="form-input" id="exec-imdb" type="url" placeholder="https://imdb.com/name/…">
+      <!-- SIGNIN PANEL -->
+      <div id="exec-panel-signin" style="display:none;">
+        <div class="auth-title">Welcome back.</div>
+        <div class="auth-sub" style="margin-bottom:20px;">Sign in to access your industry dashboard.</div>
+        <div class="form-field">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="exec-signin-email" type="email" placeholder="you@studio.com" autocomplete="email">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="exec-signin-password" type="password" placeholder="Password" autocomplete="current-password">
+        </div>
+        <div id="exec-signin-error" style="font-size:11px;color:#e06c6c;margin-bottom:12px;display:none;"></div>
+        <button class="exec-submit" id="exec-signin-btn" onclick="handleExecSignIn()">Sign In →</button>
       </div>
-
-      <div class="form-field">
-        <label class="form-label">Email</label>
-        <input class="form-input" id="exec-email" type="email" placeholder="you@studio.com" autocomplete="email">
-      </div>
-
-      <div class="form-field">
-        <label class="form-label">Password</label>
-        <input class="form-input" id="exec-password" type="password" placeholder="8+ characters" autocomplete="new-password">
-      </div>
-
-      <button class="exec-submit" id="exec-submit-btn" onclick="handleExecSignup()">Request Industry Access →</button>
-      <div style="font-size:10px;color:var(--sub);text-align:center;margin-top:12px;line-height:1.55;">We review credentials within 24 hours. You'll receive an email when approved.</div>
     </div>
 
     <div class="exec-tagline">"Your next project is already written."</div>
 
-    <div style="text-align:center;margin-top:16px;">
-      <button onclick="goTo('welcome')" style="background:none;border:none;color:var(--sub);font-size:12px;cursor:pointer;">I'm a writer — take me to the upload →</button>
+    <div style="text-align:center;margin-top:20px;">
+      <button onclick="goTo('welcome')" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border2);border-radius:100px;color:var(--text);font-size:13px;font-weight:600;padding:11px 22px;cursor:pointer;transition:all .2s;">
+        I'm a writer — take me to upload →
+      </button>
     </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ EXEC ONBOARDING ══════════════════════ -->
+<div class="screen" id="screen-exec-onboard">
+  <div class="onboard-wrap">
+
+    <div class="ob-progress">
+      <div class="ob-dot active" id="exob-dot-0"></div>
+      <div class="ob-dot" id="exob-dot-1"></div>
+      <div class="ob-dot" id="exob-dot-2"></div>
+      <div class="ob-dot" id="exob-dot-3"></div>
+    </div>
+
+    <!-- Step 1: What you're here for -->
+    <div class="onboard-step active" id="exob-step-0">
+      <div class="ob-card">
+        <div class="ob-icon" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="ob-eyebrow">Step 1 of 4 · Welcome to Industry Access</div>
+        <div class="ob-title">Pre-graded scripts.<br>No agents. No gatekeeping.</div>
+        <div class="ob-body">Every script on the Discovery Dashboard has already been through SceneOne's structural analysis — graded against Save the Cat, the same methodology your development team uses. You're not wading through 10,000 unvetted submissions. You're browsing scripts that have already cleared a quality bar.</div>
+        <div class="ob-highlight"><p>"Writers submit. SceneOne grades. You browse what's ready. The filter happens before you ever open a file."</p></div>
+        <button class="ob-next" onclick="nextExobStep(1)" style="margin-top:20px;background:var(--gold);color:#0F0F0F;">What do I see on each script? →</button>
+        <button class="ob-skip-all" onclick="skipExecOnboard()">Skip — take me to the dashboard</button>
+      </div>
+    </div>
+
+    <!-- Step 2: What's on each script card -->
+    <div class="onboard-step" id="exob-step-1">
+      <div class="ob-card">
+        <div class="ob-icon" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div class="ob-eyebrow">Step 2 of 4 · What you see on each script</div>
+        <div class="ob-title">Score. Logline. Story DNA. Genre. Format.</div>
+        <div class="ob-body">Every script card shows the <strong style="color:#fff">overall craft score</strong> (0–100), a <strong style="color:#fff">pitch-ready logline</strong>, and <strong style="color:#fff">Story DNA</strong> — the comp titles that define its tone and genre (e.g. "40% Whiplash · 35% Black Swan"). You can filter by score threshold, genre, format, and DNA comps.</div>
+        <div class="ob-highlight"><p>"You never see the actual script until the writer approves your access request. Logline and DNA are always visible. The script itself stays protected."</p></div>
+        <button class="ob-next" onclick="nextExobStep(2)" style="background:var(--gold);color:#0F0F0F;">How do I request a read? →</button>
+        <button class="ob-skip-all" onclick="skipExecOnboard()">Skip — take me to the dashboard</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Request access flow -->
+    <div class="onboard-step" id="exob-step-2">
+      <div class="ob-card">
+        <div class="ob-icon" style="background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 5.99 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="ob-eyebrow">Step 3 of 4 · Requesting a read</div>
+        <div class="ob-title">You request. The writer decides.<br>Access lasts 14 days.</div>
+        <div class="ob-body">Tap <strong style="color:#fff">Request Access</strong> on any script card. The writer has <strong style="color:#fff">72 hours</strong> to approve or decline — no response is an auto-decline. If approved, you receive the full script for a <strong style="color:#fff">14-day read window</strong> that expires automatically. No rights transfer. No options. Read-only access.</div>
+        <div class="ob-highlight"><p>"Writers see your credential card before they decide — your name, company, role, and IMDb. That's what gets you approved. Make sure your profile is complete."</p></div>
+        <button class="ob-next" onclick="nextExobStep(3)" style="background:var(--gold);color:#0F0F0F;">One more thing →</button>
+        <button class="ob-skip-all" onclick="skipExecOnboard()">Skip — take me to the dashboard</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Verification + rules -->
+    <div class="onboard-step" id="exob-step-3">
+      <div class="ob-card">
+        <div class="ob-icon" style="background:rgba(62,237,231,0.08);border:1px solid rgba(62,237,231,0.18);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="ob-eyebrow">Step 4 of 4 · A few ground rules</div>
+        <div class="ob-title">This platform exists to protect writers.<br>We take that seriously.</div>
+        <div class="ob-body">Your access is tied to your verified credentials. <strong style="color:#fff">Sharing scripts outside SceneOne, claiming rights, or misrepresenting your identity will result in permanent removal.</strong> Every request, approval, and expiry is logged with a full activity trail.</div>
+        <div class="ob-highlight"><p>"Writers built their scripts here trusting that the industry readers are real. Your verified status is what makes that trust possible. Don't abuse it."</p></div>
+        <button class="ob-next" onclick="finishExecOnboard()" style="background:var(--gold);color:#0F0F0F;font-size:14px;padding:14px 28px;">Happy Hunting →</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2254,6 +2347,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="profile-nav-right">
       <button class="pnav-btn active">My Dashboard</button>
       <button class="pnav-btn" onclick="goTo('dashboard')">Browse Scripts</button>
+      <button class="pnav-btn" onclick="handleSignOut()" style="color:var(--sub);margin-left:8px;">Sign Out</button>
     </div>
   </nav>
 
@@ -3858,7 +3952,79 @@ function selectExecRole(btn, role) {
   document.querySelectorAll('.exec-role-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   _selectedExecRole = role;
-  document.getElementById('exec-role-input').value = role;
+}
+
+// ─── EXEC ONBOARDING ───
+let _exobStep = 0;
+function nextExobStep(n) {
+  document.getElementById('exob-step-' + _exobStep).classList.remove('active');
+  document.getElementById('exob-dot-' + _exobStep).classList.remove('active');
+  _exobStep = n;
+  document.getElementById('exob-step-' + n).classList.add('active');
+  document.getElementById('exob-dot-' + n).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function skipExecOnboard() {
+  localStorage.setItem('sceneone_exec_onboard_done', '1');
+  goTo('dashboard');
+}
+function finishExecOnboard() {
+  localStorage.setItem('sceneone_exec_onboard_done', '1');
+  // Fire the "Happy Hunting" cinematic moment then go to dashboard
+  const banner = document.getElementById('exec-banner');
+  if (banner) banner.classList.add('show');
+  goTo('dashboard');
+}
+
+function switchExecTab(tab) {
+  const isSignup = tab === 'signup';
+  document.getElementById('exec-panel-signup').style.display = isSignup ? '' : 'none';
+  document.getElementById('exec-panel-signin').style.display = isSignup ? 'none' : '';
+  document.getElementById('exec-tab-signup').style.cssText = isSignup
+    ? 'flex:1;padding:10px;font-size:12px;font-weight:700;background:var(--gold);color:#0F0F0F;border:none;cursor:pointer;transition:all .15s;'
+    : 'flex:1;padding:10px;font-size:12px;font-weight:700;background:transparent;color:var(--sub);border:none;cursor:pointer;transition:all .15s;';
+  document.getElementById('exec-tab-signin').style.cssText = isSignup
+    ? 'flex:1;padding:10px;font-size:12px;font-weight:700;background:transparent;color:var(--sub);border:none;cursor:pointer;transition:all .15s;'
+    : 'flex:1;padding:10px;font-size:12px;font-weight:700;background:var(--gold);color:#0F0F0F;border:none;cursor:pointer;transition:all .15s;';
+}
+
+async function handleExecSignIn() {
+  const email = document.getElementById('exec-signin-email').value.trim();
+  const password = document.getElementById('exec-signin-password').value;
+  const errEl = document.getElementById('exec-signin-error');
+  const btn = document.getElementById('exec-signin-btn');
+  errEl.style.display = 'none';
+  if (!email || !password) { errEl.textContent = 'Enter your email and password.'; errEl.style.display = ''; return; }
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error || !data.user) {
+    errEl.textContent = error?.message || 'Sign in failed.';
+    errEl.style.display = '';
+    btn.textContent = 'Sign In →'; btn.disabled = false;
+    return;
+  }
+  _currentUser = data.user;
+  // Check profile role + verified
+  const { data: profile } = await supabaseClient.from('profiles').select('role,verified').eq('id', data.user.id).single();
+  if (!profile || profile.role !== 'exec') {
+    errEl.textContent = 'No industry account found for this email.';
+    errEl.style.display = '';
+    btn.textContent = 'Sign In →'; btn.disabled = false;
+    await supabaseClient.auth.signOut(); _currentUser = null;
+    return;
+  }
+  if (!profile.verified) {
+    btn.textContent = '✓ Account found — pending verification';
+    btn.style.background = 'rgba(201,168,76,0.85)';
+    return;
+  }
+  // First-time exec login: show exec onboarding. Repeat logins: go straight to dashboard.
+  const hasSeenExecOnboard = localStorage.getItem('sceneone_exec_onboard_done');
+  if (!hasSeenExecOnboard) {
+    goTo('exec-onboard');
+  } else {
+    goTo('dashboard');
+  }
 }
 
 async function handleExecSignup() {
@@ -3920,7 +4086,7 @@ async function handleExecSignup() {
   }
 
   // Show confirmation state
-  btn.textContent = '✓ Request received — we'll email you within 24 hours';
+  btn.textContent = '✓ Request received — we\'ll email you within 24 hours';
   btn.style.background = 'rgba(76,175,125,0.85)';
   btn.disabled = true;
 }

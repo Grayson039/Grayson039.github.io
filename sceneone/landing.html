@@ -4004,7 +4004,21 @@ function switchTosTab(tab, el) {
 }
 
 // ─── EXEC MODE UPDATED ───
-function setMode(mode, btn) {
+async function setMode(mode, btn) {
+  if (mode === 'exec') {
+    // Check if current user has a verified exec profile
+    if (!_currentUser) { goTo('exec-signup'); return; }
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('role, verified')
+      .eq('id', _currentUser.id)
+      .single();
+    if (!profile || profile.role !== 'exec' || !profile.verified) {
+      // Not a verified exec — send to exec signup
+      goTo('exec-signup');
+      return;
+    }
+  }
   document.querySelectorAll('.pill-nav button').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const panel = document.getElementById('exec-banner');

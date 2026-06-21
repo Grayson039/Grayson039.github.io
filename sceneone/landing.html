@@ -2099,6 +2099,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       <button class="pnav-btn active" onclick="goTo('writer-profile')">My Profile</button>
       <button class="pnav-btn" onclick="goTo('report')">My Reports</button>
       <button class="pnav-btn" onclick="goTo('upload')">New Script</button>
+      <button class="pnav-btn" onclick="handleSignOut()" style="color:var(--sub);margin-left:8px;">Sign Out</button>
     </div>
   </nav>
 
@@ -3838,6 +3839,13 @@ window.addEventListener('load',()=>{
   const celebrate=document.getElementById('ob-celebrate');
   if(celebrate){ celebrate.style.display='none'; celebrate.classList.remove('show'); }
 });
+
+// ─── SIGN OUT ───
+async function handleSignOut() {
+  await supabaseClient.auth.signOut();
+  _currentUser = null;
+  goTo('landing');
+}
 
 // ─── EXEC SIGNUP ───
 let _selectedExecRole = '';

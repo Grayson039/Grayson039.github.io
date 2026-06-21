@@ -3498,8 +3498,25 @@ async function startOnboarding() {
     return;
   }
 
+  // If email confirmation is enabled, session is null until confirmed.
+  // Force a sign-in immediately so the session persists across reloads.
+  if (!data.session) {
+    const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (!signInError && signInData.session) {
+      _currentUser = signInData.user;
+    } else {
+      // Confirmation email required — tell the user
+      btn.textContent = 'Create Account & Continue →';
+      btn.disabled = false;
+      emailEl.parentElement.insertAdjacentHTML('afterend',
+        `<div style="color:var(--cyan);font-size:12px;margin-top:4px;">Check your email to confirm your account, then sign in.</div>`);
+      return;
+    }
+  } else {
+    _currentUser = data.user;
+  }
+
   userName = name.split(' ')[0] || email.split('@')[0];
-  _currentUser = data.user;
   isFirstTime = true;
   goTo('onboard');
   updateObDots(0);

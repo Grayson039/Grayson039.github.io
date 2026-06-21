@@ -1,9 +1,12 @@
 import Anthropic from "npm:@anthropic-ai/sdk";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const RATE_LIMIT_PER_HOUR = 5; // max grading requests per user per hour
 
 const SYSTEM_PROMPT = `You are SceneOne's analysis engine. You evaluate screenplays using proportional structural analysis. For features, you apply Save the Cat methodology (Act 1 ~25%, Act 2 ~50%, Act 3 ~25%, midpoint at 50%). For short films, you apply compressed structure analysis — shorts operate on tighter proportions, often with a single escalating conflict and a fast pivot; do NOT penalize a short for lacking a traditional midpoint or full three-act sprawl. Assess five dimensions: Structure, Conflict, Dialogue, Pacing, and Visual Storytelling.
 
@@ -110,11 +113,57 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // ── Auth check ──────────────────────────────────────────────────────────
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ── Rate limit: max 5 grading calls per user per hour ───────────────────
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count } = await supabase
+      .from("submissions")
+      .select("*", { count: "exact", head: true })
+      .eq("user_email", user.email)
+      .gte("created_at", oneHourAgo);
+
+    if ((count ?? 0) >= RATE_LIMIT_PER_HOUR) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit reached. You can grade up to 5 scripts per hour." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ── Input validation ─────────────────────────────────────────────────────
     const { script_text, title, script_type = 'feature' } = await req.json();
 
     if (!script_text || script_text.trim().length < 100) {
       return new Response(
         JSON.stringify({ error: "Script text too short or missing" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (script_text.length > 500_000) {
+      return new Response(
+        JSON.stringify({ error: "Script too large. Please upload a file under 500,000 characters." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

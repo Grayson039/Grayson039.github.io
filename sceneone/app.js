@@ -1167,7 +1167,10 @@ let tosAccepted = false;
 let firstReport = true;
 
 function showTosModal() {
-  document.getElementById('tos-modal').classList.add('show');
+  const m = document.getElementById('tos-modal');
+  m.classList.add('show');
+  const first = m.querySelector('button,input,[tabindex]');
+  if (first) setTimeout(() => first.focus(), 50);
 }
 
 function checkTosReady() {
@@ -1429,8 +1432,10 @@ async function handleLogin() {
     btn.textContent = 'Sign In →';
     btn.disabled = false;
     passEl.style.borderColor = 'rgba(232,146,58,0.6)';
-    passEl.parentElement.insertAdjacentHTML('afterend',
-      `<div style="color:#E8923A;font-size:12px;margin-top:4px;">${error.message}</div>`);
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'color:#E8923A;font-size:12px;margin-top:4px;';
+    errDiv.textContent = 'Incorrect email or password. Please try again.';
+    passEl.parentElement.after(errDiv);
     return;
   }
 
@@ -1876,6 +1881,14 @@ function toggleListing(checkbox) {
   }
 }
 
+// ─── MODAL FOCUS HELPER ───
+function _focusModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  const first = m.querySelector('button:not([disabled]),input,[tabindex="0"]');
+  if (first) setTimeout(() => first.focus(), 50);
+}
+
 function checkWriterMktReady() {
   const checked = document.getElementById('writer-mkt-check')?.checked;
   const btn = document.getElementById('writer-mkt-btn');
@@ -1932,18 +1945,21 @@ function approveRequest(id, name, company, email) {
   expiry.setDate(expiry.getDate() + 14);
   const expiryStr = expiry.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-  actions.innerHTML = `
-    <div class="req-approved-state">
-      <div class="req-approved-icon">&#10003;</div>
-      <div>
-        <div class="req-approved-title">Approved &mdash; 14-Day Access Granted</div>
-        <div class="req-approved-detail">${name} at ${company} can now read your script. Access expires ${expiryStr}.</div>
-        <div class="req-approved-contact">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          ${email}
-        </div>
-      </div>
-    </div>`;
+  const safeApproveDiv = document.createElement('div');
+  safeApproveDiv.className = 'req-approved-state';
+  safeApproveDiv.innerHTML = `<div class="req-approved-icon">&#10003;</div><div>
+    <div class="req-approved-title">Approved &mdash; 14-Day Access Granted</div>
+    <div class="req-approved-detail"></div>
+    <div class="req-approved-contact">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span class="req-approved-email"></span>
+    </div>
+  </div>`;
+  safeApproveDiv.querySelector('.req-approved-detail').textContent =
+    esc(name) + ' at ' + esc(company) + ' can now read your script. Access expires ' + expiryStr + '.';
+  safeApproveDiv.querySelector('.req-approved-email').textContent = email;
+  actions.innerHTML = '';
+  actions.appendChild(safeApproveDiv);
 
   _pendingCount--;
   _updateRequestsHeader();
@@ -2014,10 +2030,8 @@ function showHappyHunting() {
   }, 2800);
 }
 
-function requestScriptAccess(btn) {
-  btn.textContent = '✓ Requested — Writer notified';
-  btn.classList.add('requested');
-}
+// NOTE: requestScriptAccess(id, title) is defined above at line ~978 with auth checks.
+// This stub was a duplicate that silently overwrote it — removed.
 
 
 // ─── TITLE + CO-WRITERS ───
@@ -2535,5 +2549,14 @@ function _showLimitReached(msg) {
   // normal in-app navigation still works.
   [0,300,700,1300,2200].forEach(function(t){ setTimeout(routeView, t); });
 })();
-function openPricingModal(){document.getElementById('pricing-modal').classList.add('active');}
-function closePricingModal(e){if(!e||e.target.id==='pricing-modal')document.getElementById('pricing-modal').classList.remove('active');}
+function openPricingModal(){
+  const m = document.getElementById('pricing-modal');
+  m.classList.add('active');
+  const first = m.querySelector('button,input,[tabindex]');
+  if (first) setTimeout(() => first.focus(), 50);
+}
+function closePricingModal(e){
+  if(!e||e.target.id==='pricing-modal'){
+    document.getElementById('pricing-modal').classList.remove('active');
+  }
+}

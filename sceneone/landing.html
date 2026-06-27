@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <link rel="stylesheet" href="styles.css">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://*.supabase.co https://supabase.co; frame-src https://challenges.cloudflare.com;">
 <!-- pdf.js for client-side PDF text extraction -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <!-- Supabase JS client -->
@@ -42,10 +43,10 @@
       </div>
       <div class="form-field">
         <label class="form-label">Password</label>
-        <input class="form-input" type="password" placeholder="At least 8 characters" id="ob-password" oninput="checkPasswordStrength(this.value);checkSignupReady()">
+        <input class="form-input" type="password" placeholder="At least 8 characters" id="ob-password" oninput="checkPasswordStrength(this.value);checkSignupReady()" aria-describedby="pw-req pw-label">
         <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
-        <div class="pw-strength-label" id="pw-label" style="color:var(--sub);">Enter a password</div>
-        <div class="pw-req" id="pw-req">
+        <div class="pw-strength-label" id="pw-label" style="color:var(--sub);" aria-live="polite">Enter a password</div>
+        <div class="pw-req" id="pw-req" role="list" aria-label="Password requirements">
           <span id="req-len">8+ characters</span>
           <span id="req-upper">One uppercase letter</span>
           <span id="req-num">One number</span>
@@ -501,7 +502,7 @@
     </div>
     <div class="stt-hint" id="stt-hint">Feature length (~80–120 pages)</div>
 
-    <div class="drop-zone" id="drop-zone">
+    <div class="drop-zone" id="drop-zone" role="region" aria-label="Script upload area — drag and drop or click to browse">
       <input type="file" id="file-input" accept=".pdf" onchange="handleFile(this)" aria-label="Upload your script — PDF only">
       <div class="drop-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
@@ -514,7 +515,7 @@
     <div class="file-row" id="file-row">
       <div class="file-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
       <div><div class="file-nm" id="file-nm">—</div><div class="file-sz" id="file-sz">—</div></div>
-      <button class="file-x" onclick="removeFile()">×</button>
+      <button class="file-x" onclick="removeFile()" aria-label="Remove selected file">×</button>
     </div>
 
     <!-- Script Title -->
@@ -549,10 +550,10 @@
     <button class="pricing-modal-btn" onclick="openPricingModal()">View Pricing Plans</button>
 
 <!-- PRICING MODAL -->
-<div id="pricing-modal" class="pricing-modal" onclick="closePricingModal(event)">
+<div id="pricing-modal" class="pricing-modal" onclick="closePricingModal(event)" role="dialog" aria-modal="true" aria-labelledby="pricing-modal-title">
   <div class="pricing-modal-content" onclick="event.stopPropagation()">
-    <button class="pricing-modal-close" onclick="closePricingModal()">×</button>
-    <h2>Simple, Transparent Pricing</h2>
+    <button class="pricing-modal-close" onclick="closePricingModal()" aria-label="Close pricing">×</button>
+    <h2 id="pricing-modal-title">Simple, Transparent Pricing</h2>
     <div class="pricing-modal-grid">
       <div class="pricing-modal-card">
         <h3>Writer</h3>
@@ -712,8 +713,8 @@
   <!-- Shared status bar -->
   <div class="proc-status">
     <div class="proc-lbl" id="proc-lbl">Analyzing</div>
-    <div class="proc-bar-bg"><div class="proc-bar-fill" id="proc-bar"></div></div>
-    <div class="proc-phrase" id="proc-phrase">Identifying characters...</div>
+    <div class="proc-bar-bg"><div class="proc-bar-fill" id="proc-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Analysis progress"></div></div>
+    <div class="proc-phrase" id="proc-phrase" aria-live="polite" aria-atomic="true">Identifying characters...</div>
   </div>
 
 </div>
@@ -735,10 +736,10 @@
 </div>
 
 <!-- ══════════════════════ MARKETPLACE TOS FLASH — WRITER ══════════════════════ -->
-<div class="mkt-tos-overlay" id="mkt-tos-writer">
+<div class="mkt-tos-overlay" id="mkt-tos-writer" role="dialog" aria-modal="true" aria-labelledby="mkt-tos-writer-title">
   <div class="mkt-tos-card">
     <div class="mkt-tos-eye">Discovery Dashboard — Writer</div>
-    <div class="mkt-tos-title">Before your script goes out there.</div>
+    <div class="mkt-tos-title" id="mkt-tos-writer-title">Before your script goes out there.</div>
     <div class="mkt-tos-points">
       <div class="mkt-tos-point"><strong>You own it.</strong> Listing your script does not transfer any rights. You own everything, always.</div>
       <div class="mkt-tos-point"><strong>You control access.</strong> Readers see only your logline and Story DNA. They must request access. You approve or decline every request within 72 hours.</div>
@@ -756,10 +757,10 @@
 </div>
 
 <!-- ══════════════════════ MARKETPLACE TOS FLASH — READER ══════════════════════ -->
-<div class="mkt-tos-overlay" id="mkt-tos-reader">
+<div class="mkt-tos-overlay" id="mkt-tos-reader" role="dialog" aria-modal="true" aria-labelledby="mkt-tos-reader-title">
   <div class="mkt-tos-card">
     <div class="mkt-tos-eye">Discovery Dashboard — Verified Reader</div>
-    <div class="mkt-tos-title">Before you start hunting.</div>
+    <div class="mkt-tos-title" id="mkt-tos-reader-title">Before you start hunting.</div>
     <div class="mkt-tos-points">
       <div class="mkt-tos-point"><strong>Accessing a script grants you nothing.</strong> No option rights, no adaptation rights, no right to use the material in any way without a separate agreement with the writer.</div>
       <div class="mkt-tos-point"><strong>14-day read window.</strong> Access expires automatically. You may not request extensions.</div>

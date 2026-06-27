@@ -2360,6 +2360,7 @@ function useSample() {
   // Create a real File blob so _runAnalysis() calls the live API
   _uploadedFile = new File([SAMPLE_SCRIPT_TEXT], 'the-last-hour-draft1.txt', { type: 'text/plain' });
   window._isSampleRun = true; // demo script — exempt from the plan limit server-side
+  window._scriptPageCount = 94; // hardcode correct page count for sample
 
   document.getElementById('analyze-btn').classList.add('ready');
   setTimeout(() => checkTosBeforeAnalysis(), 600);
@@ -2456,7 +2457,17 @@ async function _runAnalysis() {
         _showLimitReached(limitMsg);
         return;
       }
-      throw new Error(fnError.message || 'Edge function error');
+      // Try to extract a readable message from the response body
+      let serverMsg = '';
+      try { const b = await fnError.context?.clone().json(); serverMsg = b?.message || b?.error || ''; } catch (_e) {}
+      const friendlyMsg = status === 504
+        ? 'Analysis timed out — your script may be very long. Try again; it usually succeeds on the second attempt.'
+        : status === 503
+        ? 'Our analysis server is warming up. Please wait 10 seconds and try again.'
+        : status >= 500
+        ? `Server error (${status})${serverMsg ? ': ' + serverMsg : ''}. Please try again — if it persists, contact support.`
+        : fnError.message || 'Edge function error';
+      throw new Error(friendlyMsg);
     }
     if (data && data.error === 'limit_reached') { _showLimitReached(data.message || ''); return; }
     if (data?.error) throw new Error(data.error);

@@ -173,25 +173,26 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
     <a class="nav-link" href="#problem">Problem</a>
     <a class="nav-link" href="#features">Features</a>
     <a class="nav-link" href="#marketplace">Marketplace</a>
+    <a class="nav-link" href="#engineering">Engineering</a>
     <a class="nav-link" href="#decisions">Decisions</a>
     <a class="nav-link" href="#legal">Legal</a>
     <a class="nav-link" href="#roadmap">Roadmap</a>
   </div>
-  <a class="nav-cta" href="landing.html" target="_blank">Try the Prototype &rarr;</a>
+  <a class="nav-cta" href="https://sceneone.net" target="_blank">Try SceneOne &rarr;</a>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Case Study &middot; AI Product Design</div>
+  <div class="hero-eyebrow">Case Study &middot; AI Product Design &middot; Live at sceneone.net</div>
   <h1 class="hero-title">Scene<span>One</span></h1>
   <div class="hero-mission">&ldquo;Democratizing Hollywood, one script at a time.&rdquo;</div>
-  <p class="hero-sub">An AI-powered screenplay feedback tool that gives every writer the same studio-grade coverage Hollywood charges $100 for &mdash; free, in minutes, graded against the same framework the industry uses.</p>
+  <p class="hero-sub">An AI-powered screenplay feedback tool that gives every writer the same studio-grade coverage Hollywood charges $100 for &mdash; free, in minutes, graded against the same framework the industry uses. Live at sceneone.net.</p>
   <div class="hero-ctas">
-    <a class="btn-primary" href="landing.html" target="_blank">Try the Prototype &rarr;</a>
+    <a class="btn-primary" href="https://sceneone.net" target="_blank">Try SceneOne &rarr;</a>
     <a class="btn-secondary" href="#problem">Read the Case Study &darr;</a>
   </div>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-val" data-val="7">7</div><div class="hero-stat-lbl">Screens Built</div></div>
+    <div class="hero-stat"><div class="hero-stat-val" data-val="9">9</div><div class="hero-stat-lbl">Screens Built</div></div>
     <div class="hero-stat"><div class="hero-stat-val" data-val="3">3</div><div class="hero-stat-lbl">Cinematic Loaders</div></div>
     <div class="hero-stat"><div class="hero-stat-val" data-val="5">5</div><div class="hero-stat-lbl">Craft Dimensions</div></div>
     <div class="hero-stat"><div class="hero-stat-val" data-val="2">2</div><div class="hero-stat-lbl">Sided Marketplace</div></div>
@@ -380,7 +381,7 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
 <!-- SCREENS -->
 <section id="screens">
   <div class="section-eyebrow">The Screens</div>
-  <div class="section-title">7 screens. One cohesive system.</div>
+  <div class="section-title">9 screens. One cohesive system.</div>
   <div class="screens-grid">
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Welcome / Sign Up</div><div class="screen-card-tag">Screen 0</div></div><div class="screen-card-body"><p>Create Account and Sign In tabs. Password strength meter with 4 live requirements. Form validation &mdash; button stays grey until all fields are valid. Age confirmation (18+) and content policy summary.</p></div></div>
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Onboarding</div><div class="screen-card-tag">Screen 0b</div></div><div class="screen-card-body"><p>6-step walkthrough: Save the Cat grading framework, plain English feedback, Creative Choice (you have the final word), Fix It inline editor, Logline + Story DNA pitch tools, and processing time honesty.</p></div></div>
@@ -390,6 +391,70 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Writer Profile</div><div class="screen-card-tag">Screen 6</div></div><div class="screen-card-body"><p>Avatar, member stats, script listing cards with status chips (Live / Private / Under Review / Approved / Expired), activity feed, pending request approvals with Approve/Decline inline.</p></div></div>
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Exec Profile</div><div class="screen-card-tag">Screen 7</div></div><div class="screen-card-body"><p>Flux-inspired. Left sidebar nav with notification badges. Donut ring charts &mdash; scripts reviewed, active access, pending requests, avg score. Requested scripts list with status chips. Full activity feed.</p></div></div>
     <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Exec Mode (Report)</div><div class="screen-card-tag">Toggle View</div></div><div class="screen-card-body"><p>9-stat development assessment grid: Genre, Budget Tier, Format, Craft Score, Primary Strength, Primary Flag, Named Characters, Comp Titles, Save the Cat Beat. Recommendation card. Browse Discovery Dashboard button.</p></div></div>
+    <div class="screen-card"><div class="screen-card-header"><div class="screen-card-name">Writer Requests Inbox</div><div class="screen-card-tag">Screen 8 &middot; Live</div></div><div class="screen-card-body"><p>Real-time inbox showing every access request across all of a writer&rsquo;s scripts. Loaded fresh from Supabase on each visit. Approve or Decline inline &mdash; approval sets a 14-day expiry. Writer and exec both receive transactional email notifications via Resend on every action.</p></div></div>
+  </div>
+</section>
+
+<!-- ENGINEERING -->
+<section id="engineering">
+  <div class="section-eyebrow">The Engineering</div>
+  <div class="section-title">What it actually took to ship.</div>
+  <p class="section-sub">SceneOne is a production system, not a prototype. This is a record of the real work &mdash; the decisions made, the problems hit, and how each one was resolved.</p>
+  <div class="decision-list">
+    <div class="decision-card">
+      <div class="decision-num">Shipped</div>
+      <div class="decision-title">Supabase Realtime &mdash; Live Exec Dashboard</div>
+      <div class="decision-body">The exec dashboard previously required a manual refresh button to see new submissions. Replaced with a Supabase Realtime channel subscription (postgres_changes on the submissions table) that starts when an exec enters the dashboard screen and tears down when they leave. No polling. No stale data. The refresh button is gone.</div>
+      <span class="decision-badge badge-high">Backend</span>
+    </div>
+    <div class="decision-card">
+      <div class="decision-num">Shipped</div>
+      <div class="decision-title">XSS Hardening &mdash; Event Delegation Refactor</div>
+      <div class="decision-body">Script card titles were being interpolated directly into onclick attribute strings &mdash; a textbook XSS vector. Systematically replaced all three patterns across the app with data-* attributes + delegated event listeners using { once: true }. Only UUIDs and integer counters (safe by type) remain as inline interpolations. The fix is architectural, not a sanitizer bolted on top.</div>
+      <span class="decision-badge badge-highest">Security</span>
+    </div>
+    <div class="decision-card">
+      <div class="decision-num">Shipped</div>
+      <div class="decision-title">Server-Side JWT Enforcement &mdash; Admin Panel</div>
+      <div class="decision-body">The admin panel was originally gated by client-side role checks in JavaScript &mdash; trivially bypassable. Moved enforcement into a Supabase Edge Function (Deno): every request must carry a valid JWT, which is verified server-side against the anon client. Only then does it switch to the service-role key for DB operations. The admin email check happens in the verified JWT claim, never the request body.</div>
+      <span class="decision-badge badge-highest">Security</span>
+    </div>
+    <div class="decision-card">
+      <div class="decision-num">Shipped</div>
+      <div class="decision-title">Transactional Email via Resend</div>
+      <div class="decision-body">Writers are notified when an exec requests their script. Execs are notified when a writer approves or declines. A dedicated notify Edge Function handles both &mdash; it verifies the caller's JWT, fetches recipient email addresses from the DB only (never from the request body), and sends from notifications@sceneone.net. Domain verified in Cloudflare in under 5 minutes via auto-configure. Fire-and-forget from the client so the UI never blocks on email delivery.</div>
+      <span class="decision-badge badge-high">Feature</span>
+    </div>
+    <div class="decision-card">
+      <div class="decision-num">Shipped</div>
+      <div class="decision-title">Stripe Paywall &mdash; End to End</div>
+      <div class="decision-body">Stripe Checkout + Customer Portal + Webhook fully wired. Writer subscriptions gate Pro and Pro Unlimited tiers. The webhook listens for checkout.session.completed and all customer.subscription.* events, writing subscription state to Supabase via service role. The signing secret validates every webhook call server-side. Credentials never touch client code.</div>
+      <span class="decision-badge badge-high">Revenue</span>
+    </div>
+    <div class="decision-card">
+      <div class="decision-num">Shipped</div>
+      <div class="decision-title">14-Day Access Expiry &mdash; RLS + DB Column</div>
+      <div class="decision-body">Approved reader access now expires automatically after 14 days. An expires_at timestamptz column was added to read_requests and set on approval to now() + 14 days. RLS policy enforces it at the database layer so expired approvals become invisible to execs without any application logic. Writers see the expiry date and "Expired" state on their requests inbox. The access window is enforced twice: in RLS and in display logic.</div>
+      <span class="decision-badge badge-high">Feature</span>
+    </div>
+    <div class="decision-card">
+      <div class="decision-num">Shipped</div>
+      <div class="decision-title">Real View Counts via Security-Definer Function</div>
+      <div class="decision-body">Writer stat "Reader Views" was previously counting total access requests &mdash; not the same thing. Added a view_count column to submissions and a SECURITY DEFINER Postgres function (increment_view_count) that any authenticated exec can call without needing UPDATE rights on the submissions table. Called for every visible script card when the discovery dashboard loads. The stat now means what it says.</div>
+      <span class="decision-badge badge-high">Feature</span>
+    </div>
+    <div class="decision-card">
+      <div class="decision-num">Resolved</div>
+      <div class="decision-title">Migration Push Conflicts &mdash; Direct Query Fallback</div>
+      <div class="decision-body">supabase db push --linked attempted to re-apply all migrations from the beginning and hit a syntax error in migration 007 (CREATE POLICY IF NOT EXISTS is not valid Postgres syntax). Resolved by applying new migrations directly with supabase db query --linked one statement at a time, bypassing the migration runner entirely. The column landed. The RLS policy update with a quoted name (spaces) required the Supabase SQL editor instead.</div>
+      <span class="decision-badge" style="background:rgba(255,255,255,0.06);color:var(--sub);border-color:var(--border);">Resolved</span>
+    </div>
+    <div class="decision-card">
+      <div class="decision-num">Resolved</div>
+      <div class="decision-title">Fake Stripe Payment Links &mdash; Removed, Real Products Created</div>
+      <div class="decision-body">The original codebase had a PAYMENT_LINKS object with Stripe URLs containing placeholder price IDs (00000, 00001) and a broken fallback that silently substituted them if Checkout failed. Both the fake links and the fallback were removed entirely. Real Stripe products were created (Writer Pro, Writer Pro Unlimited), real price IDs were set as Supabase secrets, and startCheckout() now surfaces a clear error rather than silently routing to a broken URL.</div>
+      <span class="decision-badge" style="background:rgba(255,255,255,0.06);color:var(--sub);border-color:var(--border);">Resolved</span>
+    </div>
   </div>
 </section>
 
@@ -467,8 +532,8 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
       <div><div class="phase-title">Coverage Tool &mdash; Built</div><div class="phase-body">AI script feedback graded against Save the Cat. 7 screens. Fix It inline editor. Creative Choice. Pacing heatmap. Logline + Story DNA. 3 cinematic loading experiences. Two-sided marketplace prototype. Legal architecture. Co-writer credits.</div></div>
     </div>
     <div class="phase-item">
-      <div class="phase-num" style="color:var(--gold)">2</div>
-      <div><div class="phase-title">Live Discovery Dashboard &mdash; Next</div><div class="phase-body">Real Supabase database. Claude API integration. Reader verification system. Co-writer email notifications via Resend. IP timestamp certificates. Stripe payments. sceneone.app domain.</div></div>
+      <div class="phase-num done">2</div>
+      <div><div class="phase-title">Live Discovery Dashboard &mdash; Shipped</div><div class="phase-body">Real Supabase database with RLS. Claude API integration. Admin panel with server-side JWT enforcement. Reader verification system. Transactional email via Resend. 14-day access expiry. Live view counts. Supabase Realtime exec dashboard. Stripe Checkout + Customer Portal + Webhooks. sceneone.net live on GitHub Pages + Cloudflare.</div></div>
     </div>
     <div class="phase-item">
       <div class="phase-num planned">3</div>
@@ -482,14 +547,14 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   <div class="section-eyebrow">Tech Stack</div>
   <div class="section-title">Production-ready architecture from day one.</div>
   <div class="tech-grid">
-    <div class="tech-card"><div class="tech-name">React + Tailwind</div><div class="tech-role">Frontend</div></div>
-    <div class="tech-card"><div class="tech-name">Node.js + Express</div><div class="tech-role">Backend</div></div>
-    <div class="tech-card"><div class="tech-name">Supabase</div><div class="tech-role">DB + Auth + Storage</div></div>
+    <div class="tech-card"><div class="tech-name">Vanilla JS SPA</div><div class="tech-role">No Framework Frontend</div></div>
+    <div class="tech-card"><div class="tech-name">Supabase</div><div class="tech-role">PostgreSQL + RLS + Edge Functions</div></div>
+    <div class="tech-card"><div class="tech-name">Deno Edge Functions</div><div class="tech-role">Serverless Backend</div></div>
     <div class="tech-card"><div class="tech-name">Claude API</div><div class="tech-role">AI Analysis</div></div>
-    <div class="tech-card"><div class="tech-name">Resend</div><div class="tech-role">Email Notifications</div></div>
-    <div class="tech-card"><div class="tech-name">Stripe</div><div class="tech-role">Payments</div></div>
-    <div class="tech-card"><div class="tech-name">Vercel + Railway</div><div class="tech-role">Hosting</div></div>
-    <div class="tech-card"><div class="tech-name">~$1.65/script</div><div class="tech-role">API Cost</div></div>
+    <div class="tech-card"><div class="tech-name">Resend</div><div class="tech-role">Transactional Email</div></div>
+    <div class="tech-card"><div class="tech-name">Stripe</div><div class="tech-role">Checkout + Portal + Webhooks</div></div>
+    <div class="tech-card"><div class="tech-name">GitHub Pages + Cloudflare</div><div class="tech-role">Hosting + DNS + HSTS</div></div>
+    <div class="tech-card"><div class="tech-name">Cloudflare Turnstile</div><div class="tech-role">Bot Protection</div></div>
   </div>
 </section>
 
@@ -537,7 +602,7 @@ section{padding:80px 40px;max-width:1100px;margin:0 auto;}
   <div class="cs-footer-brand">Scene<span>One</span></div>
   <div class="cs-footer-sub">&ldquo;Democratizing Hollywood, one script at a time.&rdquo;</div>
   <div class="cs-footer-links">
-    <a class="cs-footer-link" href="landing.html" target="_blank">Try the Prototype &rarr;</a>
+    <a class="cs-footer-link" href="https://sceneone.net" target="_blank">Try SceneOne &rarr;</a>
     <a class="cs-footer-link" href="https://willgraysondesign.com">Portfolio</a>
     <a class="cs-footer-link" href="#">Terms of Service</a>
     <a class="cs-footer-link" href="#">Privacy Policy</a>

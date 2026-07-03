@@ -345,6 +345,20 @@ body {
   font-size: 11px; color: var(--muted);
 }
 
+/* ── ADA ── */
+.skip-link {
+  position: absolute; top: -100%; left: 8px;
+  background: var(--red); color: #fff;
+  padding: 8px 16px; border-radius: 4px;
+  font-size: 12px; font-weight: 700; font-family: 'Inter', sans-serif;
+  z-index: 10000; text-decoration: none;
+}
+.skip-link:focus { top: 8px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .main {
@@ -361,9 +375,11 @@ body {
 </head>
 <body>
 
-<nav class="back-nav">
-  <a href="./">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<nav class="back-nav" aria-label="Site navigation">
+  <a href="./" aria-label="Back to portfolio">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <polyline points="15 18 9 12 15 6"/>
     </svg>
     Portfolio
@@ -371,14 +387,14 @@ body {
 </nav>
 
 <!-- LIVE BANNER -->
-<div class="live-banner">
-  <div class="live-dot"></div>
+<div class="live-banner" role="status" aria-live="polite">
+  <div class="live-dot" aria-hidden="true"></div>
   <span class="live-text">Live PWA —</span>
-  <a href="https://willgraysondesign.com/cutman/app.html" target="_blank" class="live-link">willgraysondesign.com/cutman/app.html ↗</a>
+  <a href="https://willgraysondesign.com/cutman/app.html" target="_blank" rel="noopener noreferrer" class="live-link">willgraysondesign.com/cutman/app.html ↗</a>
 </div>
 
 <!-- HERO -->
-<div class="hero">
+<div class="hero" id="main">
   <div class="hero-eyebrow">Case Study · Personal Project</div>
   <h1>Cut<span>man</span></h1>
   <p class="hero-sub">One app. Every promotion. All the fights. A combat sports dashboard that replaces five fragmented sources with one fan-first interface — designed and shipped as a live PWA.</p>
@@ -389,7 +405,7 @@ body {
     <div class="hero-meta-item"><div class="label">Status</div><div class="value live">Live</div></div>
   </div>
   <div class="cta-wrap">
-    <a href="https://willgraysondesign.com/cutman/app.html" target="_blank" class="cta-btn">
+    <a href="https://willgraysondesign.com/cutman/app.html" target="_blank" rel="noopener noreferrer" class="cta-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       Open Live App
     </a>
@@ -672,7 +688,7 @@ body {
         <div class="proof-icon">🚀</div>
         <div class="proof-text">
           <h5>Live at willgraysondesign.com/cutman/app.html</h5>
-          <p>Open on iPhone, tap Share → Add to Home Screen. Installs as a standalone app. <a href="https://willgraysondesign.com/cutman/app.html" target="_blank">Try it now →</a></p>
+          <p>Open on iPhone, tap Share → Add to Home Screen. Installs as a standalone app. <a href="https://willgraysondesign.com/cutman/app.html" target="_blank" rel="noopener noreferrer">Try it now →</a></p>
         </div>
       </div>
 

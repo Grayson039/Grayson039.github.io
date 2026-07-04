@@ -27,6 +27,7 @@ var CM = (function () {
   };
   var R = { sm: '6px', md: '10px', lg: '14px', xl: '18px', pill: '100px' };
   var S = { xs: '8px', sm: '16px', md: '24px', lg: '32px', xl: '16px', section: '24px' };
+  var HEX = "url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2228%22 height=%2249%22%3E%3Cpath d=%22M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.49L26 15v14.98L13 37.48 0 30z%22 fill=%22none%22 stroke=%22%23E8272A%22 stroke-opacity=%220.1%22 stroke-width=%221%22/%3E%3C/svg%3E')";
 
   /* ── COMPONENTS ──────────────────────────────────────────── */
   var c = {};
@@ -90,16 +91,14 @@ var CM = (function () {
     '</div>';
   };
 
-  c.promoBadge = function (promo) {
-    var styles = {
-      UFC:      'background:#200000;border:1px solid #E8272A;color:#E8272A',
-      BOXING:   'background:#0A0A1E;border:1px solid #818CF8;color:#818CF8',
-      PFL:      'background:#001A08;border:1px solid #22C55E;color:#4ADE80',
-      ONE:      'background:#1A1400;border:1px solid #D4A853;color:#D4A853',
-      BELLATOR: 'background:#0C0018;border:1px solid #A855F7;color:#C084FC'
-    };
+  c.promoBadge = function (promo, bg) {
+    bg = bg || '#333333';
+    var hex = bg.replace('#', '');
+    var r = parseInt(hex.substr(0,2),16) || 0, g = parseInt(hex.substr(2,2),16) || 0, b = parseInt(hex.substr(4,2),16) || 0;
+    var luma = 0.299*r + 0.587*g + 0.114*b;
+    var textColor = luma > 150 ? '#1A1400' : '#FFFFFF';
     return '<span style="font-size:9px;font-weight:800;letter-spacing:0.08em;padding:2px 8px;border-radius:4px;' +
-      (styles[promo] || 'background:#111;border:1px solid #555;color:#999') + '">' + promo + '</span>';
+      'background:' + bg + ';color:' + textColor + '">' + promo + '</span>';
   };
 
   c.liveBadge = function () {
@@ -229,8 +228,9 @@ var CM = (function () {
       var el = document.getElementById(containerId);
       if (!el) return;
       el.innerHTML = screens[state.cur] ? screens[state.cur](th, state) : '<div style="color:red;padding:20px">Screen not found: ' + state.cur + '</div>';
-      el.style.background = th.bg;
-      el.style.backgroundImage = 'none';
+      el.style.backgroundColor = th.bg;
+      el.style.backgroundImage = '';
+      el.style.backgroundSize = '';
       if (opts && opts.onRender) opts.onRender(state, th);
     }
 
@@ -249,5 +249,5 @@ var CM = (function () {
     render();
   }
 
-  return { D: D, L: L, T: T, R: R, S: S, c: c, nav: nav };
+  return { D: D, L: L, T: T, R: R, S: S, HEX: HEX, c: c, nav: nav };
 })();

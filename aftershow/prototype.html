@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>aftershow.</title>
+<!-- PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="aftershow.">
+<meta name="theme-color" content="#0C0C0C" id="theme-color-meta">
+<meta name="mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=DM+Mono:wght@400;500&family=Crimson+Pro:ital,wght@0,400;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0A0A0A;font-family:'DM Mono',monospace;font-weight:500;color:#F0F0F0;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:40px 24px;}
+
+/* ── Shell ── */
+.proto-shell{display:flex;gap:32px;align-items:flex-start;}
+.proto-sidebar{width:200px;flex-shrink:0;padding-top:8px;}
+.proto-logo{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:22px;color:#D4A853;margin-bottom:6px;}
+.proto-tagline{font-size:9px;letter-spacing:.12em;color:#444;margin-bottom:28px;}
+
+.theme-btn{width:100%;padding:10px 14px;border-radius:8px;border:1px solid #2A2A2A;background:#111;color:#D4A853;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-bottom:24px;text-align:left;}
+.theme-btn:hover{border-color:#D4A853;}
+.theme-indicator{font-size:9px;color:#555;letter-spacing:.08em;margin-bottom:20px;}
+
+.screen-map{display:flex;flex-direction:column;gap:2px;}
+.screen-map-label{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#333;margin-bottom:8px;}
+.map-item{font-size:9px;letter-spacing:.06em;color:#444;padding:5px 8px;border-radius:4px;cursor:pointer;border:1px solid transparent;display:flex;align-items:center;gap:6px;}
+.map-item:hover{color:#D4A853;border-color:#1E1E1E;}
+.map-item.current{color:#D4A853;border-color:#2A2A2A;background:#111;}
+.map-dot{width:5px;height:5px;border-radius:50%;background:#333;flex-shrink:0;}
+.map-item.current .map-dot{background:#D4A853;}
+.map-divider{height:1px;background:#1A1A1A;margin:6px 0;}
+
+/* ── Phone ── */
+.phone{width:300px;height:680px;border-radius:40px;overflow:hidden;display:flex;flex-direction:column;flex-shrink:0;position:relative;transition:background .3s,border-color .3s,box-shadow .3s;}
+.phone.dark{background:#0C0C0C;background-image:radial-gradient(circle,rgba(212,168,83,.045) 1px,transparent 1px);background-size:4px 4px;border:1.5px solid #2A2A2A;box-shadow:0 40px 80px rgba(0,0,0,.8),0 0 0 1px #111;}
+.phone.light{background:#D4CCAF;background-image:linear-gradient(45deg,rgba(26,18,9,.045) 25%,transparent 25%),linear-gradient(-45deg,rgba(26,18,9,.045) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(26,18,9,.045) 75%),linear-gradient(-45deg,transparent 75%,rgba(26,18,9,.045) 75%);background-size:6px 6px;background-position:0 0,0 3px,3px -3px,-3px 0;border:1.5px solid #C8BCA0;box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px #B8A880;}
+
+/* ── Status bar ── */
+.status{display:flex;justify-content:space-between;align-items:center;padding:14px 22px 6px;font-size:11px;flex-shrink:0;}
+.dark .status{color:#F0F0F0;}.light .status{color:#1A1209;}
+
+/* ── Screen content ── */
+.proto-screens{flex:1;overflow:hidden;position:relative;}
+.proto-screen{position:absolute;inset:0;overflow-y:auto;display:none;padding-bottom:4px;}
+.proto-screen::-webkit-scrollbar{width:0;}
+.proto-screen.active{display:block;}
+.proto-screen.slide-in{animation:slideIn .32s cubic-bezier(0.34,1.4,0.64,1) both;}
+@keyframes slideIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── Press states ── */
+.feed-card:active{opacity:.75;transform:scale(.985);}
+.show-row:active{opacity:.6;}
+.trending-row:active{opacity:.6;}
+.user-card:active{opacity:.6;}
+.nav-item:active{opacity:.55;}
+.nav-log-btn:active{transform:scale(.9);opacity:.85;}
+.feed-stat-btn:active{opacity:.55;transform:scale(.94);}
+.profile-btn:active{opacity:.6;}
+.ob-primary-btn:active,.log-submit:active{opacity:.8;transform:scale(.98);}
+.follow-btn:active{opacity:.7;}
+.log-cta:active{opacity:.7;transform:scale(.99);}
+.back-nav:active{opacity:.6;}
+.show-card-sm:active{opacity:.7;}
+.live-card:active{opacity:.75;}
+
+/* ── Bottom nav ──────────────────────────────────────────────────
+   HIG: inactive icons must meet AA contrast against the bar bg.
+   Was #2A2A2A on #0C0C0C (~1.1:1) — now #888 (~4.5:1 est.).
+   ──────────────────────────────────────────────────────────────── */
+.bottom-nav{display:flex;justify-content:space-evenly;align-items:center;padding:10px 16px 16px;border-top:1px solid;flex-shrink:0;}
+.dark .bottom-nav{border-color:rgba(212,168,83,.28);background:#0C0C0C;background-image:radial-gradient(circle,rgba(212,168,83,.045) 1px,transparent 1px);background-size:4px 4px;}
+.light .bottom-nav{border-color:#C8BCA0;background:#D4CCAF;background-image:linear-gradient(45deg,rgba(26,18,9,.045) 25%,transparent 25%),linear-gradient(-45deg,rgba(26,18,9,.045) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(26,18,9,.045) 75%),linear-gradient(-45deg,transparent 75%,rgba(26,18,9,.045) 75%);background-size:6px 6px;background-position:0 0,0 3px,3px -3px,-3px 0;}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;flex:1;min-width:0;min-height:44px;}
+/* Larger tap targets, more readable labels */
+.nav-icon{font-size:18px;}
+.nav-label{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.08em;white-space:nowrap;}
+/* Active: gold. Inactive: #888 dark / #7A6E60 light — both meet AA */
+.dark .nav-item.active .nav-icon,.dark .nav-item.active .nav-label{color:#D4A853;}
+.dark .nav-item.inactive .nav-icon,.dark .nav-item.inactive .nav-label{color:#888888;}
+.light .nav-item.active .nav-icon,.light .nav-item.active .nav-label{color:#8B6914;}
+.light .nav-item.inactive .nav-icon,.light .nav-item.inactive .nav-label{color:#7A6E60;}
+.nav-log-btn{width:52px;height:52px;border-radius:50%;border:none;font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-top:-16px;box-shadow:0 4px 16px rgba(212,168,83,.45);transition:transform .15s cubic-bezier(0.34,1.56,0.64,1),opacity .1s;}
+.dark .nav-log-btn{background:#D4A853;color:#0C0C0C;}.light .nav-log-btn{background:#1A1209;color:#D4CCAF;}
+
+/* ── Feed Cards ──────────────────────────────────────────────────
+   HIG-aligned layout: generous internal padding, clear typographic
+   hierarchy, tappable footer elements, system-font reviews.
+   ──────────────────────────────────────────────────────────────── */
+.feed-card{border-radius:12px;margin:0 14px 12px;overflow:hidden;cursor:pointer;}
+.dark .feed-card{background:#111111;border:1px solid #1E1E1E;}.light .feed-card{background:#E2DBCA;border:1px solid #BEB29A;}
+.feed-card:hover{opacity:.9;}
+
+/* Padding: content breathes inside the card boundary */
+.card-inner{padding:16px 16px 12px;}
+
+/* User row */
+.user-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.dark .avatar{border:1px solid #2A2A2A;}.light .avatar{border:1px solid #C8BCA0;}
+.avatar-init{width:32px;height:32px;border-radius:50%;background:#111;border:1.5px solid #D4A853;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#D4A853;flex-shrink:0;}
+.user-info{flex:1;}
+.username{font-family:'Syne',sans-serif;font-weight:800;font-size:12px;}
+.dark .username{color:#F0F0F0;}.light .username{color:#1A1209;}
+.timestamp{font-size:9px;letter-spacing:.04em;}
+.dark .timestamp{color:#CCCCCC;}.light .timestamp{color:#3A2E1A;}
+
+/* PRIMARY — Band Name: heavy display font, room to breathe */
+.feed-artist{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;line-height:1.2;margin-bottom:8px;letter-spacing:-.01em;}
+.dark .feed-artist{color:#F0F0F0;}.light .feed-artist{color:#1A1209;}
+
+/* TERTIARY — Venue/date metadata: uppercase mono, clearly secondary */
+.feed-meta{font-size:9px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+.dark .feed-meta{color:#E0E0E0;}.light .feed-meta{color:#2A1E0E;}
+
+/* Stars */
+.feed-stars{display:flex;gap:3px;margin-bottom:10px;}
+.star-f{font-size:12px;color:#D4A853;}.star-e{font-size:12px;}
+.dark .star-e{color:#2A2A2A;}.light .star-e{color:#BEB29A;}
+
+/* SECONDARY — Review text: system sans-serif, no italics, max legibility */
+.feed-note{
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','DM Sans',sans-serif;
+  font-style:normal;
+  font-size:13px;
+  font-weight:400;
+  line-height:1.55;
+  letter-spacing:.01em;
+  margin-bottom:12px;
+}
+.dark .feed-note{color:#E0E0E0;}.light .feed-note{color:#1A1209;}
+
+/* Footer: tappable pill buttons with separator line */
+.feed-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-top:10px;
+  border-top:1px solid;
+}
+.dark .feed-footer{border-color:rgba(212,168,83,.18);}
+.light .feed-footer{border-color:rgba(0,0,0,.1);}
+
+.feed-stat-group{display:flex;gap:6px;}
+
+/* Each engagement button is a tappable pill */
+.feed-stat-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:500;
+  letter-spacing:.03em;
+  padding:5px 10px;
+  border-radius:20px;
+  cursor:pointer;
+  border:1px solid;
+}
+.dark .feed-stat-btn{color:#CCCCCC;background:rgba(255,255,255,.05);border-color:rgba(212,168,83,.2);}
+.light .feed-stat-btn{color:#2A1E0E;background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);}
+.feed-stat-btn:hover{opacity:.75;}
+
+/* ── Feed setlist preview ── */
+.setlist-preview{border-radius:6px;padding:8px 10px;margin-bottom:8px;}
+.dark .setlist-preview{background:#080808;border:1px solid #1A1A1A;}
+.light .setlist-preview{background:#E5DEC9;border:1px solid #CBC0A0;}
+.setlist-preview-lbl{font-size:7px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px;font-family:'DM Mono',monospace;}
+.dark .setlist-preview-lbl{color:#D4A853;}.light .setlist-preview-lbl{color:#8B6914;}
+.setlist-preview-row{display:flex;align-items:center;gap:6px;padding:2px 0;}
+.setlist-preview-num{font-family:'DM Mono',monospace;font-size:8px;width:16px;text-align:right;flex-shrink:0;}
+.dark .setlist-preview-num{color:#444;}.light .setlist-preview-num{color:#B8A880;}
+.setlist-preview-name{font-family:'DM Mono',monospace;font-size:9px;flex:1;letter-spacing:.01em;}
+.dark .setlist-preview-name{color:#C0C0C0;}.light .setlist-preview-name{color:#2A1E0E;}
+
+/* ── Top Artists card (profile) ── */
+.top-artists-card{margin:0 14px;border-radius:10px;overflow:hidden;}
+.dark .top-artists-card{background:#111;border:1px solid #1E1E1E;}
+.light .top-artists-card{background:#E2DBCA;border:1px solid #BEB29A;}
+.top-artist-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid;}
+.dark .top-artist-row{border-color:#1A1A1A;}.light .top-artist-row{border-color:#BEB29A;}
+.top-artist-row:last-child{border-bottom:none;}
+.top-artist-rank{font-family:'Syne',sans-serif;font-weight:800;font-size:11px;color:#D4A853;width:14px;text-align:center;flex-shrink:0;}
+.top-artist-name{flex:1;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;}
+.dark .top-artist-name{color:#F0F0F0;}.light .top-artist-name{color:#1A1209;}
+.top-artist-count{font-family:'DM Mono',monospace;font-size:9px;}
+.dark .top-artist-count{color:#555;}.light .top-artist-count{color:#9A8C74;}
+
+/* ── Stat tiles (stats screen) ── */
+.stat-tile{flex:1;padding:14px 8px 12px;border-radius:10px;text-align:center;}
+.dark .stat-tile{background:#111;border:1px solid #1E1E1E;}
+.light .stat-tile{background:#E2DBCA;border:1px solid #BEB29A;}
+.stat-tile-num{font-family:'Syne',sans-serif;font-weight:800;font-size:34px;color:#D4A853;line-height:1;}
+.stat-tile-lbl{font-size:7px;letter-spacing:.14em;text-transform:uppercase;margin-top:6px;}
+.dark .stat-tile-lbl{color:#666;}.light .stat-tile-lbl{color:#9A8C74;}
+
+.section-hdr{display:flex;align-items:center;gap:8px;margin:20px 14px 10px;}
+.section-hdr-line{flex:1;height:1px;}
+.dark .section-hdr-line{background:#1E1E1E;}.light .section-hdr-line{background:#BEB29A;}
+.section-hdr-txt{font-size:8px;letter-spacing:.2em;text-transform:uppercase;}
+.dark .section-hdr-txt{color:#888;}.light .section-hdr-txt{color:#8A7E68;}
+
+.back-nav{display:flex;align-items:center;gap:6px;padding:8px 14px;cursor:pointer;min-height:44px;}
+.back-arrow{font-size:14px;color:#D4A853;}
+.back-label{font-size:11px;letter-spacing:.02em;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;}
+.dark .back-label{color:#D4A853;}.light .back-label{color:#8B6914;}
+
+.feed-title{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:26px;}
+.dark .feed-title{color:#F0F0F0;}.light .feed-title{color:#1A1209;}
+/* Sub-nav tabs: sharper indicator, legible inactive state */
+.feed-tabs{display:flex;margin-bottom:0;border-bottom:1px solid;}
+.dark .feed-tabs{border-color:rgba(212,168,83,.25);}
+.light .feed-tabs{border-color:#BEB29A;}
+.feed-tab{
+  flex:1;
+  padding:10px 4px;
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  font-weight:500;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  text-align:center;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  /* Active indicator: 2px solid flush with container border */
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  transition:color .15s,border-color .15s;
+}
+.dark .feed-tab.active{color:#D4A853;border-bottom-color:#D4A853;}
+/* Inactive: visible against bg, clearly unselected */
+.dark .feed-tab.inactive{color:#888;}
+.light .feed-tab.active{color:#8B6914;border-bottom-color:#8B6914;}
+.light .feed-tab.inactive{color:#7A6E60;}
+.feed-pane.hidden{display:none;}
+
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#C4401C;margin-right:5px;animation:blink 1.4s ease-in-out infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+.live-badge{font-size:7px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#C4401C;border:1px solid #C4401C;padding:2px 5px;border-radius:2px;}
+.live-card{border-radius:10px;margin:0 14px 10px;padding:12px;border:1px solid rgba(196,64,28,.45);box-shadow:0 0 12px rgba(196,64,28,.15);cursor:pointer;}
+.dark .live-card{background:#111;}.light .live-card{background:#E2DBCA;}
+
+.gold{color:#D4A853;}
+.muted{opacity:.5;}
+
+/* ── Onboarding ── */
+.ob-wrap{padding:28px 20px 20px;display:flex;flex-direction:column;align-items:center;height:100%;}
+.ob-logo{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:32px;color:#D4A853;margin-bottom:4px;text-align:center;}
+.ob-sub{font-size:9px;letter-spacing:.15em;text-align:center;margin-bottom:32px;}
+.dark .ob-sub{color:#444;}.light .ob-sub{color:#9A8C74;}
+.ob-dots{display:flex;gap:8px;justify-content:center;margin-bottom:28px;}
+.ob-dot{width:8px;height:8px;border-radius:50%;}
+.dark .ob-dot.done{background:transparent;border:1.5px solid #D4A853;}.dark .ob-dot.active{background:#D4A853;}.dark .ob-dot.next{background:#1E1E1E;}
+.light .ob-dot.done{background:transparent;border:1.5px solid #D4A853;}.light .ob-dot.active{background:#D4A853;}.light .ob-dot.next{background:#C8BCA0;}
+.ob-heading{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:20px;text-align:center;margin-bottom:8px;line-height:1.2;}
+.dark .ob-heading{color:#F0F0F0;}.light .ob-heading{color:#1A1209;}
+.ob-body{font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;text-align:center;line-height:1.6;margin-bottom:24px;}
+.dark .ob-body{color:#888;}.light .ob-body{color:#4A3E2A;}
+.ob-step{width:100%;display:none;flex-direction:column;align-items:center;}
+.ob-step.active{display:flex;}
+.theme-cards{display:flex;gap:10px;margin-bottom:20px;width:100%;}
+.theme-card{flex:1;border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;border:2px solid transparent;}
+.theme-card.selected{border-color:#D4A853;}
+.theme-card-dark{background:#111;}.theme-card-light{background:#E2DBCA;}
+.theme-card-name{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;margin-top:8px;}
+.theme-card-dark .theme-card-name{color:#D4A853;}.theme-card-light .theme-card-name{color:#8B6914;}
+.theme-card-preview{height:36px;border-radius:6px;margin-bottom:6px;}
+.ob-primary-btn{width:100%;padding:12px;border-radius:8px;border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-bottom:10px;}
+.dark .ob-primary-btn{background:#D4A853;color:#0C0C0C;}.light .ob-primary-btn{background:#1A1209;color:#D4CCAF;}
+.ob-skip{font-size:8px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:none;background:transparent;}
+.dark .ob-skip{color:#444;}.light .ob-skip{color:#9A8C74;}
+.ob-contact-row{display:flex;align-items:center;gap:8px;width:100%;border-radius:8px;padding:10px;margin-bottom:8px;}
+.dark .ob-contact-row{background:#111;border:1px solid #1E1E1E;}.light .ob-contact-row{background:#E2DBCA;border:1px solid #BEB29A;}
+.ob-contact-name{font-family:'Syne',sans-serif;font-weight:800;font-size:11px;flex:1;}
+.dark .ob-contact-name{color:#F0F0F0;}.light .ob-contact-name{color:#1A1209;}
+.ob-contact-bands{font-size:8px;letter-spacing:.04em;}
+.dark .ob-contact-bands{color:#666;}.light .ob-contact-bands{color:#9A8C74;}
+.unlock-bar{width:100%;border-radius:8px;padding:12px;text-align:center;margin-bottom:16px;}
+.dark .unlock-bar{background:#111;border:1px solid #1E1E1E;}.light .unlock-bar{background:#E2DBCA;border:1px solid #BEB29A;}
+.unlock-txt{font-size:9px;letter-spacing:.1em;}
+.dark .unlock-txt{color:#444;}.light .unlock-txt{color:#9A8C74;}
+
+/* ── My Shows ── */
+.show-archive-header{padding:16px 14px 12px;display:flex;justify-content:space-between;align-items:center;}
+.shows-count{font-size:8px;letter-spacing:.1em;}.dark .shows-count{color:#555;}.light .shows-count{color:#9A8C74;}
+.show-row{display:flex;gap:10px;align-items:center;margin:0 14px 2px;padding:12px 0;border-bottom:1px solid;cursor:pointer;min-height:44px;}
+.dark .show-row{border-color:#1A1A1A;}.light .show-row{border-color:#BEB29A;}
+.show-row:hover{opacity:.8;}
+.show-row-date{width:44px;text-align:center;flex-shrink:0;padding:6px 4px;border-radius:8px;}
+.dark .show-row-date{background:rgba(0,0,0,.55);border:1.5px solid rgba(212,168,83,.65);}
+.light .show-row-date{background:rgba(0,0,0,.07);border:1.5px solid #BEB29A;}
+.show-date-m{font-size:7px;letter-spacing:.1em;text-transform:uppercase;}.dark .show-date-m{color:#CCCCCC;}.light .show-date-m{color:#3A2E1A;}
+.show-date-d{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#D4A853;line-height:1;}
+.light .show-date-d{color:#1A1209;}
+.show-row-info{flex:1;min-width:0;}
+.show-row-artist{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:14px;line-height:1.1;}
+.dark .show-row-artist{color:#F0F0F0;}.light .show-row-artist{color:#1A1209;}
+.show-row-venue{font-size:8px;letter-spacing:.06em;margin-top:2px;}
+.dark .show-row-venue{color:#666;}.light .show-row-venue{color:#9A8C74;}
+.show-row-stars{display:flex;gap:1px;margin-top:4px;}
+.show-row-badge{font-size:7px;letter-spacing:.1em;text-transform:uppercase;padding:2px 5px;border-radius:2px;margin-left:6px;}
+.dark .show-row-badge{color:#555;border:1px solid #1E1E1E;}.light .show-row-badge{color:#9A8C74;border:1px solid #BEB29A;}
+
+/* ── Show Detail ── */
+.show-detail-hero{padding:12px 14px 14px;}
+.show-detail-artist{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:24px;line-height:1.1;margin-bottom:4px;}
+.dark .show-detail-artist{color:#F0F0F0;}.light .show-detail-artist{color:#1A1209;}
+.show-detail-meta{font-size:9px;letter-spacing:.06em;margin-bottom:12px;}
+.dark .show-detail-meta{color:#777;}.light .show-detail-meta{color:#6B6060;}
+.detail-stars{display:flex;gap:3px;margin-bottom:10px;}
+.detail-note{font-family:'Crimson Pro',serif;font-style:italic;font-size:14px;line-height:1.6;padding:12px 14px;border-radius:8px;margin-bottom:12px;}
+.dark .detail-note{background:#111;color:#888;border:1px solid #1E1E1E;}.light .detail-note{background:#E2DBCA;color:#4A3E2A;border:1px solid #BEB29A;}
+.setlist-song{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid;min-height:44px;}
+.dark .setlist-song{border-color:#1A1A1A;}.light .setlist-song{border-color:#BEB29A;}
+.song-num{font-family:'DM Mono',monospace;font-size:9px;width:18px;text-align:right;flex-shrink:0;}.dark .song-num{color:#AAAAAA;}.light .song-num{color:#8A7E68;}
+.song-title{font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;flex:1;min-width:0;}
+.dark .song-title{color:#CCC;}.light .song-title{color:#2A1E0E;}
+.song-rare{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#D4A853;border:1px solid rgba(212,168,83,.4);padding:1px 4px;border-radius:2px;}
+
+/* ── Search ── */
+.search-bar-wrap{padding:10px 14px;}
+.search-bar{width:100%;border-radius:8px;padding:10px 12px;font-family:'DM Mono',monospace;font-size:11px;border:none;outline:none;}
+.dark .search-bar{background:#111;color:#F0F0F0;border:1px solid #1E1E1E;}.light .search-bar{background:#E2DBCA;color:#1A1209;border:1px solid #BEB29A;}
+.filter-chips{display:flex;gap:6px;padding:0 14px 12px;overflow-x:auto;}
+.filter-chip{padding:5px 10px;border-radius:20px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap;border:none;}
+.dark .filter-chip.active{background:rgba(212,168,83,.18);color:#D4A853;border:1px solid rgba(212,168,83,.4);}
+.dark .filter-chip.inactive{background:#111;color:#555;border:1px solid #1E1E1E;}
+.light .filter-chip.active{background:rgba(212,168,83,.2);color:#8B6914;border:1px solid rgba(212,168,83,.5);}
+.light .filter-chip.inactive{background:#E2DBCA;color:#9A8C74;border:1px solid #BEB29A;}
+.trending-row{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid;cursor:pointer;min-height:44px;}
+.dark .trending-row{border-color:#1A1A1A;}.light .trending-row{border-color:#BEB29A;}
+.trending-artist{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:14px;flex:1;}
+.dark .trending-artist{color:#F0F0F0;}.light .trending-artist{color:#1A1209;}
+.trend-pct{font-size:9px;color:#4A9B6F;}
+.trend-hot{font-size:9px;color:#C4401C;}
+
+/* ── Profile ── */
+.profile-hero{padding:20px 14px 14px;text-align:center;}
+.profile-avatar-wrap{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#D4A853;border:2px solid #D4A853;overflow:hidden;}
+.dark .profile-avatar-wrap{background:#111;}.light .profile-avatar-wrap{background:#E2DBCA;}
+.profile-avatar-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.profile-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:4px;}
+.dark .profile-name{color:#F0F0F0;}.light .profile-name{color:#1A1209;}
+.profile-handle{font-size:9px;letter-spacing:.1em;margin-bottom:12px;}
+.dark .profile-handle{color:#555;}.light .profile-handle{color:#9A8C74;}
+.profile-stats-row{display:flex;justify-content:center;gap:24px;margin-bottom:14px;}
+.profile-stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#D4A853;}
+.profile-stat-lbl{font-size:7px;letter-spacing:.12em;text-transform:uppercase;}
+.dark .profile-stat-lbl{color:#444;}.light .profile-stat-lbl{color:#B8A880;}
+.profile-action-row{display:flex;gap:8px;margin:0 14px 4px;}
+.profile-btn{flex:1;padding:12px 8px;border-radius:6px;border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center;}
+.dark .profile-btn{background:#111;color:#D4A853;border:1px solid rgba(212,168,83,.3);}
+.light .profile-btn{background:#E2DBCA;color:#8B6914;border:1px solid rgba(212,168,83,.4);}
+
+/* ── Stats ── */
+.milestone-card{margin:0 14px 12px;padding:16px;border-radius:10px;}
+.dark .milestone-card{background:#111;border:1px solid #1E1E1E;}.light .milestone-card{background:#E2DBCA;border:1px solid #BEB29A;}
+.milestone-txt{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','DM Sans',sans-serif;font-style:normal;font-size:14px;font-weight:400;line-height:1.6;letter-spacing:.01em;}
+.dark .milestone-txt{color:#CCC;}.light .milestone-txt{color:#1A1209;}
+.bar-chart-row{display:flex;align-items:flex-end;gap:4px;height:60px;margin:0 14px 6px;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;}
+.bar{width:100%;border-radius:2px 2px 0 0;background:#D4A853;min-height:4px;}
+.bar.covid{opacity:.25;}
+.bar-yr{font-size:10px;}.dark .bar-yr{color:#444;}.light .bar-yr{color:#B8A880;}
+
+/* ── Section card (list container — used on all list screens) ── */
+.section-card{margin:0 14px 8px;border-radius:10px;overflow:hidden;}
+.dark .section-card{background:#111;border:1px solid #1E1E1E;}
+.light .section-card{background:#E2DBCA;border:1px solid #BEB29A;}
+.section-card .show-row{margin:0;padding:12px;}
+.section-card .show-row:last-child{border-bottom:none;}
+.section-card .trending-row{padding:10px 14px;}
+.section-card .trending-row:last-child{border-bottom:none;}
+.section-card .user-card{padding:10px 14px;}
+.section-card .user-card:last-child{border-bottom:none;}
+.section-card .setlist-song:last-child{border-bottom:none;}
+.section-card .vote-song:last-child{border-bottom:none;}
+
+/* ── Settings ── */
+.settings-section{margin:0 14px 8px;border-radius:10px;overflow:hidden;padding:0 12px;}
+.dark .settings-section{background:#111;border:1px solid #1E1E1E;}
+.light .settings-section{background:#E2DBCA;border:1px solid #BEB29A;}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid;min-height:44px;}
+.dark .settings-row{border-color:#1A1A1A;}.light .settings-row{border-color:#BEB29A;}
+.settings-section .settings-row:last-child{border-bottom:none;}
+.settings-label{font-size:10px;letter-spacing:.04em;}
+.dark .settings-label{color:#CCC;}.light .settings-label{color:#1A1209;}
+.toggle{width:36px;height:20px;border-radius:10px;position:relative;cursor:pointer;flex-shrink:0;}
+.toggle.on{background:rgba(212,168,83,.9);}.toggle.off{background:#1E1E1E;}
+.light .toggle.off{background:#C8BCA0;}
+.toggle-thumb{position:absolute;top:3px;width:14px;height:14px;border-radius:50%;background:#FFF;transition:left .2s;}
+.toggle.on .toggle-thumb{left:19px;}.toggle.off .toggle-thumb{left:3px;}
+
+/* ── Artist page ── */
+.artist-hero{padding:12px 14px 0;}
+.artist-name-big{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:26px;line-height:1.1;margin-bottom:6px;}
+.dark .artist-name-big{color:#F0F0F0;}.light .artist-name-big{color:#1A1209;}
+.genre-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.genre-tag{font-size:7px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;}
+.dark .genre-tag{color:#999;border:1px solid #333;}.light .genre-tag{color:#6B6050;border:1px solid #B8AA88;}
+.hero-stats{display:flex;border-radius:8px;overflow:hidden;border:1px solid;margin-bottom:12px;}
+.dark .hero-stats{border-color:#1E1E1E;}.light .hero-stats{border-color:#BEB29A;}
+.hero-stat{flex:1;padding:10px 4px;text-align:center;border-right:1px solid;}
+.dark .hero-stat{border-color:#1E1E1E;background:#111;}.light .hero-stat{border-color:#BEB29A;background:#E2DBCA;}
+.hero-stat:last-child{border-right:none;}
+.hero-stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#D4A853;}
+.hero-stat-lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+.dark .hero-stat-lbl{color:#777;}.light .hero-stat-lbl{color:#8A7E68;}
+.follow-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+.dark .follow-btn{background:rgba(212,168,83,.12);color:#D4A853;border:1px solid rgba(212,168,83,.35);}
+.light .follow-btn{background:rgba(212,168,83,.12);color:#8B6914;border:1px solid rgba(212,168,83,.4);}
+.follow-btn.following{background:rgba(212,168,83,.3);}
+.show-card-sm{border-radius:8px;margin:0 14px 8px;padding:10px 12px;cursor:pointer;}
+.dark .show-card-sm{background:#111;border:1px solid #1E1E1E;}.light .show-card-sm{background:#E2DBCA;border:1px solid #BEB29A;}
+.show-card-sm-venue{font-family:'Playfair Display',serif;font-style:italic;font-size:13px;margin-bottom:2px;}
+.dark .show-card-sm-venue{color:#F0F0F0;}.light .show-card-sm-venue{color:#1A1209;}
+.show-card-sm-meta{font-size:8px;letter-spacing:.06em;}
+.dark .show-card-sm-meta{color:#666;}.light .show-card-sm-meta{color:#9A8C74;}
+.song-freq-row{display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid;}
+.dark .song-freq-row{border-color:#1A1A1A;}.light .song-freq-row{border-color:#BEB29A;}
+.song-freq-name{font-family:'Crimson Pro',serif;font-style:italic;font-size:12px;width:140px;flex-shrink:0;}
+.dark .song-freq-name{color:#CCC;}.light .song-freq-name{color:#2A1E0E;}
+.song-freq-bar-wrap{flex:1;height:4px;border-radius:2px;}
+.dark .song-freq-bar-wrap{background:#1A1A1A;}.light .song-freq-bar-wrap{background:#BEB29A;}
+.song-freq-bar{height:100%;border-radius:2px;background:#D4A853;}
+.song-freq-pct{font-size:8px;width:28px;text-align:right;flex-shrink:0;}
+.dark .song-freq-pct{color:#777;}.light .song-freq-pct{color:#8A7E68;}
+
+/* ── Followers ── */
+.user-card{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid;cursor:pointer;min-height:44px;}
+.dark .user-card{border-color:#1A1A1A;}.light .user-card{border-color:#BEB29A;}
+.user-card-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.dark .user-card-avatar{border:1px solid #2A2A2A;}.light .user-card-avatar{border:1px solid #C8BCA0;}
+.user-card-name{font-family:'Syne',sans-serif;font-weight:800;font-size:12px;}
+.dark .user-card-name{color:#F0F0F0;}.light .user-card-name{color:#1A1209;}
+.user-card-artists{font-family:'Crimson Pro',serif;font-style:italic;font-size:11px;}
+.dark .user-card-artists{color:#777;}.light .user-card-artists{color:#6B6060;}
+.mutual-pill{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#D4A853;border:1px solid rgba(212,168,83,.4);padding:2px 5px;border-radius:3px;}
+
+/* ── Log a Show ── */
+.log-header{padding:16px 14px 10px;display:flex;align-items:center;justify-content:space-between;}
+.log-title{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:22px;}
+.dark .log-title{color:#F0F0F0;}.light .log-title{color:#1A1209;}
+.log-close{font-size:18px;color:#555;cursor:pointer;background:none;border:none;}
+.dark .log-close{color:#555;}.light .log-close{color:#9A8C74;}
+.log-field{margin:0 14px 16px;}
+.log-field-label{font-size:8px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px;}
+.dark .log-field-label{color:#555;}.light .log-field-label{color:#9A8C74;}
+.log-input{width:100%;padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;border:none;outline:none;}
+.dark .log-input{background:#111;color:#F0F0F0;border:1px solid #1E1E1E;}.light .log-input{background:#E2DBCA;color:#1A1209;border:1px solid #BEB29A;}
+.star-selector{display:flex;gap:8px;padding:4px 0;}
+.sel-star{font-size:22px;color:#D4A853;cursor:pointer;}
+.dark .sel-star.empty{color:#1E1E1E;}.light .sel-star.empty{color:#BEB29A;}
+.log-submit{width:calc(100% - 28px);margin:12px 14px 0;padding:12px;border-radius:8px;border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;}
+.dark .log-submit{background:#D4A853;color:#0C0C0C;}.light .log-submit{background:#1A1209;color:#D4CCAF;}
+.memory-toggle{display:flex;align-items:center;gap:8px;padding:10px 14px 0;}
+.memory-lbl{font-size:9px;letter-spacing:.06em;}
+.dark .memory-lbl{color:#555;}.light .memory-lbl{color:#9A8C74;}
+
+/* ── Show Page ── */
+.show-page-hero{padding:12px 14px 14px;}
+.show-page-artist{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:20px;margin-bottom:3px;}
+.dark .show-page-artist{color:#F0F0F0;}.light .show-page-artist{color:#1A1209;}
+.show-page-meta{font-size:9px;letter-spacing:.06em;margin-bottom:10px;}
+.dark .show-page-meta{color:#777;}.light .show-page-meta{color:#6B6060;}
+.show-page-stats{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid;margin-bottom:12px;}
+.dark .show-page-stats{border-color:#1E1E1E;}.light .show-page-stats{border-color:#BEB29A;}
+.sps{flex:1;padding:8px 4px;text-align:center;border-right:1px solid;}
+.dark .sps{border-color:#1E1E1E;background:#111;}.light .sps{border-color:#BEB29A;background:#E2DBCA;}
+.sps:last-child{border-right:none;}
+.sps-num{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#D4A853;}
+.sps-lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+.dark .sps-lbl{color:#444;}.light .sps-lbl{color:#B8A880;}
+.vote-song{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid;position:relative;min-height:44px;}
+.dark .vote-song{border-color:#1A1A1A;}.light .vote-song{border-color:#BEB29A;}
+.vote-bg{position:absolute;inset:0;}.dark .vote-bg{background:rgba(212,168,83,.05);}.light .vote-bg{background:rgba(212,168,83,.08);}
+.vote-title{font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;flex:1;position:relative;min-width:0;word-break:break-word;}
+.dark .vote-title{color:#CCC;}.light .vote-title{color:#2A1E0E;}
+.vote-pct{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;position:relative;flex-shrink:0;min-width:24px;text-align:right;}.dark .vote-pct{color:#AAAAAA;}.light .vote-pct{color:#6B6050;}
+.log-cta{margin:12px 14px;padding:16px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:56px;gap:12px;}
+.dark .log-cta{background:rgba(212,168,83,.08);border:1px solid rgba(212,168,83,.2);}.light .log-cta{background:rgba(212,168,83,.1);border:1px solid rgba(212,168,83,.3);}
+.log-cta-body{flex:1;}
+.log-cta-eyebrow{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;}
+.dark .log-cta-eyebrow{color:#888;}.light .log-cta-eyebrow{color:#9A8C74;}
+.log-cta-txt{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#D4A853;}
+.light .log-cta-txt{color:#8B6914;}
+.log-cta-icon{font-size:22px;flex-shrink:0;}
+.dark .log-cta-icon{color:#D4A853;}.light .log-cta-icon{color:#8B6914;}
+
+/* ══════════════════════════════════════════
+   LEGIBILITY PASS — every readable element
+   Dark: #F0F0F0 white / secondary #CCCCCC
+   Light: #1A1209 ink / secondary #2A1E0E
+   ══════════════════════════════════════════ */
+
+/* Dark — content text → white */
+.dark .feed-meta{color:#E0E0E0;}
+.dark .feed-note{color:#F0F0F0;}
+.dark .feed-stat{color:#CCCCCC;}
+.dark .vote-title{color:#F0F0F0;}
+.dark .song-title{color:#F0F0F0;}
+.dark .milestone-txt{color:#F0F0F0;}
+.dark .settings-label{color:#F0F0F0;}
+.dark .user-card-name{color:#F0F0F0;}
+.dark .user-card-artists{color:#E0E0E0;}
+.dark .ob-body{color:#E0E0E0;}
+.dark .ob-contact-bands{color:#DDDDDD;}
+.dark .memory-lbl{color:#E0E0E0;}
+.dark .show-row-venue{color:#E0E0E0;}
+.dark .show-detail-meta{color:#E0E0E0;}
+.dark .show-page-meta{color:#E0E0E0;}
+.dark .show-card-sm-venue{color:#F0F0F0;}
+.dark .show-card-sm-meta{color:#E0E0E0;}
+.dark .show-row-artist{color:#F0F0F0;}
+.dark .setlist-preview-name{color:#F0F0F0;}
+.dark .top-artist-name{color:#F0F0F0;}
+.dark .trending-artist{color:#F0F0F0;}
+
+/* Dark — secondary labels → clearly readable gray */
+.dark .timestamp{color:#CCCCCC;}
+.dark .section-hdr-txt{color:#BBBBBB;}
+.dark .back-label{color:#D4A853;}
+.dark .shows-count{color:#CCCCCC;}
+.dark .show-date-m{color:#CCCCCC;}
+.dark .show-row-badge{color:#CCCCCC;border-color:#444;}
+.dark .song-num{color:#BBBBBB;}
+.dark .sps-lbl{color:#CCCCCC;}
+.dark .vote-pct{color:#BBBBBB;}
+.dark .hero-stat-lbl{color:#CCCCCC;}
+.dark .genre-tag{color:#E0E0E0;border-color:#555;}
+.dark .song-freq-pct{color:#CCCCCC;}
+.dark .ob-sub{color:#CCCCCC;}
+.dark .ob-skip{color:#AAAAAA;}
+.dark .unlock-txt{color:#CCCCCC;}
+.dark .log-field-label{color:#CCCCCC;}
+.dark .log-close{color:#AAAAAA;}
+.dark .profile-handle{color:#CCCCCC;}
+.dark .profile-stat-lbl{color:#CCCCCC;}
+.dark .stat-tile-lbl{color:#CCCCCC;}
+.dark .top-artist-count{color:#CCCCCC;}
+.dark .setlist-preview-num{color:#BBBBBB;}
+.dark .setlist-preview-lbl{color:#D4A853;}
+.dark .bar-yr{color:#BBBBBB;}
+
+/* Light — all content text → dark ink */
+.light .feed-meta{color:#1A1209;}
+.light .feed-note{color:#1A1209;}
+.light .feed-stat{color:#2A1E0E;}
+.light .vote-title{color:#1A1209;}
+.light .song-title{color:#1A1209;}
+.light .milestone-txt{color:#1A1209;}
+.light .settings-label{color:#1A1209;}
+.light .user-card-name{color:#1A1209;}
+.light .user-card-artists{color:#2A1E0E;}
+.light .ob-body{color:#1A1209;}
+.light .ob-contact-bands{color:#2A1E0E;}
+.light .memory-lbl{color:#1A1209;}
+.light .show-row-venue{color:#2A1E0E;}
+.light .show-detail-meta{color:#1A1209;}
+.light .show-page-meta{color:#1A1209;}
+.light .show-card-sm-venue{color:#1A1209;}
+.light .show-card-sm-meta{color:#2A1E0E;}
+.light .show-row-artist{color:#1A1209;}
+.light .setlist-preview-name{color:#1A1209;}
+.light .top-artist-name{color:#1A1209;}
+.light .trending-artist{color:#1A1209;}
+.light .timestamp{color:#3A2E1A;}
+.light .section-hdr-txt{color:#2A1E0E;}
+.light .back-label{color:#2A1E0E;}
+.light .shows-count{color:#2A1E0E;}
+.light .show-date-m{color:#3A2E1A;}
+.light .show-row-badge{color:#2A1E0E;border-color:#8A7060;}
+.light .song-num{color:#3A2E1A;}
+.light .sps-lbl{color:#2A1E0E;}
+.light .vote-pct{color:#2A1E0E;}
+.light .hero-stat-lbl{color:#2A1E0E;}
+.light .genre-tag{color:#1A1209;border-color:#8A7060;}
+.light .song-freq-pct{color:#2A1E0E;}
+.light .ob-sub{color:#2A1E0E;}
+.light .ob-skip{color:#3A2E1A;}
+.light .unlock-txt{color:#2A1E0E;}
+.light .log-field-label{color:#2A1E0E;}
+.light .log-close{color:#3A2E1A;}
+.light .profile-handle{color:#2A1E0E;}
+.light .profile-stat-lbl{color:#2A1E0E;}
+.light .stat-tile-lbl{color:#2A1E0E;}
+.light .top-artist-count{color:#2A1E0E;}
+.light .setlist-preview-num{color:#3A2E1A;}
+.light .setlist-preview-lbl{color:#8B6914;}
+.light .bar-yr{color:#2A1E0E;}
+
+/* Dark mode: visible gold borders on all containers */
+.dark .feed-card,.dark .section-card,.dark .milestone-card,
+.dark .top-artists-card,.dark .settings-section,.dark .detail-note,
+.dark .ob-contact-row,.dark .unlock-bar,.dark .show-card-sm,
+.dark .live-card,.dark .setlist-preview,.dark .stat-tile{
+  border:2px solid rgba(212,168,83,.65);
+}
+/* Log a Show — input fields, star selector, memory toggle */
+.dark .log-input{border:2px solid rgba(212,168,83,.65);}
+.dark .star-selector{background:#111;border:2px solid rgba(212,168,83,.65);border-radius:8px;padding:8px 8px 6px;}
+.dark .memory-toggle{background:#111;border:2px solid rgba(212,168,83,.65);border-radius:8px;padding:10px 12px;margin:0 14px;}
+.dark .hero-stats,.dark .show-page-stats{border:2px solid rgba(212,168,83,.6);}
+.dark .hero-stat,.dark .sps{border-right:1px solid rgba(212,168,83,.35);}
+/* Inner row dividers — 1px at moderate gold so they read as secondary */
+.dark .show-row,.dark .setlist-song,.dark .song-freq-row,
+.dark .vote-song,.dark .trending-row,.dark .user-card,
+.dark .top-artist-row,.dark .settings-row,.dark .feed-tabs{
+  border-color:rgba(212,168,83,.25);
+}
+.dark .section-hdr-line{background:rgba(212,168,83,.35);}
+/* Phone frame */
+.phone.dark{border:2px solid rgba(212,168,83,.55);}
+
+/* Light mode: gold → dark ink (gold on cream has terrible contrast) */
+.light .profile-stat-num{color:#1A1209;}
+.light .show-date-d{color:#1A1209;}
+.light .hero-stat-num{color:#1A1209;}
+.light .sps-num{color:#1A1209;}
+.light .stat-tile-num{color:#1A1209;}
+.light .top-artist-rank{color:#1A1209;}
+.light .star-f{color:#8B6914;}
+.light .sel-star{color:#8B6914;}
+.light .sel-star.empty{color:#BEB29A;}
+.light .song-rare{color:#5A3E08;border-color:rgba(90,62,8,.45);}
+.light .mutual-pill{color:#5A3E08;border-color:rgba(90,62,8,.4);}
+.light .log-cta-txt{color:#1A1209;}
+.light .song-freq-bar{background:#8B6914;}
+.light .live-dot{background:#C4401C;}
+.light .location-tag{color:#1A1209;}
+.light .nav-item.active .nav-icon{color:#8B6914;}
+.light .nav-item.active .nav-label{color:#8B6914;}
+.light .nav-log-btn{background:#1A1209;color:#D4CCAF;}
+.light .map-dot{background:#8B6914;}
+.light .back-arrow{color:#1A1209;}
+
+/* Font weight bump for small DM Mono labels (both themes) */
+.section-hdr-txt,.back-label,.feed-meta,.feed-stat,.shows-count,
+.show-date-m,.show-row-venue,.show-row-badge,.sps-lbl,.hero-stat-lbl,
+.log-field-label,.profile-handle,.profile-stat-lbl,.stat-tile-lbl,
+.top-artist-count,.bar-yr,.genre-tag,.song-freq-pct,.vote-pct,
+.timestamp,.ob-sub,.ob-contact-bands,.unlock-txt,.memory-lbl{font-weight:500;}
+
+/* Feed note color overrides (font/size set in component block above) */
+
+/* ── Mobile PWA ── */
+@media (max-width:768px){
+  body{padding:0;background:#0C0C0C;align-items:stretch;min-height:100dvh;}
+  .proto-shell{flex-direction:column;gap:0;width:100%;height:100dvh;}
+  .proto-sidebar{display:none;}
+  .phone{
+    width:100vw;
+    height:100dvh;
+    border-radius:0;
+    border:none !important;
+    box-shadow:none !important;
+    flex:1;
+  }
+  /* Safe area: notch / Dynamic Island at top, home bar at bottom */
+  .status{
+    padding-top:env(safe-area-inset-top,14px);
+    padding-left:max(env(safe-area-inset-left,22px),22px);
+    padding-right:max(env(safe-area-inset-right,22px),22px);
+  }
+  .bottom-nav{
+    padding-bottom:max(env(safe-area-inset-bottom,16px),16px);
+  }
+  /* Slightly larger tap targets on real screens */
+  .nav-icon{font-size:20px;}
+  .nav-label{font-size:8px;}
+  .nav-log-btn{width:52px;height:52px;font-size:26px;}
+  /* Feed cards: a little more breathing room */
+  .feed-card{margin:0 12px 12px;}
+  /* Show rows full-width */
+  .show-row{margin:0 16px;}
+  /* Back nav bigger hit area */
+  .back-nav{padding:12px 16px 4px;}
+  /* Log a Show inputs feel native */
+  .log-input{font-size:16px;} /* prevents iOS zoom on focus */
+  .search-bar{font-size:16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="proto-shell">
+
+<!-- ── Sidebar ── -->
+<div class="proto-sidebar">
+  <div class="proto-logo">aftershow.</div>
+  <div class="proto-tagline">Interactive Prototype · Phase 3</div>
+  <button class="theme-btn" onclick="toggleTheme()">⬤ Toggle Theme</button>
+  <div class="theme-indicator" id="theme-indicator">Marshall Dark</div>
+  <div class="screen-map">
+    <div class="screen-map-label">Screens</div>
+    <div class="map-item current" id="map-s-onboarding" onclick="navigate('s-onboarding')"><span class="map-dot"></span>Onboarding</div>
+    <div class="map-divider"></div>
+    <div class="map-item" id="map-s-myshows" onclick="navigate('s-myshows')"><span class="map-dot"></span>My Shows</div>
+    <div class="map-item" id="map-s-feed" onclick="navigate('s-feed')"><span class="map-dot"></span>Feed</div>
+    <div class="map-item" id="map-s-log" onclick="navigate('s-log')"><span class="map-dot"></span>Log a Show</div>
+    <div class="map-item" id="map-s-search" onclick="navigate('s-search')"><span class="map-dot"></span>Search</div>
+    <div class="map-item" id="map-s-profile" onclick="navigate('s-profile')"><span class="map-dot"></span>Profile</div>
+    <div class="map-divider"></div>
+    <div class="map-item" id="map-s-showdetail" onclick="navigate('s-showdetail')"><span class="map-dot"></span>Show Detail</div>
+    <div class="map-item" id="map-s-showpage" onclick="navigate('s-showpage')"><span class="map-dot"></span>Show Page</div>
+    <div class="map-item" id="map-s-artist" onclick="navigate('s-artist')"><span class="map-dot"></span>Artist Page</div>
+    <div class="map-item" id="map-s-followers" onclick="navigate('s-followers')"><span class="map-dot"></span>Followers</div>
+    <div class="map-item" id="map-s-stats" onclick="navigate('s-stats')"><span class="map-dot"></span>Stats</div>
+    <div class="map-item" id="map-s-settings" onclick="navigate('s-settings')"><span class="map-dot"></span>Settings</div>
+  </div>
+</div>
+
+<!-- ── Phone ── -->
+<div class="phone dark" id="proto-phone">
+
+  <!-- Status bar -->
+  <div class="status">
+    <span>9:41</span>
+    <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:12px;color:#D4A853;">aftershow.</span>
+    <span>●●●</span>
+  </div>
+
+  <!-- Screens -->
+  <div class="proto-screens">
+
+    <!-- ━━━━ ONBOARDING ━━━━ -->
+    <div class="proto-screen active slide-in" id="s-onboarding">
+      <div class="ob-wrap">
+        <div class="ob-logo">aftershow.</div>
+        <div class="ob-sub">Your full lifetime show history.</div>
+        <div class="ob-dots">
+          <div class="ob-dot" id="ob-dot-0" style="background:#D4A853;"></div>
+          <div class="ob-dot" id="ob-dot-1" style="background:#1E1E1E;"></div>
+          <div class="ob-dot" id="ob-dot-2" style="background:#1E1E1E;"></div>
+        </div>
+
+        <!-- Step 0: Theme -->
+        <div class="ob-step active" id="ob-step-0">
+          <div class="ob-heading">Choose your look.</div>
+          <div class="ob-body">You can always switch later in Settings.</div>
+          <div class="theme-cards">
+            <div class="theme-card theme-card-dark selected" id="tc-dark" onclick="selectTheme('dark')">
+              <div class="theme-card-preview" style="background:#111;border:1px solid #2A2A2A;"></div>
+              <div style="display:flex;gap:4px;justify-content:center;margin-bottom:4px;">
+                <div style="width:16px;height:3px;border-radius:2px;background:#D4A853;"></div>
+                <div style="width:10px;height:3px;border-radius:2px;background:#1E1E1E;"></div>
+              </div>
+              <div class="theme-card-name">Marshall Dark</div>
+            </div>
+            <div class="theme-card theme-card-light" id="tc-light" onclick="selectTheme('light')">
+              <div class="theme-card-preview" style="background:#D4CCAF;border:1px solid #C8BCA0;"></div>
+              <div style="display:flex;gap:4px;justify-content:center;margin-bottom:4px;">
+                <div style="width:16px;height:3px;border-radius:2px;background:#D4A853;"></div>
+                <div style="width:10px;height:3px;border-radius:2px;background:#C8BCA0;"></div>
+              </div>
+              <div class="theme-card-name">Orange Vintage</div>
+            </div>
+          </div>
+          <button class="ob-primary-btn" onclick="obNext()">Continue →</button>
+        </div>
+
+        <!-- Step 1: Contacts -->
+        <div class="ob-step" id="ob-step-1">
+          <div class="ob-heading">Find your people.</div>
+          <div class="ob-body">We'll check your contacts for Aftershow users. Nothing is uploaded.</div>
+          <div class="ob-contact-row">
+            <div class="avatar-init" style="width:34px;height:34px;">M</div>
+            <div>
+              <div class="ob-contact-name">Mimsie</div>
+              <div class="ob-contact-bands">Paramore · BTS · K-Pop</div>
+            </div>
+          </div>
+          <div class="ob-contact-row">
+            <div class="avatar-init" style="width:34px;height:34px;font-size:10px;">xSx</div>
+            <div>
+              <div class="ob-contact-name">xSasquatchx</div>
+              <div class="ob-contact-bands">Mastodon · Gojira · Baroness</div>
+            </div>
+          </div>
+          <div class="ob-contact-row">
+            <img src="sako.jpg" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:1.5px solid #D4A853;flex-shrink:0;">
+            <div>
+              <div class="ob-contact-name">Sako H.</div>
+              <div class="ob-contact-bands">System of a Down · Scorpions</div>
+            </div>
+          </div>
+          <button class="ob-primary-btn" onclick="obNext()" style="margin-top:16px;">Follow All 3 →</button>
+          <button class="ob-skip" onclick="obNext()">Skip</button>
+        </div>
+
+        <!-- Step 2: First Show -->
+        <div class="ob-step" id="ob-step-2">
+          <div class="ob-heading">Log your first show.</div>
+          <div class="ob-body">No proof needed. From memory is a feature.</div>
+          <div class="unlock-bar">
+            <div class="unlock-txt">🔒 Log 1 show to unlock Feed</div>
+          </div>
+          <button class="ob-primary-btn" onclick="navigate('s-log')">Log a Show →</button>
+          <button class="ob-skip" onclick="navigate('s-myshows')">Skip for now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━ MY SHOWS ━━━━ -->
+    <div class="proto-screen" id="s-myshows">
+      <div class="show-archive-header">
+        <div class="feed-title">My Shows</div>
+        <div class="shows-count">47 shows logged</div>
+      </div>
+      <div class="section-hdr"><span class="section-hdr-txt">2026</span><div class="section-hdr-line"></div></div>
+      <div class="section-card">
+        <div class="show-row" onclick="navigate('s-showdetail')">
+          <div class="show-row-date"><div class="show-date-m">MAY</div><div class="show-date-d">14</div></div>
+          <div class="show-row-info">
+            <div class="show-row-artist">Nine Inch Nails</div>
+            <div class="show-row-venue">Riviera Theatre · Chicago</div>
+            <div class="show-row-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span></div>
+          </div>
+        </div>
+        <div class="show-row" onclick="navigate('s-showdetail')">
+          <div class="show-row-date"><div class="show-date-m">APR</div><div class="show-date-d">22</div></div>
+          <div class="show-row-info">
+            <div class="show-row-artist">Gojira</div>
+            <div class="show-row-venue">The Vic · Chicago</div>
+            <div class="show-row-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-e">★</span></div>
+          </div>
+        </div>
+        <div class="show-row" onclick="navigate('s-showdetail')">
+          <div class="show-row-date"><div class="show-date-m">MAR</div><div class="show-date-d">8</div></div>
+          <div class="show-row-info">
+            <div class="show-row-artist">Deftones</div>
+            <div class="show-row-venue">Aragon Ballroom · Chicago</div>
+            <div class="show-row-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-hdr" style="margin-top:4px;"><span class="section-hdr-txt">2025</span><div class="section-hdr-line"></div></div>
+      <div class="section-card">
+        <div class="show-row" onclick="navigate('s-showdetail')">
+          <div class="show-row-date"><div class="show-date-m">NOV</div><div class="show-date-d">30</div></div>
+          <div class="show-row-info">
+            <div class="show-row-artist">Tool</div>
+            <div class="show-row-venue">United Center · Chicago</div>
+            <div class="show-row-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span></div>
+          </div>
+        </div>
+        <div class="show-row" onclick="navigate('s-showdetail')">
+          <div class="show-row-date"><div class="show-date-m">SEP</div><div class="show-date-d">12</div></div>
+          <div class="show-row-info">
+            <div class="show-row-artist">The Bravery Quarterly</div>
+            <div class="show-row-venue">Thalia Hall · Chicago</div>
+            <div class="show-row-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-e">★</span></div>
+            <span class="show-row-badge">From Memory</span>
+          </div>
+        </div>
+        <div class="show-row" onclick="navigate('s-showdetail')">
+          <div class="show-row-date"><div class="show-date-m">JUN</div><div class="show-date-d">7</div></div>
+          <div class="show-row-info">
+            <div class="show-row-artist">Mastodon</div>
+            <div class="show-row-venue">Metro · Chicago</div>
+            <div class="show-row-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-e">★</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:16px;text-align:center;font-size:9px;letter-spacing:.1em;color:#BBBBBB;">↓ 41 more shows</div>
+    </div>
+
+    <!-- ━━━━ FEED ━━━━ -->
+    <div class="proto-screen" id="s-feed">
+      <div style="padding:8px 18px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div class="feed-title">Feed</div>
+          <div class="location-tag" style="font-size:9px;letter-spacing:.06em;">Chicago ↓</div>
+        </div>
+        <div class="feed-tabs" id="feed-tabs">
+          <button class="feed-tab active" data-tab="friends" onclick="switchFeedTab('friends')">Friends</button>
+          <button class="feed-tab inactive" data-tab="global" onclick="switchFeedTab('global')">Global</button>
+          <button class="feed-tab inactive" data-tab="tonight" onclick="switchFeedTab('tonight')">Tonight</button>
+        </div>
+      </div>
+
+      <!-- Friends pane -->
+      <div class="feed-pane" id="pane-friends" style="padding-top:10px;">
+        <div class="feed-card" onclick="navigate('s-showdetail')">
+          <div class="card-inner">
+            <div class="user-row">
+              <div class="avatar-init">M</div>
+              <div class="user-info"><span class="username">Mimsie</span> <span class="timestamp">2h ago</span></div>
+            </div>
+            <div class="feed-artist">Paramore</div>
+            <div class="feed-meta">United Center · Chicago · May 14</div>
+            <div class="setlist-preview">
+              <div class="setlist-preview-lbl">Setlist</div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">01</span><span class="setlist-preview-name">Still Into You</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">02</span><span class="setlist-preview-name">Decode <span class="song-rare">RARE</span></span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">03</span><span class="setlist-preview-name">Misery Business</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">04</span><span class="setlist-preview-name">Ignorance</span></div>
+            </div>
+            <div class="feed-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span></div>
+            <div class="feed-note">"Hayley absolutely owned that stage. Misery Business had the crowd in a full frenzy."</div>
+            <div class="feed-footer">
+              <div class="feed-stat-group">
+                <span class="feed-stat-btn">♡ 12</span>
+                <span class="feed-stat-btn">↩ 3</span>
+              </div>
+              <span class="feed-stat-btn">♪ 23 songs</span>
+            </div>
+          </div>
+        </div>
+        <div class="feed-card" onclick="navigate('s-showdetail')">
+          <div class="card-inner">
+            <div class="user-row">
+              <div class="avatar-init" style="font-size:10px;">xSx</div>
+              <div class="user-info"><span class="username">xSasquatchx</span> <span class="timestamp">5h ago</span></div>
+            </div>
+            <div class="feed-artist">Mastodon</div>
+            <div class="feed-meta">Metro · Chicago · May 14</div>
+            <div class="setlist-preview">
+              <div class="setlist-preview-lbl">Setlist</div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">01</span><span class="setlist-preview-name">Blood and Thunder</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">02</span><span class="setlist-preview-name">Crack the Skye</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">03</span><span class="setlist-preview-name">The Motherload</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">04</span><span class="setlist-preview-name">Colony of Birchmen <span class="song-rare">RARE</span></span></div>
+            </div>
+            <div class="feed-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-e">★</span></div>
+            <div class="feed-note">"Blood and Thunder into Crack the Skye back to back. I blacked out."</div>
+            <div class="feed-footer">
+              <div class="feed-stat-group">
+                <span class="feed-stat-btn">♡ 8</span>
+                <span class="feed-stat-btn">↩ 1</span>
+              </div>
+              <span class="feed-stat-btn">♪ 19 songs</span>
+            </div>
+          </div>
+        </div>
+        <div class="feed-card" onclick="navigate('s-showdetail')">
+          <div class="card-inner">
+            <div class="user-row">
+              <img src="sako.jpg" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid #D4A853;flex-shrink:0;">
+              <div class="user-info"><span class="username">Sako H.</span> <span class="timestamp">yesterday</span></div>
+            </div>
+            <div class="feed-artist" onclick="event.stopPropagation();navigate('s-artist')">System of a Down</div>
+            <div class="feed-meta">Kia Forum · Los Angeles · May 17</div>
+            <div class="setlist-preview">
+              <div class="setlist-preview-lbl">Setlist</div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">01</span><span class="setlist-preview-name">Chop Suey!</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">02</span><span class="setlist-preview-name">B.Y.O.B.</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">03</span><span class="setlist-preview-name">Toxicity</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">04</span><span class="setlist-preview-name">Suite-Pee <span class="song-rare">RARE</span></span></div>
+            </div>
+            <div class="feed-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span></div>
+            <div class="feed-note">"Chop Suey opener. 20,000 people screaming every word. I will never recover."</div>
+            <div class="feed-footer">
+              <div class="feed-stat-group">
+                <span class="feed-stat-btn">♡ 31</span>
+                <span class="feed-stat-btn">↩ 7</span>
+              </div>
+              <span class="feed-stat-btn">♪ 24 songs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Global pane -->
+      <div class="feed-pane hidden" id="pane-global" style="padding-top:10px;">
+        <div style="font-size:9px;letter-spacing:.08em;text-align:center;padding:8px 0 12px;color:#D4A853;">2,341 logs this week · 61 countries</div>
+        <div class="feed-card" onclick="navigate('s-showdetail')">
+          <div class="card-inner">
+            <div class="user-row">
+              <div class="avatar-init" style="font-size:10px;">tky</div>
+              <div class="user-info"><span class="username">tokyoshred</span> <span class="timestamp">Tokyo</span></div>
+            </div>
+            <div class="feed-artist">Boris</div>
+            <div class="feed-meta">Liquidroom · Tokyo · May 17</div>
+            <div class="setlist-preview">
+              <div class="setlist-preview-lbl">Setlist</div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">01</span><span class="setlist-preview-name">Feedbacker</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">02</span><span class="setlist-preview-name">Heavy Rocks</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">03</span><span class="setlist-preview-name">Akuma No Uta <span class="song-rare">RARE</span></span></div>
+            </div>
+            <div class="feed-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span></div>
+            <div class="feed-note">"Two hours of pure drone-doom. My ears are still ringing in the best way."</div>
+            <div class="feed-footer">
+              <div class="feed-stat-group">
+                <span class="feed-stat-btn">♡ 44</span>
+              </div>
+              <span class="feed-stat-btn">🌐 Tokyo</span>
+            </div>
+          </div>
+        </div>
+        <div class="feed-card" onclick="navigate('s-showdetail')">
+          <div class="card-inner">
+            <div class="user-row">
+              <div class="avatar-init" style="font-size:10px;">osl</div>
+              <div class="user-info"><span class="username">velvet_oslo</span> <span class="timestamp">Oslo</span></div>
+            </div>
+            <div class="feed-artist">Deafheaven</div>
+            <div class="feed-meta">Rockefeller · Oslo · May 16</div>
+            <div class="setlist-preview">
+              <div class="setlist-preview-lbl">Setlist · Sunbather in Full</div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">01</span><span class="setlist-preview-name">Dream House</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">02</span><span class="setlist-preview-name">Irresistible</span></div>
+              <div class="setlist-preview-row"><span class="setlist-preview-num">03</span><span class="setlist-preview-name">The Pecan Tree</span></div>
+            </div>
+            <div class="feed-stars"><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span><span class="star-f">★</span></div>
+            <div class="feed-note">"Sunbather in full. Once in a decade kind of set."</div>
+            <div class="feed-footer">
+              <div class="feed-stat-group">
+                <span class="feed-stat-btn">♡ 89</span>
+              </div>
+              <span class="feed-stat-btn" style="color:#D4A853;border-color:rgba(212,168,83,.4);">RARE SET</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tonight pane -->
+      <div class="feed-pane hidden" id="pane-tonight" style="padding-top:10px;">
+        <div style="font-size:9px;letter-spacing:.08em;text-align:center;padding:8px 0 12px;"><span class="live-dot"></span><span style="color:#D4A853;">47 shows happening now · 23 cities</span></div>
+        <div class="live-card" onclick="navigate('s-showdetail')">
+          <div class="user-row">
+            <div class="avatar-init">M</div>
+            <div class="user-info"><span class="username">Mimsie</span> <span class="live-badge">● LIVE</span></div>
+          </div>
+          <div class="feed-artist">Paramore</div>
+          <div class="feed-meta">United Center · Chicago</div>
+          <div style="height:3px;border-radius:2px;background:#1E1E1E;margin-top:8px;"><div style="width:62%;height:100%;background:#C4401C;border-radius:2px;"></div></div>
+          <div style="font-size:8px;color:#C4401C;margin-top:4px;">encore soon</div>
+        </div>
+        <div class="live-card" onclick="navigate('s-showdetail')">
+          <div class="user-row">
+            <div class="avatar-init" style="font-size:10px;">xSx</div>
+            <div class="user-info"><span class="username">xSasquatchx</span> <span class="live-badge">● LIVE</span></div>
+          </div>
+          <div class="feed-artist">Mastodon</div>
+          <div class="feed-meta">Metro · Chicago</div>
+          <div style="height:3px;border-radius:2px;background:#1E1E1E;margin-top:8px;"><div style="width:38%;height:100%;background:#C4401C;border-radius:2px;"></div></div>
+          <div style="font-size:8px;color:#C4401C;margin-top:4px;">mid-set</div>
+        </div>
+        <div style="padding:10px 14px;text-align:center;font-size:9px;letter-spacing:.08em;color:#BBBBBB;">↓ 42 more shows tonight</div>
+      </div>
+    </div>
+
+    <!-- ━━━━ LOG A SHOW ━━━━ -->
+    <div class="proto-screen" id="s-log">
+      <div class="log-header">
+        <div class="log-title">Log a Show</div>
+        <button class="log-close" onclick="navBack()">✕</button>
+      </div>
+      <div class="log-field">
+        <div class="log-field-label">Artist</div>
+        <input class="log-input" type="text" placeholder="Nine Inch Nails" value="">
+      </div>
+      <div class="log-field">
+        <div class="log-field-label">Venue</div>
+        <input class="log-input" type="text" placeholder="Riviera Theatre">
+      </div>
+      <div class="log-field">
+        <div class="log-field-label">Date</div>
+        <input class="log-input" type="text" placeholder="May 14, 2026">
+      </div>
+      <div class="log-field">
+        <div class="log-field-label">Rating</div>
+        <div class="star-selector">
+          <span class="sel-star" onclick="setStars(1)">★</span>
+          <span class="sel-star" onclick="setStars(2)">★</span>
+          <span class="sel-star" onclick="setStars(3)">★</span>
+          <span class="sel-star empty" onclick="setStars(4)">★</span>
+          <span class="sel-star empty" onclick="setStars(5)">★</span>
+        </div>
+      </div>
+      <div class="log-field">
+        <div class="log-field-label">Notes</div>
+        <textarea class="log-input" rows="3" placeholder="How was it?"></textarea>
+      </div>
+      <div class="memory-toggle">
+        <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+        <span class="memory-lbl">Logging from memory</span>
+      </div>
+      <button class="log-submit" onclick="navigate('s-myshows')">Save Show →</button>
+    </div>
+
+    <!-- ━━━━ SEARCH ━━━━ -->
+    <div class="proto-screen" id="s-search">
+      <div style="padding:10px 14px 4px;">
+        <div class="feed-title" style="margin-bottom:10px;">Discover</div>
+        <input class="search-bar" type="text" placeholder="Artists, shows, venues, people…">
+      </div>
+      <div class="filter-chips">
+        <div class="filter-chip active">Artists</div>
+        <div class="filter-chip inactive">Shows</div>
+        <div class="filter-chip inactive">Venues</div>
+        <div class="filter-chip inactive">People</div>
+      </div>
+      <div class="section-hdr"><span class="section-hdr-txt">Trending This Week</span><div class="section-hdr-line"></div></div>
+      <div class="section-card">
+        <div class="trending-row" onclick="navigate('s-artist')">
+          <div class="trending-artist">System of a Down</div>
+          <span class="trend-hot">🔥 +31%</span>
+        </div>
+        <div class="trending-row" onclick="navigate('s-showpage')">
+          <div class="trending-artist">Nine Inch Nails</div>
+          <span class="trend-pct">↑ +18%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-artist">Knocked Loose</div>
+          <span class="trend-pct">↑ +22%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-artist">Paramore</div>
+          <span class="trend-pct">↑ +14%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-artist">Gojira</div>
+          <span class="trend-pct">↑ +9%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-artist">Deafheaven</div>
+          <span class="trend-hot">🔥 +44%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━ PROFILE ━━━━ -->
+    <div class="proto-screen" id="s-profile">
+      <div class="profile-hero">
+        <div class="profile-avatar-wrap"><img src="creepychu.gif" alt="Grayson039"></div>
+        <div class="profile-name">Grayson039</div>
+        <div class="profile-handle">Will · Chicago, IL</div>
+        <div class="profile-stats-row">
+          <div style="text-align:center;">
+            <div class="profile-stat-num">47</div>
+            <div class="profile-stat-lbl">Shows</div>
+          </div>
+          <div style="text-align:center;cursor:pointer;" onclick="navigate('s-followers')">
+            <div class="profile-stat-num">47</div>
+            <div class="profile-stat-lbl">Followers</div>
+          </div>
+          <div style="text-align:center;cursor:pointer;" onclick="navigate('s-followers')">
+            <div class="profile-stat-num">31</div>
+            <div class="profile-stat-lbl">Following</div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-action-row">
+        <div class="profile-btn" onclick="navigate('s-stats')">📊 Stats</div>
+        <div class="profile-btn" onclick="navigate('s-settings')">⚙ Settings</div>
+      </div>
+      <div class="section-hdr" style="margin-top:14px;"><span class="section-hdr-txt">Top Artists</span><div class="section-hdr-line"></div></div>
+      <div class="top-artists-card">
+        <div class="top-artist-row">
+          <span class="top-artist-rank">1</span>
+          <span class="top-artist-name">Nine Inch Nails</span>
+          <span class="top-artist-count">12×</span>
+        </div>
+        <div class="top-artist-row">
+          <span class="top-artist-rank">2</span>
+          <span class="top-artist-name">Tool</span>
+          <span class="top-artist-count">8×</span>
+        </div>
+        <div class="top-artist-row">
+          <span class="top-artist-rank">3</span>
+          <span class="top-artist-name">Gojira</span>
+          <span class="top-artist-count">6×</span>
+        </div>
+        <div class="top-artist-row">
+          <span class="top-artist-rank">4</span>
+          <span class="top-artist-name">Deftones</span>
+          <span class="top-artist-count">5×</span>
+        </div>
+        <div class="top-artist-row">
+          <span class="top-artist-rank">5</span>
+          <span class="top-artist-name">The Black Queen</span>
+          <span class="top-artist-count">4×</span>
+        </div>
+      </div>
+      <div class="section-hdr" style="margin-top:8px;"><span class="section-hdr-txt">Recent</span><div class="section-hdr-line"></div></div>
+      <div class="section-card">
+        <div class="show-row" onclick="navigate('s-showdetail')">
+          <div class="show-row-date"><div class="show-date-m">MAY</div><div class="show-date-d">14</div></div>
+          <div class="show-row-info">
+            <div class="show-row-artist">Nine Inch Nails</div>
+            <div class="show-row-venue">Riviera Theatre · Chicago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━ SHOW DETAIL ━━━━ -->
+    <div class="proto-screen" id="s-showdetail">
+      <div class="back-nav" onclick="navBack()"><span class="back-arrow">←</span><span class="back-label">Back</span></div>
+      <div class="show-detail-hero">
+        <div class="show-detail-artist">Nine Inch Nails</div>
+        <div class="show-detail-meta">Riviera Theatre · Chicago · May 14, 2026</div>
+        <div class="detail-stars"><span class="star-f" style="font-size:16px;">★</span><span class="star-f" style="font-size:16px;">★</span><span class="star-f" style="font-size:16px;">★</span><span class="star-f" style="font-size:16px;">★</span><span class="star-f" style="font-size:16px;">★</span></div>
+        <div class="detail-note">"Closer opening, then into Mr. Self Destruct — I lost it immediately. Hurt as the closer. Absolutely obliterated."</div>
+      </div>
+      <div class="section-hdr"><span class="section-hdr-txt">Setlist</span><div class="section-hdr-line"></div></div>
+      <div class="section-card">
+        <div class="setlist-song"><span class="song-num">1</span><span class="song-title" onclick="navigate('s-showpage')">Closer</span></div>
+        <div class="setlist-song"><span class="song-num">2</span><span class="song-title">Mr. Self Destruct</span></div>
+        <div class="setlist-song"><span class="song-num">3</span><span class="song-title">Wish</span></div>
+        <div class="setlist-song"><span class="song-num">4</span><span class="song-title">The Perfect Drug</span></div>
+        <div class="setlist-song"><span class="song-num">5</span><span class="song-title">March of the Pigs</span></div>
+        <div class="setlist-song"><span class="song-num">6</span><span class="song-title">Sanctified <span class="song-rare">RARE</span></span></div>
+        <div class="setlist-song" style="opacity:.5;"><span class="song-num">enc.</span><span class="song-title" style="font-style:italic;">Hurt</span></div>
+      </div>
+      <div class="section-hdr" style="margin-top:8px;"><span class="section-hdr-txt">Show Page</span><div class="section-hdr-line"></div></div>
+      <div class="log-cta" onclick="navigate('s-showpage')">
+        <div class="log-cta-body">
+          <div class="log-cta-eyebrow">Community</div>
+          <div class="log-cta-txt">View full show · 3 logs · 4.8 avg →</div>
+        </div>
+        <span class="log-cta-icon">↗</span>
+      </div>
+    </div>
+
+    <!-- ━━━━ SHOW PAGE ━━━━ -->
+    <div class="proto-screen" id="s-showpage">
+      <div class="back-nav" onclick="navBack()"><span class="back-arrow">←</span><span class="back-label">Back</span></div>
+      <div class="show-page-hero">
+        <div class="show-page-artist" style="cursor:pointer;" onclick="navigate('s-artist')">Nine Inch Nails <span style="font-size:10px;color:#D4A853;">↗</span></div>
+        <div class="show-page-meta">Riviera Theatre · Chicago · May 14, 2026</div>
+        <div class="show-page-stats">
+          <div class="sps"><div class="sps-num">3</div><div class="sps-lbl">Logs</div></div>
+          <div class="sps"><div class="sps-num">22</div><div class="sps-lbl">Songs</div></div>
+          <div class="sps"><div class="sps-num">2h 8m</div><div class="sps-lbl">Set</div></div>
+          <div class="sps"><div class="sps-num">4.8</div><div class="sps-lbl">Avg</div></div>
+        </div>
+      </div>
+      <div class="section-hdr"><span class="section-hdr-txt">Aggregated Setlist</span><div class="section-hdr-line"></div></div>
+      <div class="section-card">
+        <div class="vote-song"><div class="vote-bg" style="width:100%;"></div><span class="vote-title">Closer</span><span class="vote-pct">3/3</span></div>
+        <div class="vote-song"><div class="vote-bg" style="width:100%;"></div><span class="vote-title">Mr. Self Destruct</span><span class="vote-pct">3/3</span></div>
+        <div class="vote-song"><div class="vote-bg" style="width:100%;"></div><span class="vote-title">Wish</span><span class="vote-pct">3/3</span></div>
+        <div class="vote-song"><div class="vote-bg" style="width:66%;"></div><span class="vote-title">The Perfect Drug</span><span class="vote-pct">2/3</span></div>
+        <div class="vote-song"><div class="vote-bg" style="width:66%;"></div><span class="vote-title">March of the Pigs</span><span class="vote-pct">2/3</span></div>
+        <div class="vote-song"><div class="vote-bg" style="width:33%;"></div><span class="vote-title">Sanctified <span class="song-rare">RARE</span></span><span class="vote-pct">1/3</span></div>
+        <div class="vote-song" style="opacity:.45;"><div class="vote-bg" style="width:100%;"></div><span class="vote-title" style="font-style:italic;font-size:11px;opacity:.7;">enc. Hurt</span><span class="vote-pct">3/3</span></div>
+      </div>
+      <div class="log-cta" onclick="navigate('s-log')" style="margin-top:8px;">
+        <div class="log-cta-body">
+          <div class="log-cta-eyebrow">Were you there?</div>
+          <div class="log-cta-txt">Log your version →</div>
+        </div>
+        <span class="log-cta-icon">✎</span>
+      </div>
+    </div>
+
+    <!-- ━━━━ ARTIST PAGE (SOAD) ━━━━ -->
+    <div class="proto-screen" id="s-artist">
+      <div class="back-nav" onclick="navBack()"><span class="back-arrow">←</span><span class="back-label">Back</span></div>
+      <div class="artist-hero">
+        <img src="system.JPG" style="width:100%;height:110px;object-fit:cover;object-position:center top;border-radius:0;">
+        <div style="padding:10px 14px 0;">
+          <div class="artist-name-big">System of a Down</div>
+          <div class="genre-row">
+            <span class="genre-tag">Metal</span>
+            <span class="genre-tag">Nu-Metal</span>
+            <span class="genre-tag">Alternative Metal</span>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="hero-stat-num">6.2k</div><div class="hero-stat-lbl">Logs</div></div>
+            <div class="hero-stat"><div class="hero-stat-num">3.8k</div><div class="hero-stat-lbl">Fans</div></div>
+            <div class="hero-stat"><div class="hero-stat-num">4.9</div><div class="hero-stat-lbl">Avg</div></div>
+            <div class="hero-stat"><div class="hero-stat-num">214</div><div class="hero-stat-lbl">Shows</div></div>
+          </div>
+          <button class="follow-btn" id="artist-follow-btn" onclick="toggleFollow(this)">+ Follow Artist</button>
+        </div>
+      </div>
+      <div class="section-hdr"><span class="section-hdr-txt">Recent Shows</span><div class="section-hdr-line"></div></div>
+      <div class="show-card-sm" onclick="navigate('s-showpage')">
+        <div class="show-card-sm-venue">Kia Forum · Los Angeles</div>
+        <div class="show-card-sm-meta">May 17 · 312 logs · ★ 5.0</div>
+      </div>
+      <div class="show-card-sm" onclick="navigate('s-showpage')">
+        <div class="show-card-sm-venue">Chase Center · San Francisco</div>
+        <div class="show-card-sm-meta">May 14 · 289 logs · ★ 4.9</div>
+      </div>
+      <div class="show-card-sm" onclick="navigate('s-showpage')">
+        <div class="show-card-sm-venue">T-Mobile Arena · Las Vegas</div>
+        <div class="show-card-sm-meta">May 10 · 341 logs · ★ 5.0</div>
+      </div>
+      <div class="section-hdr" style="margin-top:4px;"><span class="section-hdr-txt">Most Logged Songs</span><div class="section-hdr-line"></div></div>
+      <div class="section-card">
+        <div class="song-freq-row"><span class="song-freq-name">Chop Suey!</span><div class="song-freq-bar-wrap"><div class="song-freq-bar" style="width:97%;"></div></div><span class="song-freq-pct">97%</span></div>
+        <div class="song-freq-row"><span class="song-freq-name">B.Y.O.B.</span><div class="song-freq-bar-wrap"><div class="song-freq-bar" style="width:94%;"></div></div><span class="song-freq-pct">94%</span></div>
+        <div class="song-freq-row"><span class="song-freq-name">Toxicity</span><div class="song-freq-bar-wrap"><div class="song-freq-bar" style="width:91%;"></div></div><span class="song-freq-pct">91%</span></div>
+        <div class="song-freq-row"><span class="song-freq-name">Aerials</span><div class="song-freq-bar-wrap"><div class="song-freq-bar" style="width:88%;"></div></div><span class="song-freq-pct">88%</span></div>
+        <div class="song-freq-row"><span class="song-freq-name">Prison Song</span><div class="song-freq-bar-wrap"><div class="song-freq-bar" style="width:82%;"></div></div><span class="song-freq-pct">82%</span></div>
+        <div class="song-freq-row"><span class="song-freq-name">Lonely Day</span><div class="song-freq-bar-wrap"><div class="song-freq-bar" style="width:79%;"></div></div><span class="song-freq-pct">79%</span></div>
+      </div>
+      <div style="padding:14px;border-radius:8px;margin:12px 14px 16px;display:flex;gap:10px;align-items:flex-start;" id="sako-quote">
+        <img src="sako.jpg" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1.5px solid #D4A853;flex-shrink:0;">
+        <div>
+          <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;line-height:1.55;margin-bottom:4px;" id="sako-quote-txt">"Chop Suey live is a religious experience. There's nothing else like it."</div>
+          <div style="font-size:8px;letter-spacing:.08em;" id="sako-attr">— Sako H. · 23 SOAD shows</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━ FOLLOWERS ━━━━ -->
+    <div class="proto-screen" id="s-followers">
+      <div class="back-nav" onclick="navBack()"><span class="back-arrow">←</span><span class="back-label">Profile</span></div>
+      <div style="padding:8px 14px 12px;display:flex;justify-content:space-between;align-items:center;">
+        <div class="feed-title">Grayson039</div>
+      </div>
+      <div class="feed-tabs" style="margin:0 14px;" id="follow-tabs">
+        <button class="feed-tab active" onclick="switchFollowTab('followers')">47 Followers</button>
+        <button class="feed-tab inactive" onclick="switchFollowTab('following')">31 Following</button>
+      </div>
+      <div id="pane-followers" style="margin-top:8px;">
+        <div class="section-card" style="margin-top:0;">
+          <div class="user-card">
+            <div class="avatar-init" style="width:38px;height:38px;">M</div>
+            <div style="flex:1;"><div class="user-card-name">Mimsie</div><div class="user-card-artists">Paramore · BTS · K-Pop</div></div>
+            <span class="mutual-pill">Mutual</span>
+          </div>
+          <div class="user-card">
+            <div class="avatar-init" style="width:38px;height:38px;font-size:10px;">xSx</div>
+            <div style="flex:1;"><div class="user-card-name">xSasquatchx</div><div class="user-card-artists">Mastodon · Gojira · Baroness</div></div>
+            <span class="mutual-pill">Mutual</span>
+          </div>
+          <div class="user-card">
+            <img src="sako.jpg" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:1.5px solid #D4A853;flex-shrink:0;">
+            <div style="flex:1;"><div class="user-card-name">Sako H.</div><div class="user-card-artists">System of a Down · Scorpions</div></div>
+            <span class="mutual-pill">Mutual</span>
+          </div>
+          <div class="user-card">
+            <div class="avatar-init" style="width:38px;height:38px;font-size:7px;">tky</div>
+            <div style="flex:1;"><div class="user-card-name">tokyoshred</div><div class="user-card-artists">Boris · Mono · Envy</div></div>
+            <button style="font-size:8px;padding:5px 10px;border-radius:5px;background:transparent;cursor:pointer;border:1px solid #2A2A2A;color:#D4A853;">Follow</button>
+          </div>
+        </div>
+      </div>
+      <div id="pane-following" style="margin-top:8px;display:none;">
+        <div class="section-card" style="margin-top:0;">
+          <div class="user-card">
+            <div class="avatar-init" style="width:38px;height:38px;">M</div>
+            <div style="flex:1;"><div class="user-card-name">Mimsie</div><div class="user-card-artists">Paramore · BTS</div></div>
+          </div>
+          <div class="user-card">
+            <div class="avatar-init" style="width:38px;height:38px;font-size:10px;">xSx</div>
+            <div style="flex:1;"><div class="user-card-name">xSasquatchx</div><div class="user-card-artists">Mastodon · Gojira</div></div>
+          </div>
+          <div class="user-card">
+            <img src="sako.jpg" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:1.5px solid #D4A853;flex-shrink:0;">
+            <div style="flex:1;"><div class="user-card-name">Sako H.</div><div class="user-card-artists">System of a Down · Scorpions</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━ STATS ━━━━ -->
+    <div class="proto-screen" id="s-stats">
+      <div class="back-nav" onclick="navBack()"><span class="back-arrow">←</span><span class="back-label">Profile</span></div>
+      <div style="padding:10px 14px 14px;">
+        <div class="feed-title">Your Stats</div>
+        <div style="font-size:9px;letter-spacing:.08em;margin-top:4px;font-weight:500;color:#D4A853;">Grayson039 · 2019–2026</div>
+      </div>
+      <div class="milestone-card">
+        <div class="milestone-txt">You've seen <span class="gold">Nine Inch Nails</span> — <span class="gold">12 times.</span> That's top <span class="gold">3%</span> of all Aftershow fans.</div>
+      </div>
+      <div style="display:flex;gap:8px;margin:0 14px 14px;">
+        <div class="stat-tile">
+          <div class="stat-tile-num">7</div>
+          <div class="stat-tile-lbl">Year Streak</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-num">4</div>
+          <div class="stat-tile-lbl">This Month</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-num">18</div>
+          <div class="stat-tile-lbl">Best Year</div>
+        </div>
+      </div>
+      <div class="section-hdr"><span class="section-hdr-txt">Shows Per Year</span><div class="section-hdr-line"></div></div>
+      <div class="bar-chart-row">
+        <div class="bar-col"><div class="bar" style="height:28%;"></div><div class="bar-yr">15</div></div>
+        <div class="bar-col"><div class="bar" style="height:33%;"></div><div class="bar-yr">16</div></div>
+        <div class="bar-col"><div class="bar" style="height:44%;"></div><div class="bar-yr">17</div></div>
+        <div class="bar-col"><div class="bar" style="height:55%;"></div><div class="bar-yr">18</div></div>
+        <div class="bar-col"><div class="bar" style="height:100%;"></div><div class="bar-yr">19</div></div>
+        <div class="bar-col"><div class="bar covid" style="height:6%;"></div><div class="bar-yr">20</div></div>
+        <div class="bar-col"><div class="bar covid" style="height:11%;"></div><div class="bar-yr">21</div></div>
+        <div class="bar-col"><div class="bar" style="height:72%;"></div><div class="bar-yr">22</div></div>
+        <div class="bar-col"><div class="bar" style="height:83%;"></div><div class="bar-yr">23</div></div>
+        <div class="bar-col"><div class="bar" style="height:77%;"></div><div class="bar-yr">24</div></div>
+        <div class="bar-col"><div class="bar" style="height:88%;"></div><div class="bar-yr">25</div></div>
+        <div class="bar-col"><div class="bar" style="height:28%;"></div><div class="bar-yr">26</div></div>
+      </div>
+      <div style="font-size:7px;letter-spacing:.08em;text-align:center;padding:4px 0 12px;color:#AAAAAA;">pandemic years shown at 25% opacity</div>
+    </div>
+
+    <!-- ━━━━ SETTINGS ━━━━ -->
+    <div class="proto-screen" id="s-settings">
+      <div class="back-nav" onclick="navBack()"><span class="back-arrow">←</span><span class="back-label">Profile</span></div>
+      <div style="padding:10px 14px 16px;"><div class="feed-title">Settings</div></div>
+      <div class="section-hdr"><span class="section-hdr-txt">Account</span><div class="section-hdr-line"></div></div>
+      <div class="settings-section">
+        <div class="settings-row">
+          <span class="settings-label">Username</span>
+          <span style="font-size:9px;color:#CCCCCC;">Grayson039</span>
+        </div>
+        <div class="settings-row" onclick="toggleTheme()" style="cursor:pointer;">
+          <span class="settings-label">Theme</span>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:9px;color:#D4A853;" id="settings-theme-lbl">Marshall Dark</span>
+            <span style="font-size:10px;color:#D4A853;">↗</span>
+          </span>
+        </div>
+      </div>
+      <div class="section-hdr" style="margin-top:8px;"><span class="section-hdr-txt">Notifications</span><div class="section-hdr-line"></div></div>
+      <div class="settings-section">
+        <div class="settings-row">
+          <span class="settings-label">Friend logs a show</span>
+          <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Show comments</span>
+          <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Tonight alerts</span>
+          <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+        </div>
+      </div>
+      <div class="section-hdr" style="margin-top:8px;"><span class="section-hdr-txt">Privacy</span><div class="section-hdr-line"></div></div>
+      <div class="settings-section">
+        <div class="settings-row">
+          <span class="settings-label">Private profile</span>
+          <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Show in global feed</span>
+          <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+        </div>
+      </div>
+      <div style="padding:20px 14px 8px;">
+        <button style="width:100%;padding:10px;border-radius:6px;border:1px solid #C4401C;background:transparent;color:#C4401C;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-bottom:8px;">Sign Out</button>
+      </div>
+      <div style="text-align:center;padding:8px;font-size:8px;letter-spacing:.1em;color:#333;">aftershow. v0.3.0 · Phase 3 Build</div>
+    </div>
+
+  </div><!-- /proto-screens -->
+
+  <!-- Shared nav (hidden when showing screens without nav) -->
+  <div class="bottom-nav" id="proto-nav">
+    <div class="nav-item inactive" id="nav-shows" onclick="navigate('s-myshows')">
+      <span class="nav-icon">♪</span><span class="nav-label">Shows</span>
+    </div>
+    <div class="nav-item inactive" id="nav-feed" onclick="navigate('s-feed')">
+      <span class="nav-icon">◈</span><span class="nav-label">Feed</span>
+    </div>
+    <button class="nav-log-btn" onclick="navigate('s-log')">+</button>
+    <div class="nav-item inactive" id="nav-discover" onclick="navigate('s-search')">
+      <span class="nav-icon">⊙</span><span class="nav-label">Discover</span>
+    </div>
+    <div class="nav-item inactive" id="nav-me" onclick="navigate('s-profile')">
+      <span class="nav-icon">◉</span><span class="nav-label">Me</span>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+</div><!-- /proto-shell -->
+
+<script>
+// ── State ──
+let currentScreen = 's-onboarding';
+let prevScreen = null;
+let currentTheme = 'dark';
+let obStep = 0;
+
+// ── Haptic feedback (iOS vibrate API) ──
+function haptic(type = 'light') {
+  if (!navigator.vibrate) return;
+  if (type === 'light')  navigator.vibrate(8);
+  if (type === 'medium') navigator.vibrate(15);
+  if (type === 'success') navigator.vibrate([8, 40, 8]);
+}
+
+// ── Nav mapping ──
+const navMap = {
+  's-myshows': 'nav-shows',
+  's-feed':    'nav-feed',
+  's-log':     null,
+  's-search':  'nav-discover',
+  's-profile': 'nav-me',
+};
+const noNavScreens = new Set(['s-onboarding', 's-log']);
+const secondaryScreens = new Set(['s-showdetail','s-showpage','s-artist','s-followers','s-stats','s-settings']);
+
+// ── Router ──
+function navigate(id) {
+  if (id === currentScreen) return;
+  haptic('light');
+  prevScreen = currentScreen;
+
+  // Hide current
+  const old = document.getElementById(currentScreen);
+  if (old) old.classList.remove('active');
+
+  // Show new
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('active','slide-in');
+  setTimeout(() => el.classList.remove('slide-in'), 250);
+  currentScreen = id;
+
+  // Nav bar visibility
+  const nav = document.getElementById('proto-nav');
+  nav.style.display = noNavScreens.has(id) ? 'none' : 'flex';
+
+  // Nav active state
+  Object.values(navMap).forEach(nid => {
+    if (!nid) return;
+    const ni = document.getElementById(nid);
+    ni.classList.remove('active');
+    ni.classList.add('inactive');
+  });
+  const activeNav = navMap[id];
+  if (activeNav) {
+    const ni = document.getElementById(activeNav);
+    ni.classList.add('active');
+    ni.classList.remove('inactive');
+  }
+
+  // Sidebar map
+  document.querySelectorAll('.map-item').forEach(m => m.classList.remove('current'));
+  const mapEl = document.getElementById('map-' + id);
+  if (mapEl) mapEl.classList.add('current');
+}
+
+function navBack() {
+  if (prevScreen) navigate(prevScreen);
+  else navigate('s-feed');
+}
+
+// ── Theme ──
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  applyTheme(currentTheme);
+}
+function applyTheme(t) {
+  const phone = document.getElementById('proto-phone');
+  phone.classList.remove('dark','light');
+  phone.classList.add(t);
+  document.getElementById('theme-indicator').textContent = t === 'dark' ? 'Marshall Dark' : 'Orange Vintage';
+  const sl = document.getElementById('settings-theme-lbl');
+  if (sl) sl.textContent = t === 'dark' ? 'Marshall Dark' : 'Orange Vintage';
+  // Onboarding cards
+  const tcDark = document.getElementById('tc-dark');
+  const tcLight = document.getElementById('tc-light');
+  if (tcDark && tcLight) {
+    tcDark.classList.toggle('selected', t === 'dark');
+    tcLight.classList.toggle('selected', t === 'light');
+  }
+  // ob-dot colors
+  updateObDots();
+  // Sako quote colors
+  const sq = document.getElementById('sako-quote');
+  if (sq) {
+    sq.style.background = t === 'dark' ? 'rgba(212,168,83,.06)' : 'rgba(212,168,83,.1)';
+    sq.style.border = t === 'dark' ? '1px solid rgba(212,168,83,.15)' : '1px solid rgba(212,168,83,.25)';
+    sq.style.borderRadius = '8px';
+  }
+  const sqt = document.getElementById('sako-quote-txt');
+  if (sqt) sqt.style.color = t === 'dark' ? '#F0F0F0' : '#1A1209';
+  const sa = document.getElementById('sako-attr');
+  if (sa) sa.style.color = t === 'dark' ? '#CCCCCC' : '#2A1E0E';
+  // Feed tab colors handled by CSS
+  // Artist page profile stat list
+  document.querySelectorAll('.dark-only').forEach(el => {
+    el.style.color = t === 'dark' ? '#F0F0F0' : '#1A1209';
+  });
+}
+function selectTheme(t) {
+  currentTheme = t;
+  applyTheme(t);
+}
+
+// ── Onboarding steps ──
+function obNext() {
+  const steps = document.querySelectorAll('.ob-step');
+  steps[obStep].classList.remove('active');
+  obStep = Math.min(obStep + 1, steps.length - 1);
+  steps[obStep].classList.add('active');
+  updateObDots();
+}
+function updateObDots() {
+  for (let i = 0; i < 3; i++) {
+    const d = document.getElementById('ob-dot-' + i);
+    if (!d) continue;
+    if (i < obStep) { d.style.background = 'transparent'; d.style.border = '1.5px solid #D4A853'; }
+    else if (i === obStep) { d.style.background = '#D4A853'; d.style.border = 'none'; }
+    else { d.style.background = currentTheme === 'dark' ? '#1E1E1E' : '#C8BCA0'; d.style.border = 'none'; }
+  }
+}
+
+// ── Feed tabs ──
+function switchFeedTab(tab) {
+  ['friends','global','tonight'].forEach(t => {
+    const pane = document.getElementById('pane-' + t);
+    if (pane) pane.classList.toggle('hidden', t !== tab);
+  });
+  document.querySelectorAll('#feed-tabs .feed-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+    btn.classList.toggle('inactive', btn.dataset.tab !== tab);
+  });
+}
+
+// ── Follow tabs ──
+function switchFollowTab(tab) {
+  document.getElementById('pane-followers').style.display = tab === 'followers' ? 'block' : 'none';
+  document.getElementById('pane-following').style.display = tab === 'following' ? 'block' : 'none';
+  document.querySelectorAll('#follow-tabs .feed-tab').forEach((btn, i) => {
+    const t = i === 0 ? 'followers' : 'following';
+    btn.classList.toggle('active', t === tab);
+    btn.classList.toggle('inactive', t !== tab);
+  });
+}
+
+// ── Follow artist toggle ──
+function toggleFollow(btn) {
+  const isFollowing = btn.classList.toggle('following');
+  btn.textContent = isFollowing ? '✓ Following' : '+ Follow Artist';
+  haptic(isFollowing ? 'success' : 'light');
+}
+
+// ── Star selector ──
+function setStars(n) {
+  document.querySelectorAll('#s-log .sel-star').forEach((s, i) => {
+    s.classList.toggle('empty', i >= n);
+  });
+  haptic('light');
+}
+
+// ── Init ──
+navigate('s-onboarding');
+applyTheme('dark');
+
+// ── Mobile: sync body bg + theme-color meta with theme ──
+const _origApply = applyTheme;
+applyTheme = function(t) {
+  _origApply(t);
+  const bg = t === 'dark' ? '#0C0C0C' : '#D4CCAF';
+  document.body.style.background = bg;
+  const meta = document.getElementById('theme-color-meta');
+  if (meta) meta.setAttribute('content', bg);
+};
+applyTheme('dark'); // re-run with patched version
+
+// ── Home screen icon (canvas-generated, gold "a." on dark) ──
+(function() {
+  try {
+    const c = document.createElement('canvas');
+    c.width = 180; c.height = 180;
+    const x = c.getContext('2d');
+    // Background
+    x.fillStyle = '#0C0C0C';
+    x.beginPath();
+    x.roundRect(0, 0, 180, 180, 36);
+    x.fill();
+    // Gold logotype
+    x.fillStyle = '#D4A853';
+    x.font = 'italic bold 78px Georgia, serif';
+    x.textAlign = 'center';
+    x.textBaseline = 'middle';
+    x.fillText('a.', 90, 96);
+    const link = document.createElement('link');
+    link.rel = 'apple-touch-icon';
+    link.href = c.toDataURL('image/png');
+    document.head.appendChild(link);
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>

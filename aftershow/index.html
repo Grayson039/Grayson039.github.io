@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aftershow — Concert Logging App · Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@1,700;1,800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #0C0C0C;
+  --card:   #111111;
+  --border: #1E1E1E;
+  --text:   #F0F0F0;
+  --sub:    #888888;
+  --gold:   #D4A853;
+  --gold-t: #3A2E10;
+  --cream:  #EDE6D3;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.back-nav { position: fixed; top: 20px; left: 24px; z-index: 999; }
+.back-nav a {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(12,12,12,0.88); backdrop-filter: blur(10px);
+  border: 1px solid rgba(212,168,83,0.3);
+  color: var(--cream); text-decoration: none;
+  padding: 10px 16px; border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+.back-nav a:hover { border-color: rgba(212,168,83,0.7); }
+.back-nav a svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* HERO */
+.hero {
+  padding: 100px 40px 64px; text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(212,168,83,0.12) 0%, transparent 65%), var(--bg);
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(64px, 10vw, 130px); line-height: 0.9;
+  color: var(--text); margin-bottom: 16px; letter-spacing: -1px;
+}
+.hero h1 span { color: var(--gold); }
+.hero-tagline {
+  font-size: 17px; color: var(--sub); max-width: 500px; margin: 0 auto 16px;
+  line-height: 1.6; font-style: italic;
+}
+.hero-origin {
+  font-size: 12px; color: #555; margin-bottom: 40px;
+  letter-spacing: 0.5px;
+}
+.hero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; }
+.hero-meta-item .label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--sub); margin-bottom: 4px;
+}
+.hero-meta-item .value { font-size: 14px; font-weight: 600; color: #ccc; }
+
+/* MAIN */
+.main {
+  display: grid; grid-template-columns: 340px 1fr;
+  max-width: 1200px; margin: 0 auto; padding: 56px 40px; align-items: start;
+}
+.phone-col {
+  position: sticky; top: 40px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+.phone-outer { position: relative; filter: drop-shadow(0 32px 64px rgba(212,168,83,0.12)); }
+.side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
+.side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
+.phone-body {
+  width: 300px; height: 620px;
+  background: #0D0D0D; border-radius: 54px; padding: 10px;
+  border: 1px solid #2A2A2A;
+}
+.phone-frame { width: 100%; height: 100%; border: none; border-radius: 44px; display: block; }
+
+.cs-col { padding-left: 56px; border-left: 1px solid var(--border); }
+.cs-section { margin-bottom: 56px; }
+.cs-section:last-child { margin-bottom: 0; }
+.cs-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+}
+.cs-section h2 {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(28px, 3.5vw, 48px); color: var(--text); margin-bottom: 14px; line-height: 1.1;
+}
+.cs-body { font-size: 14px; line-height: 1.75; color: #aaa; margin-bottom: 14px; }
+.cs-body:last-child { margin-bottom: 0; }
+.cs-divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+.decisions { display: flex; flex-direction: column; gap: 18px; margin-top: 20px; }
+.decision { display: flex; gap: 14px; align-items: flex-start; }
+.decision-arrow { color: var(--gold); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.decision-body h5 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.decision-body p { font-size: 12px; color: var(--sub); line-height: 1.65; }
+
+/* PALETTE */
+.palette { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.swatch { flex: 1; min-width: 90px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+.swatch-color { height: 56px; }
+.swatch-info { padding: 8px 10px; background: var(--card); }
+.swatch-hex { font-size: 11px; font-weight: 700; color: var(--text); font-family: monospace; }
+.swatch-name { font-size: 10px; color: var(--sub); margin-top: 2px; }
+
+/* PHASES */
+.phases { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+.phase {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 18px;
+}
+.phase-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+  color: var(--gold); line-height: 1; width: 32px; flex-shrink: 0;
+}
+.phase-info { flex: 1; }
+.phase-info h5 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.phase-info p { font-size: 11px; color: var(--sub); }
+.phase-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px;
+  white-space: nowrap;
+}
+.phase-badge.done { background: rgba(212,168,83,0.15); color: var(--gold); border: 1px solid rgba(212,168,83,0.3); }
+.phase-badge.active { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+.phase-badge.locked { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #2A2A2A; }
+
+/* TYPE SYSTEM */
+.type-samples { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
+.type-sample { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+.type-sample-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--sub); margin-bottom: 8px; }
+.type-meta { font-size: 10px; color: #555; margin-top: 6px; }
+
+/* SCREENS */
+.screen-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px;
+}
+.screen-chip {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; font-size: 12px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 7px;
+}
+.screen-chip span { font-size: 14px; }
+
+/* STATS */
+.stat-row { display: flex; gap: 12px; margin-top: 20px; }
+.stat {
+  flex: 1; background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; text-align: center;
+}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 44px;
+  color: var(--gold); line-height: 1; margin-bottom: 4px;
+}
+.stat-label { font-size: 11px; color: var(--sub); }
+
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; padding: 32px 20px; }
+  .phone-col { position: static; margin-bottom: 48px; }
+  .cs-col { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 40px; }
+  .hero { padding: 80px 20px 48px; }
+  .screen-grid { grid-template-columns: 1fr 1fr; }
+  .stat-row { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<nav class="back-nav">
+  <a href="../">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Case Study, 04 / 09 · Personal Project</div>
+  <h1>after<span>show.</span></h1>
+  <p class="hero-tagline">"Letterboxd for concerts — your full lifetime show history, no proof needed."</p>
+  <p class="hero-origin">Conceived at a Black Queen show. Built as a portfolio-grade project.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="label">Role</div><div class="value">UX Design · Product Strategy</div></div>
+    <div class="hero-meta-item"><div class="label">Platform</div><div class="value">iOS · Android</div></div>
+    <div class="hero-meta-item"><div class="label">Screens</div><div class="value">14 MVP Screens</div></div>
+    <div class="hero-meta-item"><div class="label">Status</div><div class="value">UI Design Phase</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="phone-col">
+    <div class="phone-outer">
+      <div class="side-l"></div>
+      <div class="side-r"></div>
+      <div class="phone-body">
+        <iframe class="phone-frame" src="prototype.html" scrolling="no" title="Aftershow Prototype"></iframe>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--sub);text-align:center;max-width:260px;line-height:1.5">
+      Interactive prototype · Dark &amp; light mode
+    </div>
+  </div>
+
+  <div class="cs-col">
+
+    <!-- PROBLEM -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">The Problem</div>
+      <h2>Concert Archives has deep data. Zero soul.</h2>
+      <p class="cs-body">Die-hard concert fans have been to 50, 100, 200+ shows. That history lives in their heads, in old ticket stubs in a shoebox, in Instagram posts they can't find anymore. The one app that tries to catalogue this — Concert Archives — is built like a database, not a diary. It gatekeeps: you need to verify you were there. It treats attendance like something that needs to be proven.</p>
+      <p class="cs-body">Nobody builds for the fan who saw Radiohead in 2003 and remembers every song. Nobody treats the archive as identity rather than data. That's the gap.</p>
+      <div class="decisions">
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Gap 1: No lifetime diary</h5>
+            <p>Concert Archives requires event data to exist in their system. If the show isn't in the database, you can't log it. That eliminates every obscure gig, every small venue, every show from 15 years ago.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Gap 2: Archive as identity</h5>
+            <p>Your concert history says something about who you are. Existing apps treat it as a list. Aftershow treats it as a record — something worth presenting, sharing, and being proud of.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Gap 3: Private-first social</h5>
+            <p>Concert Archives is a database. Social features feel bolted on. Aftershow designs the archive as the diary first — shareable second. The Letterboxd model.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- THE DIFFERENTIATOR -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">The Core Differentiator</div>
+      <h2>From Memory. No gatekeeping.</h2>
+      <p class="cs-body">The "from memory" log is what no other app has. You can add any show you've ever attended — no ticket, no check-in, no proof required. Just artist, venue, date, setlist as best you remember, and a rating. Shows logged from memory get a subtle tag — not a warning, not a badge of shame. It's just context.</p>
+      <p class="cs-body">This one decision unlocks the lifetime diary use case. A 45-year-old who's been to 300 shows since 1998 can build their full archive. A casual fan who went to one Taylor Swift show last year can log it. No gatekeeping, ever.</p>
+
+      <div style="margin-top:20px;background:var(--card);border:1px solid rgba(212,168,83,0.2);border-radius:16px;padding:24px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px">The 5 Design Principles</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">1</div>
+            <div style="font-size:13px;color:var(--text)"><strong>Utility over decoration</strong> — the setlist is the hero</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">2</div>
+            <div style="font-size:13px;color:var(--text)"><strong>The show is the product</strong> — every flow leads to the "+" button</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">3</div>
+            <div style="font-size:13px;color:var(--text)"><strong>No gatekeeping</strong> — "from memory" is a feature, not a warning</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">4</div>
+            <div style="font-size:13px;color:var(--text)"><strong>Dark and light are equal</strong> — gold (#D4A853) is the connective thread in both</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">5</div>
+            <div style="font-size:13px;color:var(--text)"><strong>Respect the culture</strong> — designed for people who've stood in a pit at 11pm on a Tuesday</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- KEY DECISIONS -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Architecture Decisions</div>
+      <h2>My Shows is Tab 1. Not the feed.</h2>
+      <p class="cs-body">Every competing app puts the social feed first. Aftershow puts your personal archive first. This is the biggest structural departure and it was the first decision made after the competitive analysis.</p>
+
+      <div class="decisions">
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>My Shows (Archive) = Tab 1</h5>
+            <p>The archive is the product. The feed is the reward. Flipping this establishes Aftershow as a personal diary first — not another social app with a logging feature.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Onboarding starts with your history — not your profile</h5>
+            <p>When you first open Aftershow, you don't pick a username and upload a photo. You log a show. That's it. The archive must be seeded before the social layer has any value — so we lead with the action that creates that value.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>1-show minimum, not 3</h5>
+            <p>Original thinking was a 3-show threshold for onboarding. Cut to 1. A 3-show gate alienates users who've only been to one or two concerts — exactly the casual fans who could grow into power users. Lower the bar, let people in.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Log a Show is the center CTA</h5>
+            <p>Tab 3 is a prominent "+" button, not a screen. Every flow in the app leads back to this action. It's the Shazam button of Aftershow — the single most important interaction.</p>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-arrow">→</div>
+          <div class="decision-body">
+            <h5>Design both themes simultaneously</h5>
+            <p>Dark and light modes were designed in parallel from day one, not as an afterthought. Gold (#D4A853) is the single consistent accent across both — the connective thread that makes the product feel cohesive regardless of mode.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- DESIGN SYSTEM -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Design System</div>
+      <h2>Typography does the heavy lifting</h2>
+      <p class="cs-body">Four typefaces, all with clear jobs. The pairing of editorial serif (Playfair Display) with mono (DM Mono) gives Aftershow a premium, almost printed-program feel that no other concert app has.</p>
+
+      <div class="type-samples">
+        <div class="type-sample">
+          <div class="type-sample-label">Display · Artist Names · Show Titles</div>
+          <div style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:28px;color:var(--text);line-height:1.1">Radiohead at Madison Square Garden</div>
+          <div class="type-meta">Playfair Display Italic 700 · 28–40px</div>
+        </div>
+        <div class="type-sample">
+          <div class="type-sample-label">Body · Setlist Songs · Notes</div>
+          <div style="font-family:Georgia,serif;font-style:italic;font-size:15px;color:#ccc;line-height:1.6">1. Fake Plastic Trees · 2. Karma Police · 3. Everything In Its Right Place · 4. Creep (rare)</div>
+          <div class="type-meta">Crimson Pro Italic 400 · 13–16px</div>
+        </div>
+        <div class="type-sample">
+          <div class="type-sample-label">UI Labels · Tabs · Metadata</div>
+          <div style="font-family:monospace;font-size:11px;color:var(--sub);letter-spacing:0.08em;text-transform:uppercase">SHOW LOG · MAY 17, 2026 · MSG · FROM MEMORY</div>
+          <div class="type-meta">DM Mono 400–500 · 9–12px</div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px;font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Color Palette</div>
+      <div class="palette">
+        <div class="swatch"><div class="swatch-color" style="background:#0C0C0C;border-bottom:1px solid #222"></div><div class="swatch-info"><div class="swatch-hex">#0C0C0C</div><div class="swatch-name">Dark bg</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#111111"></div><div class="swatch-info"><div class="swatch-hex">#111111</div><div class="swatch-name">Cards</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#D4A853"></div><div class="swatch-info"><div class="swatch-hex">#D4A853</div><div class="swatch-name">Gold · Both modes</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#EDE6D3"></div><div class="swatch-info"><div class="swatch-hex">#EDE6D3</div><div class="swatch-name">Cream · Light bg</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#F7F2E6"></div><div class="swatch-info"><div class="swatch-hex">#F7F2E6</div><div class="swatch-name">Light cards</div></div></div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- SCREENS -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Screen Inventory</div>
+      <h2>14 MVP screens across 5 tabs</h2>
+
+      <div class="screen-grid">
+        <div class="screen-chip"><span>📚</span> My Shows</div>
+        <div class="screen-chip"><span>🎵</span> Show Detail</div>
+        <div class="screen-chip"><span>📊</span> Stats</div>
+        <div class="screen-chip"><span>👥</span> Friends Feed</div>
+        <div class="screen-chip"><span>🌍</span> Global Feed</div>
+        <div class="screen-chip"><span>🌙</span> Tonight Feed</div>
+        <div class="screen-chip"><span>➕</span> Log a Show</div>
+        <div class="screen-chip"><span>🔍</span> Search</div>
+        <div class="screen-chip"><span>🎤</span> Artist Page</div>
+        <div class="screen-chip"><span>🎟️</span> Show Page</div>
+        <div class="screen-chip"><span>👤</span> Profile</div>
+        <div class="screen-chip"><span>👫</span> Followers</div>
+        <div class="screen-chip"><span>⚙️</span> Settings</div>
+        <div class="screen-chip"><span>✨</span> Onboarding</div>
+      </div>
+    </div>
+
+    <div class="cs-divider"></div>
+
+    <!-- BUILD STATUS -->
+    <div class="cs-section">
+      <div class="cs-eyebrow">Build Status</div>
+      <h2>Two phases complete. UI in progress.</h2>
+
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-num">1</div>
+          <div class="phase-info">
+            <h5>Ideation, Competitive Analysis & Differentiation</h5>
+            <p>Concert Archives benchmarked. 3 UX gaps identified. North Star user defined.</p>
+          </div>
+          <div class="phase-badge done">Complete</div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">2</div>
+          <div class="phase-info">
+            <h5>UX Architecture</h5>
+            <p>User personas, journeys, IA. 14 screens scoped. All major architectural decisions made.</p>
+          </div>
+          <div class="phase-badge done">Complete</div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">3</div>
+          <div class="phase-info">
+            <h5>UI Design & Asset Creation</h5>
+            <p>Figma wireframes for all 14 screens. Design system finalized. Component specs in progress.</p>
+          </div>
+          <div class="phase-badge active">In Progress</div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">4</div>
+          <div class="phase-info">
+            <h5>Technical Architecture & Build</h5>
+            <p>React Native. Setlist.fm API. Claude AI for fuzzy input matching.</p>
+          </div>
+          <div class="phase-badge locked">Locked</div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">5</div>
+          <div class="phase-info">
+            <h5>Case Study Compilation</h5>
+            <p>Portfolio-ready documentation of every decision made.</p>
+          </div>
+          <div class="phase-badge locked">Locked</div>
+        </div>
+      </div>
+
+      <div class="stat-row" style="margin-top:24px">
+        <div class="stat"><div class="stat-num">14</div><div class="stat-label">MVP Screens</div></div>
+        <div class="stat"><div class="stat-num">2</div><div class="stat-label">Phases Complete</div></div>
+        <div class="stat"><div class="stat-num">2</div><div class="stat-label">Color Modes</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

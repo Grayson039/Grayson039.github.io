@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aftershow case study</title>
+<meta name="description" content="How Aftershow, a social app for concertgoers, went from idea to a working product: the problem, the decisions, and the fights.">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/playfair-display-italic-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="ui.css">
+<link rel="stylesheet" href="doc.css">
+<script>(function(){var t=null;try{t=localStorage.getItem("aftershow-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
+</head>
+<body>
+<header class="doc-header"><div class="doc-header-in">
+  <a class="logo" href="index.html">aftershow<span>.</span></a><span class="grow"></span>
+  <a class="nav hide-sm" href="index.html">Home</a>
+  <button class="theme-toggle compact" id="themeToggle" type="button" aria-label="Toggle theme" data-theme-toggle><span class="knob" aria-hidden="true"><i></i></span></button>
+  <a class="btn-accent" style="min-height:40px;font-size:14px" href="app.html">Open the app</a>
+</div></header>
+
+<main class="doc wide">
+  <span class="kicker">Case study</span>
+  <h1>Aftershow.</h1>
+  <p class="lede">Letterboxd for concerts: your full lifetime show history, no proof needed, now with the people you went with. Conceived at a Black Queen show at Thalia Hall. Built as a portfolio-grade product from ideation to a working app.</p>
+
+  <section id="problem">
+    <div class="label">The problem</div>
+    <h2>Concertgoers have no home for their history.</h2>
+    <p>Fans who go to shows have nowhere dedicated to log setlists, rate performances, and build a lasting record of every concert they’ve attended. Generic social apps don’t serve this niche, and the closest direct competitor, Concert Archives, is data-rich and soul-poor: deep fields, zero identity, nothing that feels like it’s for music fans.</p>
+    <p>Three gaps stood out early. There was no assisted logging, so every entry is manual grunt work. There was no sense of the archive as identity, because competitors treat history as a spreadsheet, not something worth showing off. And there was no private-first social layer: everything defaults to public with no middle ground.</p>
+  </section>
+
+  <section id="insights">
+    <div class="label">Insight</div>
+    <h2>The archive is the product. The feed is the reward.</h2>
+    <p>The North Star user isn’t a casual show-goer. It’s the die-hard fan with 100+ shows behind them, the type who becomes a community’s backbone once they have somewhere worth putting that history. Everything downstream follows from designing for that person first.</p>
+    <p>It started at home. My wife’s concert tracker, Concert Archives, felt more like a list than an experience: you read your history instead of reliving it. Aftershow is the version where the night comes back, with the setlist, the photos and the people you went with.</p>
+  </section>
+
+  <section id="decisions">
+    <div class="label">Three decisions</div>
+    <h2>What shaped everything else.</h2>
+    <div class="cards">
+      <div class="c"><div class="label">Architecture</div><h3>My Shows is Tab 1, not the feed</h3><p>Every competitor leads with a feed or upcoming shows. Aftershow leads with your own archive, because the archive has to be seeded before the feed has any value. The feed unlocks after your first logged show.</p></div>
+      <div class="c"><div class="label">Onboarding</div><h3>One-show minimum, not three</h3><p>A three-show threshold alienates people early in their concert journey. The bar is deliberately low: encourage more logging, never gate the product behind it.</p></div>
+      <div class="c"><div class="label">Stack</div><h3>Pivoted from React Native to a web-first build</h3><p>The original plan was a native prototype. Rebuilt mid-project as a web app on Supabase and Cloudflare Pages: faster to ship a real, data-backed product than a native shell with no backend.</p></div>
+    </div>
+  </section>
+
+  <section id="iterations">
+    <div class="label">Four iterations</div>
+    <h2>The fights.</h2>
+    <div class="cards two">
+      <div class="c"><div class="label">Fight 1</div><h3>Sako’s teardown</h3><p>iOS developer Sako H. reviewed the first screens for buildability, not just looks. He flagged illegible field labels, elements floating on the background with no containers, and headings too weak to read as headings. Every fix became a hard rule, not a one-off patch.</p></div>
+      <div class="c"><div class="label">Fight 2</div><h3>Fourteen screens, one shell</h3><p>The screens were built as fourteen standalone files, three of them megabytes from embedded images. Consolidating into one shell meant killing the bloat and building shared components once instead of copy-pasting them fourteen times.</p></div>
+      <div class="c"><div class="label">Fight 3</div><h3>Public vs. private-first</h3><p>“Private-first social” was a named differentiator. The backend work forced the real call: fully public reads are simpler to ship, but quietly abandon that promise if chosen by default instead of on purpose. The answer was public by default with a one-switch private mode.</p></div>
+      <div class="c"><div class="label">Fight 4</div><h3>It looked like a prototype</h3><p>The first complete build worked, but a phone-width column on a desktop screen and a heavy retro skin made it feel like a database with a costume. The redesign started from what the best social apps get right and wrong: a photo-first feed, a poster-grid archive, shareable recaps, and no ads or algorithm. Rebuilt around that, in one design system.</p></div>
+    </div>
+  </section>
+
+  <section id="product">
+    <div class="label">Product</div>
+    <h2>What shipped.</h2>
+    <p>Fourteen screens across five tabs, plus activity, comments and import, in one dark-primary, light-alternate app. A shared design system: Playfair Display Italic for artist names and headlines, Inter for UI, Crimson Pro Italic for what people write, DM Mono for dates and counts, and a single accent that shifts from gold in the dark theme to rust in the light one. The theme switch is an amp dial.</p>
+    <div class="cards two">
+      <div class="c"><h3>From-memory logging</h3><p>Add any show ever attended: no ticket, no proof, no location check. Artist, venue, date, setlist as best remembered, and a rating, with a live preview of how it will look in your archive.</p></div>
+      <div class="c"><h3>Archive-first profile</h3><p>A poster grid with a diary view, four pinned favourite shows, a month-by-month map of your life in concerts, and ranked artists and venues.</p></div>
+      <div class="c"><h3>A calm, chronological feed</h3><p>Friends, everyone, and Tonight for live-logging. Photo-first posts with likes and comments. No algorithm, no ads.</p></div>
+      <div class="c"><h3>Share cards and photo voting</h3><p>Turn any show or your whole recap into an image for stories, and vote for the best fan photo of each show.</p></div>
+    </div>
+    <div class="stack"><span>HTML / CSS / JavaScript modules</span><span>Supabase (Postgres, Auth, RLS)</span><span>Cloudflare Pages</span><span>Demo mode (localStorage)</span></div>
+    <div class="todo"><b>Production hardening: to fill in after launch</b>Describe the real Supabase Auth flow, the row-level-security policies actually in force, and the behaviour running in production. Left blank until the backend is live.</div>
+  </section>
+</main>
+
+<footer class="backpanel">
+  <div class="bp-plate">
+    <div class="bp-brand">
+      <div class="logo">aftershow<span>.</span></div>
+      <p>The show never really ends.</p>
+      <dl class="bp-spec"><dt>Model</dt><dd>AS-1</dd><dt>Input</dt><dd>Your memory</dd><dt>Output</dt><dd>Share cards</dd><dt>Warning</dt><dd>May cause nostalgia</dd></dl>
+    </div>
+    <nav class="bp-jacks" aria-label="Footer"><a href="index.html">Home</a><a href="app.html">Sign in</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="photo-ugc-license.html">Photo &amp; UGC License</a><a href="case-study.html">Case study</a></nav>
+    <p class="bp-copy"><span>© <span id="yr">2026</span> Will Grayson</span><span>You must be 13 or older to join.</span></p>
+  </div>
+</footer>
+<script src="doc.js"></script>
+</body>
+</html>

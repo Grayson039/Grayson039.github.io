@@ -1,451 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aftershow — Concert Logging App · Case Study</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@1,700;1,800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:     #0C0C0C;
-  --card:   #111111;
-  --border: #1E1E1E;
-  --text:   #F0F0F0;
-  --sub:    #888888;
-  --gold:   #D4A853;
-  --gold-t: #3A2E10;
-  --cream:  #EDE6D3;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-.back-nav { position: fixed; top: 20px; left: 24px; z-index: 999; }
-.back-nav a {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(12,12,12,0.88); backdrop-filter: blur(10px);
-  border: 1px solid rgba(212,168,83,0.3);
-  color: var(--cream); text-decoration: none;
-  padding: 10px 16px; border-radius: 100px;
-  font-size: 13px; font-weight: 600;
-  transition: background 0.2s, border-color 0.2s;
-}
-.back-nav a:hover { border-color: rgba(212,168,83,0.7); }
-.back-nav a svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-/* HERO */
-.hero {
-  padding: 100px 40px 64px; text-align: center;
-  border-bottom: 1px solid var(--border);
-  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(212,168,83,0.12) 0%, transparent 65%), var(--bg);
-}
-.hero-eyebrow {
-  font-size: 11px; font-weight: 700; letter-spacing: 3px;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 20px;
-}
-.hero h1 {
-  font-family: 'Playfair Display', serif; font-style: italic;
-  font-size: clamp(64px, 10vw, 130px); line-height: 0.9;
-  color: var(--text); margin-bottom: 16px; letter-spacing: -1px;
-}
-.hero h1 span { color: var(--gold); }
-.hero-tagline {
-  font-size: 17px; color: var(--sub); max-width: 500px; margin: 0 auto 16px;
-  line-height: 1.6; font-style: italic;
-}
-.hero-origin {
-  font-size: 12px; color: #555; margin-bottom: 40px;
-  letter-spacing: 0.5px;
-}
-.hero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; }
-.hero-meta-item .label {
-  font-size: 10px; font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--sub); margin-bottom: 4px;
-}
-.hero-meta-item .value { font-size: 14px; font-weight: 600; color: #ccc; }
-
-/* MAIN */
-.main {
-  display: grid; grid-template-columns: 340px 1fr;
-  max-width: 1200px; margin: 0 auto; padding: 56px 40px; align-items: start;
-}
-.phone-col {
-  position: sticky; top: 40px;
-  display: flex; flex-direction: column; align-items: center; gap: 20px;
-}
-.phone-outer { position: relative; filter: drop-shadow(0 32px 64px rgba(212,168,83,0.12)); }
-.side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
-.side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
-.phone-body {
-  width: 300px; height: 620px;
-  background: #0D0D0D; border-radius: 54px; padding: 10px;
-  border: 1px solid #2A2A2A;
-}
-.phone-frame { width: 100%; height: 100%; border: none; border-radius: 44px; display: block; }
-
-.cs-col { padding-left: 56px; border-left: 1px solid var(--border); }
-.cs-section { margin-bottom: 56px; }
-.cs-section:last-child { margin-bottom: 0; }
-.cs-eyebrow {
-  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
-}
-.cs-section h2 {
-  font-family: 'Playfair Display', serif; font-style: italic;
-  font-size: clamp(28px, 3.5vw, 48px); color: var(--text); margin-bottom: 14px; line-height: 1.1;
-}
-.cs-body { font-size: 14px; line-height: 1.75; color: #aaa; margin-bottom: 14px; }
-.cs-body:last-child { margin-bottom: 0; }
-.cs-divider { height: 1px; background: var(--border); margin: 36px 0; }
-
-.decisions { display: flex; flex-direction: column; gap: 18px; margin-top: 20px; }
-.decision { display: flex; gap: 14px; align-items: flex-start; }
-.decision-arrow { color: var(--gold); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
-.decision-body h5 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.decision-body p { font-size: 12px; color: var(--sub); line-height: 1.65; }
-
-/* PALETTE */
-.palette { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-.swatch { flex: 1; min-width: 90px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
-.swatch-color { height: 56px; }
-.swatch-info { padding: 8px 10px; background: var(--card); }
-.swatch-hex { font-size: 11px; font-weight: 700; color: var(--text); font-family: monospace; }
-.swatch-name { font-size: 10px; color: var(--sub); margin-top: 2px; }
-
-/* PHASES */
-.phases { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
-.phase {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 12px; padding: 14px 18px;
-}
-.phase-num {
-  font-family: 'Bebas Neue', sans-serif; font-size: 28px;
-  color: var(--gold); line-height: 1; width: 32px; flex-shrink: 0;
-}
-.phase-info { flex: 1; }
-.phase-info h5 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
-.phase-info p { font-size: 11px; color: var(--sub); }
-.phase-badge {
-  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px;
-  white-space: nowrap;
-}
-.phase-badge.done { background: rgba(212,168,83,0.15); color: var(--gold); border: 1px solid rgba(212,168,83,0.3); }
-.phase-badge.active { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
-.phase-badge.locked { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #2A2A2A; }
-
-/* TYPE SYSTEM */
-.type-samples { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
-.type-sample { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
-.type-sample-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--sub); margin-bottom: 8px; }
-.type-meta { font-size: 10px; color: #555; margin-top: 6px; }
-
-/* SCREENS */
-.screen-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px;
-}
-.screen-chip {
-  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-  padding: 10px 12px; font-size: 12px; font-weight: 600; color: var(--text);
-  display: flex; align-items: center; gap: 7px;
-}
-.screen-chip span { font-size: 14px; }
-
-/* STATS */
-.stat-row { display: flex; gap: 12px; margin-top: 20px; }
-.stat {
-  flex: 1; background: var(--card); border: 1px solid var(--border);
-  border-radius: 14px; padding: 20px; text-align: center;
-}
-.stat-num {
-  font-family: 'Bebas Neue', sans-serif; font-size: 44px;
-  color: var(--gold); line-height: 1; margin-bottom: 4px;
-}
-.stat-label { font-size: 11px; color: var(--sub); }
-
-@media (max-width: 900px) {
-  .main { grid-template-columns: 1fr; padding: 32px 20px; }
-  .phone-col { position: static; margin-bottom: 48px; }
-  .cs-col { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 40px; }
-  .hero { padding: 80px 20px 48px; }
-  .screen-grid { grid-template-columns: 1fr 1fr; }
-  .stat-row { flex-wrap: wrap; }
-}
-</style>
+<title>Aftershow: remember every show, share the night</title>
+<meta name="description" content="Aftershow is where concertgoers keep their history, trade setlists and see what their friends saw last night. Log live or from memory. No ticket, no proof.">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="canonical" href="https://willgraysondesign.com/aftershow/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aftershow">
+<meta property="og:title" content="Aftershow: remember every show, share the night">
+<meta property="og:description" content="Log every concert you have ever been to, with setlists, ratings and photos. The community picks the best photo of each show.">
+<meta property="og:url" content="https://willgraysondesign.com/aftershow/">
+<meta property="og:image" content="https://willgraysondesign.com/aftershow/og.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Aftershow: remember every show, share the night">
+<meta name="twitter:description" content="Your whole concert life, in setlists and posters.">
+<meta name="twitter:image" content="https://willgraysondesign.com/aftershow/og.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Aftershow","url":"https://willgraysondesign.com/aftershow/","applicationCategory":"MusicApplication","operatingSystem":"Web","description":"A place to log every concert you have attended, with setlists, ratings and community-voted photos.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/playfair-display-italic-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="ui.css">
+<link rel="stylesheet" href="landing.css">
+<script>
+  // Set the theme before first paint: saved choice, else the visitor's system preference.
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('aftershow-theme'); } catch (e) {}
+    if (t !== 'dark' && t !== 'light') t = (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
 </head>
-<body>
+<body class="lp">
+<a class="skip-link" href="#main">Skip to content</a>
 
-<nav class="back-nav">
-  <a href="../">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="15 18 9 12 15 6"/>
-    </svg>
-    Portfolio
-  </a>
-</nav>
-
-<div class="hero">
-  <div class="hero-eyebrow">Case Study, 04 / 09 · Personal Project</div>
-  <h1>after<span>show.</span></h1>
-  <p class="hero-tagline">"Letterboxd for concerts — your full lifetime show history, no proof needed."</p>
-  <p class="hero-origin">Conceived at a Black Queen show. Built as a portfolio-grade project.</p>
-  <div class="hero-meta">
-    <div class="hero-meta-item"><div class="label">Role</div><div class="value">UX Design · Product Strategy</div></div>
-    <div class="hero-meta-item"><div class="label">Platform</div><div class="value">iOS · Android</div></div>
-    <div class="hero-meta-item"><div class="label">Screens</div><div class="value">14 MVP Screens</div></div>
-    <div class="hero-meta-item"><div class="label">Status</div><div class="value">UI Design Phase</div></div>
-  </div>
-</div>
-
-<div class="main">
-  <div class="phone-col">
-    <div class="phone-outer">
-      <div class="side-l"></div>
-      <div class="side-r"></div>
-      <div class="phone-body">
-        <iframe class="phone-frame" src="prototype.html" scrolling="no" title="Aftershow Prototype"></iframe>
-      </div>
-    </div>
-    <div style="font-size:11px;color:var(--sub);text-align:center;max-width:260px;line-height:1.5">
-      Interactive prototype · Dark &amp; light mode
+<header class="lp-header" id="top">
+  <div class="lp-wrap lp-header-in">
+    <a class="logo lp-logo" href="#top" aria-label="Aftershow home">aftershow<span>.</span></a>
+    <nav class="lp-nav" aria-label="Site">
+      <a href="#tour">The app</a>
+      <a href="#features">Features</a>
+      <a href="#different">Why it’s different</a>
+      <a href="#faq">Questions</a>
+      <a href="case-study.html">Case study</a>
+    </nav>
+    <div class="lp-header-actions">
+      <button class="theme-toggle compact" id="themeToggle" type="button" aria-label="Toggle theme" data-theme-toggle><span class="knob" aria-hidden="true"><i></i></span></button>
+      <a class="lp-signin" href="app.html">Sign in</a>
+      <a class="btn-accent sm" href="app.html"><span class="long">Start your archive</span><span class="short">Start</span></a>
     </div>
   </div>
+</header>
 
-  <div class="cs-col">
+<main id="main">
+  <!-- HERO -->
+  <section class="lp-hero">
+    <div class="lp-wrap lp-hero-grid">
+      <div class="lp-hero-copy">
+        <p class="lp-kicker"><span class="live-dot"></span> Free while we build it</p>
+        <h1 class="lp-h1"><span class="lp-line">Remember every show.</span> <span class="lp-line">Share the night.</span></h1>
+        <p class="lp-lede">Aftershow is where concertgoers keep their history, trade setlists and see what their friends saw last night. Log live or from memory. No ticket, no proof.</p>
+        <div class="lp-actions">
+          <a class="btn-accent lg" href="app.html">Start your archive</a>
+          <a class="lp-ghost" href="app.html?demo=1">Try it with sample data</a>
+        </div>
+        <p class="lp-fine">No credit card. Works in your browser on any screen.</p>
+      </div>
 
-    <!-- PROBLEM -->
-    <div class="cs-section">
-      <div class="cs-eyebrow">The Problem</div>
-      <h2>Concert Archives has deep data. Zero soul.</h2>
-      <p class="cs-body">Die-hard concert fans have been to 50, 100, 200+ shows. That history lives in their heads, in old ticket stubs in a shoebox, in Instagram posts they can't find anymore. The one app that tries to catalogue this — Concert Archives — is built like a database, not a diary. It gatekeeps: you need to verify you were there. It treats attendance like something that needs to be proven.</p>
-      <p class="cs-body">Nobody builds for the fan who saw Radiohead in 2003 and remembers every song. Nobody treats the archive as identity rather than data. That's the gap.</p>
-      <div class="decisions">
-        <div class="decision">
-          <div class="decision-arrow">→</div>
-          <div class="decision-body">
-            <h5>Gap 1: No lifetime diary</h5>
-            <p>Concert Archives requires event data to exist in their system. If the show isn't in the database, you can't log it. That eliminates every obscure gig, every small venue, every show from 15 years ago.</p>
-          </div>
+      <div class="lp-cluster" aria-hidden="true">
+        <div class="col a">
+          <article class="tile cover photo" style="--x:30%;--y:20%;--c1:#FF4F7E;--c2:#5E0C28;--photo:url('Paramore.jpg')"><div class="t-top"></div><div class="t-bottom"><h3 class="cover-name">Paramore</h3><div class="t-more"><div class="t-more-in"><div class="t-venue">Xcel Energy Center</div><div class="cover-meta t-when">Apr 8, 2023 · St. Paul, MN</div></div></div><span class="dial" role="img" aria-label="Rated 10 out of 10" style="--v:10"><i aria-hidden="true"></i><b aria-hidden="true">10</b></span></div><span class="t-credit has-votes"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span class="who"><b>Mimsie</b><small>128 votes</small></span></span></article>
+          <div class="fw fw-f1"><div class="float f1"><span class="avatar" style="width:30px;height:30px;font-size:11px">M</span><span><b>Mimsie</b> liked Paramore</span></div></div>
+          <article class="tile cover photo" style="--x:70%;--y:25%;--c1:#2FD08A;--c2:#08402B;--photo:url('Tool.jpg')"><div class="t-top"></div><div class="t-bottom"><h3 class="cover-name">Tool</h3><div class="t-more"><div class="t-more-in"><div class="t-venue">Xcel Energy Center</div><div class="cover-meta t-when">Aug 30, 2025 · St. Paul, MN</div></div></div><span class="dial" role="img" aria-label="Rated 10 out of 10" style="--v:10"><i aria-hidden="true"></i><b aria-hidden="true">10</b></span></div><span class="t-credit"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span class="who"><b>Grayson039</b></span></span></article>
+          <div class="fw fw-f3"><div class="float f3"><span class="avatar" style="width:30px;height:30px;font-size:11px">B</span><span><b>xSasquatchx</b> “Heaviest show of the decade.”</span></div></div>
         </div>
-        <div class="decision">
-          <div class="decision-arrow">→</div>
-          <div class="decision-body">
-            <h5>Gap 2: Archive as identity</h5>
-            <p>Your concert history says something about who you are. Existing apps treat it as a list. Aftershow treats it as a record — something worth presenting, sharing, and being proud of.</p>
-          </div>
-        </div>
-        <div class="decision">
-          <div class="decision-arrow">→</div>
-          <div class="decision-body">
-            <h5>Gap 3: Private-first social</h5>
-            <p>Concert Archives is a database. Social features feel bolted on. Aftershow designs the archive as the diary first — shareable second. The Letterboxd model.</p>
-          </div>
+        <div class="col b">
+          <div class="fw fw-f2"><div class="float f2"><span class="live-badge"><span class="live-dot"></span>Live</span><span>3 people logging tonight</span></div></div>
+          <article class="tile cover photo" style="--x:25%;--y:30%;--c1:#5E6BFF;--c2:#141A66;--photo:url('BlackQueen.jpg')"><div class="t-top"><span class="tag">Memory</span></div><div class="t-bottom"><h3 class="cover-name">The Black Queen</h3><div class="t-more"><div class="t-more-in"><div class="t-venue">Turf Club</div><div class="cover-meta t-when">Sep 22, 2017 · St. Paul, MN</div></div></div><span class="dial" role="img" aria-label="Rated 9 out of 10" style="--v:9"><i aria-hidden="true"></i><b aria-hidden="true">9</b></span></div><span class="t-credit"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span class="who"><b>Grayson039</b></span></span></article>
+          <article class="tile cover photo" style="--x:30%;--y:20%;--c1:#FFB02E;--c2:#6B3A05;--photo:url('Mastodon.jpg')"><div class="t-top"></div><div class="t-bottom"><h3 class="cover-name">Mastodon</h3><div class="t-more"><div class="t-more-in"><div class="t-venue">Roy Wilkins Auditorium</div><div class="cover-meta t-when">Feb 25, 2017 · St. Paul, MN</div></div></div><span class="dial" role="img" aria-label="Rated 8 out of 10" style="--v:8"><i aria-hidden="true"></i><b aria-hidden="true">8</b></span></div><span class="t-credit has-votes"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span class="who"><b>xSasquatchx</b><small>64 votes</small></span></span></article>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="cs-divider"></div>
+  <!-- PROOF STRIP -->
+  <section class="lp-strip" aria-label="What you get">
+    <div class="lp-wrap lp-strip-in">
+      <div><b>No proof needed</b><span>Log shows from 2009 as easily as last night.</span></div>
+      <div><b>Chronological feed</b><span>Your friends’ nights, newest first. No algorithm, no ads.</span></div>
+      <div><b>Bring your history</b><span>Import a Concert Archives or spreadsheet CSV.</span></div>
+      <div><b>Yours to keep</b><span>Export everything, any time.</span></div>
+    </div>
+  </section>
 
-    <!-- THE DIFFERENTIATOR -->
-    <div class="cs-section">
-      <div class="cs-eyebrow">The Core Differentiator</div>
-      <h2>From Memory. No gatekeeping.</h2>
-      <p class="cs-body">The "from memory" log is what no other app has. You can add any show you've ever attended — no ticket, no check-in, no proof required. Just artist, venue, date, setlist as best you remember, and a rating. Shows logged from memory get a subtle tag — not a warning, not a badge of shame. It's just context.</p>
-      <p class="cs-body">This one decision unlocks the lifetime diary use case. A 45-year-old who's been to 300 shows since 1998 can build their full archive. A casual fan who went to one Taylor Swift show last year can log it. No gatekeeping, ever.</p>
-
-      <div style="margin-top:20px;background:var(--card);border:1px solid rgba(212,168,83,0.2);border-radius:16px;padding:24px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px">The 5 Design Principles</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">1</div>
-            <div style="font-size:13px;color:var(--text)"><strong>Utility over decoration</strong> — the setlist is the hero</div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">2</div>
-            <div style="font-size:13px;color:var(--text)"><strong>The show is the product</strong> — every flow leads to the "+" button</div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">3</div>
-            <div style="font-size:13px;color:var(--text)"><strong>No gatekeeping</strong> — "from memory" is a feature, not a warning</div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">4</div>
-            <div style="font-size:13px;color:var(--text)"><strong>Dark and light are equal</strong> — gold (#D4A853) is the connective thread in both</div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="color:var(--gold);font-weight:800;font-size:13px;flex-shrink:0;width:20px">5</div>
-            <div style="font-size:13px;color:var(--text)"><strong>Respect the culture</strong> — designed for people who've stood in a pit at 11pm on a Tuesday</div>
-          </div>
+  <!-- LIVE PRODUCT TOUR -->
+  <section class="lp-section" id="tour" aria-labelledby="tour-h">
+    <div class="lp-wrap">
+      <div class="lp-intro">
+        <h2 id="tour-h" class="lp-h2">This is the actual app.</h2>
+        <p class="lp-sub">Not a mockup. The window below runs Aftershow with sample data, so you can click around.</p>
+      </div>
+      <div class="lp-tabs" role="tablist" aria-label="App screens">
+        <button class="lp-tab on" role="tab" aria-selected="true" data-route="#/shows" data-cap="Your shows: every night you’ve ever been to, as a wall of posters.">Your shows</button>
+        <button class="lp-tab" role="tab" aria-selected="false" data-route="#/feed/global" data-cap="The feed: your friends’ nights, newest first, with setlists and photos.">Feed</button>
+        <button class="lp-tab" role="tab" aria-selected="false" data-route="#/stats" data-cap="Your numbers: milestones and a month-by-month map of your life in concerts.">Stats</button>
+        <button class="lp-tab" role="tab" aria-selected="false" data-route="#/log" data-cap="Log a show: live now or from memory, with a setlist editor and photos.">Log a show</button>
+        <button class="lp-pause" id="tourPause" type="button" aria-label="Pause automatic tour" aria-pressed="false">Pause</button>
+      </div>
+      <div class="lp-device" id="device">
+        <div class="lp-lid"><span class="lp-cam" aria-hidden="true"></span>
+          <div class="lp-screen" id="screen"><iframe id="tourFrame" title="Aftershow app preview" src="app.html?tour=1#/shows" loading="lazy" tabindex="-1"></iframe></div>
         </div>
+        <div class="lp-base" aria-hidden="true"></div>
+      </div>
+      <p class="lp-caption" id="tourCaption" aria-live="polite">Your shows: every night you’ve ever been to, as a wall of posters.</p>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="lp-section" id="features" aria-labelledby="feat-h">
+    <div class="lp-wrap">
+      <div class="lp-intro">
+        <h2 id="feat-h" class="lp-h2">Built for people who keep count.</h2>
+        <p class="lp-sub">Every other app treats your concert history as a byproduct of buying tickets. Aftershow treats it as the whole point, then lets you share it.</p>
+      </div>
+      <div class="lp-bento">
+        <article class="bt wide">
+          <div class="bt-vis"><div class="mini-form"><span>Date</span><b>June 14, 2019</b><span>Venue</span><b>Pinnacle Bank Arena</b><i class="tag">From memory</i></div></div>
+          <h3>Log it from memory</h3>
+          <p>No ticket, no proof, no location check. Add any show you’ve ever been to with whatever you remember. “From memory” is a feature, not a warning.</p>
+        </article>
+        <article class="bt">
+          <div class="bt-vis"><span class="live-badge"><span class="live-dot"></span>Live</span><div class="mini-line"></div><div class="mini-line s"></div><div class="mini-line"></div></div>
+          <h3>Log it live</h3>
+          <p>At the show right now? Start the setlist and it appears in Tonight while the band is still on stage.</p>
+        </article>
+        <article class="bt">
+          <div class="bt-vis share"><div class="cover mini-share" style="--x:30%;--y:20%;--c1:#B655FF;--c2:#3A0F66"><span class="cover-name">Gojira</span><span class="cover-meta">Nov 3, 2016</span></div></div>
+          <h3>Share cards</h3>
+          <p>One tap turns any show or your year into an image made for stories and group chats.</p>
+        </article>
+        <article class="bt">
+          <div class="bt-vis favs"><i class="cover" style="--x:30%;--y:20%;--c1:#FF6A3D;--c2:#6B1608"></i><i class="cover" style="--x:60%;--y:30%;--c1:#44B5E8;--c2:#0A3350"></i><i class="cover" style="--x:40%;--y:20%;--c1:#A6D63B;--c2:#2F4A06"></i><i class="cover" style="--x:70%;--y:30%;--c1:#FFB02E;--c2:#6B3A05"></i></div>
+          <h3>Four favourites</h3>
+          <p>Pin the four shows you’d tell anyone about first. They sit at the top of your profile.</p>
+        </article>
+        <article class="bt">
+          <div class="bt-vis"><div class="mini-dots" id="miniDots" aria-hidden="true"></div></div>
+          <h3>Your life in dots</h3>
+          <p>Shows per year, favourite rooms, most-seen artists, and the milestone you’re about to hit.</p>
+        </article>
+        <article class="bt full">
+          <div class="bt-vis csv"><code>Date,Band,Venue,City<br>2017-03-02,Deftones,Skyway Theatre,Minneapolis<br>2019-06-14,Tool,Pinnacle Bank Arena,Lincoln</code><span class="arrow" aria-hidden="true">→</span><div class="mini-stack"><i></i><i></i><i></i></div></div>
+          <h3>Bring your history with you</h3>
+          <p>Already tracking shows somewhere else? Import a CSV, check the column mapping, and your 229 shows are in before your coffee’s cold. Imports never spam your friends’ feeds.</p>
+        </article>
       </div>
     </div>
+  </section>
 
-    <div class="cs-divider"></div>
-
-    <!-- KEY DECISIONS -->
-    <div class="cs-section">
-      <div class="cs-eyebrow">Architecture Decisions</div>
-      <h2>My Shows is Tab 1. Not the feed.</h2>
-      <p class="cs-body">Every competing app puts the social feed first. Aftershow puts your personal archive first. This is the biggest structural departure and it was the first decision made after the competitive analysis.</p>
-
-      <div class="decisions">
-        <div class="decision">
-          <div class="decision-arrow">→</div>
-          <div class="decision-body">
-            <h5>My Shows (Archive) = Tab 1</h5>
-            <p>The archive is the product. The feed is the reward. Flipping this establishes Aftershow as a personal diary first — not another social app with a logging feature.</p>
-          </div>
-        </div>
-        <div class="decision">
-          <div class="decision-arrow">→</div>
-          <div class="decision-body">
-            <h5>Onboarding starts with your history — not your profile</h5>
-            <p>When you first open Aftershow, you don't pick a username and upload a photo. You log a show. That's it. The archive must be seeded before the social layer has any value — so we lead with the action that creates that value.</p>
-          </div>
-        </div>
-        <div class="decision">
-          <div class="decision-arrow">→</div>
-          <div class="decision-body">
-            <h5>1-show minimum, not 3</h5>
-            <p>Original thinking was a 3-show threshold for onboarding. Cut to 1. A 3-show gate alienates users who've only been to one or two concerts — exactly the casual fans who could grow into power users. Lower the bar, let people in.</p>
-          </div>
-        </div>
-        <div class="decision">
-          <div class="decision-arrow">→</div>
-          <div class="decision-body">
-            <h5>Log a Show is the center CTA</h5>
-            <p>Tab 3 is a prominent "+" button, not a screen. Every flow in the app leads back to this action. It's the Shazam button of Aftershow — the single most important interaction.</p>
-          </div>
-        </div>
-        <div class="decision">
-          <div class="decision-arrow">→</div>
-          <div class="decision-body">
-            <h5>Design both themes simultaneously</h5>
-            <p>Dark and light modes were designed in parallel from day one, not as an afterthought. Gold (#D4A853) is the single consistent accent across both — the connective thread that makes the product feel cohesive regardless of mode.</p>
-          </div>
-        </div>
+  <!-- DIFFERENT -->
+  <section class="lp-section" id="different" aria-labelledby="diff-h">
+    <div class="lp-wrap">
+      <div class="lp-intro">
+        <h2 id="diff-h" class="lp-h2">The calm corner of the internet.</h2>
+        <p class="lp-sub">Social apps got loud. Aftershow is built the other way: your history first, your friends second, nothing shouting for attention.</p>
+      </div>
+      <div class="lp-compare">
+        <div class="cmp them"><h3>Most social apps</h3><ul><li>An algorithm decides what you see</li><li>Ads between your friends’ posts</li><li>Follower counts as a scoreboard</li><li>Infinite scroll, no ending</li></ul></div>
+        <div class="cmp us"><h3>Aftershow</h3><ul><li>Chronological. Newest first, always</li><li>No ads in the feed, ever</li><li>Your history is the identity, not your audience size</li><li>Private mode is one switch</li></ul></div>
       </div>
     </div>
+  </section>
 
-    <div class="cs-divider"></div>
+  <!-- STORY -->
+  <section class="lp-section tight" aria-label="Origin">
+    <div class="lp-wrap">
+      <figure class="lp-quote">
+        <blockquote class="serif">Conceived at a Black Queen show, because the concert tracker my wife uses felt like reading a list instead of reliving the night.</blockquote>
+        <figcaption>Will Grayson, designer and builder. <a href="case-study.html">Read the case study</a></figcaption>
+      </figure>
+    </div>
+  </section>
 
-    <!-- DESIGN SYSTEM -->
-    <div class="cs-section">
-      <div class="cs-eyebrow">Design System</div>
-      <h2>Typography does the heavy lifting</h2>
-      <p class="cs-body">Four typefaces, all with clear jobs. The pairing of editorial serif (Playfair Display) with mono (DM Mono) gives Aftershow a premium, almost printed-program feel that no other concert app has.</p>
-
-      <div class="type-samples">
-        <div class="type-sample">
-          <div class="type-sample-label">Display · Artist Names · Show Titles</div>
-          <div style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:28px;color:var(--text);line-height:1.1">Radiohead at Madison Square Garden</div>
-          <div class="type-meta">Playfair Display Italic 700 · 28–40px</div>
-        </div>
-        <div class="type-sample">
-          <div class="type-sample-label">Body · Setlist Songs · Notes</div>
-          <div style="font-family:Georgia,serif;font-style:italic;font-size:15px;color:#ccc;line-height:1.6">1. Fake Plastic Trees · 2. Karma Police · 3. Everything In Its Right Place · 4. Creep (rare)</div>
-          <div class="type-meta">Crimson Pro Italic 400 · 13–16px</div>
-        </div>
-        <div class="type-sample">
-          <div class="type-sample-label">UI Labels · Tabs · Metadata</div>
-          <div style="font-family:monospace;font-size:11px;color:var(--sub);letter-spacing:0.08em;text-transform:uppercase">SHOW LOG · MAY 17, 2026 · MSG · FROM MEMORY</div>
-          <div class="type-meta">DM Mono 400–500 · 9–12px</div>
-        </div>
-      </div>
-
-      <div style="margin-top:28px;font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Color Palette</div>
-      <div class="palette">
-        <div class="swatch"><div class="swatch-color" style="background:#0C0C0C;border-bottom:1px solid #222"></div><div class="swatch-info"><div class="swatch-hex">#0C0C0C</div><div class="swatch-name">Dark bg</div></div></div>
-        <div class="swatch"><div class="swatch-color" style="background:#111111"></div><div class="swatch-info"><div class="swatch-hex">#111111</div><div class="swatch-name">Cards</div></div></div>
-        <div class="swatch"><div class="swatch-color" style="background:#D4A853"></div><div class="swatch-info"><div class="swatch-hex">#D4A853</div><div class="swatch-name">Gold · Both modes</div></div></div>
-        <div class="swatch"><div class="swatch-color" style="background:#EDE6D3"></div><div class="swatch-info"><div class="swatch-hex">#EDE6D3</div><div class="swatch-name">Cream · Light bg</div></div></div>
-        <div class="swatch"><div class="swatch-color" style="background:#F7F2E6"></div><div class="swatch-info"><div class="swatch-hex">#F7F2E6</div><div class="swatch-name">Light cards</div></div></div>
+  <!-- FAQ -->
+  <section class="lp-section" id="faq" aria-labelledby="faq-h">
+    <div class="lp-wrap narrow">
+      <div class="lp-intro"><h2 id="faq-h" class="lp-h2">Questions people ask first.</h2></div>
+      <div class="lp-faq">
+        <details><summary>Do I need a ticket to log a show?</summary><p>No. Aftershow never asks for proof. Pick an artist, a venue and a best-guess date and it’s in your archive.</p></details>
+        <details><summary>Can I move my history from Concert Archives?</summary><p>Yes. Export your list from Concert Archives (it emails you a spreadsheet), save it as CSV and drop it into Aftershow’s importer. You check the column mapping before anything is added.</p></details>
+        <details><summary>Who can see my shows?</summary><p>By default, anyone can see what you log, Letterboxd-style. One switch in Settings makes your profile private so only people who follow you can see it.</p></details>
+        <details><summary>Who owns the photos I upload?</summary><p>You do. You grant Aftershow a license to show them in the app. The details are in the <a href="photo-ugc-license.html">Photo &amp; UGC License</a>.</p></details>
+        <details><summary>Does it work on my phone?</summary><p>Yes. It’s a website that adapts to phones, tablets and desktops, with a tab bar on small screens and a sidebar on large ones.</p></details>
+        <details><summary>What does it cost?</summary><p>Nothing while we build it.</p></details>
       </div>
     </div>
+  </section>
 
-    <div class="cs-divider"></div>
-
-    <!-- SCREENS -->
-    <div class="cs-section">
-      <div class="cs-eyebrow">Screen Inventory</div>
-      <h2>14 MVP screens across 5 tabs</h2>
-
-      <div class="screen-grid">
-        <div class="screen-chip"><span>📚</span> My Shows</div>
-        <div class="screen-chip"><span>🎵</span> Show Detail</div>
-        <div class="screen-chip"><span>📊</span> Stats</div>
-        <div class="screen-chip"><span>👥</span> Friends Feed</div>
-        <div class="screen-chip"><span>🌍</span> Global Feed</div>
-        <div class="screen-chip"><span>🌙</span> Tonight Feed</div>
-        <div class="screen-chip"><span>➕</span> Log a Show</div>
-        <div class="screen-chip"><span>🔍</span> Search</div>
-        <div class="screen-chip"><span>🎤</span> Artist Page</div>
-        <div class="screen-chip"><span>🎟️</span> Show Page</div>
-        <div class="screen-chip"><span>👤</span> Profile</div>
-        <div class="screen-chip"><span>👫</span> Followers</div>
-        <div class="screen-chip"><span>⚙️</span> Settings</div>
-        <div class="screen-chip"><span>✨</span> Onboarding</div>
+  <!-- FINAL CTA -->
+  <section class="lp-section tight" aria-labelledby="cta-h">
+    <div class="lp-wrap">
+      <div class="lp-cta-band cover" style="--x:15%;--y:10%;--c1:#FFB02E;--c2:#6B1608">
+        <h2 id="cta-h" class="lp-h2">Start with one show.</h2>
+        <p class="lp-sub">Even one from ten years ago. Your archive starts today, and the feed unlocks the moment you log it.</p>
+        <div class="lp-actions"><a class="btn-accent lg white" href="app.html">Start your archive</a><a class="lp-ghost white" href="app.html?demo=1">Try the demo</a></div>
       </div>
     </div>
+  </section>
+</main>
 
-    <div class="cs-divider"></div>
-
-    <!-- BUILD STATUS -->
-    <div class="cs-section">
-      <div class="cs-eyebrow">Build Status</div>
-      <h2>Two phases complete. UI in progress.</h2>
-
-      <div class="phases">
-        <div class="phase">
-          <div class="phase-num">1</div>
-          <div class="phase-info">
-            <h5>Ideation, Competitive Analysis & Differentiation</h5>
-            <p>Concert Archives benchmarked. 3 UX gaps identified. North Star user defined.</p>
-          </div>
-          <div class="phase-badge done">Complete</div>
-        </div>
-        <div class="phase">
-          <div class="phase-num">2</div>
-          <div class="phase-info">
-            <h5>UX Architecture</h5>
-            <p>User personas, journeys, IA. 14 screens scoped. All major architectural decisions made.</p>
-          </div>
-          <div class="phase-badge done">Complete</div>
-        </div>
-        <div class="phase">
-          <div class="phase-num">3</div>
-          <div class="phase-info">
-            <h5>UI Design & Asset Creation</h5>
-            <p>Figma wireframes for all 14 screens. Design system finalized. Component specs in progress.</p>
-          </div>
-          <div class="phase-badge active">In Progress</div>
-        </div>
-        <div class="phase">
-          <div class="phase-num">4</div>
-          <div class="phase-info">
-            <h5>Technical Architecture & Build</h5>
-            <p>React Native. Setlist.fm API. Claude AI for fuzzy input matching.</p>
-          </div>
-          <div class="phase-badge locked">Locked</div>
-        </div>
-        <div class="phase">
-          <div class="phase-num">5</div>
-          <div class="phase-info">
-            <h5>Case Study Compilation</h5>
-            <p>Portfolio-ready documentation of every decision made.</p>
-          </div>
-          <div class="phase-badge locked">Locked</div>
-        </div>
-      </div>
-
-      <div class="stat-row" style="margin-top:24px">
-        <div class="stat"><div class="stat-num">14</div><div class="stat-label">MVP Screens</div></div>
-        <div class="stat"><div class="stat-num">2</div><div class="stat-label">Phases Complete</div></div>
-        <div class="stat"><div class="stat-num">2</div><div class="stat-label">Color Modes</div></div>
-      </div>
+<footer class="backpanel">
+  <div class="bp-plate">
+    <div class="bp-brand">
+      <div class="logo">aftershow<span>.</span></div>
+      <p>The show never really ends.</p>
+      <dl class="bp-spec"><dt>Model</dt><dd>AS-1</dd><dt>Input</dt><dd>Your memory</dd><dt>Output</dt><dd>Share cards</dd><dt>Warning</dt><dd>May cause nostalgia</dd></dl>
     </div>
-
+    <nav class="bp-jacks" aria-label="Footer"><a href="index.html">Home</a><a href="app.html">Sign in</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="photo-ugc-license.html">Photo &amp; UGC License</a><a href="case-study.html">Case study</a></nav>
+    <p class="bp-copy"><span>© <span id="yr">2026</span> Will Grayson</span><span>You must be 13 or older to join.</span></p>
   </div>
-</div>
-
+</footer>
+<script src="landing.js"></script>
 </body>
 </html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Aftershow</title>
+<meta name="description" content="Aftershow: your lifetime concert archive. Log any show, live or from memory.">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<script>(function(){var t=null;try{t=localStorage.getItem("aftershow-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
+<link rel="preload" href="fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/playfair-display-italic-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="ui.css">
+<link rel="modulepreload" href="js/main.js">
+<link rel="modulepreload" href="js/ui.js">
+<link rel="modulepreload" href="js/util.js">
+<link rel="modulepreload" href="js/router.js">
+<link rel="modulepreload" href="js/theme.js">
+<link rel="modulepreload" href="js/covers.js">
+<link rel="modulepreload" href="js/activity.js">
+<link rel="modulepreload" href="js/social.js">
+<link rel="modulepreload" href="js/rails.js">
+<link rel="modulepreload" href="js/config.js">
+<link rel="modulepreload" href="js/views/archive.js">
+<link rel="modulepreload" href="js/views/feed.js">
+<link rel="modulepreload" href="js/views/entry.js">
+<link rel="modulepreload" href="js/views/log.js">
+<link rel="modulepreload" href="js/views/discover.js">
+<link rel="modulepreload" href="js/views/profile.js">
+<link rel="modulepreload" href="js/views/settings.js">
+<link rel="modulepreload" href="js/views/onboarding.js">
+<link rel="modulepreload" href="js/views/import.js">
+<link rel="modulepreload" href="js/views/activity.js">
+<link rel="modulepreload" href="js/views/vote.js">
+<link rel="modulepreload" href="js/views/photoField.js">
+<link rel="modulepreload" href="js/photo.js">
+<link rel="modulepreload" href="js/share.js">
+<link rel="modulepreload" href="js/csv.js">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="offline" class="offline" role="status" hidden>You are offline. Changes will not save until you reconnect.</div>
+<div id="route-announcer" class="sr-only" aria-live="polite"></div>
+<div id="boot" class="boot" role="status"><div class="boot-logo">aftershow<span>.</span></div><span class="pilot on boot-led" aria-hidden="true"></span><span class="sr-only">Loading</span></div>
+<div id="gate" class="auth-gate" hidden></div>
+<div id="app" class="app-shell" hidden>
+  <aside class="sidenav" aria-label="Primary">
+    <a class="logo" href="#/shows" aria-label="Aftershow, my shows">aftershow<span>.</span></a>
+    <nav class="nav-list" id="sidenav" aria-label="Main"></nav>
+    <div class="nav-cta" id="navCta" style="margin:18px 6px 0"></div>
+    <div class="side-foot">
+      <a class="user-chip" id="userChip" href="#/me"></a>
+      <div class="side-links"><a href="#/settings">Settings</a><button type="button" id="signOutBtn">Sign out</button></div>
+      <button class="theme-toggle" id="themeToggle" type="button" data-theme-toggle><span class="knob" aria-hidden="true"><i></i></span><span class="knob-text"><b>Theme</b><span>Marshall dark / Orange vintage</span></span></button>
+    </div>
+  </aside>
+  <div class="content">
+    <header class="topbar">
+      <a class="logo" href="#/shows">aftershow<span>.</span></a>
+      <a class="bell vote-link" href="#/vote" aria-label="Vote on photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></a>
+      <a class="bell" href="#/activity" aria-label="Activity"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><i class="bell-dot" hidden></i></a>
+      <button class="theme-toggle compact" id="themeToggleMobile" type="button" data-theme-toggle aria-label="Toggle theme"><span class="knob" aria-hidden="true"><i></i></span></button>
+    </header>
+    <div class="mode-banner" id="modeBanner" hidden><span class="pilot amber on" aria-hidden="true"></span>Demo mode: sample data, stored only in this browser. <a href="#/settings">Manage</a></div>
+    <main id="main" class="content-inner" tabindex="-1"></main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav" aria-label="Main"></nav>
+</div>
+<noscript><p style="padding:24px">Aftershow needs JavaScript.</p></noscript>
+<script>
+// Independent of the app bundle: if main.js never runs (server stopped, opened as a file, blocked script) say so instead of spinning forever.
+(function () {
+  var lastErr = '';
+  window.addEventListener('error', function (e) { lastErr = e.message || ''; });
+  setTimeout(function () {
+    if (window.__asLoaded) return;
+    var b = document.getElementById('boot'); if (!b) return;
+    var file = location.protocol === 'file:';
+    b.innerHTML = '<div class="boot-logo">aftershow<span>.</span></div><p class="sub" style="max-width:40ch;text-align:center;padding:0 16px">' +
+      (file ? 'This page has to be opened through a web server, not as a file. In this folder run <b>python -m http.server 8000</b>, then open <b>http://localhost:8000/app.html</b>.'
+            : 'The app files did not load. Try a hard refresh (Ctrl+Shift+R, or Cmd+Shift+R on a Mac) to clear old cached files. If you are running it locally, also check that the local server is still running.') +
+      (lastErr ? '<br><code style="font-size:12px;opacity:.7">' + lastErr.replace(/[<>&]/g, '') + '</code>' : '') +
+      '</p><div class="empty-actions"><button class="btn primary" type="button" id="guardReload">Reload</button></div>';
+    var rb = document.getElementById('guardReload'); if (rb) rb.addEventListener('click', function () { location.reload(); });
+  }, 4000);
+})();
+</script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -175,7 +175,7 @@ function seed() {
   });
   // Extra contenders so a few shows are real contests: [uploader, artist, show date, file, votes]
   [['hazel', 'Tool', '2025-08-30', 'ToolStage.jpg', 140], ['mimsie', 'Tool', '2025-08-30', 'ToolArms.jpg', 96], ['sako', 'Tool', '2025-08-30', 'ToolBass.jpg', 77],
-   ['sako', 'Nine Inch Nails', '2025-04-02', 'NineInchNailsArms.jpg', 118], ['hazel', 'Nine Inch Nails', '2025-04-02', 'NineInchNailsGuitar.jpg', 74], ['hazel', 'Deftones', '2021-10-21', 'DeftonesStage.jpg', 71], ['dan', 'Deftones', '2021-10-21', 'DeftonesArms.jpg', 33],
+   ['sako', 'Nine Inch Nails', '2025-04-02', 'NineInchNailsArms.jpg', 118], ['hazel', 'Nine Inch Nails', '2025-04-02', 'NineInchNailsGuitar.jpg', 74], ['hazel', 'Deftones', '2021-10-21', 'DeftonesStage.jpg', 71],
    ['mimsie', 'Bruno Mars', '2024-03-14', 'BrunoMarsSuit.jpg', 164], ['sako', 'Bruno Mars', '2024-03-14', 'BrunoMarsCongas.jpg', 88], ['hazel', 'Bruno Mars', '2024-03-14', 'BrunoMarsGuitar.jpg', 52],
    ['hazel', 'The Black Queen', '2017-09-22', 'BlackQueenDuo.jpg', 97], ['mimsie', 'The Black Queen', '2017-09-22', 'BlackQueenSing.jpg', 82], ['sako', 'The Black Queen', '2017-09-22', 'BlackQueenRed.jpg', 63]].forEach(([u, an, date, file, votes]) => {
     const sh = db.shows.find((x) => x.artistId === art(an).id && x.date === date);

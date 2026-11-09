@@ -72,8 +72,8 @@
       <div class="c"><h3>A calm, chronological feed</h3><p>Friends, everyone, and Tonight for live-logging. Photo-first posts with likes and comments. No algorithm, no ads.</p></div>
       <div class="c"><h3>Share cards and photo voting</h3><p>Turn any show or your whole recap into an image for stories, and vote for the best fan photo of each show.</p></div>
     </div>
-    <div class="stack"><span>HTML / CSS / JavaScript modules</span><span>Supabase (Postgres, Auth, RLS)</span><span>Cloudflare Pages</span><span>Demo mode (localStorage)</span></div>
-    <div class="todo"><b>Production hardening: to fill in after launch</b>Describe the real Supabase Auth flow, the row-level-security policies actually in force, and the behaviour running in production. Left blank until the backend is live.</div>
+    <div class="stack"><span>HTML / CSS / JavaScript modules</span><span>Supabase (Postgres, Auth, RLS, Storage), shared project, own schema</span><span>Cloudflare Pages</span><span>Demo mode (localStorage)</span></div>
+    <div class="todo"><b>Status: what runs today</b>The “Try it with sample data” demo runs Aftershow on sample data kept in your own browser, so nothing you do there is sent to a server. The real backend is connected to a live Supabase project (its own database schema, sharing a project with another app of mine) and was tested end to end with throwaway accounts: sign-up, privacy rules (a private profile’s shows stay hidden until someone follows), photo upload, likes, comments, photo voting and account deletion, which removes everything without touching the other app. It has not yet had a security review or any real-user testing, so real sign-ups are switched off on this site for now and I am not calling it production-ready.</div>
   </section>
 </main>
 

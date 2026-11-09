@@ -1,5 +1,5 @@
 // Supabase backend — same API surface as backends/demo.js. Requires supabase-migration.sql, -002-photos.sql and -003-app.sql.
-import { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_ESM, PHOTO_BUCKET } from '../config.js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SCHEMA, SUPABASE_ESM, PHOTO_BUCKET } from '../config.js';
 import { todayISO, uid } from '../util.js';
 import { compressPhoto } from '../photo.js';
 
@@ -67,7 +67,7 @@ export const api = {
   mode: 'live',
   async init() {
     const mod = await import(SUPABASE_ESM);
-    sb = mod.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    sb = mod.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: SUPABASE_SCHEMA } });
     const { data, error } = await sb.auth.getSession();
     if (error) throw error;
     const u = data.session?.user || null; meId = u?.id || null;
@@ -78,7 +78,7 @@ export const api = {
     return () => data.subscription.unsubscribe();
   },
   async signUp(email, password, username) {
-    const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username } } });
+    const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username, app: 'aftershow' } } });
     if (error) throw error;
     return { needsConfirm: !data.session };
   },
@@ -104,7 +104,11 @@ export const api = {
     let p = ok(await sb.from('profiles').select(PROFILE_COLS).eq('id', user.id).maybeSingle());
     if (!p) { // first real session: create the row (RLS blocks this before a session exists)
       const username = user.user_metadata?.username || user.email.split('@')[0];
-      p = ok(await sb.from('profiles').insert({ id: user.id, username }).select(PROFILE_COLS).single());
+      const ins = await sb.from('profiles').insert({ id: user.id, username }).select(PROFILE_COLS).single();
+      if (ins.error?.code === '23505') { // a parallel first-session call made the row first: use it
+        p = ok(await sb.from('profiles').select(PROFILE_COLS).eq('id', user.id).maybeSingle());
+        if (!p) throw ins.error;
+      } else p = ok(ins);
     }
     return mapProfile(p);
   },

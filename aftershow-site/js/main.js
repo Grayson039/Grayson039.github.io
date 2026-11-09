@@ -1,4 +1,5 @@
 // Aftershow app bootstrap: pick backend (live Supabase or local demo), auth gate, shell, router.
+import { LIVE_SIGNUPS } from './config.js';
 import { app, avatar, toast, coverStyle, posterWall, passwordDialog } from './ui.js';
 import { esc, friendlyError } from './util.js';
 import { startRouter, currentPath } from './router.js';
@@ -22,8 +23,8 @@ const $ = (s) => document.querySelector(s);
 const qs = new URLSearchParams(location.search);
 const TOUR = qs.has('tour'); // landing-page product tour: demo data, auto sign-in, mode is not persisted
 if (qs.has('demo')) localStorage.setItem('aftershow-mode', 'demo');
-if (qs.get('live') === '1') localStorage.setItem('aftershow-mode', 'live');
-app.mode = TOUR || localStorage.getItem('aftershow-mode') === 'demo' ? 'demo' : 'live';
+if (LIVE_SIGNUPS && qs.get('live') === '1') localStorage.setItem('aftershow-mode', 'live');
+app.mode = !LIVE_SIGNUPS || TOUR || localStorage.getItem('aftershow-mode') === 'demo' ? 'demo' : 'live';
 if (TOUR) document.body.classList.add('tour');
 applyTheme(initialTheme());
 
@@ -145,7 +146,7 @@ function paintGate(message = '', kind = 'error') {
         </form>
         <p class="gate-trust">13 and older · Your shows stay yours · Export anytime</p>
         <div class="gate-alt">${demo
-          ? '<button class="btn" type="button" data-gate="live">Use a real account instead</button>'
+          ? (LIVE_SIGNUPS ? '<button class="btn" type="button" data-gate="live">Use a real account instead</button>' : '<p class="sub">Real sign-ups are not open yet. This is a working demo.</p>')
           : '<button class="btn" type="button" data-gate="demo">Explore in demo mode first</button>'}</div>
       </main>
       <p class="gate-legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="photo-ugc-license.html">Photo &amp; UGC License</a></p>
@@ -160,7 +161,7 @@ document.addEventListener('click', async (ev) => {
   const act = g.dataset.gate;
   if (act === 'signin' || act === 'signup') { gateState.signup = act === 'signup'; paintGate(); }
   if (act === 'demo') { localStorage.setItem('aftershow-mode', 'demo'); location.reload(); }
-  if (act === 'live') { localStorage.setItem('aftershow-mode', 'live'); location.reload(); }
+  if (act === 'live' && LIVE_SIGNUPS) { localStorage.setItem('aftershow-mode', 'live'); location.reload(); }
   if (act === 'forgot' || act === 'link') {
     const email = $('#aEmail').value.trim(), msg = $('#authMsg');
     if (!email) { msg.className = 'auth-msg error'; msg.textContent = 'Enter your email above first.'; return; }

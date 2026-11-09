@@ -59,7 +59,7 @@ export async function onboarding(ctx) {
       const own = d.photoOn
         ? `<span class="pv-poster cover photo" style="--photo:url('Tool.jpg')"><button type="button" class="ob-add on" data-demo-photo aria-label="Remove the demo photo"><b aria-hidden="true">×</b><span>Remove</span></button><span class="cover-name">Tool</span></span>`
         : `<span class="pv-poster cover" style="${coverStyle('Tool')}"><button type="button" class="ob-add" data-demo-photo aria-label="Add a demo photo"><b aria-hidden="true">+</b><span>Add photo</span></button><span class="cover-name">Tool</span></span>`;
-      return `<h2 class="serif">Who gets to see your shows?</h2><p class="sub">Pick how you want to use Aftershow. You can change this any time in Settings.</p>
+      return `<h2 class="serif">Who gets to see your shows?</h2><p class="sub">Pick how you want to use Aftershow. Public is selected to start, so anyone can see what you log. You can change this any time in Settings.</p>
         <div class="privacy-split" role="radiogroup" aria-label="Profile visibility">
           <div class="pv ${isP ? 'on' : ''}" data-privacy="private">
             <span class="pv-head"><button type="button" class="pv-radio" role="radio" aria-checked="${isP}" data-privacy="private"><b>Private</b></button><i class="pilot ${isP ? 'on' : 'off'}" aria-hidden="true"></i></span>

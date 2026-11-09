@@ -92,9 +92,13 @@ body {
   box-shadow: inset 0 1px 1px rgba(255,255,255,0.06);
 }
 .phone-frame {
-  width: 100%; height: 100%;
-  border: none; border-radius: 44px; display: block;
+  /* the real app is laid out as a 375px phone, then scaled to sit inside the frame */
+  width: 375px; height: 803px;
+  border: none; display: block;
+  transform: scale(0.7467); transform-origin: top left;
+  clip-path: inset(0 round 59px);
 }
+.phone-body { overflow: hidden; }
 
 /* CASE STUDY COL */
 .cs-col {
@@ -219,11 +223,11 @@ body {
       <div class="side-l"></div>
       <div class="side-r"></div>
       <div class="phone-body">
-        <iframe class="phone-frame" src="prototype.html" scrolling="no" title="OurTable Prototype"></iframe>
+        <iframe class="phone-frame" src="../ourtable-site/" title="OurTable live demo"></iframe>
       </div>
     </div>
     <div style="font-size:11px;color:var(--sub);text-align:center;max-width:260px;line-height:1.5">
-      Interactive prototype · 8 screens · Light &amp; dark mode
+      Live demo · tap around, it runs in your browser and saves nothing
     </div>
   </div>
 

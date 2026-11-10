@@ -69,42 +69,52 @@ body {
 
 /* MAIN LAYOUT */
 .main {
-  display: grid; grid-template-columns: 340px 1fr;
-  max-width: 1200px; margin: 0 auto;
-  padding: 56px 40px; gap: 0; align-items: start;
+  display: block;
+  max-width: 1040px; margin: 0 auto;
+  padding: 56px 40px;
 }
 
-/* PHONE COL */
-.phone-col {
-  position: sticky; top: 40px;
-  display: flex; flex-direction: column; align-items: center; gap: 20px;
+/* HERO CTAs */
+.hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 0 auto 36px; }
+.btn-demo {
+  display: inline-block; background: var(--primary); color: #fff; text-decoration: none;
+  font-weight: 700; font-size: 15px; padding: 14px 26px; border-radius: 100px;
+  transition: filter 0.2s, transform 0.2s;
 }
-.phone-outer {
-  position: relative;
-  filter: drop-shadow(0 32px 64px rgba(196,97,74,0.15));
+.btn-demo:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-ghost {
+  display: inline-block; color: var(--cream); text-decoration: none; font-weight: 600; font-size: 15px;
+  padding: 13px 24px; border-radius: 100px; border: 1px solid rgba(250,247,240,0.28);
+  transition: border-color 0.2s;
 }
-.side-l { position:absolute;left:-4px;top:108px;width:4px;height:32px;background:#1A1A1A;border-radius:4px 0 0 4px;box-shadow:0 46px 0 #1A1A1A; }
-.side-r { position:absolute;right:-4px;top:130px;width:4px;height:64px;background:#1A1A1A;border-radius:0 4px 4px 0; }
-.phone-body {
-  width: 300px; height: 620px;
-  background: #0D0D0D; border-radius: 54px; padding: 10px;
-  border: 1px solid #2A2A2A;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.06);
+.btn-ghost:hover { border-color: rgba(250,247,240,0.6); }
+.btn-demo:focus-visible, .btn-ghost:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* LAPTOP DEMO */
+.demo-col { display: flex; flex-direction: column; align-items: center; gap: 18px; margin-bottom: 64px; }
+.laptop { width: 100%; max-width: 940px; filter: drop-shadow(0 32px 64px rgba(196,97,74,0.15)); }
+.laptop-lid {
+  background: #0D0D0D; border: 1px solid #2A2A2A; border-radius: 16px 16px 4px 4px;
+  padding: 12px 12px 14px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.06);
 }
-.phone-frame {
-  /* the real app is laid out as a 375px phone, then scaled to sit inside the frame */
-  width: 375px; height: 803px;
-  border: none; display: block;
-  transform: scale(0.7467); transform-origin: top left;
-  clip-path: inset(0 round 59px);
+.laptop-screen { position: relative; overflow: hidden; border-radius: 6px; background: var(--bg); width: 100%; }
+.laptop-screen iframe { position: absolute; top: 0; left: 0; border: none; display: block; transform-origin: top left; }
+.laptop-base {
+  height: 14px; margin: 0 -3%; border-radius: 0 0 16px 16px;
+  background: linear-gradient(#2a2a2a, #151515); border: 1px solid #2A2A2A; border-top: none; position: relative;
 }
-.phone-body { overflow: hidden; }
+.laptop-base::after {
+  content: ''; position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  width: 14%; height: 5px; border-radius: 0 0 8px 8px; background: #0a0a0a;
+}
+.demo-note { font-size: 13px; color: var(--sub); text-align: center; line-height: 1.5; }
+.demo-note a { color: var(--cream); font-weight: 600; text-underline-offset: 3px; }
+.demo-note a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.closing-cta { text-align: center; padding: 56px 0 8px; border-top: 1px solid var(--border); margin-top: 56px; }
+.closing-cta p { color: var(--sub); font-size: 14px; margin-bottom: 18px; }
 
 /* CASE STUDY COL */
-.cs-col {
-  padding-left: 56px;
-  border-left: 1px solid var(--border);
-}
+.cs-col { max-width: 760px; margin: 0 auto; scroll-margin-top: 24px; }
 .cs-section { margin-bottom: 56px; }
 .cs-section:last-child { margin-bottom: 0; }
 .cs-eyebrow {
@@ -181,9 +191,8 @@ body {
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
-  .main { grid-template-columns: 1fr; padding: 32px 20px; }
-  .phone-col { position: static; margin-bottom: 48px; }
-  .cs-col { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 40px; }
+  .main { padding: 32px 20px; }
+  .demo-col { margin-bottom: 48px; }
   .hero { padding: 80px 20px 48px; }
   .feature-grid, .status-grid { grid-template-columns: 1fr; }
   .screens-grid { grid-template-columns: 1fr 1fr; }
@@ -203,9 +212,13 @@ body {
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Case Study, 02 / 09 · Personal Project</div>
+  <div class="hero-eyebrow">Case Study · Personal Project</div>
   <h1>Our<span>Table</span></h1>
   <p class="hero-sub">A family kitchen on the web. One shared recipe book where every recipe answers one question first: can everyone at the table eat this? Dietary checks, recipes that remember how you actually cook, and safety rules you can test.</p>
+  <div class="hero-cta">
+    <a class="btn-demo" href="../ourtable-site/" target="_blank" rel="noopener noreferrer">Try the live demo &#x2192;</a>
+    <a class="btn-ghost" href="#cs">Read the case study</a>
+  </div>
   <div class="hero-meta">
     <div class="hero-meta-item"><div class="label">Role</div><div class="value">UX Design · Product · Build</div></div>
     <div class="hero-meta-item"><div class="label">Platform</div><div class="value">Web (React + Supabase)</div></div>
@@ -217,35 +230,37 @@ body {
 <!-- MAIN TWO-COLUMN -->
 <div class="main">
 
-  <!-- PHONE PROTOTYPE -->
-  <div class="phone-col">
-    <div class="phone-outer">
-      <div class="side-l"></div>
-      <div class="side-r"></div>
-      <div class="phone-body">
-        <iframe class="phone-frame" src="../ourtable-site/" title="OurTable live demo"></iframe>
+  <!-- LIVE DEMO -->
+  <div class="demo-col">
+    <div class="laptop">
+      <div class="laptop-lid">
+        <div class="laptop-screen" id="demoScreen">
+          <iframe id="demoFrame" src="../ourtable-site/" title="OurTable live demo"></iframe>
+        </div>
       </div>
+      <div class="laptop-base"></div>
     </div>
-    <div style="font-size:11px;color:var(--sub);text-align:center;max-width:260px;line-height:1.5">
-      Live demo · tap around, it runs in your browser and saves nothing
+    <div class="demo-note">
+      Live demo on sample data. It runs in your browser and saves nothing.
+      <a href="../ourtable-site/" target="_blank" rel="noopener noreferrer">Open it full screen &#x2197;</a>
     </div>
   </div>
 
   <!-- CASE STUDY -->
-  <div class="cs-col">
+  <div class="cs-col" id="cs">
 
     <!-- PROBLEM -->
     <div class="cs-section">
       <div class="cs-eyebrow">The Problem</div>
       <h2>Cooking for a household is a coordination problem</h2>
-      <p class="cs-body">This app started because of my wife. She's a passionate home cook who saves recipes from TikTok and Instagram — and then can't find them when she needs them. Screenshots buried in camera roll, links in DMs that disappear, recipes saved to five different apps with no connection between them.</p>
-      <p class="cs-body">But the bigger problem isn't recipe management — it's that cooking for a household involves multiple people with different dietary needs, different schedules, and a shared fridge nobody has a full picture of. No app solves this as a household coordination problem. They all solve it as an individual food tracker.</p>
+      <p class="cs-body">This app started because of my wife. She had her gallbladder removed, and overnight our cooking had to change: certain fats and ingredients were suddenly off the table. Every recipe app we tried was built for one person with no restrictions.</p>
+      <p class="cs-body">Real households are more complicated. Several people, medical needs, dietary preferences, and a fridge full of things you bought three days ago and forgot about. Apps treat that as an individual food tracker. Nobody treats the household as the thing being cooked for.</p>
 
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-card-icon">🤌</div>
           <h4>Recipes live everywhere</h4>
-          <p>TikTok, Instagram, screenshots, links in messages — no unified home for saved recipes that actually stays organized.</p>
+          <p>Screenshots, links in messages, five different apps. No single home for saved recipes that stays organized.</p>
         </div>
         <div class="feature-card">
           <div class="feature-card-icon">🧑‍🍳</div>
@@ -405,8 +420,28 @@ body {
       </div>
     </div>
 
+    <div class="closing-cta">
+      <p>See it for yourself. No account needed.</p>
+      <a class="btn-demo" href="../ourtable-site/" target="_blank" rel="noopener noreferrer">Try the live demo &#x2192;</a>
+    </div>
+
   </div>
 </div>
+
+<script>
+// Lay the app out at a real laptop size (or phone size on narrow screens), then scale it to fit the frame.
+(function () {
+  var screen = document.getElementById('demoScreen'), frame = document.getElementById('demoFrame');
+  function fit() {
+    var cw = screen.clientWidth, narrow = cw < 600;
+    var w = narrow ? 390 : 1280, h = narrow ? 700 : 800, s = cw / w;
+    frame.style.width = w + 'px'; frame.style.height = h + 'px';
+    frame.style.transform = 'scale(' + s + ')';
+    screen.style.height = (h * s) + 'px';
+  }
+  fit(); window.addEventListener('resize', fit);
+})();
+</script>
 
 </body>
 </html>

@@ -50,7 +50,6 @@
   <aside class="sidenav" aria-label="Primary">
     <a class="logo" href="#/shows" aria-label="Aftershow, my shows">aftershow<span>.</span></a>
     <nav class="nav-list" id="sidenav" aria-label="Main"></nav>
-    <div class="nav-cta" id="navCta" style="margin:18px 6px 0"></div>
     <div class="side-foot">
       <a class="user-chip" id="userChip" href="#/me"></a>
       <div class="side-links"><a href="#/settings">Settings</a><button type="button" id="signOutBtn">Sign out</button></div>
@@ -59,15 +58,26 @@
   </aside>
   <div class="content">
     <header class="topbar">
+      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <a class="logo" href="#/shows">aftershow<span>.</span></a>
       <a class="bell vote-link" href="#/vote" aria-label="Vote on photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></a>
       <a class="bell" href="#/activity" aria-label="Activity"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><i class="bell-dot" hidden></i></a>
-      <button class="theme-toggle compact" id="themeToggleMobile" type="button" data-theme-toggle aria-label="Toggle theme"><span class="knob" aria-hidden="true"><i></i></span></button>
+      <a class="btn-accent top-log" href="#/log" aria-label="Log a show"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Log</span></a>
     </header>
+    <div class="desk-bar"><a class="btn-accent" href="#/log">+ Log a show</a></div>
     <div class="mode-banner" id="modeBanner" hidden><span class="pilot amber on" aria-hidden="true"></span>Demo mode: sample data, stored only in this browser. <a href="#/settings">Manage</a></div>
     <main id="main" class="content-inner" tabindex="-1"></main>
   </div>
-  <nav class="bottom-nav" id="bottomNav" aria-label="Main"></nav>
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" aria-label="Menu" hidden>
+    <div class="drawer-head"><a class="logo" href="#/shows">aftershow<span>.</span></a><button class="drawer-x" id="drawerClose" type="button" aria-label="Close menu">&times;</button></div>
+    <nav class="nav-list" id="drawerNav" aria-label="Main"></nav>
+    <div class="side-foot">
+      <a class="user-chip" id="drawerUser" href="#/me"></a>
+      <div class="side-links"><a href="#/settings">Settings</a><button type="button" id="signOutBtn2">Sign out</button></div>
+      <button class="theme-toggle" id="themeToggleDrawer" type="button" data-theme-toggle><span class="knob" aria-hidden="true"><i></i></span><span class="knob-text"><b>Theme</b><span>Marshall dark / Orange vintage</span></span></button>
+    </div>
+  </aside>
 </div>
 <noscript><p style="padding:24px">Aftershow needs JavaScript.</p></noscript>
 <script>

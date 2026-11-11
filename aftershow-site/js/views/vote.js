@@ -1,6 +1,6 @@
 // Vote: go through shows people have posted photos for and pick the best shot. The top photo becomes
 // the default cover for everyone who did not upload their own. One vote per show; voting again moves it.
-import { app, emptyState, statRow, toast, ICON, reportDialog } from '../ui.js';
+import { app, emptyState, statRow, toast, ICON, reportDialog, boltBurst } from '../ui.js';
 import { esc, formatDate, friendlyError, fuzzyMatch } from '../util.js';
 import { withRail, railCard, yourVotesCard } from '../rails.js';
 
@@ -13,7 +13,7 @@ function photoHtml(p, show, leaderId) {
   const lead = p.id === leaderId;
   const mine = p.uploaderId === app.profile.id;
   const votes = Number(p.votes || 0);
-  const action = p.canVote && !isPrivate()
+  const action = p.canVote
     ? `<button type="button" class="vc-vote ${p.votedByMe ? 'on' : ''}" data-vote data-id="${p.id}" aria-pressed="${!!p.votedByMe}" aria-label="${p.votedByMe ? 'Remove your vote for' : 'Vote for'} this photo by ${esc(p.uploaderName)}"><span class="vc-arrow" aria-hidden="true">▲</span><span class="vc-n">${votes.toLocaleString()}</span><span class="vc-lbl">${p.votedByMe ? 'Your pick' : 'Vote'}</span></button>`
     : `<span class="vc-own">${mine ? '<b>Yours</b>' : ''}<span><span aria-hidden="true">▲</span> ${votes.toLocaleString()}<span class="sr-only"> votes</span></span></span>`;
   return `<figure class="vc-photo ${lead ? 'lead' : ''} ${p.votedByMe ? 'picked' : ''}">
@@ -71,7 +71,7 @@ export async function vote(ctx) {
   const chips = () => `<div class="vc-modes" role="radiogroup" aria-label="Sort and filter">${MODES.map(([id, label]) => `<button type="button" class="chip ${st.mode === id ? 'active' : ''}" role="radio" aria-checked="${st.mode === id}" data-mode="${id}">${label}</button>`).join('')}</div>`;
   const quick = () => `<div class="vc-quick" aria-label="Popular artists">${topArtists.map((n) => `<button type="button" class="chip ${st.q.toLowerCase() === n.toLowerCase() ? 'active' : ''}" data-artist="${esc(n)}">${esc(n)}</button>`).join('')}</div>`;
 
-  const main = `${isPrivate() ? '<div class="vc-private"><b>Your profile is private.</b> Switch to public in <a href="#/settings">Settings</a> to vote and to get community covers on your own posters.</div>' : ''}<header class="page-head vc-hero"><h1 class="title" tabindex="-1">Pick the cover.</h1>
+  const main = `${isPrivate() ? '<div class="vc-private"><b>Your profile is private, and you can still vote.</b> Your own photos stay hidden from everyone but you and your followers. Switch to public in <a href="#/settings">Settings</a> to get community covers on your own posters.</div>' : ''}<header class="page-head vc-hero"><h1 class="title" tabindex="-1">Pick the cover.</h1>
       <p class="sub">Every show gets one cover photo, and you choose it. Vote for the best shot. The top photo becomes the default cover for everyone who didn’t upload their own.</p></header>
     ${statRow([[byShow.size, 'Shows'], [photoCount, 'Photos'], [myVotes, 'Your votes']])}
     <div class="vc-bar"><div class="vc-search"><label class="sr-only" for="vq">Search for an artist’s concert photos</label>
@@ -94,11 +94,11 @@ export async function vote(ctx) {
   ctx.on('click', '[data-clear]', () => { st.q = ''; ctx.view.querySelector('#vq').value = ''; repaint(); });
 
   ctx.on('click', '[data-vote]', async (_, btn) => {
-    if (isPrivate()) return;
     const card = btn.closest('.vote-card'); const showId = card.dataset.show;
     const on = btn.getAttribute('aria-pressed') !== 'true'; btn.disabled = true;
     try {
       await app.api.votePhoto(btn.dataset.id, on);
+      if (on) boltBurst(btn);
       const fresh = await app.api.listPhotos({ showId });
       byShow.set(showId, fresh);
       card.outerHTML = cardHtml(showMap.get(showId), fresh);

@@ -1,6 +1,6 @@
 // Tab 3: Log a Show (and edit) — Live Now and From Memory modes, setlist editor, rating, photo.
 import { app, pageHeader, knobInput, bindKnob, toast, tile } from '../ui.js';
-import { esc, todayISO, friendlyError } from '../util.js';
+import { esc, todayISO, friendlyError, splitCity, joinCity, stateOptions, LIMITS } from '../util.js';
 import { photoFieldHtml, bindPhotoField, photoProblem, uploadSelected } from './photoField.js';
 
 export async function logShow(ctx) {
@@ -19,7 +19,7 @@ export async function logShow(ctx) {
     mode: existing ? (existing.fromMemory ? 'memory' : 'live') : (ctx.query.mode === 'live' ? 'live' : 'memory'),
     songs: [...(existing?.setlist || [])]
   };
-  const pre = { artist: existing?.artistName || ctx.query.artist || '', venue: existing?.venueName || ctx.query.venue || '', city: existing?.city || '', date: existing?.date || '', rating: existing?.rating || 0, note: existing?.note || '' };
+  const pre = { artist: existing?.artistName || ctx.query.artist || '', venue: existing?.venueName || ctx.query.venue || '', city: splitCity(existing?.city || '').city, state: splitCity(existing?.city || '').state, date: existing?.date || '', rating: existing?.rating || 0, note: existing?.note || '' };
 
   const songsHtml = () => st.songs.length
     ? `<ol class="song-edit">${st.songs.map((s, i) => `<li><span class="song-no">${i + 1}.</span><span class="song-name">${esc(s)}</span>
@@ -33,10 +33,11 @@ export async function logShow(ctx) {
         <button type="button" class="toggle-opt" role="radio" data-mode="live">● Live now</button>
         <button type="button" class="toggle-opt" role="radio" data-mode="memory">From memory</button></div>`}
       <p class="sub" id="modeHint"></p>
-      <div class="field"><label for="fArtist">Artist <span class="req">required</span></label><input id="fArtist" list="artistList" autocomplete="off" value="${esc(pre.artist)}" placeholder="e.g. Paramore" aria-describedby="eArtist"><datalist id="artistList">${sugg.artists.map((a) => `<option value="${esc(a)}">`).join('')}</datalist><div class="err" id="eArtist" role="alert"></div></div>
+      <div class="field"><label for="fArtist">Artist <span class="req">required</span></label><input id="fArtist" list="artistList" autocomplete="off" maxlength="${LIMITS.artist}" value="${esc(pre.artist)}" placeholder="e.g. Paramore" aria-describedby="eArtist"><datalist id="artistList">${sugg.artists.map((a) => `<option value="${esc(a)}">`).join('')}</datalist><div class="err" id="eArtist" role="alert"></div></div>
+      <div class="field"><label for="fVenue">Venue <span class="req">required</span></label><input id="fVenue" list="venueList" autocomplete="off" maxlength="${LIMITS.venue}" value="${esc(pre.venue)}" placeholder="e.g. Thalia Hall" aria-describedby="eVenue"><datalist id="venueList">${[...new Set(sugg.venues.map((v) => v.name))].map((v) => `<option value="${esc(v)}">`).join('')}</datalist><div class="err" id="eVenue" role="alert"></div></div>
       <div class="field-pair">
-        <div class="field"><label for="fVenue">Venue <span class="req">required</span></label><input id="fVenue" list="venueList" autocomplete="off" value="${esc(pre.venue)}" placeholder="e.g. Thalia Hall" aria-describedby="eVenue"><datalist id="venueList">${[...new Set(sugg.venues.map((v) => v.name))].map((v) => `<option value="${esc(v)}">`).join('')}</datalist><div class="err" id="eVenue" role="alert"></div></div>
-        <div class="field"><label for="fCity">City</label><input id="fCity" value="${esc(pre.city)}" placeholder="Chicago, IL" autocomplete="off"></div>
+        <div class="field"><label for="fCity">City</label><input id="fCity" name="show-city" value="${esc(pre.city)}" maxlength="${LIMITS.city}" placeholder="Chicago" autocomplete="off" autocorrect="off" data-lpignore="true"></div>
+        <div class="field"><label for="fState">State</label><select id="fState" name="show-state" autocomplete="off">${stateOptions(pre.state)}</select></div>
       </div>
       <div class="field" id="dateField"><label for="fDate">Date <span class="req">required</span></label><input id="fDate" type="date" max="${todayISO()}" value="${esc(pre.date)}" aria-describedby="eDate"><div class="err" id="eDate" role="alert"></div><p class="sub">Not sure of the exact day? Pick your best guess — nobody’s checking.</p></div>
       <div class="field"><label id="ratingLabel">Rating</label>${knobInput('rating', pre.rating)}</div>
@@ -79,7 +80,7 @@ export async function logShow(ctx) {
   ctx.on('click', '[data-action=song-del]', (_, b) => { st.songs.splice(+b.dataset.i, 1); paintSongs(); });
   ctx.on('click', '[data-action=song-up]', (_, b) => { const i = +b.dataset.i; [st.songs[i - 1], st.songs[i]] = [st.songs[i], st.songs[i - 1]]; paintSongs(); ctx.view.querySelector(`[data-action=song-up][data-i="${i - 1}"]`)?.focus(); });
   ctx.on('click', '[data-action=song-down]', (_, b) => { const i = +b.dataset.i; [st.songs[i + 1], st.songs[i]] = [st.songs[i], st.songs[i + 1]]; paintSongs(); ctx.view.querySelector(`[data-action=song-down][data-i="${i + 1}"]`)?.focus(); });
-  ctx.on('change', '#fVenue', (_, el) => { const v = sugg.venues.find((x) => x.name.toLowerCase() === el.value.trim().toLowerCase()); if (v?.city && !$('#fCity').value) $('#fCity').value = v.city; });
+  ctx.on('change', '#fVenue', (_, el) => { const v = sugg.venues.find((x) => x.name.toLowerCase() === el.value.trim().toLowerCase()); if (v?.city && !$('#fCity').value) { const sc = splitCity(v.city); $('#fCity').value = sc.city; $('#fState').value = sc.state; } });
   bindPhotoField(ctx);
   bindKnob(ctx);
 
@@ -100,7 +101,7 @@ export async function logShow(ctx) {
     if (consentProblem) { $('#formErr').textContent = consentProblem; return; }
     const btn = $('#saveBtn'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Saving…';
     const payload = {
-      artistName, venueName, city: $('#fCity').value.trim(), date, rating: +(ctx.view.querySelector('[name=rating]')?.value || 0) || null,
+      artistName, venueName, city: joinCity($('#fCity').value, $('#fState').value), date, rating: +(ctx.view.querySelector('[name=rating]')?.value || 0) || null,
       note: $('#fNote').value.trim(), setlist: st.songs, fromMemory: st.mode === 'memory', isLive: live
     };
     let entry;

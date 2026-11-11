@@ -110,6 +110,9 @@ const MILESTONES = [1, 5, 10, 25, 50, 100, 150, 200, 300, 500, 1000];
 const MONTHS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+const BAND_DEFS = [['9-10', 9, 10, 'var(--c1)'], ['7-8', 7, 8, 'var(--c2)'], ['5-6', 5, 6, 'var(--c3)'], ['3-4', 3, 4, 'var(--c4)'], ['1-2', 1, 2, 'var(--c5)'], ['Not rated', 0, 0, 'var(--c0)']];
+const bandOf = (r) => BAND_DEFS.findIndex(([, a, b]) => (a === 0 ? !r : r >= a && r <= b));
+const legendHtml = () => `<div class="stack-legend" aria-hidden="true">${BAND_DEFS.map(([l, , , c]) => `<span><i style="background:${c}"></i>${l === 'Not rated' ? l : l.replace('-', '–')}</span>`).join('')}</div>`;
 export async function stats(ctx) {
   const entries = await ctx.guard(() => app.api.listEntries({ userId: app.profile.id }));
   if (!entries) return;
@@ -140,13 +143,17 @@ export async function stats(ctx) {
       </div>
     </div>
     <div class="progress" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Progress to ${next} shows"><span style="width:${pct}%"></span></div>
-    ${sectionHead('Every year, month by month')}
-    <div class="card matrix-card"><div class="matrix" role="img" aria-label="Shows by month for each year. ${esc(s.years.map(([y, n]) => `${y}: ${n}`).join(', '))}"><div></div>${MONTHS.map((m, i) => `<div class="mx-head" title="${MONTH_NAMES[i]}">${m}</div>`).join('')}${matrix}</div></div>
+    ${sectionHead('Shows per year, by rating')}
+    <div class="card sb">${(() => {
+      const per = years.map((y) => { const c = BAND_DEFS.map(() => 0); entries.filter((e) => e.date.startsWith(String(y))).forEach((e) => { c[bandOf(e.rating)]++; }); return [y, c, c.reduce((a, b) => a + b, 0)]; });
+      const top = Math.max(1, ...per.map((p) => p[2]));
+      return `<div class="sb-years" role="img" aria-label="Shows per year, split by rating. ${esc(per.map(([y, , n]) => `${y}: ${n}`).join(', '))}">${per.map(([y, c, n]) => `<div class="sb-col"><b>${n}</b><div class="sb-stack" style="height:${Math.max(4, (n / top) * 170)}px">${c.map((v, k2) => (v ? `<i style="height:${(v / n) * 100}%;background:${BAND_DEFS[k2][3]}" title="${y}: ${v} rated ${BAND_DEFS[k2][0]}"></i>` : '')).join('')}</div><span>${esc(String(y).slice(2) ? "'" + String(y).slice(2) : y)}</span></div>`).join('')}</div>${legendHtml()}`;
+    })()}</div>
     <div class="cols-2">
       <div>${sectionHead('Most-seen artists')}<div class="card list-card">${rankList(s.artists.slice(0, 8), { hrefFor: (n) => `#/search?q=${encodeURIComponent(n)}` })}</div></div>
       <div>${sectionHead('Favourite rooms')}<div class="card list-card">${rankList(s.venues.slice(0, 8))}</div></div>
       ${s.genres.length ? `<div>${sectionHead('Genres')}<div class="card list-card">${rankList(s.genres.slice(0, 6))}</div></div>` : ''}
-      <div>${sectionHead('How you rate')}<div class="card"><div class="rating-bars">${bands.map(([a, b, n]) => `<div class="rating-row"><span class="band">${a}–${b}</span><div class="progress thin"><span style="width:${(n / maxRating) * 100}%"></span></div><span class="meta">${n}</span></div>`).join('')}</div></div></div>
+      <div>${sectionHead('How you rate')}<div class="card sb"><div class="sb-one" role="img" aria-label="How you rate: ${esc(BAND_DEFS.map(([l], k2) => `${l}: ${k2 < 5 ? bands[k2][2] : entries.filter((e) => !e.rating).length}`).join(', '))}">${BAND_DEFS.map(([l, , , col], k2) => { const n = k2 < 5 ? bands[k2][2] : entries.filter((e) => !e.rating).length; return n ? `<i style="width:${(n / Math.max(1, entries.length)) * 100}%;background:${col}" title="${l}: ${n}"></i>` : ''; }).join('')}</div>${legendHtml()}</div></div>
     </div>
     <p class="sub center" style="margin-top:28px">${s.memoryCount} of ${s.total} shows were logged from memory. We trust you.</p>`);
   ctx.on('click', '[data-action=share-recap]', async () => {

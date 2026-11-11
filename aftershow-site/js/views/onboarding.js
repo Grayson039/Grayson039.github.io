@@ -3,10 +3,11 @@
 import { app, knobInput, bindKnob, coverStyle, coverClass, posterWall, toast, avatar } from '../ui.js';
 import { invalidateCovers } from '../covers.js';
 import { applyTheme } from '../theme.js';
-import { esc, todayISO, friendlyError, formatDate, ratingDial, norm } from '../util.js';
+import { esc, todayISO, friendlyError, formatDate, ratingDial, norm, splitCity, joinCity, stateOptions, LIMITS } from '../util.js';
 import { validatePhoto } from '../photo.js';
 
-const STEPS = ['Pick your amp', 'Plug in your history', 'Your profile', 'First show'];
+const STEPS = ['Pick your amp', 'Plug in your history', 'Your profile', 'Near you', 'First show'];
+const LAST = STEPS.length;
 const LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 
 const amp = (k, name, desc) => `<button type="button" class="amp ${k} ${app.theme === k ? 'on' : ''}" role="radio" aria-checked="${app.theme === k}" data-theme-pick="${k}">
@@ -15,7 +16,7 @@ const amp = (k, name, desc) => `<button type="button" class="amp ${k} ${app.them
   <span class="amp-name">${name}</span><span class="amp-desc">${desc}</span></button>`;
 
 export async function onboarding(ctx) {
-  const st = { step: Math.min(4, Math.max(1, Number(ctx.query.step) || 1)), privacy: app.profile.settings?.private ? 'private' : 'public', demo: { votes: [212, 140, 96], mine: -1, photoOn: false }, photo: '', done: false, ownPhoto: '', file: null, form: { artist: '', venue: '', city: '', date: '', note: '', rating: 0 } };
+  const st = { step: Math.min(LAST, Math.max(1, Number(ctx.query.step) || 1)), go: ctx.query.go === '1', loc: { city: splitCity(app.profile.settings?.location).city, state: splitCity(app.profile.settings?.location).state }, privacy: app.profile.settings?.private ? 'private' : 'public', demo: { votes: [212, 140, 96], mine: -1, photoOn: false }, photo: '', done: false, ownPhoto: '', file: null, form: { artist: '', venue: '', city: '', date: '', note: '', rating: 0 } };
   const sugg = await app.api.suggestions().catch(() => ({ artists: [], venues: [] }));
   const serial = () => String([...(st.form.artist || 'first')].reduce((a, c) => a + c.charCodeAt(0) * 7, 1) % 10000).padStart(4, '0');
 
@@ -41,7 +42,8 @@ export async function onboarding(ctx) {
     if (st.step === 1) {
       return `<h2 class="serif">Pick your amp.</h2><p class="sub">Both looks are first-class. Pick one, or turn the dial. The whole site changes live.</p>
         <div class="amps" role="radiogroup" aria-label="Theme">${amp('dark', 'Marshall Dark', 'Black tolex, gold piping.')}${amp('light', 'Orange Vintage', 'Cream baffle cloth, ink black.')}</div>
-        <button type="button" class="ob-dial" data-action="flip"><span class="knob" aria-hidden="true"><i></i></span><span>Turn the dial</span></button>`;
+        <button type="button" class="ob-dial" data-action="flip"><span class="knob" aria-hidden="true"><i></i></span><span>Turn the dial</span></button>
+        <p class="ob-foot">You can change your look any time from the menu or in Settings.</p>`;
     }
     if (st.step === 2) {
       return `<h2 class="serif">Plug in your history.</h2><p class="sub">Already tracking shows somewhere else? Import a CSV from Concert Archives or any spreadsheet and skip the re-typing.</p>
@@ -82,12 +84,23 @@ export async function onboarding(ctx) {
         </div>
         <p class="pv-summary">Public gets you community posters and a say in every cover. Private keeps it all yours.</p>`;
     }
+    if (st.step === 4) {
+      return `<h2 class="serif">Shows near you.</h2><p class="sub">Add your city and we can point you to venues and shows close to home as the community grows. Only your city is stored. Never an address, and you can clear it in Settings.</p>
+        <form id="locForm" class="ob-loc" novalidate><div class="ob-two"><div class="field"><label for="lCity">City</label><input id="lCity" name="home-city" autocomplete="off" autocorrect="off" data-lpignore="true" maxlength="${LIMITS.city}" value="${esc(st.loc.city)}" placeholder="e.g. Minneapolis"></div>
+          <div class="field"><label for="lState">State</label><select id="lState" name="home-state" autocomplete="off">${stateOptions(st.loc.state)}</select></div></div></form>
+        <p class="ob-skip-line"><button class="link-btn" type="button" data-action="next">Skip for now</button></p>`;
+    }
+    if (!st.go) {
+      return `<div class="ob-ready"><h2 class="serif">Are you ready to log your first show?</h2><p class="sub">Any show, from last night or from 2009. No ticket, no proof. It takes about a minute, and your poster builds as you type.</p>
+        <div class="detail-actions"><button class="btn-block inline" type="button" data-action="go-log">Yes, log it</button><button class="btn" type="button" data-action="go-profile">Not yet, take me to my profile</button></div></div>`;
+    }
     const f = st.form;
     return `<h2 class="serif">Log your first show.</h2><p class="sub">Any show, from last night or from 2009. No ticket, no proof. Watch the poster build as you type.</p>
       <div class="ob-log"><form id="obForm" novalidate>
-        <div class="field"><label for="oArtist">Who did you see?</label><input id="oArtist" list="oArtists" autocomplete="off" value="${esc(f.artist)}" placeholder="e.g. Tool"><datalist id="oArtists">${sugg.artists.map((a) => `<option value="${esc(a)}">`).join('')}</datalist></div>
-        <div class="ob-two"><div class="field"><label for="oVenue">Venue</label><input id="oVenue" list="oVenues" autocomplete="off" value="${esc(f.venue)}" placeholder="e.g. Xcel Energy Center"><datalist id="oVenues">${sugg.venues.map((v) => `<option value="${esc(v.name)}">`).join('')}</datalist></div>
-          <div class="field"><label for="oCity">City</label><input id="oCity" value="${esc(f.city)}" placeholder="St. Paul, MN"></div></div>
+        <div class="field"><label for="oArtist">Who did you see?</label><input id="oArtist" list="oArtists" autocomplete="off" maxlength="${LIMITS.artist}" value="${esc(f.artist)}" placeholder="e.g. Tool"><datalist id="oArtists">${sugg.artists.map((a) => `<option value="${esc(a)}">`).join('')}</datalist></div>
+        <div class="field"><label for="oVenue">Venue</label><input id="oVenue" list="oVenues" autocomplete="off" maxlength="${LIMITS.venue}" value="${esc(f.venue)}" placeholder="e.g. Xcel Energy Center"><datalist id="oVenues">${sugg.venues.map((v) => `<option value="${esc(v.name)}">`).join('')}</datalist></div>
+        <div class="ob-two"><div class="field"><label for="oCity">City</label><input id="oCity" name="show-city" autocomplete="off" autocorrect="off" data-lpignore="true" maxlength="${LIMITS.city}" value="${esc(splitCity(f.city).city)}" placeholder="St. Paul"></div>
+          <div class="field"><label for="oState">State</label><select id="oState" name="show-state" autocomplete="off">${stateOptions(splitCity(f.city).state)}</select></div></div>
         <div class="field"><label for="oDate">Date</label><input id="oDate" type="date" max="${todayISO()}" value="${esc(f.date)}"></div>
         <div class="field"><label id="ratingLabel">How was it?</label>${knobInput('rating', f.rating)}</div>
         <div class="auth-msg error" id="obErr" role="alert"></div>
@@ -103,7 +116,7 @@ export async function onboarding(ctx) {
     return `<li class="${n === st.step && !st.done ? 'now' : ''}" ${n === st.step && !st.done ? 'aria-current="step"' : ''}><i class="pilot ${on ? 'on' : 'off'}" aria-hidden="true"></i><span>${s}</span></li>`;
   }).join('')}</ol>`;
 
-  const nav = () => st.done ? '' : `<div class="step-nav">${st.step > 1 ? '<button class="btn" type="button" data-action="back-step">Back</button>' : '<span></span>'}${st.step < 4 ? '<button class="btn primary" type="button" data-action="next">Next</button>' : '<span></span>'}</div>`;
+  const nav = () => st.done ? '' : `<div class="step-nav">${st.step > 1 ? '<button class="btn" type="button" data-action="back-step">Back</button>' : '<span></span>'}${st.step < LAST ? '<button class="btn primary" type="button" data-action="next">Next</button>' : '<span></span>'}</div>`;
 
   const paint = () => {
     ctx.setHTML(`<div class="ob-stage">${posterWall()}
@@ -132,8 +145,15 @@ export async function onboarding(ctx) {
     if (p) st.demo.photoOn = !st.demo.photoOn;
     paint();
   });
-  ctx.on('click', '[data-action=next]', async () => { if (st.step === 3) await savePrivacy(); st.step = Math.min(4, st.step + 1); paint(); });
-  ctx.on('click', '[data-action=back-step]', () => { st.step = Math.max(1, st.step - 1); paint(); });
+  const saveLoc = async () => {
+    const city = ctx.view.querySelector('#lCity')?.value ?? st.loc.city, state = ctx.view.querySelector('#lState')?.value ?? st.loc.state;
+    st.loc = { city, state };
+    try { app.profile = { ...app.profile, ...(await app.api.updateMyProfile({ settings: { location: joinCity(city, state) } })) }; } catch (e) { toast(friendlyError(e), 'error'); }
+  };
+  ctx.on('click', '[data-action=next]', async () => { if (st.step === 3) await savePrivacy(); if (st.step === 4) await saveLoc(); st.step = Math.min(LAST, st.step + 1); paint(); });
+  ctx.on('click', '[data-action=go-log]', () => { st.go = true; paint(); ctx.view.querySelector('#oArtist')?.focus(); });
+  ctx.on('click', '[data-action=go-profile]', async () => { app.profile.onboarded = true; await app.api.updateMyProfile({ onboarded: true }).catch(() => {}); location.hash = '#/me'; });
+  ctx.on('click', '[data-action=back-step]', () => { if (st.step === LAST && st.go) st.go = false; else st.step = Math.max(1, st.step - 1); paint(); });
   const finish = async () => { app.profile.onboarded = true; await app.api.updateMyProfile({ onboarded: true }).catch(() => {}); location.hash = '#/shows'; };
   ctx.on('click', '[data-action=finish]', finish);
   ctx.on('click', '[data-action=finish-link]', () => { app.profile.onboarded = true; });
@@ -142,7 +162,7 @@ export async function onboarding(ctx) {
   let lookup;
   const read = () => {
     const v = (id) => ctx.view.querySelector(id)?.value ?? '';
-    Object.assign(st.form, { artist: v('#oArtist'), venue: v('#oVenue'), city: v('#oCity'), date: v('#oDate'), rating: +(ctx.view.querySelector('[name=rating]')?.value || 0) });
+    Object.assign(st.form, { artist: v('#oArtist'), venue: v('#oVenue'), city: joinCity(v('#oCity'), v('#oState')), date: v('#oDate'), rating: +(ctx.view.querySelector('[name=rating]')?.value || 0) });
   };
   const onChange = (e) => {
     if (!e.target.closest?.('#obForm')) return;
@@ -158,7 +178,7 @@ export async function onboarding(ctx) {
   };
   ctx.view.addEventListener('input', onChange);
   ctx.view.addEventListener('change', onChange);
-  ctx.on('change', '#oVenue', (_, el) => { const v = sugg.venues.find((x) => x.name.toLowerCase() === el.value.trim().toLowerCase()); const c = ctx.view.querySelector('#oCity'); if (v?.city && c && !c.value) { c.value = v.city; read(); repaintPoster(); } });
+  ctx.on('change', '#oVenue', (_, el) => { const v = sugg.venues.find((x) => x.name.toLowerCase() === el.value.trim().toLowerCase()); const c = ctx.view.querySelector('#oCity'); if (v?.city && c && !c.value) { const sc = splitCity(v.city); c.value = sc.city; const s = ctx.view.querySelector('#oState'); if (s) s.value = sc.state; read(); repaintPoster(); } });
 
   const note = (t, bad) => { const n = ctx.view.querySelector('#oPhotoNote'); if (n) { n.textContent = t; n.style.color = bad ? 'var(--live-text)' : ''; } };
   ctx.on('click', '[data-action=add-photo]', () => ctx.view.querySelector('#oPhoto')?.click());

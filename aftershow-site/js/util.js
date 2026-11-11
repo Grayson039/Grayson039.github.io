@@ -98,3 +98,14 @@ export function fuzzyMatch(text, query) {
   const words = t.split(/[\s,.'’-]+/).filter(Boolean);
   return q.split(' ').every((w) => w.length < 3 ? words.some((x) => x.startsWith(w)) : words.some((x) => x.startsWith(w) || editDistance(x.slice(0, w.length + 1), w) <= (w.length >= 5 ? 2 : 1)));
 }
+
+/* ---------- city + state (a dropdown, so browsers can't autofill a wrong city and names stay consistent) ---------- */
+export const US_STATES = [['AL', 'Alabama'],['AK', 'Alaska'],['AZ', 'Arizona'],['AR', 'Arkansas'],['CA', 'California'],['CO', 'Colorado'],['CT', 'Connecticut'],['DE', 'Delaware'],['DC', 'District of Columbia'],['FL', 'Florida'],['GA', 'Georgia'],['HI', 'Hawaii'],['ID', 'Idaho'],['IL', 'Illinois'],['IN', 'Indiana'],['IA', 'Iowa'],['KS', 'Kansas'],['KY', 'Kentucky'],['LA', 'Louisiana'],['ME', 'Maine'],['MD', 'Maryland'],['MA', 'Massachusetts'],['MI', 'Michigan'],['MN', 'Minnesota'],['MS', 'Mississippi'],['MO', 'Missouri'],['MT', 'Montana'],['NE', 'Nebraska'],['NV', 'Nevada'],['NH', 'New Hampshire'],['NJ', 'New Jersey'],['NM', 'New Mexico'],['NY', 'New York'],['NC', 'North Carolina'],['ND', 'North Dakota'],['OH', 'Ohio'],['OK', 'Oklahoma'],['OR', 'Oregon'],['PA', 'Pennsylvania'],['RI', 'Rhode Island'],['SC', 'South Carolina'],['SD', 'South Dakota'],['TN', 'Tennessee'],['TX', 'Texas'],['UT', 'Utah'],['VT', 'Vermont'],['VA', 'Virginia'],['WA', 'Washington'],['WV', 'West Virginia'],['WI', 'Wisconsin'],['WY', 'Wyoming']];
+export function splitCity(v = '') {
+  const m = String(v).match(/^(.*?),\s*([A-Z]{2})$/);
+  return m && US_STATES.some((s) => s[0] === m[2]) ? { city: m[1].trim(), state: m[2] } : { city: String(v).trim(), state: '' };
+}
+export const joinCity = (city, state) => { const c = String(city || '').trim(); return c && state ? `${c}, ${state}` : c; };
+export const stateOptions = (sel = '') => `<option value="">State or region</option>${US_STATES.map(([a, n]) => `<option value="${a}" ${a === sel ? 'selected' : ''}>${n}</option>`).join('')}`;
+// Long values would overflow a poster, so each field has a cap. The poster also shrinks text that still doesn't fit.
+export const LIMITS = { artist: 40, venue: 40, city: 28 };

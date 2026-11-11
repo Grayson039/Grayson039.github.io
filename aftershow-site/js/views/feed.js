@@ -38,10 +38,18 @@ export async function feed(ctx) {
     <section class="rail-card"><h2>Most logged</h2><div class="pill-row">${data.popular.map((a) => `<a class="chip" href="#/artist/${a.id}">${esc(a.name)} <span class="meta">${a.logs}</span></a>`).join('') || '<p class="sub">Nothing yet.</p>'}</div></section>
   </aside>`;
   const left = `<aside class="rail rail-left" aria-label="Your corner">${liveCta()}${voteCta(data.photos)}${recentShowsCard(data.recent)}</aside>`;
+  // best photos first: the community's top covers sit above everything else
+  const seen = new Set();
+  const topPics = [...data.photos].sort((a, b) => (b.votes || 0) - (a.votes || 0)).filter((p) => !seen.has(p.showId) && seen.add(p.showId)).slice(0, 10).map((p) => {
+    const e = [...data.list, ...data.recent].find((x) => x.showId === p.showId);
+    return e ? `<a class="tp-item" style="--photo:url('${esc(p.url)}')" href="#/entry/${e.id}" aria-label="${esc(e.artistName)} photo, ${Number(p.votes || 0)} votes"><span><b>${esc(e.artistName)}</b>▲ ${Number(p.votes || 0)}</span></a>` : '';
+  }).filter(Boolean).join('');
+  const topStrip = topPics ? `<section class="top-photos" aria-label="Top photos"><h2>Top photos <a href="#/vote">Vote</a></h2><div class="tp-row">${topPics}</div></section>` : '';
+  const followCard = tab === 'friends' && data.people.length ? `<section class="card follow-card"><h2>Start following people</h2><p class="sub">Follow fans to see their nights here.</p>${data.people.map((p) => personRow(p)).join('')}</section>` : '';
   let shown = 20;
   const postsHtml = () => (data.list.length ? data.list.slice(0, shown).map((e) => post(e)).join('') + (data.list.length > shown ? '<div class="center"><button class="btn" type="button" data-more>Load more</button></div>' : '') : `<div class="card">${emptyCopy}</div>`);
-  ctx.setHTML(`${head}<div class="feed-layout">${left}<div class="feed-col">${nav}
-    <div id="feedList">${postsHtml()}</div>
+  ctx.setHTML(`${head}<div class="feed-layout">${left}<div class="feed-col">${topStrip}${nav}
+    ${followCard}<div id="feedList">${postsHtml()}</div>
     <div class="center"><button class="btn" type="button" data-action="retry">Refresh</button></div></div>${rail}</div>`);
   bindSocial(ctx);
   ctx.on('click', '[data-more]', () => { shown += 20; ctx.view.querySelector('#feedList').innerHTML = postsHtml(); });

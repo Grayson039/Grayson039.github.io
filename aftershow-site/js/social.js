@@ -1,5 +1,5 @@
 // Delegated like / follow handlers shared by every screen that shows those buttons.
-import { app, toast, followButton, likeButton } from './ui.js';
+import { app, toast, followButton, likeButton, boltBurst } from './ui.js';
 import { friendlyError } from './util.js';
 
 export function bindSocial(ctx, { onFollowChange } = {}) {
@@ -20,7 +20,7 @@ export function bindSocial(ctx, { onFollowChange } = {}) {
   ctx.on('click', '[data-action=vote-photo]', async (ev, btn) => {
     ev.stopPropagation();
     const on = btn.getAttribute('aria-pressed') !== 'true'; btn.disabled = true;
-    try { await app.api.votePhoto(btn.dataset.id, on); toast(on ? 'Vote counted' : 'Vote removed'); ctx.rerun(); }
+    try { await app.api.votePhoto(btn.dataset.id, on); if (on) boltBurst(btn); toast(on ? 'Vote counted' : 'Vote removed'); setTimeout(() => ctx.rerun(), on ? 450 : 0); }
     catch (e) { toast(friendlyError(e), 'error'); btn.disabled = false; }
   });
   ctx.on('click', '[data-action=follow]', async (ev, btn) => {

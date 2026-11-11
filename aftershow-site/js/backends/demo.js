@@ -458,7 +458,7 @@ export const api = {
   },
   async listPhotos({ artistId, showId } = {}) {
     await delay(30);
-    return db.photos.filter((p) => { const s = db.shows.find((x) => x.id === p.showId); return s && (!artistId || s.artistId === artistId) && (!showId || p.showId === showId); }).map(hydratePhoto).sort((a, b) => b.votes - a.votes);
+    return db.photos.filter((p) => { const s = db.shows.find((x) => x.id === p.showId); return s && (p.uploaderId === me()?.id || canSee(p.uploaderId)) && (!artistId || s.artistId === artistId) && (!showId || p.showId === showId); }).map(hydratePhoto).sort((a, b) => b.votes - a.votes);
   },
   async uploadPhoto(showId, file, onProgress) {
     const u = needMe();

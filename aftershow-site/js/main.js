@@ -1,6 +1,6 @@
 // Aftershow app bootstrap: pick backend (live Supabase or local demo), auth gate, shell, router.
 import { LIVE_SIGNUPS } from './config.js';
-import { app, avatar, toast, coverStyle, posterWall, passwordDialog } from './ui.js';
+import { app, avatar, toast, coverStyle, posterWall, passwordDialog, fitCoverNames } from './ui.js';
 import { esc, friendlyError } from './util.js';
 import { startRouter, currentPath } from './router.js';
 import { initialTheme, applyTheme, toggleTheme } from './theme.js';
@@ -50,14 +50,24 @@ function navGroup(path) {
 }
 function paintNav(path) {
   const active = navGroup(path);
-  $('#sidenav').innerHTML = NAV.filter((n) => !n.cta && !n.bottomOnly).map((n) => `<a class="nav-item ${n.id === active ? 'active' : ''}" href="${n.href}" ${n.id === active ? 'aria-current="page"' : ''}><span class="nav-icon" aria-hidden="true">${n.icon}</span><span>${n.label}</span>${n.id === 'activity' ? '<i class="nav-dot" hidden></i>' : ''}</a>`).join('');
+  const items = NAV.filter((n) => !n.cta && !n.bottomOnly).map((n) => `<a class="nav-item ${n.id === active ? 'active' : ''}" href="${n.href}" ${n.id === active ? 'aria-current="page"' : ''}><span class="nav-icon" aria-hidden="true">${n.icon}</span><span>${n.label}</span>${n.id === 'activity' ? '<i class="nav-dot" hidden></i>' : ''}</a>`).join('');
+  $('#sidenav').innerHTML = items;
+  // the mobile menu also lists Me, because there is no bottom bar any more
+  const me = NAV.find((n) => n.id === 'me');
+  $('#drawerNav').innerHTML = items + `<a class="nav-item ${active === 'me' ? 'active' : ''}" href="${me.href}"><span class="nav-icon" aria-hidden="true">${me.icon}</span><span>${me.label}</span></a>`;
   paintBadge();
   const chip = $('#userChip'); chip.classList.toggle('active', active === 'me'); if (active === 'me') chip.setAttribute('aria-current', 'page'); else chip.removeAttribute('aria-current');
-  $('#navCta').innerHTML = '<a class="btn-accent wide" href="#/log">+ Log a show</a>';
-  $('#bottomNav').innerHTML = NAV.filter((n) => !n.side).map((n) => n.cta
-    ? `<a class="bnav-item" href="${n.href}" aria-label="${n.label}"><span class="bnav-log" aria-hidden="true">${n.icon}</span></a>`
-    : `<a class="bnav-item ${n.id === active ? 'active' : ''}" href="${n.href}" ${n.id === active ? 'aria-current="page"' : ''}><span class="bnav-icon" aria-hidden="true">${n.icon}</span><span class="bnav-label">${n.label}</span></a>`).join('');
+  closeDrawer();
 }
+/* ---------- mobile menu (replaces the bottom tab bar, which fights Safari's own bottom bar) ---------- */
+function openDrawer() { $('#drawer').hidden = false; $('#scrim').hidden = false; $('#burger').setAttribute('aria-expanded', 'true'); document.body.classList.add('drawer-open'); $('#drawerClose').focus(); }
+function closeDrawer() { if ($('#drawer').hidden) return; $('#drawer').hidden = true; $('#scrim').hidden = true; $('#burger').setAttribute('aria-expanded', 'false'); document.body.classList.remove('drawer-open'); }
+document.addEventListener('click', (e) => {
+  if (e.target.closest('#burger')) openDrawer();
+  else if (e.target.closest('#drawerClose') || e.target.id === 'scrim') { closeDrawer(); $('#burger').focus(); }
+  else if (e.target.closest('#signOutBtn2')) { closeDrawer(); app.api?.signOut?.(); }
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#drawer').hidden) { closeDrawer(); $('#burger').focus(); } });
 function paintBadge() {
   const n = app.unread || 0;
   document.querySelectorAll('.nav-dot, .bell-dot').forEach((d) => { d.hidden = !n; d.textContent = n > 9 ? '9+' : String(n); });
@@ -67,6 +77,7 @@ function paintUser() {
   const p = app.profile; if (!p) return;
   $('#userChip').innerHTML = `${avatar(p.avatarUrl, p.username, 30)}<span class="user-info"><span class="user-name">${esc(p.username)}</span>${app.mode === 'demo' ? '<span class="user-meta">Demo mode</span>' : ''}</span>`;
   $('#userChip').href = '#/me';
+  $('#drawerUser').innerHTML = $('#userChip').innerHTML;
   $('#modeBanner').hidden = app.mode !== 'demo';
 }
 document.addEventListener('profile-changed', paintUser);
@@ -85,7 +96,8 @@ const ROUTES = [
   { path: '/settings', title: 'Settings', view: settings, narrow: true }, { path: '/activity', title: 'Activity', view: activity }, { path: '/vote', title: 'Vote on photos', view: vote },
   { path: '/welcome', title: 'Welcome', view: onboarding }, { path: '/import', title: 'Import', view: importCsv, narrow: true }
 ];
-let routerStarted = false, badgeTimer = null;
+let routerStarted = false, badgeTimer = null, fitQueued = false;
+new MutationObserver(() => { if (fitQueued) return; fitQueued = true; requestAnimationFrame(() => { fitQueued = false; fitCoverNames(document.getElementById('main') || document); }); }).observe(document.body, { childList: true, subtree: true });
 function startApp() {
   $('#gate').hidden = true; $('#app').hidden = false;
   paintUser();
@@ -211,7 +223,7 @@ function bootHelp() {
 }
 async function boot() {
   const watchdog = setTimeout(bootHelp, 7000);
-  $('#themeToggle').onclick = $('#themeToggleMobile').onclick = toggleTheme;
+  $('#themeToggle').onclick = $('#themeToggleDrawer').onclick = toggleTheme;
   window.addEventListener('storage', (e) => { if (e.key === 'aftershow-theme' && (e.newValue === 'dark' || e.newValue === 'light')) applyTheme(e.newValue); });
   window.addEventListener('offline', () => { $('#offline').hidden = false; });
   window.addEventListener('online', () => { $('#offline').hidden = true; toast('Back online'); });

@@ -27,7 +27,7 @@ export async function settings(ctx) {
       <button type="button" class="toggle-opt ${app.theme === 'light' ? 'active' : ''}" role="radio" aria-checked="${app.theme === 'light'}" data-theme-pick="light">Orange Vintage</button></div></div>
     ${sectionHead('Privacy & notifications')}
     <div class="card list-card">
-      ${toggle('sPrivate', 'Private mode', 'Only you and your followers see your logs. Your posters use only your own photos, and you sit out the cover vote.', s.private)}
+      ${toggle('sPrivate', 'Private mode', 'Only you and your followers see your logs and photos. You can still vote on covers and join the community.', s.private)}
       ${toggle('sNotifFollow', 'New followers', 'Preference saved; email delivery ships with launch.', s.notifyFollowers !== false)}
       ${toggle('sNotifLike', 'Likes on your logs', 'Preference saved; email delivery ships with launch.', s.notifyLikes !== false)}
     </div>

@@ -75,6 +75,10 @@ export async function artistPage(ctx) {
       <div class="detail-actions" id="followWrap" style="margin:0">${followBtn(artist.followedByMe)}<a class="btn" href="#/log?artist=${encodeURIComponent(artist.name)}">Log a show</a><span class="cover-meta"><span id="fcount">${artist.followerCount}</span> following</span></div>
     </header>
     ${statRow([[entries.length, 'Logs'], [fans.size, 'Fans'], [repeat, 'Seen them twice+'], [rating ? rating.toFixed(1) : '—', 'Avg rating']])}
+    <nav class="learn-links" aria-label="More about ${esc(artist.name)}"><span>More about them</span>
+      <a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(artist.name + ' band musician')}" target="_blank" rel="noopener noreferrer">Wikipedia</a>
+      <a href="https://www.setlist.fm/search?query=${encodeURIComponent(artist.name)}" target="_blank" rel="noopener noreferrer">Setlist.fm</a>
+      <a href="https://musicbrainz.org/search?type=artist&query=${encodeURIComponent(artist.name)}" target="_blank" rel="noopener noreferrer" title="Official site and social links">Socials &amp; links</a></nav>
     ${photos.length ? `${sectionHead('Fan photos')}<div class="card">${photoStrip(photos.slice(0, 6), 'Community photos', { vote: true })}</div>` : ''}
     ${topSongs.length ? `${sectionHead('Most-played songs')}<div class="card list-card"><ol class="song-list">${topSongs.map(([s, n]) => `<li><span class="t">${esc(s)}</span><span class="song-count">${n} setlist${n === 1 ? '' : 's'}</span></li>`).join('')}</ol></div>` : ''}
     ${sectionHead('Shows')}<div class="card list-card">${shows.length ? shows.slice(0, 12).map(showRow).join('') : emptyState('No shows logged.')}</div>

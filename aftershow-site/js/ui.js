@@ -69,8 +69,8 @@ export function post(e, { fallbackPhoto = '' } = {}) {
   const ph = asPhoto(e.cover || e.photos?.[0] || fallbackPhoto); const photo = ph?.url || '';
   const where = [e.venueName, e.city].filter(Boolean).join(', ');
   const peek = (e.setlist || []).slice(0, 3);
-  return `<article class="post">
-    <div class="post-head">${avatar(e.avatarUrl, e.username, 40)}
+  return `<article class="post" data-href="#/entry/${e.id}">
+    <div class="post-head"><a class="post-avatar" href="#/u/${encodeURIComponent(e.username)}" aria-label="${esc(e.username)}'s profile">${avatar(e.avatarUrl, e.username, 40)}</a>
       <div class="who"><a class="name" href="#/u/${encodeURIComponent(e.username)}">${esc(e.username)}</a><span class="meta">${esc(where)}</span></div>
       <span class="when">${esc(relativeTime(e.createdAt))}</span></div>
     <a class="post-media ${coverClass(photo)}" style="${coverStyle(e.artistName, photo)}" href="#/entry/${e.id}" aria-label="${esc(e.artistName)}, ${esc(where)}">
@@ -149,12 +149,10 @@ export function knobInput(name, value = 0) {
   const v = Math.max(0, Math.min(10, +value || 0));
   const ticks = Array.from({ length: 11 }, (_, i) => `<i class="k-tick${i % 5 === 0 ? ' big' : ''}${v > 0 && i <= v ? ' on' : ''}" style="--a:${-135 + i * 27}deg"></i>`).join('');
   return `<div class="knob-input" data-knob>
-    <div class="k-dial" role="slider" tabindex="0" aria-label="Rating" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${v}" aria-valuetext="${v ? v + ' out of 10' : 'Not rated'}" style="--v:${v}">${ticks}<span class="k-cap"><i></i></span></div>
-    <div class="k-side">
-      <div class="k-read"><output class="k-num${v ? '' : ' empty'}" aria-hidden="true">${v || '–'}</output><span>/ 10</span></div>
-      <span class="k-hint">Drag the knob or use the arrow keys. Save the top end for nights that wrecked you.</span>
-      <button type="button" class="btn star-clear" data-action="clear-rating">Clear</button>
-    </div>
+    <div class="k-frame"><div class="k-dial" role="slider" tabindex="0" aria-label="Rating" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${v}" aria-valuetext="${v ? v + ' out of 10' : 'Not rated'}" style="--v:${v}">${ticks}<span class="k-cap"><i></i></span></div></div>
+    <div class="k-read"><output class="k-num${v ? '' : ' empty'}" aria-hidden="true">${v || '–'}</output><span>/ 10</span></div>
+    <span class="k-hint">Drag the knob or use the arrow keys. Save the top end for nights that wrecked you.</span>
+    <button type="button" class="btn star-clear" data-action="clear-rating">Clear</button>
     <input type="hidden" name="${name}" value="${v || ''}">
   </div>`;
 }
@@ -254,3 +252,30 @@ export const posterWall = () => `<div class="gate-wall" aria-hidden="true">${WAL
   return `<div class="wall-col c${i + 1}">${posters}${posters}</div>`; // doubled so the drift loops seamlessly
 }).join('')}</div><div class="gate-shade" aria-hidden="true"></div>`;
 
+
+/* Lightning-bolt burst for a vote. Pure decoration: removed after a moment, skipped for reduced motion. */
+export function boltBurst(el) {
+  if (!el || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  const r = el.getBoundingClientRect(), layer = document.createElement('div');
+  layer.className = 'bolt-layer'; layer.setAttribute('aria-hidden', 'true');
+  layer.style.cssText = `left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px`;
+  for (let i = 0; i < 9; i++) {
+    const b = document.createElement('span'); const a = (Math.PI * 2 * i) / 9 + Math.random() * 0.5, d = 46 + Math.random() * 50;
+    b.textContent = '⚡'; b.style.cssText = `--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d - 24}px;--rot:${Math.round(Math.random() * 60 - 30)}deg;--s:${(0.8 + Math.random() * 0.9).toFixed(2)}`;
+    layer.appendChild(b);
+  }
+  document.body.appendChild(layer); setTimeout(() => layer.remove(), 900);
+}
+
+/* Long artist names shrink until they fit in three lines, so a poster never overflows. Called after every render. */
+export function fitCoverNames(root = document) {
+  root.querySelectorAll('.cover-name').forEach((el) => {
+    if (!el.offsetParent) return;
+    el.style.fontSize = '';
+    const cs = getComputedStyle(el); const orig = parseFloat(cs.fontSize); let fs = orig;
+    const ratio = (parseFloat(cs.lineHeight) || orig * 1.05) / orig; // line-height as a multiple of the font size
+    const lines = el.closest('.tile,.wall-poster,.pv-poster') ? 2 : 3;
+    let guard = 0;
+    while (el.scrollHeight > fs * ratio * lines + 2 && fs > 13 && guard++ < 30) { fs -= 2; el.style.fontSize = fs + 'px'; }
+  });
+}

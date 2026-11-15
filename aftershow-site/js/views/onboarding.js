@@ -5,7 +5,7 @@ import { invalidateCovers } from '../covers.js';
 import { applyTheme } from '../theme.js';
 import { esc, todayISO, friendlyError, formatDate, ratingDial, norm, splitCity, joinCity, stateOptions, LIMITS } from '../util.js';
 import { validatePhoto } from '../photo.js';
-import { GENRES, sceneSvg, thumbSvg } from './stageScene.js';
+import { GENRES, GENRE_GROUPS, KIND_CAPTION, kindOf, sceneSvg, thumbSvg } from './stageScene.js';
 
 const STEPS = ['Pick your amp', 'Plug in your history', 'Your night', 'Your profile', 'Near you', 'First show'];
 const LAST = STEPS.length;
@@ -63,7 +63,9 @@ export async function onboarding(ctx) {
     }
     if (st.step === 3) {
       return `<h2 class="serif">What’s your kind of night?</h2><p class="sub">Pick the shows you go to most. It sets the scene on the next screen. You can skip this.</p>
-        <div class="gn-grid" role="radiogroup" aria-label="Kind of shows">${GENRES.map((g) => `<button type="button" class="gn-opt ${st.genre === g.id ? 'on' : ''}" role="radio" aria-checked="${st.genre === g.id}" data-genre="${g.id}">${thumbSvg(g.id)}<span class="gn-name">${esc(g.label)}</span><span class="gn-hint">${esc(g.hint)}</span></button>`).join('')}</div>`;
+        <div class="gn-pick"><label class="sr-only" for="genreSel">Genre</label>
+          <select id="genreSel" class="gn-select" name="genre" autocomplete="off"><option value="">Choose a genre</option>${GENRE_GROUPS.map((g) => `<optgroup label="${esc(g.label)}">${GENRES.filter((x) => x.group === g.label).map((x) => `<option value="${x.id}" ${st.genre === x.id ? 'selected' : ''}>${esc(x.label)}</option>`).join('')}</optgroup>`).join('')}</select>
+          <figure class="gn-preview">${thumbSvg(st.genre)}<figcaption id="gnCaption" aria-live="polite">${esc(st.genre ? KIND_CAPTION[kindOf(st.genre)] : 'Pick a genre to change the scene.')}</figcaption></figure></div>`;
     }
     if (st.step === 4) {
       const m = st.privacy;
@@ -139,9 +141,11 @@ export async function onboarding(ctx) {
     if (!!app.profile.settings?.private === priv && app.profile.settings?.private !== undefined) return;
     try { app.profile = { ...app.profile, ...(await app.api.updateMyProfile({ settings: { private: priv } })) }; invalidateCovers(); } catch (e) { toast(friendlyError(e), 'error'); }
   };
-  ctx.on('click', '[data-genre]', (_, b) => {
-    st.genre = b.dataset.genre;
-    ctx.view.querySelectorAll('[data-genre]').forEach((x) => { const on = x.dataset.genre === st.genre; x.classList.toggle('on', on); x.setAttribute('aria-checked', on); });
+  ctx.on('change', '#genreSel', (_, sel) => {
+    st.genre = sel.value;
+    const fig = ctx.view.querySelector('.gn-preview');
+    fig.querySelector('svg').outerHTML = thumbSvg(st.genre);
+    fig.querySelector('#gnCaption').textContent = st.genre ? KIND_CAPTION[kindOf(st.genre)] : 'Pick a genre to change the scene.';
     app.api.updateMyProfile({ settings: { genre: st.genre } }).then((p) => { app.profile = { ...app.profile, ...p }; }).catch(() => {});
   });
   ctx.on('click', '[data-privacy]', (_, b) => {

@@ -1178,14 +1178,12 @@ select{font:inherit;color:inherit;}
 @keyframes phone-glow{0%,100%{opacity:1}50%{opacity:.35}}
 .pv-one .pv-points{margin:0;}
 
-/* ---------- onboarding: kind of night ---------- */
-.gn-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:560px;}
-.gn-opt{display:flex;flex-direction:column;gap:4px;padding:8px 8px 12px;text-align:left;color:var(--text);background:var(--surface);border:1px solid var(--line-2);border-radius:18px;cursor:pointer;transition:border-color .2s,background .2s,transform .2s;}
-.gn-opt:hover{border-color:var(--accent);}
-.gn-opt.on{border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface));}
-.gn-art{display:block;width:100%;height:auto;border-radius:12px;margin-bottom:6px;}
-.gn-name{font-weight:700;font-size:15px;line-height:1.2;padding:0 4px;}
-.gn-hint{font-size:12.5px;line-height:1.35;color:var(--text-2);padding:0 4px;}
-.gn-opt:last-child:nth-child(odd){grid-column:1 / -1;}
+/* ---------- onboarding: kind of night (a dropdown, because there are a lot of genres) ---------- */
+.gn-pick{display:flex;flex-direction:column;gap:14px;max-width:480px;}
+.gn-select{width:100%;min-height:54px;padding:0 44px 0 18px;border-radius:16px;border:1px solid var(--line-2);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center/20px;color:var(--text);font:inherit;font-size:16px;font-weight:600;appearance:none;-webkit-appearance:none;cursor:pointer;}
+.gn-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent);}
+.gn-preview{margin:0;border-radius:18px;overflow:hidden;background:#0f0f11;border:1px solid var(--line-2);}
+.gn-preview .gn-art{display:block;width:100%;height:auto;max-height:240px;}
+.gn-preview figcaption{padding:10px 14px 12px;font:400 12px/1.45 var(--mono);color:rgba(255,255,255,.75);}
 .sc-extra{transition:opacity .55s ease;}
 .pv-one[data-mode=private] .sc-extra{opacity:0;}

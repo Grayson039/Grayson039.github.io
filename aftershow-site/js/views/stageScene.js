@@ -2,15 +2,25 @@
 // Who is in it depends on the kind of shows someone goes to. The centre figure never changes between the two moods;
 // in public, band-mates and dancers appear around it.
 
-export const GENRES = [
-  { id: 'rock', label: 'Rock & metal', hint: 'Riffs, pits, loud amps' },
-  { id: 'solo', label: 'Pop, R&B & hip-hop', hint: 'Solo artists, big voices' },
-  { id: 'dance', label: 'K-pop & dance', hint: 'Choreography, light sticks' },
-  { id: 'band', label: 'Bands', hint: 'Indie, folk, country, everything in a band' },
-  { id: 'mix', label: 'A bit of everything', hint: 'No favourite, just good nights' },
+// Genres shown in the picker, grouped. Each one maps to one of four acts: rock (guitarist), solo (singer with a mic),
+// dance (dancers) or band (a few players on stage).
+export const GENRE_GROUPS = [
+  { label: 'Rock & metal', kind: 'rock', items: ['Rock', 'Hard rock', 'Metal', 'Punk', 'Grunge', 'Alternative', 'Industrial'] },
+  { label: 'Pop & R&B', kind: 'solo', items: ['Pop', 'R&B', 'Soul', 'Hip-hop & rap', 'Singer-songwriter', 'Latin', 'Reggae'] },
+  { label: 'Dance', kind: 'dance', items: ['K-pop', 'J-pop', 'Electronic & EDM', 'Disco & funk'] },
+  { label: 'Bands & roots', kind: 'band', items: ['Indie', 'Folk', 'Country', 'Blues', 'Jazz', 'Classical & orchestral'] },
+  { label: 'Other', kind: 'band', items: ['A bit of everything'] },
 ];
-const KIND = { rock: 'rock', solo: 'solo', dance: 'dance', band: 'band', mix: 'band' };
-export const kindOf = (genre) => KIND[genre] || 'rock';
+const slug = (s) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export const GENRES = GENRE_GROUPS.flatMap((g) => g.items.map((label) => ({ id: slug(label), label, group: g.label, kind: g.kind })));
+const LEGACY = { rock: 'rock', solo: 'solo', dance: 'dance', band: 'band', mix: 'band' };
+export const kindOf = (genre) => GENRES.find((g) => g.id === genre)?.kind || LEGACY[genre] || 'rock';
+export const KIND_CAPTION = {
+  rock: 'A guitarist with a Flying V.',
+  solo: 'A solo artist with a mic.',
+  dance: 'Dancers, in sync.',
+  band: 'The whole band on stage.',
+};
 
 const HEAD = `<svg class="sc" viewBox="0 0 320 200" aria-hidden="true" focusable="false">
   <defs>

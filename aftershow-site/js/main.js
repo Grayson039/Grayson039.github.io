@@ -258,3 +258,14 @@ document.addEventListener('keydown', (e) => {
 });
 /* pause the drifting poster wall when the tab is hidden */
 document.addEventListener('visibilitychange', () => document.documentElement.classList.toggle('is-hidden', document.hidden));
+
+/* Touch screens have no hover, so a poster tile reveals its details on the first tap and opens on the second. Tap elsewhere to close. */
+document.addEventListener('click', (e) => {
+  if (!window.matchMedia?.('(hover: none)').matches) return;
+  const open = document.querySelector('.tile.expanded');
+  const link = e.target.closest?.('.tile a.stretch');
+  if (link) {
+    const tile = link.closest('.tile');
+    if (!tile.classList.contains('expanded')) { e.preventDefault(); open?.classList.remove('expanded'); tile.classList.add('expanded'); }
+  } else if (open && !e.target.closest?.('.tile')) open.classList.remove('expanded');
+}, true);

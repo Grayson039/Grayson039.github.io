@@ -64,7 +64,7 @@ export async function onboarding(ctx) {
       return `<h2 class="serif">Who gets to see your shows?</h2><p class="sub">Pick how you want to use Aftershow. Public is selected to start, so anyone can see what you log. You can change this any time in Settings.</p>
         <div class="privacy-split" role="radiogroup" aria-label="Profile visibility">
           <div class="pv ${isP ? 'on' : ''}" data-privacy="private">
-            <span class="pv-head"><button type="button" class="pv-radio" role="radio" aria-checked="${isP}" data-privacy="private"><b>Private</b></button><i class="pilot ${isP ? 'on' : 'off'}" aria-hidden="true"></i></span>
+            <span class="pv-head"><button type="button" class="pv-radio" role="radio" aria-checked="${isP}" data-privacy="private"><b>Private</b><small class="pv-tag">Your photos stay yours. You can still vote.</small></button><i class="pilot ${isP ? 'on' : 'off'}" aria-hidden="true"></i></span>
             <div class="pv-visual">
               <span class="pv-user">${avatar(app.profile.avatarUrl, app.profile.username, 34)}<span class="pv-who"><b>${esc(app.profile.username)}</b><small>Your archive · only you and your followers</small></span><span class="pv-lock">${LOCK}</span></span>
               <span class="pv-row">${own}<span class="pv-poster cover photo" style="--photo:url('Deftones.jpg')"><span class="cover-name">Deftones</span></span><span class="pv-poster cover photo" style="--photo:url('NineInchNailsArms.jpg')"><span class="cover-name">Nine Inch Nails</span></span></span>
@@ -73,7 +73,7 @@ export async function onboarding(ctx) {
             <ul class="pv-points">${pt('M5 7h14M5 12h14M5 17h9', 'Log shows and setlists')}${pt('M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5z', 'Only you and your followers see them')}${pt('M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7', 'Add your own photos')}</ul>
           </div>
           <div class="pv ${isP ? '' : 'on'}" data-privacy="public">
-            <span class="pv-head"><button type="button" class="pv-radio" role="radio" aria-checked="${!isP}" data-privacy="public"><b>Public</b></button><i class="pilot ${isP ? 'off' : 'on'}" aria-hidden="true"></i></span>
+            <span class="pv-head"><button type="button" class="pv-radio" role="radio" aria-checked="${!isP}" data-privacy="public"><b>Public</b><small class="pv-tag">Share your photos and shape every cover.</small></button><i class="pilot ${isP ? 'off' : 'on'}" aria-hidden="true"></i></span>
             <div class="pv-visual">
               <span class="pv-vname">Tool <small>Xcel Energy Center</small></span>
               <span class="pv-row">${cands}</span>
@@ -91,8 +91,8 @@ export async function onboarding(ctx) {
         <p class="ob-skip-line"><button class="link-btn" type="button" data-action="next">Skip for now</button></p>`;
     }
     if (!st.go) {
-      return `<div class="ob-ready"><h2 class="serif">Are you ready to log your first show?</h2><p class="sub">Any show, from last night or from 2009. No ticket, no proof. It takes about a minute, and your poster builds as you type.</p>
-        <div class="detail-actions"><button class="btn-block inline" type="button" data-action="go-log">Yes, log it</button><button class="btn" type="button" data-action="go-profile">Not yet, take me to my profile</button></div></div>`;
+      return `<div class="ob-ready"><h2 class="serif">You’re up next.</h2><p class="sub">Log your first show. It can be from last night or from 2009, with no ticket and no proof. It takes about a minute, and your poster builds as you type.</p>
+        <div class="detail-actions"><button class="btn-block inline" type="button" data-action="go-log">Go on stage</button><button class="btn" type="button" data-action="go-profile">Not yet, take me to my profile</button></div></div>`;
     }
     const f = st.form;
     return `<h2 class="serif">Log your first show.</h2><p class="sub">Any show, from last night or from 2009. No ticket, no proof. Watch the poster build as you type.</p>
@@ -116,12 +116,22 @@ export async function onboarding(ctx) {
     return `<li class="${n === st.step && !st.done ? 'now' : ''}" ${n === st.step && !st.done ? 'aria-current="step"' : ''}><i class="pilot ${on ? 'on' : 'off'}" aria-hidden="true"></i><span>${s}</span></li>`;
   }).join('')}</ol>`;
 
+  // Phones: the five labelled steps do not fit, so the setup becomes a countdown to going on stage.
+  const countdown = () => {
+    const left = st.done ? 0 : LAST - st.step + 1;
+    const title = st.done ? 'You’re on.' : STEPS[st.step - 1];
+    const sub = st.done ? 'The stage is yours.' : left === 1 ? 'Last step, then you’re on.' : `${left} steps until you’re on stage`;
+    return `<div class="ob-count" role="group" aria-label="Setup progress: ${esc(title)}. ${esc(sub)}"><span class="ob-count-n" aria-hidden="true">${left || '★'}</span>
+      <span class="ob-count-txt"><b>${esc(title)}</b><small>${esc(sub)}</small></span>
+      <span class="ob-count-bulbs" aria-hidden="true">${STEPS.map((_, i) => `<i class="pilot ${st.done || i + 1 <= st.step ? 'on' : 'off'}"></i>`).join('')}</span></div>`;
+  };
+
   const nav = () => st.done ? '' : `<div class="step-nav">${st.step > 1 ? '<button class="btn" type="button" data-action="back-step">Back</button>' : '<span></span>'}${st.step < LAST ? '<button class="btn primary" type="button" data-action="next">Next</button>' : '<span></span>'}</div>`;
 
   const paint = () => {
     ctx.setHTML(`<div class="ob-stage">${posterWall()}
       <div class="ob-panel ${st.step === 3 && !st.done ? 'wide' : ''}"><header class="ob-head"><span class="ob-brand">aftershow<span>.</span></span><span class="ob-hello">Welcome, ${esc(app.profile.username)}.</span><button type="button" class="link-btn" data-action="finish">${st.done ? 'Close' : 'Skip setup'}</button></header>
-        ${lamps()}<section class="ob-body" aria-live="polite">${body()}</section>${nav()}</div></div>`);
+        ${lamps()}${countdown()}<section class="ob-body" aria-live="polite">${body()}</section>${nav()}</div></div>`);
   };
   const repaintPoster = () => { const p = ctx.view.querySelector('#obPoster'); if (p) p.outerHTML = posterHtml(); };
 

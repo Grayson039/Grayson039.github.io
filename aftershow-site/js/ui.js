@@ -100,7 +100,7 @@ export function tile(e, { fallbackPhoto = '', showYear = true } = {}) {
   const when = [e.date ? formatDate(e.date) : '', e.city].filter(Boolean).join(' · ');
   // Resting state: name + rating only. Hover/focus opens the poster to show venue, date, uploader and votes.
   return `<article class="tile ${coverClass(photo)}" style="${coverStyle(e.artistName, photo)}">
-    <div class="t-top">${e.fromMemory ? '<span class="tag" title="Logged from memory">Memory</span>' : ''}</div>
+    <div class="t-top">${e.isLive ? liveTag(e) : e.fromMemory ? '<span class="tag" title="Logged from memory">Memory</span>' : ''}</div>
     <div class="t-bottom"><h3 class="cover-name"><a class="stretch" href="#/entry/${e.id}">${esc(e.artistName)}</a></h3>
       <div class="t-more"><div class="t-more-in"><div class="t-venue">${esc(e.venueName)}</div><div class="cover-meta t-when">${esc(when)}</div></div></div>${ratingDial(e.rating)}</div>${creditHtml(ph, ph?.community ?? !e.photos?.[0], true)}
   </article>`;

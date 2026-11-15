@@ -15,6 +15,64 @@ const amp = (k, name, desc) => `<button type="button" class="amp ${k} ${app.them
   <span class="amp-knobs" aria-hidden="true">${[0, 1, 2, 3, 4].map((i) => `<i style="--r:${-130 + i * 58 + (k === 'dark' ? 0 : 14)}deg"></i>`).join('')}</span>
   <span class="amp-name">${name}</span><span class="amp-desc">${desc}</span></button>`;
 
+const PUBLIC_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.5 2.5 14.5 0 17M12 3.5c-2.5 2.5-2.5 14.5 0 17"/></svg>';
+const pvIcon = (p) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${p}"/></svg>`;
+const PV_POINTS = {
+  private: [['M5 7h14M5 12h14M5 17h9', 'Log shows and setlists'], ['M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5z', 'Only you and your followers see them'], ['M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7', 'Add your own photos'], ['M12 19V5M6 11l6-6 6 6', 'You can still vote on every show’s best photo']],
+  public: [['M12 19V5M6 11l6-6 6 6', 'Vote on the best photo of every show'], ['M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4V7z', 'The top photo becomes the band’s cover'], ['M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4', 'No photo of your own? You still get a great poster']],
+};
+const PV_CAPTION = { private: 'Your archive. Only you and your followers.', public: 'Your shows join the community. The top photo becomes the band’s cover.' };
+const pvPoints = (m) => PV_POINTS[m].map(([p, txt]) => `<li>${pvIcon(p)}<span>${txt}</span></li>`).join('');
+const SCENE = `<svg class="sc" viewBox="0 0 320 200" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="scLamp" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#F4C760" stop-opacity=".5"/><stop offset="1" stop-color="#F4C760" stop-opacity="0"/></radialGradient>
+    <linearGradient id="scBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4E6B8" stop-opacity=".55"/><stop offset="1" stop-color="#F4E6B8" stop-opacity="0"/></linearGradient>
+    <linearGradient id="scCrowd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E3B552" stop-opacity=".38"/><stop offset="1" stop-color="#E3B552" stop-opacity=".05"/></linearGradient>
+  </defs>
+  <g class="sc-room">
+    <rect width="320" height="200" fill="#17120e"/>
+    <rect y="150" width="320" height="50" fill="#21180f"/><path d="M0 150H320" stroke="#33261a" stroke-width="2"/>
+    <rect x="22" y="24" width="60" height="72" rx="3" fill="#0d1626" stroke="#3a2e22" stroke-width="2"/><path d="M52 24V96M22 60H82" stroke="#3a2e22" stroke-width="2"/><circle cx="66" cy="42" r="7" fill="#E9E2CC" opacity=".9"/>
+    <rect x="200" y="30" width="26" height="36" fill="#6b2d2d"/><rect x="232" y="40" width="22" height="30" fill="#2d4a6b"/>
+    <rect x="14" y="112" width="76" height="40" rx="7" fill="#2b2017"/><rect x="10" y="130" width="84" height="22" rx="7" fill="#35271c"/>
+    <circle cx="276" cy="66" r="46" fill="url(#scLamp)"/><path d="M276 70V150" stroke="#4a3a28" stroke-width="3"/><path d="M262 70H290L284 52H268Z" fill="#E3B552" opacity=".92"/>
+    <ellipse cx="160" cy="170" rx="82" ry="11" fill="#3a1f1a" opacity=".85"/>
+    <rect x="206" y="126" width="38" height="26" rx="3" fill="#1a1613" stroke="#4a3a28" stroke-width="1.5"/><circle cx="216" cy="133" r="2" fill="#E3B552"/><circle cx="224" cy="133" r="2" fill="#E3B552"/><circle cx="232" cy="133" r="2" fill="#E3B552"/><rect x="211" y="139" width="28" height="9" rx="1.5" fill="#0d0b09"/>
+  </g>
+  <g class="sc-stage">
+    <rect width="320" height="200" fill="#0c0b10"/>
+    <rect width="320" height="12" fill="#1d1b27"/>
+    <circle cx="70" cy="12" r="5" fill="#F4E6B8"/><circle cx="160" cy="12" r="5" fill="#F4E6B8"/><circle cx="250" cy="12" r="5" fill="#F4E6B8"/>
+    <path d="M62 12L78 12L176 170L112 170Z" fill="url(#scBeam)"/><path d="M242 12L258 12L204 170L142 170Z" fill="url(#scBeam)"/><path d="M152 12L168 12L190 170L130 170Z" fill="url(#scBeam)" opacity=".7"/>
+    <rect y="150" width="320" height="22" fill="#1b1824"/><path d="M0 172H320" stroke="#E3B552" stroke-width="2" opacity=".7"/>
+    <rect y="172" width="320" height="28" fill="url(#scCrowd)"/>
+    <rect x="228" y="86" width="42" height="64" rx="2" fill="#17151c" stroke="#2f2b3a" stroke-width="1.5"/><circle cx="249" cy="104" r="10" fill="#0d0c12" stroke="#3a3646" stroke-width="1.5"/><circle cx="249" cy="132" r="10" fill="#0d0c12" stroke="#3a3646" stroke-width="1.5"/>
+    <path d="M52 150L96 150L88 140L60 140Z" fill="#17151c" stroke="#2f2b3a" stroke-width="1.5"/>
+    <g class="sc-crowd" fill="#050408"><circle cx="8" cy="192" r="6"/><rect x="1" y="197" width="14" height="14" rx="6"/><path d="M12 198 L17 178" stroke="#050408" stroke-width="3" stroke-linecap="round" fill="none"/><rect class="sc-phone" x="15" y="171" width="4" height="6" rx="1" stroke="none"/><circle cx="36" cy="190" r="6"/><rect x="29" y="195" width="14" height="14" rx="6"/><path d="M32 196 L27 178" stroke="#050408" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="62" cy="192" r="6"/><rect x="55" y="197" width="14" height="14" rx="6"/><circle cx="90" cy="194" r="6"/><rect x="83" y="199" width="14" height="14" rx="6"/><path d="M94 200 L99 180" stroke="#050408" stroke-width="3" stroke-linecap="round" fill="none"/><rect class="sc-phone" x="97" y="173" width="4" height="6" rx="1" stroke="none"/><circle cx="118" cy="190" r="6"/><rect x="111" y="195" width="14" height="14" rx="6"/><path d="M114 196 L109 178" stroke="#050408" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="146" cy="190" r="6"/><rect x="139" y="195" width="14" height="14" rx="6"/><circle cx="174" cy="194" r="6"/><rect x="167" y="199" width="14" height="14" rx="6"/><path d="M178 200 L183 180" stroke="#050408" stroke-width="3" stroke-linecap="round" fill="none"/><rect class="sc-phone" x="181" y="173" width="4" height="6" rx="1" stroke="none"/><circle cx="202" cy="190" r="6"/><rect x="195" y="195" width="14" height="14" rx="6"/><path d="M198 196 L193 178" stroke="#050408" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="230" cy="192" r="6"/><rect x="223" y="197" width="14" height="14" rx="6"/><circle cx="258" cy="194" r="6"/><rect x="251" y="199" width="14" height="14" rx="6"/><path d="M262 200 L267 180" stroke="#050408" stroke-width="3" stroke-linecap="round" fill="none"/><rect class="sc-phone" x="265" y="173" width="4" height="6" rx="1" stroke="none"/><circle cx="286" cy="190" r="6"/><rect x="279" y="195" width="14" height="14" rx="6"/><path d="M282 196 L277 178" stroke="#050408" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="312" cy="194" r="6"/><rect x="305" y="199" width="14" height="14" rx="6"/></g>
+  </g>
+  <g class="sc-figure">
+    <ellipse cx="160" cy="169" rx="34" ry="4" fill="#000" opacity=".35"/>
+    <g fill="none" stroke="#F2EEE4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="160" cy="62" r="11"/><path d="M149 60Q148 49 160 49Q172 49 171 60"/><path d="M149 60Q145 70 148 78M171 60Q175 70 172 78"/>
+      <path d="M160 73V120"/><path d="M160 120L146 168M160 120L176 166"/><path d="M146 168H137M176 166H185"/>
+    </g>
+    <path d="M163 78Q196 84 205 118" fill="none" stroke="#8a6a2a" stroke-width="2.4" stroke-linecap="round"/>
+    <g transform="translate(160 112) rotate(28)">
+      <rect x="-72" y="-3" width="62" height="6" rx="1" fill="#7a5a2e"/>
+      <path d="M-62-3V3M-52-3V3M-42-3V3M-32-3V3M-22-3V3" stroke="#d8c89a" stroke-width=".8"/>
+      <path d="M-72-5L-91-8L-92 4L-72 5Z" fill="#3a2a14"/><circle cx="-80" cy="-5" r="1.6" fill="#ddd"/><circle cx="-86" cy="-6" r="1.6" fill="#ddd"/><circle cx="-80" cy="4" r="1.6" fill="#ddd"/><circle cx="-86" cy="3" r="1.6" fill="#ddd"/>
+      <path d="M-10 0L40-22L45-16L12 1L45 18L40 24Z" fill="#E3B552" stroke="#7a5a1a" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M0-3L30-15L32-12L6 0L32 12L30 15L0 3Z" fill="#17110a" opacity=".85"/>
+      <rect x="6" y="-5" width="3" height="10" rx=".8" fill="#d6d6d6"/><rect x="14" y="-7" width="3" height="14" rx=".8" fill="#d6d6d6"/><rect x="24" y="-9" width="3" height="18" rx=".8" fill="#b8b8b8"/>
+      <circle cx="22" cy="11" r="1.8" fill="#222"/><circle cx="28" cy="14" r="1.8" fill="#222"/>
+      <path d="M-72 0H26" stroke="#e4e4e4" stroke-width=".7"/>
+    </g>
+    <g fill="none" stroke="#F2EEE4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M160 84L140 98L117 89"/><path d="M160 84L178 98L178 121"/>
+    </g>
+  </g>
+</svg>`;
+
 export async function onboarding(ctx) {
   const st = { step: Math.min(LAST, Math.max(1, Number(ctx.query.step) || 1)), go: ctx.query.go === '1', loc: { city: splitCity(app.profile.settings?.location).city, state: splitCity(app.profile.settings?.location).state }, privacy: app.profile.settings?.private ? 'private' : 'public', demo: { votes: [212, 140, 96], mine: -1, photoOn: false }, photo: '', done: false, ownPhoto: '', file: null, form: { artist: '', venue: '', city: '', date: '', note: '', rating: 0 } };
   const sugg = await app.api.suggestions().catch(() => ({ artists: [], venues: [] }));
@@ -52,35 +110,15 @@ export async function onboarding(ctx) {
         <p class="ob-skip-line"><button class="link-btn" type="button" data-action="next">Skip. I’ll add shows by hand.</button></p>`;
     }
     if (st.step === 3) {
-      const isP = st.privacy === 'private';
-      const d = st.demo, lead = d.votes.indexOf(Math.max(...d.votes));
-      const ic = (p) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${p}"/></svg>`;
-      const pt = (p, t) => `<li>${ic(p)}<span>${t}</span></li>`;
-      const MINE = ['@Grayson039', '@hazel_ldn', '@Mimsie'], FILES = ['Tool.jpg', 'ToolStage.jpg', 'ToolArms.jpg'];
-      const cands = FILES.map((f, i) => `<button type="button" class="pv-cand ${i === lead ? 'lead' : ''} ${d.mine === i ? 'mine' : ''}" style="--photo:url('${f}')" data-demo-vote="${i}" aria-pressed="${d.mine === i}" aria-label="Vote for the photo by ${MINE[i]}">${i === lead ? '<em>Current cover</em>' : ''}<span class="pv-by">${MINE[i]}</span><b>▲ ${d.votes[i]}${d.mine === i ? ' · your vote' : ''}</b></button>`).join('');
-      const own = d.photoOn
-        ? `<span class="pv-poster cover photo" style="--photo:url('Tool.jpg')"><button type="button" class="ob-add on" data-demo-photo aria-label="Remove the demo photo"><b aria-hidden="true">×</b><span>Remove</span></button><span class="cover-name">Tool</span></span>`
-        : `<span class="pv-poster cover" style="${coverStyle('Tool')}"><button type="button" class="ob-add" data-demo-photo aria-label="Add a demo photo"><b aria-hidden="true">+</b><span>Add photo</span></button><span class="cover-name">Tool</span></span>`;
+      const m = st.privacy;
       return `<h2 class="serif">Who gets to see your shows?</h2><p class="sub">Pick how you want to use Aftershow. Public is selected to start, so anyone can see what you log. You can change this any time in Settings.</p>
-        <div class="privacy-split" role="radiogroup" aria-label="Profile visibility">
-          <div class="pv ${isP ? 'on' : ''}" data-privacy="private">
-            <span class="pv-head"><button type="button" class="pv-radio" role="radio" aria-checked="${isP}" data-privacy="private"><b>Private</b><small class="pv-tag">Your photos stay yours. You can still vote.</small></button><i class="pilot ${isP ? 'on' : 'off'}" aria-hidden="true"></i></span>
-            <div class="pv-visual">
-              <span class="pv-user">${avatar(app.profile.avatarUrl, app.profile.username, 34)}<span class="pv-who"><b>${esc(app.profile.username)}</b><small>Your archive · only you and your followers</small></span><span class="pv-lock">${LOCK}</span></span>
-              <span class="pv-row">${own}<span class="pv-poster cover photo" style="--photo:url('Deftones.jpg')"><span class="cover-name">Deftones</span></span><span class="pv-poster cover photo" style="--photo:url('NineInchNailsArms.jpg')"><span class="cover-name">Nine Inch Nails</span></span></span>
-              <span class="pv-status">${d.photoOn ? 'Your photo is the poster.' : 'Tap “Add photo” and your own shot becomes the poster.'}</span>
-            </div>
-            <ul class="pv-points">${pt('M5 7h14M5 12h14M5 17h9', 'Log shows and setlists')}${pt('M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5z', 'Only you and your followers see them')}${pt('M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7', 'Add your own photos')}</ul>
+        <div class="pv-one" data-mode="${m}">
+          <div class="toggle-row pv-toggle" role="radiogroup" aria-label="Profile visibility">
+            <button type="button" class="toggle-opt ${m === 'private' ? 'active' : ''}" role="radio" aria-checked="${m === 'private'}" data-privacy="private">${LOCK}Private</button>
+            <button type="button" class="toggle-opt ${m === 'public' ? 'active' : ''}" role="radio" aria-checked="${m === 'public'}" data-privacy="public">${PUBLIC_ICON}Public</button>
           </div>
-          <div class="pv ${isP ? '' : 'on'}" data-privacy="public">
-            <span class="pv-head"><button type="button" class="pv-radio" role="radio" aria-checked="${!isP}" data-privacy="public"><b>Public</b><small class="pv-tag">Share your photos and shape every cover.</small></button><i class="pilot ${isP ? 'off' : 'on'}" aria-hidden="true"></i></span>
-            <div class="pv-visual">
-              <span class="pv-vname">Tool <small>Xcel Energy Center</small></span>
-              <span class="pv-row">${cands}</span>
-              <span class="pv-status">${d.mine >= 0 ? `Your vote moved <b>${MINE[d.mine]}</b> up. The top photo is Tool’s cover for everyone.` : 'Tap a photo to vote. The top photo becomes Tool’s cover for everyone.'}</span>
-            </div>
-            <ul class="pv-points">${pt('M12 19V5M6 11l6-6 6 6', 'Vote on the best photo of every show')}${pt('M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4V7z', 'The top photo becomes the band’s cover')}${pt('M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4', 'No photo of your own? You still get a great poster')}</ul>
-          </div>
+          <figure class="pv-scene">${SCENE}<figcaption class="pv-caption" aria-live="polite">${PV_CAPTION[m]}</figcaption></figure>
+          <ul class="pv-points" aria-live="polite">${pvPoints(m)}</ul>
         </div>
         <p class="pv-summary">Public gets you community posters and a say in every cover. Private keeps it all yours.</p>`;
     }
@@ -130,7 +168,7 @@ export async function onboarding(ctx) {
 
   const paint = () => {
     ctx.setHTML(`<div class="ob-stage">${posterWall()}
-      <div class="ob-panel ${st.step === 3 && !st.done ? 'wide' : ''}"><header class="ob-head"><span class="ob-brand">aftershow<span>.</span></span><span class="ob-hello">Welcome, ${esc(app.profile.username)}.</span><button type="button" class="link-btn" data-action="finish">${st.done ? 'Close' : 'Skip setup'}</button></header>
+      <div class="ob-panel"><header class="ob-head"><span class="ob-brand">aftershow<span>.</span></span><span class="ob-hello">Welcome, ${esc(app.profile.username)}.</span><button type="button" class="link-btn" data-action="finish">${st.done ? 'Close' : 'Skip setup'}</button></header>
         ${lamps()}${countdown()}<section class="ob-body" aria-live="polite">${body()}</section>${nav()}</div></div>`);
   };
   const repaintPoster = () => { const p = ctx.view.querySelector('#obPoster'); if (p) p.outerHTML = posterHtml(); };
@@ -145,15 +183,13 @@ export async function onboarding(ctx) {
     if (!!app.profile.settings?.private === priv && app.profile.settings?.private !== undefined) return;
     try { app.profile = { ...app.profile, ...(await app.api.updateMyProfile({ settings: { private: priv } })) }; invalidateCovers(); } catch (e) { toast(friendlyError(e), 'error'); }
   };
-  ctx.on('click', '[data-privacy]', (ev, b) => {
+  ctx.on('click', '[data-privacy]', (_, b) => {
     st.privacy = b.dataset.privacy;
-    const v = ev.target.closest('[data-demo-vote]'), p = ev.target.closest('[data-demo-photo]');
-    if (v) { // a tiny working demo of the vote: your vote moves, the cover can change
-      const i = +v.dataset.demoVote, d = st.demo;
-      if (d.mine === i) { d.votes[i] -= 1; d.mine = -1; } else { if (d.mine >= 0) d.votes[d.mine] -= 1; d.votes[i] += 1; d.mine = i; }
-    }
-    if (p) st.demo.photoOn = !st.demo.photoOn;
-    paint();
+    const root = ctx.view.querySelector('.pv-one'); if (!root) return;
+    root.dataset.mode = st.privacy;
+    root.querySelectorAll('[data-privacy]').forEach((x) => { const on = x.dataset.privacy === st.privacy; x.classList.toggle('active', on); x.setAttribute('aria-checked', on); });
+    root.querySelector('.pv-points').innerHTML = pvPoints(st.privacy);
+    root.querySelector('.pv-caption').textContent = PV_CAPTION[st.privacy];
   });
   const saveLoc = async () => {
     const city = ctx.view.querySelector('#lCity')?.value ?? st.loc.city, state = ctx.view.querySelector('#lState')?.value ?? st.loc.state;

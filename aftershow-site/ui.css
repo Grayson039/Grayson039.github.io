@@ -1161,3 +1161,19 @@ select{font:inherit;color:inherit;}
   .tile.expanded .t-credit{display:inline-flex;bottom:44px;right:10px;}
   .fav-grid .tile .cover-name{font-size:15px;}
 }
+
+/* ---------- privacy: one card, one scene. The same guitarist, in a living room (private) or on a stage (public) ---------- */
+.pv-one{max-width:520px;}
+.pv-toggle{margin-bottom:14px;}
+.pv-toggle .toggle-opt{gap:8px;}
+.pv-toggle .toggle-opt svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.pv-scene{margin:0 0 14px;border-radius:20px;overflow:hidden;background:#0f0f11;border:1px solid var(--line-2);}
+.pv-scene .sc{display:block;width:100%;height:auto;}
+.pv-caption{padding:10px 14px 12px;font:400 12px/1.45 var(--mono);color:rgba(255,255,255,.75);background:#0f0f11;}
+.sc-room,.sc-stage{transition:opacity .55s ease;}
+.pv-one[data-mode=private] .sc-stage{opacity:0;}
+.pv-one[data-mode=public] .sc-room{opacity:0;}
+.sc-phone{fill:#F4E6B8;}
+.pv-one[data-mode=public] .sc-phone{animation:phone-glow 2.4s ease-in-out infinite;}
+@keyframes phone-glow{0%,100%{opacity:1}50%{opacity:.35}}
+.pv-one .pv-points{margin:0;}

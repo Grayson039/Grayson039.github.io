@@ -5,7 +5,7 @@ import { invalidateCovers } from '../covers.js';
 import { applyTheme } from '../theme.js';
 import { esc, todayISO, friendlyError, formatDate, ratingDial, norm, splitCity, joinCity, stateOptions, LIMITS } from '../util.js';
 import { validatePhoto } from '../photo.js';
-import { GENRES, GENRE_GROUPS, KIND_CAPTION, kindOf, sceneSvg, thumbSvg } from './stageScene.js';
+import { GENRES, GENRE_GROUPS, sceneSvg } from './stageScene.js';
 
 const STEPS = ['Pick your amp', 'Plug in your history', 'Your night', 'Your profile', 'Near you', 'First show'];
 const LAST = STEPS.length;
@@ -26,7 +26,7 @@ const PV_CAPTION = { private: 'Your archive. Only you and your followers.', publ
 const pvPoints = (m) => PV_POINTS[m].map(([p, txt]) => `<li>${pvIcon(p)}<span>${txt}</span></li>`).join('');
 
 export async function onboarding(ctx) {
-  const st = { step: Math.min(LAST, Math.max(1, Number(ctx.query.step) || 1)), go: ctx.query.go === '1', loc: { city: splitCity(app.profile.settings?.location).city, state: splitCity(app.profile.settings?.location).state }, privacy: app.profile.settings?.private ? 'private' : 'public', genre: app.profile.settings?.genre || '', demo: { votes: [212, 140, 96], mine: -1, photoOn: false }, photo: '', done: false, ownPhoto: '', file: null, form: { artist: '', venue: '', city: '', date: '', note: '', rating: 0 } };
+  const st = { step: Math.min(LAST, Math.max(1, Number(ctx.query.step) || 1)), go: ctx.query.go === '1', loc: { city: splitCity(app.profile.settings?.location).city, state: splitCity(app.profile.settings?.location).state }, privacy: app.profile.settings?.private ? 'private' : 'public', genres: (app.profile.settings?.genres || [app.profile.settings?.genre]).filter(Boolean).slice(0, 3), demo: { votes: [212, 140, 96], mine: -1, photoOn: false }, photo: '', done: false, ownPhoto: '', file: null, form: { artist: '', venue: '', city: '', date: '', note: '', rating: 0 } };
   const sugg = await app.api.suggestions().catch(() => ({ artists: [], venues: [] }));
   const serial = () => String([...(st.form.artist || 'first')].reduce((a, c) => a + c.charCodeAt(0) * 7, 1) % 10000).padStart(4, '0');
 
@@ -62,10 +62,9 @@ export async function onboarding(ctx) {
         <p class="ob-skip-line"><button class="link-btn" type="button" data-action="next">Skip. I’ll add shows by hand.</button></p>`;
     }
     if (st.step === 3) {
-      return `<h2 class="serif">What’s your kind of night?</h2><p class="sub">Pick the shows you go to most. It sets the scene on the next screen. You can skip this.</p>
-        <div class="gn-pick"><label class="sr-only" for="genreSel">Genre</label>
-          <select id="genreSel" class="gn-select" name="genre" autocomplete="off"><option value="">Choose a genre</option>${GENRE_GROUPS.map((g) => `<optgroup label="${esc(g.label)}">${GENRES.filter((x) => x.group === g.label).map((x) => `<option value="${x.id}" ${st.genre === x.id ? 'selected' : ''}>${esc(x.label)}</option>`).join('')}</optgroup>`).join('')}</select>
-          <figure class="gn-preview">${thumbSvg(st.genre)}<figcaption id="gnCaption" aria-live="polite">${esc(st.genre ? KIND_CAPTION[kindOf(st.genre)] : 'Pick a genre to change the scene.')}</figcaption></figure></div>`;
+      const opts = (n) => `<option value="">${n === 0 ? 'Choose a genre' : 'Choose another (optional)'}</option>${GENRE_GROUPS.map((g) => `<optgroup label="${esc(g.label)}">${GENRES.filter((x) => x.group === g.label).map((x) => `<option value="${x.id}" ${st.genres[n] === x.id ? 'selected' : ''} ${st.genres.some((y, k) => k !== n && y === x.id) ? 'disabled' : ''}>${esc(x.label)}</option>`).join('')}</optgroup>`).join('')}`;
+      return `<h2 class="serif">What are your top 3 genres?</h2><p class="sub">Pick the shows you go to most, favourite first. It sets the scene on the next screen. You can skip this.</p>
+        <div class="gn-pick">${['Favourite', 'Second', 'Third'].map((label, n) => `<div class="gn-row"><label for="genre${n}"><span class="gn-no" aria-hidden="true">${n + 1}</span>${label}</label><select id="genre${n}" class="gn-select" data-genre-slot="${n}" name="genre${n}" autocomplete="off">${opts(n)}</select></div>`).join('')}</div>`;
     }
     if (st.step === 4) {
       const m = st.privacy;
@@ -75,7 +74,7 @@ export async function onboarding(ctx) {
             <button type="button" class="toggle-opt ${m === 'private' ? 'active' : ''}" role="radio" aria-checked="${m === 'private'}" data-privacy="private">${LOCK}Private</button>
             <button type="button" class="toggle-opt ${m === 'public' ? 'active' : ''}" role="radio" aria-checked="${m === 'public'}" data-privacy="public">${PUBLIC_ICON}Public</button>
           </div>
-          <figure class="pv-scene">${sceneSvg(st.genre)}<figcaption class="pv-caption" aria-live="polite">${PV_CAPTION[m]}</figcaption></figure>
+          <figure class="pv-scene">${sceneSvg(st.genres)}<figcaption class="pv-caption" aria-live="polite">${PV_CAPTION[m]}</figcaption></figure>
           <ul class="pv-points" aria-live="polite">${pvPoints(m)}</ul>
         </div>
         <p class="pv-summary">Public gets you community posters and a say in every cover. Private keeps it all yours.</p>`;
@@ -141,12 +140,12 @@ export async function onboarding(ctx) {
     if (!!app.profile.settings?.private === priv && app.profile.settings?.private !== undefined) return;
     try { app.profile = { ...app.profile, ...(await app.api.updateMyProfile({ settings: { private: priv } })) }; invalidateCovers(); } catch (e) { toast(friendlyError(e), 'error'); }
   };
-  ctx.on('change', '#genreSel', (_, sel) => {
-    st.genre = sel.value;
-    const fig = ctx.view.querySelector('.gn-preview');
-    fig.querySelector('svg').outerHTML = thumbSvg(st.genre);
-    fig.querySelector('#gnCaption').textContent = st.genre ? KIND_CAPTION[kindOf(st.genre)] : 'Pick a genre to change the scene.';
-    app.api.updateMyProfile({ settings: { genre: st.genre } }).then((p) => { app.profile = { ...app.profile, ...p }; }).catch(() => {});
+  ctx.on('change', '[data-genre-slot]', (_, sel) => {
+    const slots = [...ctx.view.querySelectorAll('[data-genre-slot]')];
+    st.genres = slots.map((s) => s.value).filter(Boolean);
+    // a genre can only be picked once
+    slots.forEach((s) => s.querySelectorAll('option').forEach((o) => { o.disabled = !!o.value && slots.some((other) => other !== s && other.value === o.value); }));
+    app.api.updateMyProfile({ settings: { genres: st.genres } }).then((p) => { app.profile = { ...app.profile, ...p }; }).catch(() => {});
   });
   ctx.on('click', '[data-privacy]', (_, b) => {
     st.privacy = b.dataset.privacy;

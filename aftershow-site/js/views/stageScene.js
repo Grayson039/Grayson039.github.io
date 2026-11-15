@@ -15,12 +15,6 @@ const slug = (s) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, 
 export const GENRES = GENRE_GROUPS.flatMap((g) => g.items.map((label) => ({ id: slug(label), label, group: g.label, kind: g.kind })));
 const LEGACY = { rock: 'rock', solo: 'solo', dance: 'dance', band: 'band', mix: 'band' };
 export const kindOf = (genre) => GENRES.find((g) => g.id === genre)?.kind || LEGACY[genre] || 'rock';
-export const KIND_CAPTION = {
-  rock: 'A guitarist with a Flying V.',
-  solo: 'A solo artist with a mic.',
-  dance: 'Dancers, in sync.',
-  band: 'The whole band on stage.',
-};
 
 const HEAD = `<svg class="sc" viewBox="0 0 320 200" aria-hidden="true" focusable="false">
   <defs>
@@ -95,14 +89,14 @@ const extras = (kind) => (kind === 'dance'
     ? place(ROCK, -94, 0.75, false) + place(ROCK, 94, 0.75, true)
     : '');
 
-/** The full scene. Same centre figure in both moods; band-mates and dancers join it on the public stage. */
-export const sceneSvg = (genre) => {
-  const kind = kindOf(genre);
-  return HEAD + `  <g class="sc-extra">${extras(kind)}</g>\n  <g class="sc-figure">${centre(kind)}</g>\n</svg>`;
-};
-
-/** A small picture of the act for the genre picker. */
-export const thumbSvg = (genre) => {
-  const kind = kindOf(genre);
-  return `<svg class="gn-art" viewBox="10 30 300 150" aria-hidden="true" focusable="false"><rect x="10" y="30" width="300" height="150" fill="#0f0f11"/><path d="M10 168H310" stroke="#E3B552" stroke-width="2" opacity=".6"/><g>${extras(kind)}</g><g>${centre(kind)}</g></svg>`;
+/** The full scene. `genres` is up to three picks, in order. The first sets the centre figure; the second and third stand either side
+ *  of it on the public stage. With only one pick, a band or dance genre brings its own band-mates or dancers. */
+export const sceneSvg = (genres) => {
+  const [g1, g2, g3] = (Array.isArray(genres) ? genres : [genres]).filter(Boolean);
+  const kind = kindOf(g1);
+  const side = g2 || g3;
+  const flank = side
+    ? (g2 ? place(centre(kindOf(g2)), -80, 0.8, false) : '') + (g3 ? place(centre(kindOf(g3)), 80, 0.8, true) : '')
+    : extras(kind);
+  return HEAD + `  <g class="sc-extra">${flank}</g>\n  <g class="sc-figure">${centre(kind)}</g>\n</svg>`;
 };

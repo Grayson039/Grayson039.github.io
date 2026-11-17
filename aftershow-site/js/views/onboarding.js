@@ -63,7 +63,7 @@ export async function onboarding(ctx) {
     }
     if (st.step === 3) {
       const opts = (n) => `<option value="">${n === 0 ? 'Choose a genre' : 'Choose another (optional)'}</option>${GENRE_GROUPS.map((g) => `<optgroup label="${esc(g.label)}">${GENRES.filter((x) => x.group === g.label).map((x) => `<option value="${x.id}" ${st.genres[n] === x.id ? 'selected' : ''} ${st.genres.some((y, k) => k !== n && y === x.id) ? 'disabled' : ''}>${esc(x.label)}</option>`).join('')}</optgroup>`).join('')}`;
-      return `<h2 class="serif">What are your top 3 genres?</h2><p class="sub">Pick the shows you go to most, favourite first. It sets the scene on the next screen. You can skip this.</p>
+      return `<h2 class="serif">What are your top 3 genres?</h2><p class="sub">Pick the shows you go to most, favourite first. Your favourite sets the scene on the next screen, and the other two help us learn your taste. You can skip this.</p>
         <div class="gn-pick">${['Favourite', 'Second', 'Third'].map((label, n) => `<div class="gn-row"><label for="genre${n}"><span class="gn-no" aria-hidden="true">${n + 1}</span>${label}</label><select id="genre${n}" class="gn-select" data-genre-slot="${n}" name="genre${n}" autocomplete="off">${opts(n)}</select></div>`).join('')}</div>`;
     }
     if (st.step === 4) {

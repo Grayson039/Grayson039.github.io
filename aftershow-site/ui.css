@@ -1174,12 +1174,9 @@ select{font:inherit;color:inherit;}
 /* transparent pictures; a soft drop shadow seats each figure on the floor */
 .sc-fig{position:absolute;display:block;height:auto;z-index:2;filter:drop-shadow(0 10px 12px rgba(0,0,0,.55));transition:opacity .55s ease,transform .55s ease;}
 .sc-mid{left:50%;width:64.5%;transform:translateX(-50%);bottom:4%;}
-.sc-side{width:40%;bottom:17%;opacity:0;z-index:1;}
-.sc-l{left:-9%;}.sc-r{right:-9%;}
 .sc-room,.sc-stage,.sc-crowd{transition:opacity .55s ease;}
 .pv-one[data-mode=private] .sc-stage,.pv-one[data-mode=private] .sc-crowd,.pv-one[data-mode=private] .sc-pub{opacity:0;}
 .pv-one[data-mode=public] .sc-room,.pv-one[data-mode=public] .sc-priv{opacity:0;}
-.pv-one[data-mode=public] .sc-side{opacity:.96;}
 .pv-one[data-mode=public] .sc-mid{bottom:11%;}
 .pv-caption{padding:10px 14px 12px;font:400 12px/1.45 var(--mono);color:rgba(255,255,255,.75);background:#0f0f11;}
 .sc-phone{fill:#F4E6B8;stroke:none;}

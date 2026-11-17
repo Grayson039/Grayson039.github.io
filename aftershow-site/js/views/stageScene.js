@@ -48,13 +48,10 @@ const BG = `<svg class="sc-bg" viewBox="0 0 320 240" preserveAspectRatio="xMidYM
 const person = (x, h, arm) => `<g transform="translate(${x} 0)"><circle cx="0" cy="${235 - h}" r="9"/><path d="M-14 240Q-14 ${240 - h + 4} 0 ${240 - h + 4}Q14 ${240 - h + 4} 14 240Z"/>${arm ? `<path d="M10 ${240 - h + 10}L18 ${240 - h - 14}" stroke="#08070b" stroke-width="5" stroke-linecap="round"/><rect class="sc-phone" x="13" y="${240 - h - 26}" width="9" height="13" rx="2" transform="rotate(10 17 ${240 - h - 20})"/>` : ''}</g>`;
 const CROWD = `<svg class="sc-crowd" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><g fill="#08070b" stroke="#E3B552" stroke-opacity=".28" stroke-width="1.2">${[[18, 38, 0], [52, 30, 1], [88, 40, 0], [126, 28, 0], [166, 38, 1], [206, 30, 0], [244, 40, 0], [282, 32, 1], [314, 38, 0]].map(([x, h, a]) => person(x, h, a)).join('')}</g></svg>`;
 
-/** The scene. `genres` is up to three picks, favourite first: the first stands in the middle, the second and third beside it on the stage. */
+/** The scene. `genres` is up to three picks, favourite first. Only the favourite sets the picture; the other two are just saved with the profile. */
 export const sceneHtml = (genres) => {
-  const acts = [...new Set((Array.isArray(genres) ? genres : [genres]).filter(Boolean).map(actOf))].slice(0, 3);
-  if (!acts.length) acts.push('rock');
-  const [mid, left, right] = acts;
-  const img = (cls, act, mode) => `<img class="sc-fig ${cls}" src="${src(act, mode)}" alt="" width="640" height="640" decoding="async">`;
-  return `<div class="sc" aria-hidden="true">${BG}
-    ${left ? img('sc-side sc-l', left, 'public') : ''}${right ? img('sc-side sc-r', right, 'public') : ''}
-    ${img('sc-mid sc-priv', mid, 'private')}${img('sc-mid sc-pub', mid, 'public')}${CROWD}</div>`;
+  const first = (Array.isArray(genres) ? genres : [genres]).filter(Boolean)[0];
+  const act = first ? actOf(first) : 'rock';
+  const img = (cls, mode) => `<img class="sc-fig ${cls}" src="${src(act, mode)}" alt="" width="640" height="640" decoding="async">`;
+  return `<div class="sc" aria-hidden="true">${BG}${img('sc-mid sc-priv', 'private')}${img('sc-mid sc-pub', 'public')}${CROWD}</div>`;
 };

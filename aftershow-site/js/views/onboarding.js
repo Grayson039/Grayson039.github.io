@@ -5,7 +5,7 @@ import { invalidateCovers } from '../covers.js';
 import { applyTheme } from '../theme.js';
 import { esc, todayISO, friendlyError, formatDate, ratingDial, norm, splitCity, joinCity, stateOptions, LIMITS } from '../util.js';
 import { validatePhoto } from '../photo.js';
-import { GENRES, GENRE_GROUPS, sceneSvg } from './stageScene.js';
+import { GENRES, GENRE_GROUPS, sceneHtml } from './stageScene.js';
 
 const STEPS = ['Pick your amp', 'Plug in your history', 'Your night', 'Your profile', 'Near you', 'First show'];
 const LAST = STEPS.length;
@@ -74,7 +74,7 @@ export async function onboarding(ctx) {
             <button type="button" class="toggle-opt ${m === 'private' ? 'active' : ''}" role="radio" aria-checked="${m === 'private'}" data-privacy="private">${LOCK}Private</button>
             <button type="button" class="toggle-opt ${m === 'public' ? 'active' : ''}" role="radio" aria-checked="${m === 'public'}" data-privacy="public">${PUBLIC_ICON}Public</button>
           </div>
-          <figure class="pv-scene">${sceneSvg(st.genres)}<figcaption class="pv-caption" aria-live="polite">${PV_CAPTION[m]}</figcaption></figure>
+          <figure class="pv-scene">${sceneHtml(st.genres)}<figcaption class="pv-caption" aria-live="polite">${PV_CAPTION[m]}</figcaption></figure>
           <ul class="pv-points" aria-live="polite">${pvPoints(m)}</ul>
         </div>
         <p class="pv-summary">Public gets you community posters and a say in every cover. Private keeps it all yours.</p>`;

@@ -52,7 +52,7 @@
     position: relative;
   }
 
-  /* â”€â”€ TOPO SVG BACKGROUND â”€â”€ */
+  /* ── TOPO SVG BACKGROUND ── */
   .topo-bg {
     position: fixed;
     inset: 0;
@@ -61,7 +61,7 @@
     opacity: 0.18;
   }
 
-  /* â”€â”€ NOISE OVERLAY â”€â”€ */
+  /* ── NOISE OVERLAY ── */
   body::after {
     content: '';
     position: fixed; inset: 0;
@@ -69,7 +69,7 @@
     pointer-events: none; z-index: 1000; opacity: 0.4;
   }
 
-  /* â”€â”€ Cursor â”€â”€ */
+  /* ── Cursor ── */
   .cursor {
     width: 10px; height: 10px;
     background: var(--orange);
@@ -91,7 +91,7 @@
   }
   @media (hover: none) { .cursor, .cursor-ring { display: none; } body { cursor: auto; } }
 
-  /* â”€â”€ NAV â”€â”€ */
+  /* ── NAV ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0;
     padding: 18px 48px;
@@ -127,7 +127,7 @@
     .hero-eyebrow::before, .hero-eyebrow::after { width: 16px; }
   }
 
-  /* â”€â”€ HERO â”€â”€ */
+  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     padding: 0 48px 80px;
@@ -214,7 +214,7 @@
     animation: fadeUp .7s ease .6s forwards;
   }
 
-  /* â”€â”€ VELOCITY CALLOUT â”€â”€ */
+  /* ── VELOCITY CALLOUT ── */
   .velocity-bar {
     display: flex;
     align-items: center;
@@ -283,7 +283,7 @@
     .scroll-hint { display: none; }
   }
 
-  /* â”€â”€ SECTIONS â”€â”€ */
+  /* ── SECTIONS ── */
   section { padding: 100px 48px; border-bottom: 1px solid var(--border); position: relative; z-index: 1; }
   @media (max-width: 768px) { section { padding: 70px 24px; } }
 
@@ -302,7 +302,7 @@
     height: 1px; background: var(--border);
   }
 
-  /* â”€â”€ WORK CARDS â”€â”€ */
+  /* ── WORK CARDS ── */
   .work-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -425,7 +425,7 @@
   }
   .p-case-link:hover { border-color: var(--orange); }
 
-  /* â”€â”€ APPROACH â”€â”€ */
+  /* ── APPROACH ── */
   .approach-grid {
     display: grid;
     grid-template-columns: repeat(3,1fr);
@@ -491,7 +491,7 @@
   }
   .approach-item:hover .a-accent { transform: scaleX(1); }
 
-  /* â”€â”€ CONTACT â”€â”€ */
+  /* ── CONTACT ── */
   .contact-section {
     min-height: 55vh;
     display: flex; flex-direction: column;
@@ -554,7 +554,7 @@
     box-shadow: 4px 4px 0 rgba(255,230,225,0.1);
   }
 
-  /* â”€â”€ FOOTER â”€â”€ */
+  /* ── FOOTER ── */
   footer {
     padding: 28px 48px;
     border-top: 1px solid var(--border);
@@ -571,7 +571,7 @@
   .footer-orange { color: var(--orange); }
   @media (max-width: 600px) { footer { flex-direction: column; text-align: center; padding: 24px; } }
 
-  /* â”€â”€ CASE STUDY OVERLAY â”€â”€ */
+  /* ── CASE STUDY OVERLAY ── */
   .case-overlay {
     position: fixed; inset: 0;
     background: rgba(3,28,29,0.97);
@@ -696,7 +696,7 @@
   }
   .cs-link:hover { border-color: var(--orange); }
 
-  /* â”€â”€ ANIMATIONS â”€â”€ */
+  /* ── ANIMATIONS ── */
   @keyframes fadeUp {
     from { opacity:0; transform:translateY(28px); }
     to   { opacity:1; transform:translateY(0); }
@@ -727,7 +727,7 @@
   .more-link:hover .more-link-arrow { transform: translateX(4px); }
   .more-link-arrow { transition: transform .3s; display: inline-block; font-size: 14px; }
 
-  /* â”€â”€ ABOUT â”€â”€ */
+  /* ── ABOUT ── */
   .about-section {
     padding: 100px 48px;
     background: var(--bg-mid);
@@ -789,7 +789,7 @@
     flex-wrap: wrap;
   }
 
-  /* â”€â”€ HERO LOGO ANIMATION â”€â”€ */
+  /* ── HERO LOGO ANIMATION ── */
   @keyframes logoReveal {
     0%   { opacity: 0; transform: scale(0.96) translateY(10px); filter: brightness(0) invert(1) drop-shadow(0 0 0px rgba(255,91,4,0)); }
     60%  { opacity: 1; transform: scale(1.01) translateY(0);    filter: brightness(0) invert(1) drop-shadow(0 0 24px rgba(255,91,4,0.35)); }
@@ -798,7 +798,7 @@
 
 
   /* GLITCH */
-  /* hero-name removed â€” GRAYSON now in jaw image */
+  /* hero-name removed — GRAYSON now in jaw image */
   .hero-name::before,
   .hero-name::after {
     content: attr(data-text);
@@ -889,7 +889,7 @@
       .tl { fill: none; stroke: #FED16A; stroke-width: 0.7; }
       .tl2 { fill: none; stroke: #FF5B04; stroke-width: 0.5; }
     
-  /* â”€â”€ CHOMP ANIMATION â”€â”€ */
+  /* ── CHOMP ANIMATION ── */
   .chomp-wrap {
     display: flex;
     flex-direction: column;
@@ -914,7 +914,7 @@
     z-index: 1;
   }
   .jaw-bottom { width: 100%; display: block; }
-  /* â”€â”€ shared channel setup (TV-style: pink left / cyan right) â”€â”€ */
+  /* ── shared channel setup (TV-style: pink left / cyan right) ── */
   .jaw-top-wrap::before, .jaw-top-wrap::after,
   .jaw-bottom-wrap::before, .jaw-bottom-wrap::after {
     content: '';
@@ -933,12 +933,12 @@
   .jaw-bottom-wrap::before, .jaw-bottom-wrap::after {
     background-image: url('lower-body-final-removebg-preview.png');
   }
-  /* pink channel â€” fixed 2px right offset like reference ::before */
+  /* pink channel — fixed 2px right offset like reference ::before */
   .jaw-top-wrap::before, .jaw-bottom-wrap::before {
     filter: sepia(1) saturate(6) hue-rotate(285deg);
     left: 2px;
   }
-  /* cyan channel â€” fixed 2px left offset like reference ::after */
+  /* cyan channel — fixed 2px left offset like reference ::after */
   .jaw-top-wrap::after, .jaw-bottom-wrap::after {
     filter: sepia(1) saturate(6) hue-rotate(155deg);
     left: -2px;
@@ -952,7 +952,7 @@
     100% { transform: translateY(0); }
   }
 
-  /* â”€â”€ BURST: rapid TV glitch right after chomp â”€â”€ */
+  /* ── BURST: rapid TV glitch right after chomp ── */
   .jaw-top-wrap.glitch-burst,
   .jaw-bottom-wrap.glitch-burst { animation: tvSkewBurst 0.1s infinite; }
   .jaw-top-wrap.glitch-burst::before,
@@ -966,7 +966,7 @@
     animation: tvCyanBurst 0.08s infinite;
   }
 
-  /* â”€â”€ STEADY: pink slow 5s / cyan fast 1s (matches reference) â”€â”€ */
+  /* ── STEADY: pink slow 5s / cyan fast 1s (matches reference) ── */
   .jaw-top-wrap.glitching,
   .jaw-bottom-wrap.glitching { animation: tvSkew 1s infinite linear alternate-reverse; }
   .jaw-top-wrap.glitching::before,
@@ -1184,22 +1184,23 @@
       </div>
     </div>
 
-    <div class="project-card stagger-child" role="button" tabindex="0" onclick="window.location.href='little-caesars/'" onkeydown="if(event.key==='Enter'||event.key===' ')window.location.href='little-caesars/'" style="cursor:pointer;">
+    <div class="project-card stagger-child" role="button" tabindex="0" onclick="window.location.href='service-desk-workbench.html'" onkeydown="if(event.key==='Enter'||event.key===' ')window.location.href='service-desk-workbench.html'" style="cursor:pointer;">
       <div class="p-num">03 / 4</div>
-      <div class="p-screenshot" style="height:220px; overflow:hidden; padding:0; background:#0a0a0a; border-color:rgba(244,115,33,0.30);">
-        <img src="little-caesars/lc-thumbnail.png" style="width:100%;height:100%;object-fit:cover;object-position:top center;" alt="Little Caesars redesign comparison">
+      <div class="p-screenshot" style="height:220px;padding:0;border:none;">
+        <img src="service-desk-workbench-thumbnail.jpg" alt="Service Desk Workbench: a troubleshooting checklist with Yes/No questions, a copyable command, and live ticket notes" style="width:100%;height:100%;object-fit:cover;object-position:top center;border-radius:3px;">
       </div>
-      <div class="p-name">Little Caesars <span style="color:#F47321">Redesign</span></div>
-      <div class="p-type">Interactive Case Study</div>
-      <p class="p-desc">Little Caesars has the best value in fast food â€” but their app makes it feel like a chore. I redesigned the full ordering flow: Hot-N-Ready real-time availability, a smarter menu, and a checkout that actually trusts the user.</p>
+      <div class="p-name">Service Desk Workbench</div>
+      <div class="p-type">Help Desk Workflow Tool</div>
+      <p class="p-desc">Every ticket gets worked twice: once to fix it, once to write it up. Type the problem, follow a checklist built from your team&rsquo;s own procedures, and the Jira notes write themselves. Offline, one file, no ticket text stored. 111 unit tests, a live demo, and honest limits.</p>
       <div class="p-footer">
         <div class="p-tags">
           <span class="p-tag">UX Design</span>
-          <span class="p-tag">Mobile</span>
-          <span class="p-tag">Case Study</span>
+          <span class="p-tag">AI Build</span>
+          <span class="p-tag">Live Demo</span>
         </div>
         <div class="p-actions">
-          <a href="little-caesars/" class="p-case-link" onclick="event.stopPropagation();">Case Study &#x2192;</a>
+          <a href="service-desk-workbench.html" class="p-case-link" onclick="event.stopPropagation();">Case Study &#x2192;</a>
+          <a href="service-desk-workbench/" class="p-case-link" onclick="event.stopPropagation();">Try the Demo &#x2192;</a>
         </div>
       </div>
     </div>
@@ -1246,14 +1247,14 @@
       <div class="a-bignum">02</div>
       <div class="a-icon"><i class="ti ti-vector-triangle" aria-hidden="true"></i></div>
       <div class="a-title">Design With Intent</div>
-      <p class="a-desc">UI/UX decisions are deliberate. I think in flows, not just screens â€” prioritizing clarity, delight, and the moments that make users come back.</p>
+      <p class="a-desc">UI/UX decisions are deliberate. I think in flows, not just screens — prioritizing clarity, delight, and the moments that make users come back.</p>
       <div class="a-accent"></div>
     </div>
     <div class="approach-item stagger-child">
       <div class="a-bignum">03</div>
       <div class="a-icon"><i class="ti ti-cpu" aria-hidden="true"></i></div>
       <div class="a-title">Ship With AI</div>
-      <p class="a-desc">I use Claude, ChatGPT, and the full AI stack as a development partner â€” directing, iterating, and building real products faster than traditional workflows ever allowed.</p>
+      <p class="a-desc">I use Claude, ChatGPT, and the full AI stack as a development partner — directing, iterating, and building real products faster than traditional workflows ever allowed.</p>
       <div class="a-accent"></div>
     </div>
   </div>
@@ -1294,38 +1295,38 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>Â© 2026 <span class="footer-orange">Will Grayson</span></span>
+  <span>© 2026 <span class="footer-orange">Will Grayson</span></span>
   <span>AI Product Designer, Available for Opportunities</span>
-  <span>Built with Claude Â· Engineered as an AI Native</span>
+  <span>Built with Claude · Engineered as an AI Native</span>
 </footer>
 
 <!-- CASE STUDY OVERLAYS -->
 <div class="case-overlay" id="case-scrapd">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">âœ• &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
   <div class="case-inner">
     <div class="cs-eyebrow">Case Study, 09 / 10</div>
     <div class="cs-title">Scrap'd</div>
-    <div class="cs-subtitle">Purpose-Built Scrapbooking App Â· PRD Complete, Building</div>
+    <div class="cs-subtitle">Purpose-Built Scrapbooking App · PRD Complete, Building</div>
     <div class="cs-tags">
       <span class="cs-tag">UX Design</span><span class="cs-tag">React Native</span><span class="cs-tag">react-native-skia</span><span class="cs-tag">Freemium</span>
     </div>
     <a href="https://grayson039.github.io/scrapd/" target="_blank" rel="noopener noreferrer" class="cs-link">View Prototype &#x2192;</a>
     <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">Scrapbookers don't have a home. GoodNotes hits a 3-file wall immediately. Canva is a marketing tool â€” its layers are broken and its best templates are paywalled. Unfold exports to Instagram only, meaning a 100-page family scrapbook literally cannot be sent to grandma. Pic Collage forces watermarks on finished work and sits at a 3.9â˜… rating from a frustrated user base. Every competitor optimizes for the wrong output.</p>
+    <p class="cs-body">Scrapbookers don't have a home. GoodNotes hits a 3-file wall immediately. Canva is a marketing tool — its layers are broken and its best templates are paywalled. Unfold exports to Instagram only, meaning a 100-page family scrapbook literally cannot be sent to grandma. Pic Collage forces watermarks on finished work and sits at a 3.9★ rating from a frustrated user base. Every competitor optimizes for the wrong output.</p>
     <div class="cs-divider"></div>
     <div class="cs-section-head">The Core Insight</div>
-    <p class="cs-body">People aren't making scrapbooks to post on Instagram. They're making them to keep, share with family, and print. That realization â€” that every competitor is solving for social media virality instead of personal memory â€” is the product foundation everything else is built on.</p>
+    <p class="cs-body">People aren't making scrapbooks to post on Instagram. They're making them to keep, share with family, and print. That realization — that every competitor is solving for social media virality instead of personal memory — is the product foundation everything else is built on.</p>
 
     <div class="cs-section-head">Who It's Built For</div>
-    <p class="cs-body">Two personas drive every design decision. The Memory Keeper: women 25â€“45 making scrapbooks for weddings, milestones, travel, and holidays â€” currently duct-taping together GoodNotes and Canva and physical craft supplies, none of it feeling right. The Gift Maker: people building scrapbooks as gifts, who care deeply about the finished output looking polished and need to actually send it to someone.</p>
+    <p class="cs-body">Two personas drive every design decision. The Memory Keeper: women 25–45 making scrapbooks for weddings, milestones, travel, and holidays — currently duct-taping together GoodNotes and Canva and physical craft supplies, none of it feeling right. The Gift Maker: people building scrapbooks as gifts, who care deeply about the finished output looking polished and need to actually send it to someone.</p>
 
-    <div class="cs-section-head">Wireframe â†’ Prototype Evolution</div>
-    <p class="cs-body">The design went through three distinct stages before the current prototype. The first pass focused purely on the canvas layer model â€” getting the stacking order right before any visual polish. The second pass established the emotional tone: warm craft textures, Playfair Display typography, the "paper feel" that separates Scrap'd from every generic grid editor. The third pass locked the onboarding flow â€” the decision to get users into creation in under 60 seconds, skippable everywhere, no account required.</p>
+    <div class="cs-section-head">Wireframe → Prototype Evolution</div>
+    <p class="cs-body">The design went through three distinct stages before the current prototype. The first pass focused purely on the canvas layer model — getting the stacking order right before any visual polish. The second pass established the emotional tone: warm craft textures, Playfair Display typography, the "paper feel" that separates Scrap'd from every generic grid editor. The third pass locked the onboarding flow — the decision to get users into creation in under 60 seconds, skippable everywhere, no account required.</p>
 
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;">
       <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
-        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 01 Â· Wireframe</div>
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 01 · Wireframe</div>
         <div style="background:rgba(255,230,225,0.06);border-radius:8px;padding:12px;margin-bottom:10px;min-height:80px;">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;">
             <div style="height:28px;background:rgba(255,230,225,0.12);border-radius:3px;"></div>
@@ -1335,10 +1336,10 @@
           </div>
           <div style="height:8px;background:rgba(255,230,225,0.08);border-radius:3px;width:60%;"></div>
         </div>
-        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Layer model + canvas architecture. No visual polish â€” just proving the stacking system works.</div>
+        <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Layer model + canvas architecture. No visual polish — just proving the stacking system works.</div>
       </div>
       <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
-        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 02 Â· Visual Identity</div>
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 02 · Visual Identity</div>
         <div style="background:linear-gradient(135deg,#2D7A6A,#519E8A);border-radius:8px;padding:12px;margin-bottom:10px;min-height:80px;display:flex;flex-direction:column;justify-content:center;gap:6px;">
           <div style="font-family:Georgia,serif;font-size:18px;font-weight:900;color:white;letter-spacing:-0.5px;">Scrap<span style="color:#F5C842;">'</span>d</div>
           <div style="font-size:9px;color:rgba(255,255,255,0.6);font-style:italic;">Snap it. Scrap it. Share it.</div>
@@ -1350,11 +1351,11 @@
         <div style="font-size:11px;color:rgba(255,230,225,0.5);line-height:1.5;">Craft textures, Playfair Display, warm palette. Establishing the emotional tone.</div>
       </div>
       <div style="background:rgba(255,230,225,0.08);border:1px solid rgba(255,230,225,0.15);border-radius:12px;padding:16px;">
-        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 03 Â· Prototype</div>
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,230,225,0.45);margin-bottom:8px;">Stage 03 · Prototype</div>
         <div style="background:linear-gradient(135deg,#1F6B5A,#519E8A);border-radius:8px;padding:10px;margin-bottom:10px;min-height:80px;">
           <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">My Scrapbooks</div>
           <div style="background:rgba(255,255,255,0.15);border-radius:6px;padding:6px 8px;margin-bottom:4px;">
-            <div style="font-size:9px;color:white;font-weight:600;">Paris 2024 âœˆ</div>
+            <div style="font-size:9px;color:white;font-weight:600;">Paris 2024 ✈</div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
             <div style="height:18px;background:rgba(255,113,103,0.5);border-radius:3px;"></div>
@@ -1386,10 +1387,10 @@
     </div>
 
     <div class="cs-section-head">The Canvas Architecture</div>
-    <p class="cs-body">Every page is a 6-layer GPU-rendered canvas via react-native-skia. Layer 1: background paper. Layer 2: photos. Layer 3: stickers and washi tape. Layer 4: typed text and journaling. Layer 5: Apple Pencil or finger drawing with pressure sensitivity. Layer 6 (Tier 2): video and GIF. Nothing is destructive. Unlimited undo. 60fps target on iPhone 12 or newer â€” non-negotiable.</p>
+    <p class="cs-body">Every page is a 6-layer GPU-rendered canvas via react-native-skia. Layer 1: background paper. Layer 2: photos. Layer 3: stickers and washi tape. Layer 4: typed text and journaling. Layer 5: Apple Pencil or finger drawing with pressure sensitivity. Layer 6 (Tier 2): video and GIF. Nothing is destructive. Unlimited undo. 60fps target on iPhone 12 or newer — non-negotiable.</p>
 
     <div class="cs-grid-2">
-      <div class="cs-stat-box"><div class="cs-stat-num">4.5â˜…</div><div class="cs-stat-label">Day-One App Store Target</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">4.5★</div><div class="cs-stat-label">Day-One App Store Target</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">$250</div><div class="cs-stat-label">Total Day-1 Asset Budget</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">>10 min</div><div class="cs-stat-label">Target Session Length</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">12</div><div class="cs-stat-label">PRD Feature Specs Written</div></div>
@@ -1402,9 +1403,9 @@
 
 <div class="case-overlay" id="case-ourtable">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">âœ• &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
   <div class="case-inner">
-    <div class="cs-eyebrow">Case Study, 05 / 10 Â· Personal Project</div>
+    <div class="cs-eyebrow">Case Study, 05 / 10 · Personal Project</div>
     <div class="cs-title">OurTable</div>
     <div class="cs-subtitle">Family Kitchen &middot; Working Web App &middot; Active Build</div>
     <div class="cs-tags">
@@ -1413,7 +1414,7 @@
 
     <a href="https://willgraysondesign.com/ourtable-site/" target="_blank" rel="noopener noreferrer" class="cs-link">Try the Live Demo &#x2192;</a>
     <div class="cs-section-head">The Origin</div>
-    <p class="cs-body">My wife had her gallbladder removed. Overnight our cooking had to change â€” certain fats and ingredients were suddenly off the table. Every recipe app we tried was built for a single person with no restrictions and unlimited pantry access. None of them understood that real households are complicated: multiple people, medical needs, dietary preferences, and a fridge full of things you bought three days ago and forgot about. So I started building the app I actually needed.</p>
+    <p class="cs-body">My wife had her gallbladder removed. Overnight our cooking had to change — certain fats and ingredients were suddenly off the table. Every recipe app we tried was built for a single person with no restrictions and unlimited pantry access. None of them understood that real households are complicated: multiple people, medical needs, dietary preferences, and a fridge full of things you bought three days ago and forgot about. So I started building the app I actually needed.</p>
     <div class="cs-divider"></div>
 
     <div class="cs-section-head">What It Is Today</div>
@@ -1535,11 +1536,11 @@
 
 <div class="case-overlay" id="case-briefed">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">âœ• &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
   <div class="case-inner">
-    <div class="cs-eyebrow">AI Tool, 07 / 10 Â· Live Demo</div>
+    <div class="cs-eyebrow">AI Tool, 07 / 10 · Live Demo</div>
     <div class="cs-title">Briefed</div>
-    <div class="cs-subtitle">AI News Summarizer Â· 15 Words or Less Â· Claude-Powered</div>
+    <div class="cs-subtitle">AI News Summarizer · 15 Words or Less · Claude-Powered</div>
     <div class="cs-tags">
       <span class="cs-tag">Claude API</span><span class="cs-tag">AI Product</span><span class="cs-tag">News</span><span class="cs-tag">Live Tool</span>
     </div>
@@ -1548,9 +1549,9 @@
     <p class="cs-body">News articles bury the actual point. Headlines lie or sensationalize. TL;DR summaries give you five bullet points when you needed one sentence. Nobody has time to read 800 words to find the thing that actually matters.</p>
     <div class="cs-divider"></div>
     <div class="cs-section-head">What It Does</div>
-    <p class="cs-body">Paste any article, long email, press release, or wall of text. Briefed calls the Claude API and returns the essential truth of what you just read â€” in exactly 15 words or less. Not a rewrite of the headline. Not a bulleted summary. The one core claim the whole piece is really about.</p>
+    <p class="cs-body">Paste any article, long email, press release, or wall of text. Briefed calls the Claude API and returns the essential truth of what you just read — in exactly 15 words or less. Not a rewrite of the headline. Not a bulleted summary. The one core claim the whole piece is really about.</p>
     <div class="cs-section-head">Design Decisions</div>
-    <p class="cs-body">The 15-word constraint is the product. It forces precision in a way that "summarize this" never does. Playfair Display gives it editorial credibility â€” it should feel like a sharp editor, not a chatbot. The dark UI with yellow-green signal color (`#e8ff47`) creates a signal-vs-noise visual language that reinforces the core idea.</p>
+    <p class="cs-body">The 15-word constraint is the product. It forces precision in a way that "summarize this" never does. Playfair Display gives it editorial credibility — it should feel like a sharp editor, not a chatbot. The dark UI with yellow-green signal color (`#e8ff47`) creates a signal-vs-noise visual language that reinforces the core idea.</p>
     <div class="cs-section-head">How the AI Was Designed</div>
     <p class="cs-body">The 15-word constraint didn&rsquo;t come from intuition &mdash; it came from failure. Early prompts returned summaries that were technically accurate but 40&ndash;60 words long. They weren&rsquo;t wrong, they were just useless for the use case. Tightening the constraint surfaced a new failure mode: the model started truncating instead of distilling, cutting off context rather than identifying the core claim. The final prompt architecture separates those two jobs &mdash; first identify the single most important claim, then express it in 15 words or fewer. The constraint is the product. The prompt engineering is what makes it work.</p>
     <div class="cs-grid-2">
@@ -1564,28 +1565,28 @@
 
 <div class="case-overlay" id="case-replyright">
   <button class="case-back" onclick="closeCase()">&#x2190; Portfolio</button>
-  <button class="case-close" onclick="closeCase()">âœ• &nbsp;Close</button>
+  <button class="case-close" onclick="closeCase()">✕ &nbsp;Close</button>
   <div class="case-inner">
-    <div class="cs-eyebrow">AI Tool, 08 / 10 Â· Live Demo</div>
+    <div class="cs-eyebrow">AI Tool, 08 / 10 · Live Demo</div>
     <div class="cs-title">ReplyRight</div>
-    <div class="cs-subtitle">AI Text Rewriter Â· 3 Tone Modes Â· Claude-Powered</div>
+    <div class="cs-subtitle">AI Text Rewriter · 3 Tone Modes · Claude-Powered</div>
     <div class="cs-tags">
       <span class="cs-tag">Claude API</span><span class="cs-tag">AI Product</span><span class="cs-tag">Communication</span><span class="cs-tag">Live Tool</span>
     </div>
     <a href="replyright.html" target="_blank" rel="noopener noreferrer" class="cs-link">Open ReplyRight &#x2192;</a>
     <div class="cs-section-head">The Problem</div>
-    <p class="cs-body">You sent the wrong tone and now the whole conversation is off. Or you didn't send anything at all because you couldn't figure out how to say it. Texts, emails, Slack messages â€” the register matters as much as the words, and most people don't have a second set of eyes on demand.</p>
+    <p class="cs-body">You sent the wrong tone and now the whole conversation is off. Or you didn't send anything at all because you couldn't figure out how to say it. Texts, emails, Slack messages — the register matters as much as the words, and most people don't have a second set of eyes on demand.</p>
     <div class="cs-divider"></div>
     <div class="cs-section-head">What It Does</div>
-    <p class="cs-body">Paste any message â€” a frustrated text, a passive-aggressive email, something you typed in a heated moment â€” and ReplyRight returns three rewrites simultaneously: Calm (de-escalates, neutral), Warm (relational, empathetic), and Assertive (direct, no softening). Same point, three different registers. Pick the one that fits.</p>
+    <p class="cs-body">Paste any message — a frustrated text, a passive-aggressive email, something you typed in a heated moment — and ReplyRight returns three rewrites simultaneously: Calm (de-escalates, neutral), Warm (relational, empathetic), and Assertive (direct, no softening). Same point, three different registers. Pick the one that fits.</p>
     <div class="cs-section-head">Design Decisions</div>
-    <p class="cs-body">Three results served at once instead of asking you to pick a tone first â€” comparison is the whole value. Color-coded left borders (blue / amber / red) let you scan the register before you read the words. Light UI so the tool disappears into the workflow rather than demanding attention. The app icon and branding stay minimal because this is a utility, not a statement.</p>
+    <p class="cs-body">Three results served at once instead of asking you to pick a tone first — comparison is the whole value. Color-coded left borders (blue / amber / red) let you scan the register before you read the words. Light UI so the tool disappears into the workflow rather than demanding attention. The app icon and branding stay minimal because this is a utility, not a statement.</p>
     <div class="cs-section-head">How the AI Was Designed</div>
     <p class="cs-body">The hardest prompt engineering problem in ReplyRight wasn&rsquo;t generating three tones &mdash; it was preventing the model from being sycophantic in Warm mode and aggressive in Assertive mode. Early outputs had Warm rewriting the user&rsquo;s point entirely to avoid conflict, and Assertive dropping all empathy in ways that would escalate rather than resolve. The fix was explicit constraints per tone: Warm preserves the core message and adds relational acknowledgment; Assertive keeps the point but removes apology language only. Same message, calibrated register &mdash; not a different message per tone.</p>
     <div class="cs-grid-2">
-      <div class="cs-stat-box"><div class="cs-stat-num">3</div><div class="cs-stat-label">Tone Modes (Calm Â· Warm Â· Assertive)</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">3</div><div class="cs-stat-label">Tone Modes (Calm · Warm · Assertive)</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">1</div><div class="cs-stat-label">API Call, 3 Results</div></div>
-      <div class="cs-stat-box"><div class="cs-stat-num">âˆž</div><div class="cs-stat-label">Use Cases (Texts, Email, Slack)</div></div>
+      <div class="cs-stat-box"><div class="cs-stat-num">∞</div><div class="cs-stat-label">Use Cases (Texts, Email, Slack)</div></div>
       <div class="cs-stat-box"><div class="cs-stat-num">0</div><div class="cs-stat-label">Tone Selections Before You See Results</div></div>
     </div>
   </div>
@@ -1608,7 +1609,7 @@
     el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
   });
 
-  // Crash Bandicoot letter drop â€” fires after chomp lands (~1.4s)
+  // Crash Bandicoot letter drop — fires after chomp lands (~1.4s)
   (function() {
     var eyebrow = document.querySelector('.hero-eyebrow');
     if (!eyebrow) return;
